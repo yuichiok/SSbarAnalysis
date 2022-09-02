@@ -1,7 +1,5 @@
 .vscode
+data
 
-# obj files
 *.o
-
-# exe files
 *.exe
