@@ -1,0 +1,7 @@
+.vscode
+
+# obj files
+*.o
+
+# exe files
+*.exe
