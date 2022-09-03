@@ -15,7 +15,9 @@ class NtupleProcessor
 {
   public:
     NtupleProcessor();
-   ~NtupleProcessor(){}
+    ~NtupleProcessor(){}
+
+    TFile* NtupleFile;
 
   private: 
 

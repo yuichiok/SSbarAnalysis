@@ -5,9 +5,9 @@
 // HEADERS
 #include <iostream>                 // stdlib
 #include <string>
-#include "TFile.h"                  // ROOT class headers
-#include "TString.h"
-#include "TTree.h"
+#include <TFile.h>                  // ROOT class headers
+#include <TString.h>
+#include <TTree.h>
 #include "../SSbarLibrary/timestamp.hh"
 #include "include/NtupleProcessor.hh"
 
