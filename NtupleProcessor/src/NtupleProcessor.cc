@@ -18,7 +18,7 @@ NtupleProcessor::NtupleProcessor()
 
     TString dummy_label = "rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.n002.d_dstm_15162_000";
 
-    NtupleFile = TFile::Open(dummy_label + ".tmp.root", "RECREATE");
+    NtupleFile = TFile::Open("rootfiles/" + dummy_label + ".tmp.root", "RECREATE");
 
   // Takes input options and processes appropriately
   //   Options that can be specified:
