@@ -11,15 +11,21 @@ NtupleProcessor.cpp
 
 using std::cout;   using std::endl;
 
-NtupleProcessor::NtupleProcessor()
+NtupleProcessor::NtupleProcessor(TString o, int me)
+: eAnalyzer(o), tIter(eAnalyzer), options(o), maxEvents(me)
 {
-  // TEST output
-    cout << "    NtupleProcessor: Created." << endl;
+  // PARAM output
+    cout << "  NtupleProcessor: Created.\n"
+            "   Options:                       " << options   << "\n"
+            "   MaxEntries:                    " << me   << "\n"
+    << endl;
 
-    TString dummy_label = "rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.n002.d_dstm_15162_000";
+  TString dummy_label = "rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.n002.d_dstm_15162_000";
 
-    ntupleFile = TFile::Open("rootfiles/" + dummy_label + ".tmp.root", "RECREATE");
-    TTree *ntuple   = (TTree*) ntupleFile->Get("Stats");
+  ntupleFile = TFile::Open("rootfiles/" + dummy_label + ".tmp.root", "RECREATE");
+  TTree *ntuple   = (TTree*) ntupleFile->Get("Stats");
+  cout << "ok0" << endl;
+  ntuple->Process(&tIter, options, maxEvents);
 
   // Takes input options and processes appropriately
   //   Options that can be specified:
