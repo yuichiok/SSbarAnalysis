@@ -21,11 +21,13 @@ NtupleProcessor::NtupleProcessor(TString o, int me)
     << endl;
 
   TString dummy_label = "rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.n002.d_dstm_15162_000";
+  TString filename = "data/" + dummy_label + ".root";
 
-  ntupleFile = TFile::Open("rootfiles/" + dummy_label + ".tmp.root", "RECREATE");
+  ntupleFile = TFile::Open(filename);
+  if(!ntupleFile) cout << "NtupleProcessor: ERROR: Unable to open file " << filename << endl;
   TTree *ntuple   = (TTree*) ntupleFile->Get("Stats");
-  cout << "ok0" << endl;
-  ntuple->Process(&tIter, options, maxEvents);
+  if(!ntuple) cout << "NtupleProcessor: ERROR: Unable to open ttree in " << filename << endl;
+  ntuple->Process(&tIter, "");
 
   // Takes input options and processes appropriately
   //   Options that can be specified:
