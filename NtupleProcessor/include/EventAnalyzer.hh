@@ -1,5 +1,5 @@
-#ifndef GUARD_NtupleProcessor_h
-#define GUARD_NtupleProcessor_h
+#ifndef GUARD_EventAnalyzer_h
+#define GUARD_EventAnalyzer_h
 
 /*------------------------------------------------------------------------------
    NtupleProcessor
@@ -10,17 +10,12 @@
  appropriate classes to handle each portion of the analysis process.
 ------------------------------------------------------------------------------*/
 #include <TString.h>
-#include "EventAnalyzer.hh"
-#include "TreeIterator.hh"
 
-class NtupleProcessor
+class EventAnalyzer
 {
   public:
-    NtupleProcessor();
-    ~NtupleProcessor(){}
-
-    EventAnalyzer  *eAnalyzer;
-    TFile          *ntupleFile;
+    EventAnalyzer();
+    ~EventAnalyzer(){}
 
   private: 
 
