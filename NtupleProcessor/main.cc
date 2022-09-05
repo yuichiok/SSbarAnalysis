@@ -13,7 +13,8 @@
 
 using namespace std;
 
-int main(int argc, char* argv[])
+// int main(int argc, char* argv[])
+int main()
 {
   // Record the time main starts processing.
   TString ts_mainBegin  = timeStamp();
@@ -26,7 +27,7 @@ int main(int argc, char* argv[])
           "  Processing Begun: " << ts_mainBegin << "\n"
           "\n";
 
-  NtupleProcessor ntplproc;
+  NtupleProcessor ntplproc("",-1);
 
   // CLOSING OUTPUT.
     TString ts_mainEnd = timeStamp();
