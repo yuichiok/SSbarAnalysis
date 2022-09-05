@@ -16,10 +16,14 @@
 class NtupleProcessor
 {
   public:
-    NtupleProcessor();
+    NtupleProcessor(TString o="", int me = -1);
     ~NtupleProcessor(){}
 
-    EventAnalyzer  *eAnalyzer;
+    EventAnalyzer  eAnalyzer;
+    TreeIterator   tIter;
+    TString        options;        // Extra options for this processing.
+    int            maxEvents;      // Max number of events to run over in this ntuple
+
     TFile          *ntupleFile;
 
   private: 
