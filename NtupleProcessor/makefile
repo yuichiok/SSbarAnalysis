@@ -6,7 +6,7 @@ CC=g++
 CFLAGS=-c -Wall -fdiagnostics-color
 ROOTFLAGS=`root-config --cflags --glibs --libs`
 OBJDIR=NtupleProcessor/obj
-OBJS=$(OBJDIR)/main.o $(OBJDIR)/NtupleProcessor.o
+OBJS=$(OBJDIR)/main.o $(OBJDIR)/NtupleProcessor.o $(OBJDIR)/TreeIterator.o $(OBJDIR)/EventAnalyzer.o
 HDRDIR=NtupleProcessor/include
 SRCDIR=NtupleProcessor/src
 LIBDIR=SSbarLibrary
@@ -20,10 +20,10 @@ createObjDir :
 NtupleProcessor.exe : $(OBJS)
 	$(CC) $(OBJS) -o NtupleProcessor.exe $(ROOTFLAGS)
 
-$(OBJDIR)/main.o : NtupleProcessor/main.cc $(HDRDIR)/NtupleProcessor.hh
+$(OBJDIR)/main.o : NtupleProcessor/main.cc $(HDRDIR)/NtupleProcessor.hh $(HDRDIR)/TreeIterator.hh $(HDRDIR)/EventAnalyzer.hh
 	$(CC) $(CFLAGS) NtupleProcessor/main.cc -o $(OBJDIR)/main.o $(ROOTFLAGS)
 
-$(OBJDIR)/NtupleProcessor.o : $(SRCDIR)/NtupleProcessor.cc $(HDRDIR)/NtupleProcessor.hh
+$(OBJDIR)/NtupleProcessor.o : $(SRCDIR)/NtupleProcessor.cc $(HDRDIR)/NtupleProcessor.hh $(HDRDIR)/TreeIterator.hh $(HDRDIR)/EventAnalyzer.hh
 	$(CC) $(CFLAGS) $(SRCDIR)/NtupleProcessor.cc -o $(OBJDIR)/NtupleProcessor.o $(ROOTFLAGS)
 
 $(OBJDIR)/TreeIterator.o : $(SRCDIR)/TreeIterator.cc $(HDRDIR)/TreeIterator.hh $(HDRDIR)/EventAnalyzer.hh
