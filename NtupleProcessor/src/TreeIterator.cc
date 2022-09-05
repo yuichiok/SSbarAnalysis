@@ -41,8 +41,8 @@ void TreeIterator::Init(TTree *tree)
 
 Bool_t TreeIterator::Notify()
 {
-   Init(fChain);
-   return kTRUE;
+    Init(fChain);
+    return kTRUE;
 }
 
 
