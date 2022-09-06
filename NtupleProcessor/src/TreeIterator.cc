@@ -51,12 +51,15 @@ Bool_t TreeIterator::Process(Long64_t entry)
   // Load current entry
     fChain->GetEntry(entry);
     nEntriesProcessed++;
-    if(entry%100000 == 0 || entry==finalEntry) cout << "  #" << entry << endl;
+    if(entry%100000 == 0 || entry==finalEntry) {
+      eAnalyzer.evalCriteria();
+      cout << "  #" << entry << endl;
+    }
 
   // Evaluate the criteria for this entry
-    eAnalyzer.evalCriteria();
+    // eAnalyzer.evalCriteria();
 
-return true;
+    return true;
 }
 
 void TreeIterator::SlaveTerminate(){}

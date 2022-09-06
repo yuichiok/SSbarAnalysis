@@ -219,4 +219,7 @@ Bool_t EventAnalyzer::Notify()
 
 void EventAnalyzer::evalCriteria()
 { // Evaluates the class' list of event selection criteria
+
+  cout << "mc_quark_E = " << mc_quark_E[0] << endl;
+
 }

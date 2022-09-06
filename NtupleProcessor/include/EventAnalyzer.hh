@@ -28,8 +28,8 @@ class EventAnalyzer
     const static int NJETS          = 2;
 
   // methods
-    bool mapTree(TTree*);                         // Maps class variables to an input TTree.
-    void evalCriteria();                          // Evaluates the class' list of event selection criteria
+    bool             mapTree(TTree*); // Maps class variables to an input TTree.
+    void             evalCriteria();  // Evaluates the class' list of event selection criteria
     virtual Bool_t   Notify();
 
 
