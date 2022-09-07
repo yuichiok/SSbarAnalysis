@@ -6,9 +6,9 @@ SET(CMAKE_OSX_ARCHITECTURES "x86_64")
 
 ### DEPENDENCIES ############################################################
 
+list(APPEND CMAKE_PREFIX_PATH $ENV{ROOTSYS})
 FIND_PACKAGE( ROOT REQUIRED )
 SET(CMAKE_CXX_STANDARD 17)
-
 
 FOREACH( pkg ROOT )
     IF( ${pkg}_FOUND )
@@ -31,13 +31,14 @@ ENDIF()
 # definitions to pass to the compiler
 ADD_DEFINITIONS( "-c -Wall -fdiagnostics-color -std=gnu++17" )
 
-# INCLUDE_DIRECTORIES( ${SSbarProcessor_SOURCE_DIR}/SSbarLibrary )
-# LINK_DIRECTORIES( ${SSbarProcessor_SOURCE_DIR}/SSbarLibrary )
-ADD_EXECUTABLE( SSbarProcessor main.cc )
-INCLUDE_DIRECTORIES( ${SSbarProcessor_SOURCE_DIR}/NtupleProcessor/include )
-TARGET_LINK_LIBRARIES(SSbarProcessor PUBLIC SSbarLibrary)
+add_library(NtupleProcessor
+  SHARED
+    EventAnalyzer.cc
+    NtupleProcessor.cc
+    TreeIterator.cc
+)
 
-TARGET_INCLUDE_DIRECTORIES(SSbarProcessor PUBLIC
-                          "${PROJECT_BINARY_DIR}"
-                          "${PROJECT_SOURCE_DIR}/SSbarLibrary"
-                          )
+target_include_directories(NtupleProcessor
+  PUBLIC
+    ${PROJECT_SOURCE_DIR}/include
+)
