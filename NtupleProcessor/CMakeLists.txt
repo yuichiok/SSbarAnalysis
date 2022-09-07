@@ -2,6 +2,7 @@ CMAKE_MINIMUM_REQUIRED(VERSION 3.0 FATAL_ERROR)
 SET(CMAKE_OSX_ARCHITECTURES "x86_64")
 
 PROJECT(SSbarProcessor CXX)
+
 ### DEPENDENCIES ############################################################
 
 list(APPEND CMAKE_PREFIX_PATH $ENV{ROOTSYS})
