@@ -20,7 +20,7 @@ class EventAnalyzer
 {
   public:
     EventAnalyzer(TString o="");
-    virtual ~EventAnalyzer(){}
+    virtual ~EventAnalyzer(){};
 
     const static int MAX_NPARTICLES = 1000;
     const static int NTRUE_JETS     = 5;

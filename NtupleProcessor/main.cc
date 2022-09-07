@@ -1,6 +1,7 @@
 /*------------------------------------------------------------------------------
    main.cpp
 ------------------------------------------------------------------------------*/
+#define _GLIBCXX_USE_CXX11_ABI 0
 
 // HEADERS
 #include <iostream>                 // stdlib
@@ -8,7 +9,7 @@
 #include <TFile.h>                  // ROOT class headers
 #include <TString.h>
 #include <TTree.h>
-#include "../SSbarLibrary/timestamp.hh"
+#include "../../SSbarLibrary/timestamp.hh"
 #include "include/NtupleProcessor.hh"
 
 using namespace std;
