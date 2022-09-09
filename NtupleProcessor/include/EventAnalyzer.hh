@@ -15,6 +15,7 @@
 #include <TFile.h>
 #include <vector>
 #include <fstream>
+#include "TreeReader.hh"
 
 class EventAnalyzer
 {
