@@ -10,6 +10,7 @@
 #include <TString.h>
 #include <TFile.h>
 #include <TTree.h>
+#include "TreeStructures.hh"
 
 class TreeReader
 {

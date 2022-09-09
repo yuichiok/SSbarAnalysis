@@ -13,7 +13,7 @@ using std::cout;   using std::endl;
 
 TreeReader::TreeReader() {}
 
-void TreeReader::InitializeReadTree(TTree *tree, StatsData_QQbar & data)
+void TreeReader::InitializeReadTree(TTree *_hTree, StatsData_QQbar & data)
 {
   
 }
