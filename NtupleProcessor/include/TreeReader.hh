@@ -18,7 +18,7 @@ class TreeReader
     TreeReader();
     virtual ~TreeReader() {};
 
-    void InitializeReadTree(TTree *tree, StatsData_QQbar & data);
+    void InitializeReadTree(TTree *tree, StatsData_QQbar & _data, Branch_QQbar & _branch);
 
   private: 
 
