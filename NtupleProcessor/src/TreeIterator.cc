@@ -35,7 +35,7 @@ void TreeIterator::Init(TTree *tree)
     finalEntry = nEntries-1;
 
   // Initialize Event Handler, adding the criteria of each HistoMaker to it's list of criteria.
-    eAnalyzer.mapTree(fChain);
+    eAnalyzer.MapTree(fChain);
 }
 
 
@@ -52,7 +52,7 @@ Bool_t TreeIterator::Process(Long64_t entry)
     fChain->GetEntry(entry);
     nEntriesProcessed++;
     if(entry%100000 == 0 || entry==finalEntry) {
-      eAnalyzer.evalCriteria();
+      eAnalyzer.EvalCriteria();
       cout << "  #" << entry << endl;
     }
 

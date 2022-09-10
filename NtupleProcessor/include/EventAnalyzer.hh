@@ -25,8 +25,8 @@ class EventAnalyzer
     virtual ~EventAnalyzer(){};
 
   // methods
-    bool             mapTree(TTree*); // Maps class variables to an input TTree.
-    void             evalCriteria();  // Evaluates the class' list of event selection criteria
+    bool             MapTree(TTree*); // Maps class variables to an input TTree.
+    void             EvalCriteria();  // Evaluates the class' list of event selection criteria
     virtual Bool_t   Notify();
 
 
@@ -41,11 +41,8 @@ class EventAnalyzer
 
   // Fixed size dimensions of array or collections stored in the TTree if any.
 
-    StatsData_QQbar _stats;
-    Branch_QQbar _branch;
-
-
-
+    StatsData_QQbar _stats  ;
+    Branch_QQbar    _branch ;
 
   private: 
 

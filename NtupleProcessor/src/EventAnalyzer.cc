@@ -28,7 +28,7 @@ EventAnalyzer::EventAnalyzer(TString o)
 
 }
 
-bool EventAnalyzer::mapTree(TTree* tree)
+bool EventAnalyzer::MapTree(TTree* tree)
 {
   // Maps TTree to class' variables.
   // TO DO: Implement check for correct mapping, return result?
@@ -62,7 +62,7 @@ Bool_t EventAnalyzer::Notify()
    return kTRUE;
 }
 
-void EventAnalyzer::evalCriteria()
+void EventAnalyzer::EvalCriteria()
 { // Evaluates the class' list of event selection criteria
 
   cout << "mc_quark_E = " << _stats.mc_quark_E[0] << endl;
