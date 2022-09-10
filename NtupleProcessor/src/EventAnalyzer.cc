@@ -43,7 +43,9 @@ bool EventAnalyzer::MapTree(TTree* tree)
     fChain->SetMakeClass(1);
 
     TreeReader reader;
-    reader.InitializeReadTree(fChain, _stats, _branch);
+    reader.InitializeMCReadTree(fChain, _mc, _branch);
+    reader.InitializeJetReadTree(fChain, _jet, _branch);
+    reader.InitializePFOReadTree(fChain, _pfo, _branch);
 
     Notify();
 
@@ -55,9 +57,9 @@ void EventAnalyzer::Analyze()
 {
 
   // PFO Analysis
-		for (int ipfo = 0; ipfo < _stats.pfo_n; ipfo++)
+		for (int ipfo = 0; ipfo < _pfo.pfo_n; ipfo++)
 		{
-      cout << _stats.pfo_n << endl;
+      cout << _pfo.pfo_n << endl;
 
 
 
@@ -92,7 +94,7 @@ bool EventAnalyzer::Select()
   // Options
     MCParticlePair PROCESS  = ss;
 
-    bool gpp = GenPairPicker( _stats.mc_quark_pdg[0], PROCESS );
+    bool gpp = GenPairPicker( _mc.mc_quark_pdg[0], PROCESS );
 
     return gpp;
 

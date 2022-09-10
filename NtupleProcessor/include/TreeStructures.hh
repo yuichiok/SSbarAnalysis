@@ -12,10 +12,9 @@ const static int NTRUE_JETS     = 5;
 const static int NQUARKS        = 2;
 const static int NJETS          = 2;
 
-struct StatsData_QQbar  {
+struct MC_QQbar  {
 
   public:
-  // Declaration of leaf types
   // MC VARIABLES
     Float_t mc_quark_E[NQUARKS];        Int_t   mc_quark_ps_n;                        Int_t   mc_stable_n;
     Float_t mc_quark_px[NQUARKS];       Float_t mc_quark_ps_E[MAX_NPARTICLES];        Float_t mc_stable_E[MAX_NPARTICLES];
@@ -35,15 +34,25 @@ struct StatsData_QQbar  {
                                         Float_t mc_quark_ps_jet_pz[NJETS];            Float_t mc_stable_jet_px[NJETS];
                                                                                       Float_t mc_stable_jet_py[NJETS];
                                                                                       Float_t mc_stable_jet_pz[NJETS];
+                                                                                      
+};
 
+struct Jet_QQbar  {
+
+  public:
   // JET VARIABLES
     Float_t truejet_E[NTRUE_JETS];      Float_t jet_E[NJETS];       Float_t y23;          Float_t major_thrust_value;       Float_t major_thrust_axis[3];
     Float_t truejet_px[NTRUE_JETS];     Float_t jet_px[NJETS];      Float_t y12;          Float_t minor_thrust_value;       Float_t minor_thrust_axis[3];
     Float_t truejet_py[NTRUE_JETS];     Float_t jet_py[NJETS];      Float_t d23;          Float_t principle_thrust_value;   Float_t principle_thrust_axis[3];
     Float_t truejet_pz[NTRUE_JETS];     Float_t jet_pz[NJETS];      Float_t d12;          Float_t sphericity;               Float_t sphericity_tensor[3];
     Int_t   truejet_type[NTRUE_JETS];   Float_t jet_btag[NJETS];    Float_t oblateness; 
-    Int_t   truejet_pdg[NTRUE_JETS];    Float_t jet_ctag[NJETS];    Float_t aplanarity; 
+    Int_t   truejet_pdg[NTRUE_JETS];    Float_t jet_ctag[NJETS];    Float_t aplanarity;
     
+};
+
+struct PFO_QQbar  {
+
+  public:
   // PFO VARIABLES
     Int_t pfo_n;
     Int_t jet_nvtx;
