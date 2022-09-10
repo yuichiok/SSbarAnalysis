@@ -51,6 +51,23 @@ bool EventAnalyzer::MapTree(TTree* tree)
 
 }
 
+void EventAnalyzer::Analyze()
+{
+
+  // PFO Analysis
+		for (int ipfo = 0; ipfo < _stats.pfo_n; ipfo++)
+		{
+      cout << _stats.pfo_n << endl;
+
+
+
+    }
+
+
+
+
+}
+
 Bool_t EventAnalyzer::Notify()
 {
    // The Notify() function is called when a new file is opened. This
@@ -62,9 +79,30 @@ Bool_t EventAnalyzer::Notify()
    return kTRUE;
 }
 
-void EventAnalyzer::EvalCriteria()
+bool EventAnalyzer::Select()
 { // Evaluates the class' list of event selection criteria
 
-  cout << "mc_quark_E = " << _stats.mc_quark_E[0] << endl;
+  /*
+  Must initialize
+    - Float_t MINP_CUT (= 20 GeV)
+    - TString PROCESS  (= "SS")
+    - TString FILE_OUT (?)
+  */
 
+  // Options
+    MCParticlePair PROCESS  = ss;
+
+    bool gpp = GenPairPicker( _stats.mc_quark_pdg[0], PROCESS );
+
+    return gpp;
+
+}
+
+bool EventAnalyzer::GenPairPicker( Float_t mc_particle, MCParticlePair pair )
+{
+    Float_t abs_mc_particle = fabs(mc_particle);
+
+    bool isGoodPair = (abs_mc_particle == pair) ? true : false;
+
+    return isGoodPair;
 }

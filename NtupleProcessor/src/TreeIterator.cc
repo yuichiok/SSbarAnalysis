@@ -51,13 +51,13 @@ Bool_t TreeIterator::Process(Long64_t entry)
   // Load current entry
     fChain->GetEntry(entry);
     nEntriesProcessed++;
-    if(entry%100000 == 0 || entry==finalEntry) {
-      eAnalyzer.EvalCriteria();
-      cout << "  #" << entry << endl;
-    }
 
   // Evaluate the criteria for this entry
-    // eAnalyzer.evalCriteria();
+    if(eAnalyzer.Select()){
+
+      eAnalyzer.Analyze();
+
+    }
 
     return true;
 }

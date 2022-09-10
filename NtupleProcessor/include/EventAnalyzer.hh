@@ -24,9 +24,13 @@ class EventAnalyzer
     EventAnalyzer(TString o="");
     virtual ~EventAnalyzer(){};
 
+    enum MCParticlePair { FIRST_ENTRY, dd, uu, ss, cc, bb, tt };
+
   // methods
     bool             MapTree(TTree*); // Maps class variables to an input TTree.
-    void             EvalCriteria();  // Evaluates the class' list of event selection criteria
+    void             Analyze();
+    bool             Select();  // Evaluates the class' list of event selection criteria
+    bool             GenPairPicker(Float_t mc_particle, MCParticlePair pair);
     virtual Bool_t   Notify();
 
 
@@ -41,10 +45,11 @@ class EventAnalyzer
 
   // Fixed size dimensions of array or collections stored in the TTree if any.
 
+  private:
+
     StatsData_QQbar _stats  ;
     Branch_QQbar    _branch ;
 
-  private: 
 
 };
 
