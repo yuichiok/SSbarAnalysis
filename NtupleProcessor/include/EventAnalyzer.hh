@@ -15,8 +15,8 @@
 #include <TFile.h>
 #include <vector>
 #include <fstream>
+#include "../../SSbarLibrary/TreeStructures.hh"
 #include "TreeReader.hh"
-#include "TreeStructures.hh"
 
 class EventAnalyzer
 {
@@ -47,11 +47,10 @@ class EventAnalyzer
 
   private:
 
-    MC_QQbar _mc  ;
-    Jet_QQbar _jet  ;
-    PFO_QQbar _pfo  ;
-    Branch_QQbar    _branch ;
-
+    MC_QQbar      _mc      ;
+    Jet_QQbar     _jet     ;
+    PFO_QQbar     _pfo     ;
+    Branch_QQbar  _branch  ;
 
 };
 

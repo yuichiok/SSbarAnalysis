@@ -14,6 +14,7 @@ EventAnalyzer.cpp
 #include <TMath.h>
 #include "../include/EventAnalyzer.hh"
 #include "../include/TreeReader.hh"
+#include "../include/PFOTools.hh"
 
 using std::cout;   using std::endl;
 
@@ -57,13 +58,7 @@ void EventAnalyzer::Analyze()
 {
 
   // PFO Analysis
-		for (int ipfo = 0; ipfo < _pfo.pfo_n; ipfo++)
-		{
-      cout << _pfo.pfo_n << endl;
-
-
-
-    }
+    PFOTools pfoTool( _pfo );
 
 
 
