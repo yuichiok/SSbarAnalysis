@@ -6,6 +6,7 @@
  Created : 2022-09-09  okugawa
  Main class of TreeReader program.
 ------------------------------------------------------------------------------*/
+#include <TVector3.h>
 
 const static int MAX_NPARTICLES = 1000;
 const static int NTRUE_JETS     = 5;
@@ -54,31 +55,31 @@ struct PFO_QQbar  {
 
   public:
   // PFO VARIABLES
-    Int_t pfo_n;
-    Int_t jet_nvtx;
-    Int_t pfo_n_j1;
-    Int_t jet_nvtx_j1;
-    Int_t pfo_n_j2;
-    Int_t jet_nvtx_j2;
-    Int_t pfo_match[MAX_NPARTICLES];
-    Int_t pfo_truejet_pdg[MAX_NPARTICLES];
-    Int_t pfo_truejet_type[MAX_NPARTICLES];
-    Int_t pfo_pdgcheat[MAX_NPARTICLES];
-    Int_t pfo_nparents[MAX_NPARTICLES];
-    Int_t pfo_pdgcheat_parent[MAX_NPARTICLES][MAX_NPARTICLES];
+    Int_t   pfo_n;
+    Int_t   jet_nvtx;
+    Int_t   pfo_n_j1;
+    Int_t   jet_nvtx_j1;
+    Int_t   pfo_n_j2;
+    Int_t   jet_nvtx_j2;
+    Int_t   pfo_match[MAX_NPARTICLES];
+    Int_t   pfo_truejet_pdg[MAX_NPARTICLES];
+    Int_t   pfo_truejet_type[MAX_NPARTICLES];
+    Int_t   pfo_pdgcheat[MAX_NPARTICLES];
+    Int_t   pfo_nparents[MAX_NPARTICLES];
+    Int_t   pfo_pdgcheat_parent[MAX_NPARTICLES][MAX_NPARTICLES];
     Float_t pfo_E[MAX_NPARTICLES];
     Float_t pfo_E_calo[MAX_NPARTICLES];
     Float_t pfo_px[MAX_NPARTICLES];
     Float_t pfo_py[MAX_NPARTICLES];
     Float_t pfo_pz[MAX_NPARTICLES];
     Float_t pfo_m[MAX_NPARTICLES];
-    Int_t pfo_type[MAX_NPARTICLES];
-    Int_t pfo_isoverlay[MAX_NPARTICLES];
-    Int_t pfo_isisr[MAX_NPARTICLES];
-    Int_t pfo_vtx[MAX_NPARTICLES];
-    Int_t pfo_charge[MAX_NPARTICLES];
-    Int_t pfo_ntracks[MAX_NPARTICLES];
-    Int_t pfo_tpc_hits[MAX_NPARTICLES];
+    Int_t   pfo_type[MAX_NPARTICLES];
+    Int_t   pfo_isoverlay[MAX_NPARTICLES];
+    Int_t   pfo_isisr[MAX_NPARTICLES];
+    Int_t   pfo_vtx[MAX_NPARTICLES];
+    Int_t   pfo_charge[MAX_NPARTICLES];
+    Int_t   pfo_ntracks[MAX_NPARTICLES];
+    Int_t   pfo_tpc_hits[MAX_NPARTICLES];
     Float_t pfo_dedx[MAX_NPARTICLES];
     Float_t pfo_dedxerror[MAX_NPARTICLES];
     Float_t pfo_d0[MAX_NPARTICLES];
@@ -95,7 +96,7 @@ struct PFO_QQbar  {
     Float_t pfo_ndf[MAX_NPARTICLES];
     Float_t pfo_vtxpt[MAX_NPARTICLES][3];
     Float_t pfo_endpt[MAX_NPARTICLES][3];
-    Int_t pfo_pid[MAX_NPARTICLES];
+    Int_t   pfo_pid[MAX_NPARTICLES];
     Float_t pfo_pid_likelihood[MAX_NPARTICLES];
     Float_t pfo_pid_eprob[MAX_NPARTICLES];
     Float_t pfo_pid_muprob[MAX_NPARTICLES];
@@ -103,7 +104,7 @@ struct PFO_QQbar  {
     Float_t pfo_pid_kprob[MAX_NPARTICLES];
     Float_t pfo_pid_pprob[MAX_NPARTICLES];
     Float_t pfo_pid_hprob[MAX_NPARTICLES];
-    Int_t pfo_piddedx[MAX_NPARTICLES];
+    Int_t   pfo_piddedx[MAX_NPARTICLES];
     Float_t pfo_piddedx_likelihood[MAX_NPARTICLES];
     Float_t pfo_piddedx_eprob[MAX_NPARTICLES];
     Float_t pfo_piddedx_muprob[MAX_NPARTICLES];
@@ -138,6 +139,26 @@ struct PFO_QQbar  {
     Float_t pfo_pidtof_closestfit_beta_10ps[MAX_NPARTICLES];
     Float_t pfo_pidtof_closestfit_beta_50ps[MAX_NPARTICLES];
     Float_t pfo_pidtof_closestfit_beta_100ps[MAX_NPARTICLES];
+
+};
+
+struct PFO_Info {
+
+  public:
+    TVector3 p3;
+    Float_t E           =  0;
+    Int_t   charge      =  0;
+    Int_t   pdgcheat    =  0;
+    Int_t   tpc_hits    =  0;
+    Float_t pv          = -2;
+    Float_t dEdx        =  0;
+    Float_t kdEdx_dist  =  0;
+    Float_t pdEdx_dist  =  0;
+    Float_t pidEdx_dist =  0;
+    Float_t cos         = -2;
+    Float_t qcos        = -2;
+    Float_t q_sep       = -2;
+    Float_t qbar_sep    = -2;
 
 };
 
