@@ -7,10 +7,13 @@
  Main class of PFOTool program.
 ------------------------------------------------------------------------------*/
 
+#include <vector>
 #include <TString.h>
 #include <TFile.h>
 #include <TTree.h>
 #include "../../SSbarLibrary/TreeStructures.hh"
+
+using std::vector;
 
 class PFOTools
 {
@@ -18,8 +21,14 @@ class PFOTools
     PFOTools( PFO_QQbar *ptr );
     virtual ~PFOTools() {};
 
+    virtual void PFOSort( vector<PFO_Info> jet );
+    virtual PFO_Info GetLPFO( int ijet );
+
+    vector<PFO_Info> PFO_jet[2];
+
   private:
-    PFO_QQbar *data;
+    PFO_QQbar *data ;
+    PFO_Info   PFO  ;
 
 };
 

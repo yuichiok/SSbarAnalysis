@@ -55,7 +55,7 @@ Bool_t TreeIterator::Process(Long64_t entry)
   // Evaluate the criteria for this entry
     if(eAnalyzer.Select()){
 
-      eAnalyzer.Analyze();
+      eAnalyzer.Analyze(entry);
 
     }
 
