@@ -15,11 +15,11 @@
 class PFOTools
 {
   public:
-    PFOTools();
+    PFOTools( PFO_QQbar *ptr );
     virtual ~PFOTools() {};
 
   private:
-    PFO_QQbar _pfo;
+    PFO_QQbar *data;
 
 };
 

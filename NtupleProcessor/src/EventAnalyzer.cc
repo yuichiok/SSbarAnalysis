@@ -58,7 +58,8 @@ void EventAnalyzer::Analyze()
 {
 
   // PFO Analysis
-    PFOTools pfoTool( _pfo );
+    PFOTools pfoTool( &_pfo );
+    // cout << _pfo.pfo_n << endl;
 
 
 

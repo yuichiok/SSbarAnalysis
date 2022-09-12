@@ -11,4 +11,4 @@ PFOTools.cpp
 
 using std::cout;   using std::endl;
 
-PFOTools::PFOTools(){}
+PFOTools::PFOTools( PFO_QQbar *ptr ) : data(ptr){}
