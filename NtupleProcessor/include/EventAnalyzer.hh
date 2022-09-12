@@ -28,7 +28,7 @@ class EventAnalyzer
 
   // methods
     bool             MapTree(TTree*); // Maps class variables to an input TTree.
-    void             Analyze();
+    void             Analyze(Long64_t entry);
     bool             Select();  // Evaluates the class' list of event selection criteria
     bool             GenPairPicker(Float_t mc_particle, MCParticlePair pair);
     virtual Bool_t   Notify();
@@ -44,6 +44,9 @@ class EventAnalyzer
     long entriesInNtuple  ;     // Number of events that were processed to make the Ntuple.
 
   // Fixed size dimensions of array or collections stored in the TTree if any.
+
+  // Leading PFO
+    PFO_Info LPFO[2];
 
   private:
 

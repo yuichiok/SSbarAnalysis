@@ -54,15 +54,16 @@ bool EventAnalyzer::MapTree(TTree* tree)
 
 }
 
-void EventAnalyzer::Analyze()
+void EventAnalyzer::Analyze(Long64_t entry)
 {
 
   // PFO Analysis
+
+    // cout << "Jet PFO (" << _pfo.pfo_n << ") size ev." << entry << endl;
+
     PFOTools pfoTool( &_pfo );
-    // cout << _pfo.pfo_n << endl;
 
-
-
+    // for(int ijet=0; ijet < 2; ijet++ ) LPFO[ijet] = pfoTool.GetLPFO(ijet);
 
 }
 
