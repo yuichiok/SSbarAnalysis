@@ -17,24 +17,24 @@ struct MC_QQbar  {
 
   public:
   // MC VARIABLES
-    Float_t mc_quark_E[NQUARKS];        Int_t   mc_quark_ps_n;                        Int_t   mc_stable_n;
-    Float_t mc_quark_px[NQUARKS];       Float_t mc_quark_ps_E[MAX_NPARTICLES];        Float_t mc_stable_E[MAX_NPARTICLES];
-    Float_t mc_quark_py[NQUARKS];       Float_t mc_quark_ps_px[MAX_NPARTICLES];       Float_t mc_stable_px[MAX_NPARTICLES];
-    Float_t mc_quark_pz[NQUARKS];       Float_t mc_quark_ps_py[MAX_NPARTICLES];       Float_t mc_stable_py[MAX_NPARTICLES];
-    Float_t mc_quark_m[NQUARKS];        Float_t mc_quark_ps_pz[MAX_NPARTICLES];       Float_t mc_stable_pz[MAX_NPARTICLES];
-    Float_t mc_quark_pdg[NQUARKS];      Float_t mc_quark_ps_m[MAX_NPARTICLES];        Float_t mc_stable_m[MAX_NPARTICLES];
-    Float_t mc_quark_charge[NQUARKS];   Float_t mc_quark_ps_pdg[MAX_NPARTICLES];      Int_t   mc_stable_pdg[MAX_NPARTICLES];
-    Float_t mc_ISR_E[NQUARKS];          Float_t mc_quark_ps_charge[MAX_NPARTICLES];   Float_t mc_stable_charge[MAX_NPARTICLES]; 
-    Float_t mc_ISR_px[NQUARKS];         Float_t mc_quark_ps_y12;                      Int_t   mc_stable_isoverlay[MAX_NPARTICLES];
-    Float_t mc_ISR_py[NQUARKS];         Float_t mc_quark_ps_y23;                      Int_t   mc_stable_isisr[MAX_NPARTICLES];
-    Float_t mc_ISR_pz[NQUARKS];         Float_t mc_quark_ps_d12;                      Float_t mc_stable_y12;
-    Float_t mc_ISR_m[NQUARKS];          Float_t mc_quark_ps_d23;                      Float_t mc_stable_y23;
-    Float_t mc_ISR_pdg[NQUARKS];        Float_t mc_quark_ps_jet_E[NJETS];             Float_t mc_stable_d12;
-    Float_t mc_ISR_charge[NQUARKS];     Float_t mc_quark_ps_jet_px[NJETS];            Float_t mc_stable_d23;
-                                        Float_t mc_quark_ps_jet_py[NJETS];            Float_t mc_stable_jet_E[NJETS];
-                                        Float_t mc_quark_ps_jet_pz[NJETS];            Float_t mc_stable_jet_px[NJETS];
-                                                                                      Float_t mc_stable_jet_py[NJETS];
-                                                                                      Float_t mc_stable_jet_pz[NJETS];
+    Float_t mc_quark_E[NQUARKS]      = {0};   Int_t   mc_quark_ps_n   = 0;                        Int_t   mc_stable_n = 0;
+    Float_t mc_quark_px[NQUARKS]     = {0};   Float_t mc_quark_ps_E[MAX_NPARTICLES]      = {0};   Float_t mc_stable_E[MAX_NPARTICLES]         = {0};
+    Float_t mc_quark_py[NQUARKS]     = {0};   Float_t mc_quark_ps_px[MAX_NPARTICLES]     = {0};   Float_t mc_stable_px[MAX_NPARTICLES]        = {0};
+    Float_t mc_quark_pz[NQUARKS]     = {0};   Float_t mc_quark_ps_py[MAX_NPARTICLES]     = {0};   Float_t mc_stable_py[MAX_NPARTICLES]        = {0};
+    Float_t mc_quark_m[NQUARKS]      = {0};   Float_t mc_quark_ps_pz[MAX_NPARTICLES]     = {0};   Float_t mc_stable_pz[MAX_NPARTICLES]        = {0};
+    Float_t mc_quark_pdg[NQUARKS]    = {0};   Float_t mc_quark_ps_m[MAX_NPARTICLES]      = {0};   Float_t mc_stable_m[MAX_NPARTICLES]         = {0};
+    Float_t mc_quark_charge[NQUARKS] = {0};   Float_t mc_quark_ps_pdg[MAX_NPARTICLES]    = {0};   Int_t   mc_stable_pdg[MAX_NPARTICLES]       = {0};
+    Float_t mc_ISR_E[NQUARKS]        = {0};   Float_t mc_quark_ps_charge[MAX_NPARTICLES] = {0};   Float_t mc_stable_charge[MAX_NPARTICLES]    = {0}; 
+    Float_t mc_ISR_px[NQUARKS]       = {0};   Float_t mc_quark_ps_y12 = 0;                        Int_t   mc_stable_isoverlay[MAX_NPARTICLES] = {0};
+    Float_t mc_ISR_py[NQUARKS]       = {0};   Float_t mc_quark_ps_y23 = 0;                        Int_t   mc_stable_isisr[MAX_NPARTICLES]     = {0};
+    Float_t mc_ISR_pz[NQUARKS]       = {0};   Float_t mc_quark_ps_d12 = 0;                        Float_t mc_stable_y12 = 0;
+    Float_t mc_ISR_m[NQUARKS]        = {0};   Float_t mc_quark_ps_d23 = 0;                        Float_t mc_stable_y23 = 0;
+    Float_t mc_ISR_pdg[NQUARKS]      = {0};   Float_t mc_quark_ps_jet_E[NJETS]  = {0};            Float_t mc_stable_d12 = 0;
+    Float_t mc_ISR_charge[NQUARKS]   = {0};   Float_t mc_quark_ps_jet_px[NJETS] = {0};            Float_t mc_stable_d23 = 0;
+                                              Float_t mc_quark_ps_jet_py[NJETS] = {0};            Float_t mc_stable_jet_E[NJETS]  = {0};
+                                              Float_t mc_quark_ps_jet_pz[NJETS] = {0};            Float_t mc_stable_jet_px[NJETS] = {0};
+                                                                                                  Float_t mc_stable_jet_py[NJETS] = {0};
+                                                                                                  Float_t mc_stable_jet_pz[NJETS] = {0};
                                                                                       
 };
 
@@ -42,12 +42,12 @@ struct Jet_QQbar  {
 
   public:
   // JET VARIABLES
-    Float_t truejet_E[NTRUE_JETS];      Float_t jet_E[NJETS];       Float_t y23;          Float_t major_thrust_value;       Float_t major_thrust_axis[3];
-    Float_t truejet_px[NTRUE_JETS];     Float_t jet_px[NJETS];      Float_t y12;          Float_t minor_thrust_value;       Float_t minor_thrust_axis[3];
-    Float_t truejet_py[NTRUE_JETS];     Float_t jet_py[NJETS];      Float_t d23;          Float_t principle_thrust_value;   Float_t principle_thrust_axis[3];
-    Float_t truejet_pz[NTRUE_JETS];     Float_t jet_pz[NJETS];      Float_t d12;          Float_t sphericity;               Float_t sphericity_tensor[3];
-    Int_t   truejet_type[NTRUE_JETS];   Float_t jet_btag[NJETS];    Float_t oblateness; 
-    Int_t   truejet_pdg[NTRUE_JETS];    Float_t jet_ctag[NJETS];    Float_t aplanarity;
+    Float_t truejet_E[NTRUE_JETS]    = {0};   Float_t jet_E[NJETS]    = {0};    Float_t y23 = 0;          Float_t major_thrust_value     = 0;   Float_t major_thrust_axis[3]     = {0};
+    Float_t truejet_px[NTRUE_JETS]   = {0};   Float_t jet_px[NJETS]   = {0};    Float_t y12 = 0;          Float_t minor_thrust_value     = 0;   Float_t minor_thrust_axis[3]     = {0};
+    Float_t truejet_py[NTRUE_JETS]   = {0};   Float_t jet_py[NJETS]   = {0};    Float_t d23 = 0;          Float_t principle_thrust_value = 0;   Float_t principle_thrust_axis[3] = {0};
+    Float_t truejet_pz[NTRUE_JETS]   = {0};   Float_t jet_pz[NJETS]   = {0};    Float_t d12 = 0;          Float_t sphericity = 0;               Float_t sphericity_tensor[3]     = {0};
+    Int_t   truejet_type[NTRUE_JETS] = {0};   Float_t jet_btag[NJETS] = {0};    Float_t oblateness = 0; 
+    Int_t   truejet_pdg[NTRUE_JETS]  = {0};   Float_t jet_ctag[NJETS] = {0};    Float_t aplanarity = 0;
     
 };
 
@@ -55,90 +55,90 @@ struct PFO_QQbar  {
 
   public:
   // PFO VARIABLES
-    Int_t   pfo_n;
-    Int_t   jet_nvtx;
-    Int_t   pfo_n_j1;
-    Int_t   jet_nvtx_j1;
-    Int_t   pfo_n_j2;
-    Int_t   jet_nvtx_j2;
-    Int_t   pfo_match[MAX_NPARTICLES];
-    Int_t   pfo_truejet_pdg[MAX_NPARTICLES];
-    Int_t   pfo_truejet_type[MAX_NPARTICLES];
-    Int_t   pfo_pdgcheat[MAX_NPARTICLES];
-    Int_t   pfo_nparents[MAX_NPARTICLES];
-    Int_t   pfo_pdgcheat_parent[MAX_NPARTICLES][MAX_NPARTICLES];
-    Float_t pfo_E[MAX_NPARTICLES];
-    Float_t pfo_E_calo[MAX_NPARTICLES];
-    Float_t pfo_px[MAX_NPARTICLES];
-    Float_t pfo_py[MAX_NPARTICLES];
-    Float_t pfo_pz[MAX_NPARTICLES];
-    Float_t pfo_m[MAX_NPARTICLES];
-    Int_t   pfo_type[MAX_NPARTICLES];
-    Int_t   pfo_isoverlay[MAX_NPARTICLES];
-    Int_t   pfo_isisr[MAX_NPARTICLES];
-    Int_t   pfo_vtx[MAX_NPARTICLES];
-    Int_t   pfo_charge[MAX_NPARTICLES];
-    Int_t   pfo_ntracks[MAX_NPARTICLES];
-    Int_t   pfo_tpc_hits[MAX_NPARTICLES];
-    Float_t pfo_dedx[MAX_NPARTICLES];
-    Float_t pfo_dedxerror[MAX_NPARTICLES];
-    Float_t pfo_d0[MAX_NPARTICLES];
-    Float_t pfo_d0error[MAX_NPARTICLES];
-    Float_t pfo_z0[MAX_NPARTICLES];
-    Float_t pfo_z0error[MAX_NPARTICLES];
-    Float_t pfo_phi[MAX_NPARTICLES];
-    Float_t pfo_phierror[MAX_NPARTICLES];
-    Float_t pfo_omega[MAX_NPARTICLES];
-    Float_t pfo_omegaerror[MAX_NPARTICLES];
-    Float_t pfo_tanlambda[MAX_NPARTICLES];
-    Float_t pfo_tanlambdaerror[MAX_NPARTICLES];
-    Float_t pfo_chi2[MAX_NPARTICLES];
-    Float_t pfo_ndf[MAX_NPARTICLES];
-    Float_t pfo_vtxpt[MAX_NPARTICLES][3];
-    Float_t pfo_endpt[MAX_NPARTICLES][3];
-    Int_t   pfo_pid[MAX_NPARTICLES];
-    Float_t pfo_pid_likelihood[MAX_NPARTICLES];
-    Float_t pfo_pid_eprob[MAX_NPARTICLES];
-    Float_t pfo_pid_muprob[MAX_NPARTICLES];
-    Float_t pfo_pid_piprob[MAX_NPARTICLES];
-    Float_t pfo_pid_kprob[MAX_NPARTICLES];
-    Float_t pfo_pid_pprob[MAX_NPARTICLES];
-    Float_t pfo_pid_hprob[MAX_NPARTICLES];
-    Int_t   pfo_piddedx[MAX_NPARTICLES];
-    Float_t pfo_piddedx_likelihood[MAX_NPARTICLES];
-    Float_t pfo_piddedx_eprob[MAX_NPARTICLES];
-    Float_t pfo_piddedx_muprob[MAX_NPARTICLES];
-    Float_t pfo_piddedx_piprob[MAX_NPARTICLES];
-    Float_t pfo_piddedx_kprob[MAX_NPARTICLES];
-    Float_t pfo_piddedx_pprob[MAX_NPARTICLES];
-    Float_t pfo_piddedx_hprob[MAX_NPARTICLES];
-    Float_t pfo_piddedx_e_dedxdist[MAX_NPARTICLES];
-    Float_t pfo_piddedx_mu_dedxdist[MAX_NPARTICLES];
-    Float_t pfo_piddedx_pi_dedxdist[MAX_NPARTICLES];
-    Float_t pfo_piddedx_k_dedxdist[MAX_NPARTICLES];
-    Float_t pfo_piddedx_p_dedxdist[MAX_NPARTICLES];
-    Float_t pfo_piddedx_e_lkhood[MAX_NPARTICLES];
-    Float_t pfo_piddedx_mu_lkhood[MAX_NPARTICLES];
-    Float_t pfo_piddedx_pi_lkhood[MAX_NPARTICLES];
-    Float_t pfo_piddedx_k_lkhood[MAX_NPARTICLES];
-    Float_t pfo_piddedx_p_lkhood[MAX_NPARTICLES];
-    Float_t pfo_pidtof_p_at_calo[MAX_NPARTICLES];
-    Float_t pfo_pidtof_closest_beta_0ps[MAX_NPARTICLES];
-    Float_t pfo_pidtof_closest_beta_10ps[MAX_NPARTICLES];
-    Float_t pfo_pidtof_closest_beta_50ps[MAX_NPARTICLES];
-    Float_t pfo_pidtof_closest_beta_100ps[MAX_NPARTICLES];
-    Float_t pfo_pidtof_fastest_beta_0ps[MAX_NPARTICLES];
-    Float_t pfo_pidtof_fastest_beta_10ps[MAX_NPARTICLES];
-    Float_t pfo_pidtof_fastest_beta_50ps[MAX_NPARTICLES];
-    Float_t pfo_pidtof_fastest_beta_100ps[MAX_NPARTICLES];
-    Float_t pfo_pidtof_cylfit_beta_0ps[MAX_NPARTICLES];
-    Float_t pfo_pidtof_cylfit_beta_10ps[MAX_NPARTICLES];
-    Float_t pfo_pidtof_cylfit_beta_50ps[MAX_NPARTICLES];
-    Float_t pfo_pidtof_cylfit_beta_100ps[MAX_NPARTICLES];
-    Float_t pfo_pidtof_closestfit_beta_0ps[MAX_NPARTICLES];
-    Float_t pfo_pidtof_closestfit_beta_10ps[MAX_NPARTICLES];
-    Float_t pfo_pidtof_closestfit_beta_50ps[MAX_NPARTICLES];
-    Float_t pfo_pidtof_closestfit_beta_100ps[MAX_NPARTICLES];
+    Int_t   pfo_n       = 0;
+    Int_t   jet_nvtx    = 0;
+    Int_t   pfo_n_j1    = 0;
+    Int_t   jet_nvtx_j1 = 0;
+    Int_t   pfo_n_j2    = 0;
+    Int_t   jet_nvtx_j2 = 0;
+    Int_t   pfo_match[MAX_NPARTICLES] = {0};
+    Int_t   pfo_truejet_pdg[MAX_NPARTICLES] = {0};
+    Int_t   pfo_truejet_type[MAX_NPARTICLES] = {0};
+    Int_t   pfo_pdgcheat[MAX_NPARTICLES] = {0};
+    Int_t   pfo_nparents[MAX_NPARTICLES] = {0};
+    Int_t   pfo_pdgcheat_parent[MAX_NPARTICLES][MAX_NPARTICLES] = {0};
+    Float_t pfo_E[MAX_NPARTICLES] = {0};
+    Float_t pfo_E_calo[MAX_NPARTICLES] = {0};
+    Float_t pfo_px[MAX_NPARTICLES] = {0};
+    Float_t pfo_py[MAX_NPARTICLES] = {0};
+    Float_t pfo_pz[MAX_NPARTICLES] = {0};
+    Float_t pfo_m[MAX_NPARTICLES] = {0};
+    Int_t   pfo_type[MAX_NPARTICLES] = {0};
+    Int_t   pfo_isoverlay[MAX_NPARTICLES] = {0};
+    Int_t   pfo_isisr[MAX_NPARTICLES] = {0};
+    Int_t   pfo_vtx[MAX_NPARTICLES] = {0};
+    Int_t   pfo_charge[MAX_NPARTICLES] = {0};
+    Int_t   pfo_ntracks[MAX_NPARTICLES] = {0};
+    Int_t   pfo_tpc_hits[MAX_NPARTICLES] = {0};
+    Float_t pfo_dedx[MAX_NPARTICLES] = {0};
+    Float_t pfo_dedxerror[MAX_NPARTICLES] = {0};
+    Float_t pfo_d0[MAX_NPARTICLES] = {0};
+    Float_t pfo_d0error[MAX_NPARTICLES] = {0};
+    Float_t pfo_z0[MAX_NPARTICLES] = {0};
+    Float_t pfo_z0error[MAX_NPARTICLES] = {0};
+    Float_t pfo_phi[MAX_NPARTICLES] = {0};
+    Float_t pfo_phierror[MAX_NPARTICLES] = {0};
+    Float_t pfo_omega[MAX_NPARTICLES] = {0};
+    Float_t pfo_omegaerror[MAX_NPARTICLES] = {0};
+    Float_t pfo_tanlambda[MAX_NPARTICLES] = {0};
+    Float_t pfo_tanlambdaerror[MAX_NPARTICLES] = {0};
+    Float_t pfo_chi2[MAX_NPARTICLES] = {0};
+    Float_t pfo_ndf[MAX_NPARTICLES] = {0};
+    Float_t pfo_vtxpt[MAX_NPARTICLES][3] = {0};
+    Float_t pfo_endpt[MAX_NPARTICLES][3] = {0};
+    Int_t   pfo_pid[MAX_NPARTICLES] = {0};
+    Float_t pfo_pid_likelihood[MAX_NPARTICLES] = {0};
+    Float_t pfo_pid_eprob[MAX_NPARTICLES] = {0};
+    Float_t pfo_pid_muprob[MAX_NPARTICLES] = {0};
+    Float_t pfo_pid_piprob[MAX_NPARTICLES] = {0};
+    Float_t pfo_pid_kprob[MAX_NPARTICLES] = {0};
+    Float_t pfo_pid_pprob[MAX_NPARTICLES] = {0};
+    Float_t pfo_pid_hprob[MAX_NPARTICLES] = {0};
+    Int_t   pfo_piddedx[MAX_NPARTICLES] = {0};
+    Float_t pfo_piddedx_likelihood[MAX_NPARTICLES] = {0};
+    Float_t pfo_piddedx_eprob[MAX_NPARTICLES] = {0};
+    Float_t pfo_piddedx_muprob[MAX_NPARTICLES] = {0};
+    Float_t pfo_piddedx_piprob[MAX_NPARTICLES] = {0};
+    Float_t pfo_piddedx_kprob[MAX_NPARTICLES] = {0};
+    Float_t pfo_piddedx_pprob[MAX_NPARTICLES] = {0};
+    Float_t pfo_piddedx_hprob[MAX_NPARTICLES] = {0};
+    Float_t pfo_piddedx_e_dedxdist[MAX_NPARTICLES] = {0};
+    Float_t pfo_piddedx_mu_dedxdist[MAX_NPARTICLES] = {0};
+    Float_t pfo_piddedx_pi_dedxdist[MAX_NPARTICLES] = {0};
+    Float_t pfo_piddedx_k_dedxdist[MAX_NPARTICLES] = {0};
+    Float_t pfo_piddedx_p_dedxdist[MAX_NPARTICLES] = {0};
+    Float_t pfo_piddedx_e_lkhood[MAX_NPARTICLES] = {0};
+    Float_t pfo_piddedx_mu_lkhood[MAX_NPARTICLES] = {0};
+    Float_t pfo_piddedx_pi_lkhood[MAX_NPARTICLES] = {0};
+    Float_t pfo_piddedx_k_lkhood[MAX_NPARTICLES] = {0};
+    Float_t pfo_piddedx_p_lkhood[MAX_NPARTICLES] = {0};
+    Float_t pfo_pidtof_p_at_calo[MAX_NPARTICLES] = {0};
+    Float_t pfo_pidtof_closest_beta_0ps[MAX_NPARTICLES] = {0};
+    Float_t pfo_pidtof_closest_beta_10ps[MAX_NPARTICLES] = {0};
+    Float_t pfo_pidtof_closest_beta_50ps[MAX_NPARTICLES] = {0};
+    Float_t pfo_pidtof_closest_beta_100ps[MAX_NPARTICLES] = {0};
+    Float_t pfo_pidtof_fastest_beta_0ps[MAX_NPARTICLES] = {0};
+    Float_t pfo_pidtof_fastest_beta_10ps[MAX_NPARTICLES] = {0};
+    Float_t pfo_pidtof_fastest_beta_50ps[MAX_NPARTICLES] = {0};
+    Float_t pfo_pidtof_fastest_beta_100ps[MAX_NPARTICLES] = {0};
+    Float_t pfo_pidtof_cylfit_beta_0ps[MAX_NPARTICLES] = {0};
+    Float_t pfo_pidtof_cylfit_beta_10ps[MAX_NPARTICLES] = {0};
+    Float_t pfo_pidtof_cylfit_beta_50ps[MAX_NPARTICLES] = {0};
+    Float_t pfo_pidtof_cylfit_beta_100ps[MAX_NPARTICLES] = {0};
+    Float_t pfo_pidtof_closestfit_beta_0ps[MAX_NPARTICLES] = {0};
+    Float_t pfo_pidtof_closestfit_beta_10ps[MAX_NPARTICLES] = {0};
+    Float_t pfo_pidtof_closestfit_beta_50ps[MAX_NPARTICLES] = {0};
+    Float_t pfo_pidtof_closestfit_beta_100ps[MAX_NPARTICLES] = {0};
 
 };
 
@@ -146,6 +146,7 @@ struct PFO_Info {
 
   public:
     TVector3 p3;
+    Float_t p_mag       =  0;
     Float_t E           =  0;
     Int_t   charge      =  0;
     Int_t   pdgcheat    =  0;
@@ -159,6 +160,11 @@ struct PFO_Info {
     Float_t qcos        = -2;
     Float_t q_sep       = -2;
     Float_t qbar_sep    = -2;
+
+    bool operator > (const PFO_Info& apfo) const
+    {
+        return (p_mag > apfo.p_mag);
+    }
 
 };
 
