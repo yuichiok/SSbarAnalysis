@@ -48,14 +48,26 @@ PFOTools::PFOTools( PFO_QQbar *ptr )
 
 }
 
-void PFOTools::PFOSort()
+void PFOTools::SortJet( vector<PFO_Info> jet )
 {
-    for (int ijet=0; ijet < 2; ijet++) std::sort(PFO_jet[ijet].begin(), PFO_jet[ijet].end(),std::greater<PFO_Info>());
+    std::sort(jet.begin(), jet.end(),std::greater<PFO_Info>());
 }
 
-bool PFOTools::PFOValid()
+bool PFOTools::ValidPFO()
 {
     bool isValid = false;
     for (int ijet=0; ijet < 2; ijet++) isValid = PFO_jet[ijet].size();
     return isValid;
+}
+
+vector<PFO_Info> PFOTools::GetJet( int ijet )
+{
+    return PFO_jet[ijet];
+}
+
+vector<PFO_Info> PFOTools::GetSortedJet( int ijet )
+{
+    vector<PFO_Info> sorted_jet = PFO_jet[ijet];
+    SortJet( sorted_jet );
+    return sorted_jet;
 }

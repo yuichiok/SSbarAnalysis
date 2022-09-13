@@ -27,10 +27,11 @@ class EventAnalyzer
     enum MCParticlePair { FIRST_ENTRY, dd, uu, ss, cc, bb, tt };
 
   // methods
-    bool             MapTree(TTree*); // Maps class variables to an input TTree.
-    void             Analyze(Long64_t entry);
+    bool             MapTree( TTree* ); // Maps class variables to an input TTree.
+    void             Analyze( Long64_t entry );
     bool             Select();  // Evaluates the class' list of event selection criteria
-    bool             GenPairPicker(Float_t mc_particle, MCParticlePair pair);
+    bool             GenPairPicker( Float_t mc_particle, MCParticlePair pair );
+    bool             ISRPicker( Float_t Kvcut );
     virtual Bool_t   Notify();
 
 
