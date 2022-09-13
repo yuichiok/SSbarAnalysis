@@ -21,14 +21,15 @@ class PFOTools
     PFOTools( PFO_QQbar *ptr );
     virtual ~PFOTools() {};
 
-    virtual void PFOSort( vector<PFO_Info> jet );
-    virtual PFO_Info GetLPFO( int ijet );
+    virtual void              PFOSort  ();
+    virtual bool              PFOValid ();
 
+    // List of PFOs in jets
     vector<PFO_Info> PFO_jet[2];
 
   private:
-    PFO_QQbar *data ;
-    PFO_Info   PFO  ;
+    PFO_QQbar *data     ;
+    PFO_Info   PFO      ;
 
 };
 

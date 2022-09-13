@@ -15,8 +15,7 @@ using std::cout;   using std::endl;
 PFOTools::PFOTools( PFO_QQbar *ptr )
 : data(ptr)
 {
-    int test[2] = {0};
-    for(int ipfo=0; ipfo < data->pfo_n; ipfo++)
+    for (int ipfo=0; ipfo < data->pfo_n; ipfo++)
     {
         // Make sure PFO belongs to either jet0 or jet 1
         if (data->pfo_match[ipfo] < 0 || 1 < data->pfo_match[ipfo]) continue;
@@ -30,7 +29,7 @@ PFOTools::PFOTools( PFO_QQbar *ptr )
         const int ijet = data->pfo_match[ipfo];
         PFO = {
             p3,
-            p3.Mag(),
+            (Float_t) p3.Mag(),
             data->pfo_E[ipfo],
             data->pfo_charge[ipfo],
             data->pfo_pdgcheat[ipfo],
@@ -45,23 +44,18 @@ PFOTools::PFOTools( PFO_QQbar *ptr )
         PFO.qcos = (PFO.charge < 0) ? PFO.cos : -PFO.cos;
 
         PFO_jet[ijet].push_back(PFO);
-
     }
 
-    cout << "Jet PFO (" << data->pfo_n << ") size" << endl;
-    cout << "ext0="<< test[0] << ", ext1=" << test[1] << endl;
-    cout << PFO_jet[0].size() << endl;
-    cout << PFO_jet[1].size() << endl;
-
 }
 
-void PFOTools::PFOSort( vector<PFO_Info> jet )
+void PFOTools::PFOSort()
 {
-    std::sort(jet.begin(), jet.end(),std::greater<PFO_Info>());
+    for (int ijet=0; ijet < 2; ijet++) std::sort(PFO_jet[ijet].begin(), PFO_jet[ijet].end(),std::greater<PFO_Info>());
 }
 
-PFO_Info PFOTools::GetLPFO( int ijet )
+bool PFOTools::PFOValid()
 {
-    PFOSort( PFO_jet[ijet] );
-    return PFO_jet[ijet].at(0);
+    bool isValid = false;
+    for (int ijet=0; ijet < 2; ijet++) isValid = PFO_jet[ijet].size();
+    return isValid;
 }
