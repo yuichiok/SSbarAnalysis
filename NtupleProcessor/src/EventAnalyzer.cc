@@ -13,11 +13,14 @@ EventAnalyzer.cpp
 #include <TLeaf.h>
 #include <TMath.h>
 #include <Math/Vector4D.h>
+#include <Math/Vector3D.h>
 #include "../include/EventAnalyzer.hh"
 #include "../include/TreeReader.hh"
 #include "../include/PFOTools.hh"
+#include "../include/VectorTools.hh"
 
 using std::cout;   using std::endl;
+typedef unsigned int Index;
 
 EventAnalyzer::EventAnalyzer(TString o)
 : options(o)
@@ -91,15 +94,21 @@ bool EventAnalyzer::Select()
     - TString FILE_OUT (?)
   */
 
-  vector<bool> boolNest;
+    bool check = true;
+    vector<bool> boolNest;
 
   // Options
 
   // QQbar check
     MCParticlePair PROCESS  = ss;
     boolNest.push_back( GenPairPicker( _mc.mc_quark_pdg[0], PROCESS ) );
+    boolNest.push_back( ISRPicker( 35 ) );
 
-  return false;
+    for (Index icheck=0; icheck < boolNest.size(); icheck++){
+      if (!boolNest.at(icheck)) check = boolNest.at(icheck);
+    }
+
+    return check;
 
 
 }
@@ -123,10 +132,13 @@ bool EventAnalyzer::ISRPicker ( Float_t Kvcut = 25)
   // UNDER CONSTRUCTION
   // USE TLorentzVector
 
-  XYZTVector jet0(_jet.jet_px[0],_jet.jet_py[0],_jet.jet_pz[0],_jet.jet_E[0]);
-  XYZTVector jet1(_jet.jet_px[1],_jet.jet_py[1],_jet.jet_pz[1],_jet.jet_E[1]);
+  VectorTools jet_vec[2];
+  for (int ijet=0; ijet < 2; ijet++)
+  {
+    jet_vec[ijet].SetCoordinates(_jet.jet_px[ijet],_jet.jet_py[ijet],_jet.jet_pz[ijet],_jet.jet_E[ijet]);
+  }
 
-	Double_t ssmass = (jet0 + jet1).M();
+	Double_t ssmass = (jet_vec[0].v4() + jet_vec[1].v4()).M();
 
 	// TVector3 v1(jet_px[0], jet_py[0], jet_pz[0]);
 	// TVector3 v2(jet_px[1], jet_py[1], jet_pz[1]);
