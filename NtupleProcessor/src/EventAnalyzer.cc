@@ -132,13 +132,15 @@ bool EventAnalyzer::ISRPicker ( Float_t Kvcut = 25)
   // UNDER CONSTRUCTION
   // USE TLorentzVector
 
-  VectorTools jet_vec[2];
+  VectorTools  jet_vec[2];
   for (int ijet=0; ijet < 2; ijet++)
   {
     jet_vec[ijet].SetCoordinates(_jet.jet_px[ijet],_jet.jet_py[ijet],_jet.jet_pz[ijet],_jet.jet_E[ijet]);
   }
 
-	Double_t ssmass = (jet_vec[0].v4() + jet_vec[1].v4()).M();
+	Float_t ssmass = (jet_vec[0].v4() + jet_vec[1].v4()).M();
+  static Float_t acol   = VectorTools::GetSinacol( jet_vec[0].v3(), jet_vec[1].v3() );
+
 
 	// TVector3 v1(jet_px[0], jet_py[0], jet_pz[0]);
 	// TVector3 v2(jet_px[1], jet_py[1], jet_pz[1]);

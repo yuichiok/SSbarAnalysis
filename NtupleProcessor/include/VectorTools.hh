@@ -15,20 +15,26 @@ class VectorTools
 {
   
   public:
-    VectorTools();
-    VectorTools( ROOT::Math::XYZVector vec3, Float_t E );
-    VectorTools( Float_t x, Float_t y, Float_t z, Float_t E );
-    virtual ~VectorTools() {};
+    // Constructor and Destructor
+      VectorTools();
+      VectorTools( ROOT::Math::XYZVector vec3, Float_t E );
+      VectorTools( Float_t x, Float_t y, Float_t z, Float_t E );
+      virtual ~VectorTools() {};
 
-    virtual void SetCoordinates(Float_t x, Float_t y, Float_t z, Float_t E);
+    // Set values
+      virtual void SetCoordinates ( Float_t x, Float_t y, Float_t z, Float_t E );
 
-    // return vectors
-    virtual ROOT::Math::XYZVector     v3 ();
-    virtual ROOT::Math::PxPyPzEVector v4 ();
+    // Common Tools
+      static Float_t GetSinacol ( ROOT::Math::XYZVector v1, ROOT::Math::XYZVector v2 );
+
+    // return private members
+      virtual ROOT::Math::XYZVector     v3 ();
+      virtual ROOT::Math::PxPyPzEVector v4 ();
 
   private:
-    ROOT::Math::XYZVector     vector3;
-    ROOT::Math::PxPyPzEVector vector4;
+    // Private members
+      ROOT::Math::XYZVector     vector3;
+      ROOT::Math::PxPyPzEVector vector4;
 
 };
 
