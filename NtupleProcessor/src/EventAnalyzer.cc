@@ -129,45 +129,24 @@ bool EventAnalyzer::ISRPicker ( Float_t Kvcut = 25)
 	if (_jet.jet_E[0] < 0.5 || _jet.jet_E[1] < 0.5)
 		return false;
 
-  // UNDER CONSTRUCTION
-  // USE TLorentzVector
-
-  VectorTools  jet_vec[2];
+  VectorTools    jet_vec[2];
+  Float_t     jet_abscos[2] = {0};
   for (int ijet=0; ijet < 2; ijet++)
   {
     jet_vec[ijet].SetCoordinates(_jet.jet_px[ijet],_jet.jet_py[ijet],_jet.jet_pz[ijet],_jet.jet_E[ijet]);
+    jet_abscos[ijet] = fabs( std::cos( jet_vec[ijet].v3().Theta() ) );
   }
 
 	Float_t ssmass = (jet_vec[0].v4() + jet_vec[1].v4()).M();
-  static Float_t acol   = VectorTools::GetSinacol( jet_vec[0].v3(), jet_vec[1].v3() );
+  Float_t acol   = VectorTools::GetSinacol( jet_vec[0].v3(), jet_vec[1].v3() );
 
+	Float_t Kv = 250. * acol / (acol + sqrt(1 - jet_abscos[0] * jet_abscos[0]) + sqrt(1 - jet_abscos[1] * jet_abscos[1]));
+  // Float_t K[2] = {0};
+  //         K[0] = jet_vec[0].v3().R() * acol / sqrt(1 - jet_abscos[1] * jet_abscos[1]);
+  //         K[1] = jet_vec[1].v3().R() * acol / sqrt(1 - jet_abscos[0] * jet_abscos[0]);
 
-	// TVector3 v1(jet_px[0], jet_py[0], jet_pz[0]);
-	// TVector3 v2(jet_px[1], jet_py[1], jet_pz[1]);
-	// VecOP vop;
-	// float acol = vop.GetSinacol(v1, v2);
-
-	// double jet0_p = sqrt(pow(jet_px[0], 2) + pow(jet_py[0], 2) + pow(jet_pz[0], 2));
-	// double jet1_p = sqrt(pow(jet_px[1], 2) + pow(jet_py[1], 2) + pow(jet_pz[1], 2));
-
-	// float costheta_j0;
-	// VecOP p_j0(jet_px[0], jet_py[0], jet_pz[0]);
-	// costheta_j0 = fabs(p_j0.GetCostheta());
-
-	// float costheta_j1;
-	// VecOP p_j1(jet_px[1], jet_py[1], jet_pz[1]);
-	// costheta_j1 = fabs(p_j1.GetCostheta());
-
-	// float Kv = 250. * acol / (acol + sqrt(1 - costheta_j0 * costheta_j0) + sqrt(1 - costheta_j1 * costheta_j1));
-	// float K1 = jet0_p * acol / sqrt(1 - costheta_j1 * costheta_j1);
-	// float K2 = jet1_p * acol / sqrt(1 - costheta_j0 * costheta_j0);
-
-	// if (type == 1)
-	// 	if (Kv < Kvcut)
-	// 		return true;
-	// if (type == 2)
-	// 	if (Kv < Kvcut && bbmass > 130)
-	// 		return true;
+  if (Kv < Kvcut && ssmass > 130)
+    return true;
 
 	return false;
 
