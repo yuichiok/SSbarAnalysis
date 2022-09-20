@@ -58,14 +58,23 @@ bool EventAnalyzer::MapTree(TTree* tree)
 void EventAnalyzer::Analyze(Long64_t entry)
 {
 
+  Bool_t debug = entry < 100;
+
   // PFO Analysis
     PFOTools pfot( &_pfo );
     if ( !pfot.ValidPFO() ) return;
 
+    vector<PFO_Info> sorted_jets[2] = {pfot.GetSortedJet(0), pfot.GetSortedJet(1)};
+
     for (int ijet=0; ijet < 2; ijet++ )
     {
-      LPFO[ijet] = pfot.GetSortedJet(ijet).at(0);
+      LPFO[ijet]  = sorted_jets[ijet].at(0);
+      SPFOs[ijet] = sorted_jets[ijet];//.erase(sorted_jets[ijet].begin());
+      SPFOs[ijet].erase(SPFOs[ijet].begin());
     }
+
+    cout << "orig size: " << sorted_jets[0].size() << ", "
+         << "spfo size: " << SPFOs[0].size()       << endl;
 
 }
 

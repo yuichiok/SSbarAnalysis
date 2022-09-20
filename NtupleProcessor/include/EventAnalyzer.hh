@@ -48,6 +48,7 @@ class EventAnalyzer
 
   // Leading PFO
     PFO_Info LPFO[2];
+    std::vector<PFO_Info> SPFOs[2];
 
   private:
 
