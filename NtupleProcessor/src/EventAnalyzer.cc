@@ -38,7 +38,7 @@ EventAnalyzer::EventAnalyzer(TString o)
     entriesInNtuple   = 0;
 }
 
-bool EventAnalyzer::MapTree(TTree* tree)
+Bool_t EventAnalyzer::MapTree(TTree* tree)
 {
   // Maps TTree to class' variables.
   // TO DO: Implement check for correct mapping, return result?
@@ -97,7 +97,7 @@ Bool_t EventAnalyzer::Notify()
    return kTRUE;
 }
 
-bool EventAnalyzer::Select()
+Bool_t EventAnalyzer::Select()
 { // Evaluates the class' list of event selection criteria
 
   /*
@@ -107,7 +107,7 @@ bool EventAnalyzer::Select()
     - TString FILE_OUT (?)
   */
 
-    bool check = true;
+    Bool_t check = true;
     vector<bool> boolNest;
 
   // Options
@@ -126,16 +126,16 @@ bool EventAnalyzer::Select()
 
 }
 
-bool EventAnalyzer::GenPairPicker ( Float_t mc_particle, MCParticlePair pair )
+Bool_t EventAnalyzer::GenPairPicker ( Float_t mc_particle, MCParticlePair pair )
 {
     Float_t abs_mc_particle = fabs(mc_particle);
 
-    bool isGoodPair = (abs_mc_particle == pair) ? true : false;
+    Bool_t isGoodPair = (abs_mc_particle == pair) ? true : false;
 
     return isGoodPair;
 }
 
-bool EventAnalyzer::ISRPicker ( Float_t Kvcut = 25)
+Bool_t EventAnalyzer::ISRPicker ( Float_t Kvcut = 25)
 {
   using namespace ROOT::Math;
 

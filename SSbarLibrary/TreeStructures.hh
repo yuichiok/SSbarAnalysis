@@ -66,7 +66,7 @@ struct PFO_QQbar  {
     Int_t   pfo_truejet_type[MAX_NPARTICLES] = {0};
     Int_t   pfo_pdgcheat[MAX_NPARTICLES] = {0};
     Int_t   pfo_nparents[MAX_NPARTICLES] = {0};
-    Int_t   pfo_pdgcheat_parent[MAX_NPARTICLES][MAX_NPARTICLES] = {0};
+    Int_t   pfo_pdgcheat_parent[MAX_NPARTICLES][MAX_NPARTICLES] = {{0}};
     Float_t pfo_E[MAX_NPARTICLES] = {0};
     Float_t pfo_E_calo[MAX_NPARTICLES] = {0};
     Float_t pfo_px[MAX_NPARTICLES] = {0};
@@ -94,8 +94,8 @@ struct PFO_QQbar  {
     Float_t pfo_tanlambdaerror[MAX_NPARTICLES] = {0};
     Float_t pfo_chi2[MAX_NPARTICLES] = {0};
     Float_t pfo_ndf[MAX_NPARTICLES] = {0};
-    Float_t pfo_vtxpt[MAX_NPARTICLES][3] = {0};
-    Float_t pfo_endpt[MAX_NPARTICLES][3] = {0};
+    Float_t pfo_vtxpt[MAX_NPARTICLES][3] = {{0}};
+    Float_t pfo_endpt[MAX_NPARTICLES][3] = {{0}};
     Int_t   pfo_pid[MAX_NPARTICLES] = {0};
     Float_t pfo_pid_likelihood[MAX_NPARTICLES] = {0};
     Float_t pfo_pid_eprob[MAX_NPARTICLES] = {0};
