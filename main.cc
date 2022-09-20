@@ -9,8 +9,8 @@
 #include <TFile.h>                  // ROOT class headers
 #include <TString.h>
 #include <TTree.h>
-#include "../../SSbarLibrary/timestamp.hh"
-#include "include/NtupleProcessor.hh"
+#include "SSbarLibrary/timestamp.hh"
+#include "NtupleProcessor/include/NtupleProcessor.hh"
 
 using namespace std;
 
@@ -18,8 +18,8 @@ using namespace std;
 int main()
 {
   // Record the time main starts processing.
-  TString ts_mainBegin  = timeStamp();
-  TString fts_mainBegin = fileTimeStamp();
+  string ts_mainBegin  = timeStamp();
+  string fts_mainBegin = fileTimeStamp();
 
   // BEGIN OUTPUT
   cout << "\n\n"
@@ -31,7 +31,7 @@ int main()
   NtupleProcessor ntplproc("",-1);
 
   // CLOSING OUTPUT.
-    TString ts_mainEnd = timeStamp();
+    string ts_mainEnd = timeStamp();
 
     cout << "\n"
             "   Completion time: " << ts_mainEnd <<      "\n"

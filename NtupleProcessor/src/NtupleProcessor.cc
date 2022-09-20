@@ -15,9 +15,9 @@ NtupleProcessor::NtupleProcessor(TString o, int me)
 : eAnalyzer(o), tIter(eAnalyzer), options(o), maxEvents(me)
 {
   // PARAM output
-    cout << "  NtupleProcessor: Created.\n"
-            "   Options:                       " << options   << "\n"
-            "   MaxEntries:                    " << me   << "\n"
+    cout << "  [NtupleProcessor]\n"
+            "    Options:    " << options   << "\n"
+            "    MaxEntries: " << me   << "\n"
     << endl;
 
   TString dummy_label = "rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.n002.d_dstm_15162_000";
