@@ -66,6 +66,8 @@ Bool_t EventAnalyzer::MapTree(TTree* tree)
 void EventAnalyzer::Analyze(Long64_t entry)
 {
 
+  cout << "here" << endl;
+
   // PFO Analysis
     PFOTools pfot( &_pfo );
     if ( !pfot.ValidPFO() ) return;
@@ -86,18 +88,8 @@ void EventAnalyzer::Analyze(Long64_t entry)
 
 }
 
-Bool_t EventAnalyzer::Notify()
-{
-   // The Notify() function is called when a new file is opened. This
-   // can be either for a new TTree in a TChain or when when a new TTree
-   // is started when using PROOF. It is normally not necessary to make changes
-   // to the generated code, but the routine can be extended by the
-   // user if needed. The return value is currently not used.
 
-   return kTRUE;
-}
-
-Bool_t EventAnalyzer::Select()
+Bool_t EventAnalyzer::Select(Selector sel)
 { // Evaluates the class' list of event selection criteria
 
   /*
@@ -107,21 +99,33 @@ Bool_t EventAnalyzer::Select()
     - TString FILE_OUT (?)
   */
 
-    Bool_t check = true;
-    vector<bool> boolNest;
+  Bool_t check = true;
+  vector<Bool_t> boolNest;
 
   // Options
 
-  // QQbar check
-    MCParticlePair PROCESS  = ss;
-    boolNest.push_back( GenPairPicker( _mc.mc_quark_pdg[0], PROCESS ) );
-    boolNest.push_back( ISRPicker( 35 ) );
+  switch (sel) {
 
-    for (Index icheck=0; icheck < boolNest.size(); icheck++){
-      if (!boolNest.at(icheck)) check = boolNest.at(icheck);
-    }
+    case kMC:
+      // QQbar checks
+        boolNest.push_back( GenPairPicker( _mc.mc_quark_pdg[0], kSS ) );
+        boolNest.push_back( ISRPicker( 35 ) );
+        break;
 
-    return check;
+    case kLPFO:
+      // LPFO checks
+        break;
+
+    default:
+      break;
+
+  }
+
+  for (auto icheck : boolNest ){
+    if (!icheck) { check = icheck; break; }
+  }
+
+  return check;
 
 
 }
@@ -163,4 +167,15 @@ Bool_t EventAnalyzer::ISRPicker ( Float_t Kvcut = 25)
 
 	return false;
 
+}
+
+Bool_t EventAnalyzer::Notify()
+{
+   // The Notify() function is called when a new file is opened. This
+   // can be either for a new TTree in a TChain or when when a new TTree
+   // is started when using PROOF. It is normally not necessary to make changes
+   // to the generated code, but the routine can be extended by the
+   // user if needed. The return value is currently not used.
+
+   return kTRUE;
 }

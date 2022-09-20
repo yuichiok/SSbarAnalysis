@@ -24,14 +24,15 @@ class EventAnalyzer
     EventAnalyzer(TString o="");
     virtual ~EventAnalyzer(){};
 
-    enum MCParticlePair { FIRST_ENTRY, dd, uu, ss, cc, bb, tt };
+    enum       Selector { kMC, kLPFO };
+    enum MCParticlePair { FIRST_ENTRY, kDD, kUU, kSS, kCC, kBB, kTT };
 
   // methods
-    Bool_t             MapTree( TTree* ); // Maps class variables to an input TTree.
+    Bool_t           MapTree( TTree* ); // Maps class variables to an input TTree.
     void             Analyze( Long64_t entry );
-    Bool_t             Select();  // Evaluates the class' list of event selection criteria
-    Bool_t             GenPairPicker( Float_t mc_particle, MCParticlePair pair );
-    Bool_t             ISRPicker( Float_t Kvcut );
+    Bool_t           Select( Selector s );          // Evaluates the class' list of event selection criteria
+    Bool_t           GenPairPicker( Float_t mc_particle, MCParticlePair pair );
+    Bool_t           ISRPicker( Float_t Kvcut );
     virtual Bool_t   Notify();
 
 
