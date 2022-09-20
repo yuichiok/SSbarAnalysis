@@ -66,8 +66,6 @@ Bool_t EventAnalyzer::MapTree(TTree* tree)
 void EventAnalyzer::Analyze(Long64_t entry)
 {
 
-  cout << "here" << endl;
-
   // PFO Analysis
     PFOTools pfot( &_pfo );
     if ( !pfot.ValidPFO() ) return;
@@ -83,11 +81,11 @@ void EventAnalyzer::Analyze(Long64_t entry)
     }
 
   // Selection
+    Select( kLPFO );
   
 
 
 }
-
 
 Bool_t EventAnalyzer::Select(Selector sel)
 { // Evaluates the class' list of event selection criteria
@@ -114,6 +112,7 @@ Bool_t EventAnalyzer::Select(Selector sel)
 
     case kLPFO:
       // LPFO checks
+        boolNest.push_back( is_charge_config( kOpposite ) );
         break;
 
     default:
@@ -178,4 +177,28 @@ Bool_t EventAnalyzer::Notify()
    // user if needed. The return value is currently not used.
 
    return kTRUE;
+}
+
+Bool_t EventAnalyzer::is_charge_config( ChargeConfig cc )
+{
+
+  Int_t charge_config = LPFO[0].charge * LPFO[1].charge;
+
+  switch (cc)
+  {
+    case kSame:
+      if ( charge_config > 0 ) return true;
+      break;
+    
+    case kOpposite:
+      if ( charge_config < 0 ) return true;
+      break;
+
+    default:
+      return false;
+      break;
+  }
+
+  return false;
+
 }

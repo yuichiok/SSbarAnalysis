@@ -25,6 +25,7 @@ class EventAnalyzer
     virtual ~EventAnalyzer(){};
 
     enum       Selector { kMC, kLPFO };
+    enum   ChargeConfig { kSame, kOpposite };
     enum MCParticlePair { FIRST_ENTRY, kDD, kUU, kSS, kCC, kBB, kTT };
 
   // methods
@@ -34,6 +35,9 @@ class EventAnalyzer
     Bool_t           GenPairPicker( Float_t mc_particle, MCParticlePair pair );
     Bool_t           ISRPicker( Float_t Kvcut );
     virtual Bool_t   Notify();
+
+  // LPFO checks
+    Bool_t           is_charge_config ( ChargeConfig cc );
 
 
   // Running Variables
