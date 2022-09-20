@@ -8,7 +8,7 @@ TreeIterator.cpp
 #include <iostream>
 #include <string>
 #include <TString.h>
-#include "../include/TreeIterator.hh"
+#include "TreeIterator.hh"
 
 using std::cout;  using std::endl;   using std::setw;   using std::string;
 

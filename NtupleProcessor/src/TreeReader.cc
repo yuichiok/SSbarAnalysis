@@ -7,7 +7,7 @@ TreeReader.cpp
 #include <iostream>
 #include <TString.h>
 #include <TFile.h> 
-#include "../include/TreeReader.hh"
+#include "TreeReader.hh"
 
 using std::cout;   using std::endl;
 

@@ -14,10 +14,11 @@ EventAnalyzer.cpp
 #include <TMath.h>
 #include <Math/Vector4D.h>
 #include <Math/Vector3D.h>
-#include "../include/EventAnalyzer.hh"
-#include "../include/TreeReader.hh"
-#include "../include/PFOTools.hh"
-#include "../include/VectorTools.hh"
+
+#include "EventAnalyzer.hh"
+#include "TreeReader.hh"
+#include "PFOTools.hh"
+#include "VectorTools.hh"
 
 using std::cout;   using std::endl;
 typedef unsigned int Index;

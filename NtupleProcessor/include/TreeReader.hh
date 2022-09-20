@@ -10,7 +10,7 @@
 #include <TString.h>
 #include <TFile.h>
 #include <TTree.h>
-#include "../../SSbarLibrary/TreeStructures.hh"
+#include "TreeStructures.hh"
 
 class TreeReader
 {

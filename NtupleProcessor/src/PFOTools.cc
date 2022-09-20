@@ -8,7 +8,7 @@ PFOTools.cpp
 #include <algorithm>
 #include <TString.h>
 #include <TFile.h> 
-#include "../include/PFOTools.hh"
+#include "PFOTools.hh"
 
 using std::cout;   using std::endl;
 
