@@ -16,6 +16,6 @@ ADD_LIBRARY(NtupleProcessor
 
 TARGET_INCLUDE_DIRECTORIES(NtupleProcessor
   PUBLIC
-    ${PROJECT_SOURCE_DIR}/include
-    ${PROJECT_SOURCE_DIR}/../SSbarLibrary
+  ../include
+  ../../SSbarLibrary
 )
