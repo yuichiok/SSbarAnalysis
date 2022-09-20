@@ -23,6 +23,14 @@ EventAnalyzer.cpp
 using std::cout;   using std::endl;
 typedef unsigned int Index;
 
+template<typename T>
+void pop_front(std::vector<T>& vec)
+{
+    assert(!vec.empty());
+    vec.front() = std::move(vec.back());
+    vec.pop_back();
+}
+
 EventAnalyzer::EventAnalyzer(TString o)
 : options(o)
 {
@@ -69,12 +77,10 @@ void EventAnalyzer::Analyze(Long64_t entry)
     for (int ijet=0; ijet < 2; ijet++ )
     {
       LPFO[ijet]  = sorted_jets[ijet].at(0);
-      SPFOs[ijet] = sorted_jets[ijet];//.erase(sorted_jets[ijet].begin());
-      SPFOs[ijet].erase(SPFOs[ijet].begin());
+      SPFOs[ijet] = sorted_jets[ijet];
+      // SPFOs[ijet].erase(SPFOs[ijet].begin());
+      pop_front(SPFOs[ijet]); // faster algorithm wise?
     }
-
-    cout << "orig size: " << sorted_jets[0].size() << ", "
-         << "spfo size: " << SPFOs[0].size()       << endl;
 
 }
 
