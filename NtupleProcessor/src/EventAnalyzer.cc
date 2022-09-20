@@ -25,12 +25,8 @@ typedef unsigned int Index;
 EventAnalyzer::EventAnalyzer(TString o)
 : options(o)
 {
-  // TEST output
-    cout << "    NtupleProcessor: Created." << endl;
-
     patEventsAnalyzed = 0;
     entriesInNtuple   = 0;
-
 }
 
 bool EventAnalyzer::MapTree(TTree* tree)
@@ -62,7 +58,6 @@ void EventAnalyzer::Analyze(Long64_t entry)
 {
 
   // PFO Analysis
-    cout << "event " << entry << endl;
     PFOTools pfot( &_pfo );
     if ( !pfot.ValidPFO() ) return;
 
