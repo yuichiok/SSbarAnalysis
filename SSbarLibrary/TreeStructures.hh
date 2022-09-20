@@ -6,7 +6,7 @@
  Created : 2022-09-09  okugawa
  Main class of TreeReader program.
 ------------------------------------------------------------------------------*/
-#include <TVector3.h>
+#include "VectorTools.hh"
 
 const static int MAX_NPARTICLES = 1000;
 const static int NTRUE_JETS     = 5;
@@ -145,7 +145,7 @@ struct PFO_QQbar  {
 struct PFO_Info {
 
   public:
-    TVector3 p3;
+    VectorTools vt;
     Float_t p_mag       =  0;
     Float_t E           =  0;
     Int_t   charge      =  0;
@@ -164,6 +164,11 @@ struct PFO_Info {
     bool operator > (const PFO_Info& apfo) const
     {
         return (p_mag > apfo.p_mag);
+    }
+
+    bool operator < (const PFO_Info& apfo) const
+    {
+        return (p_mag < apfo.p_mag);
     }
 
 };

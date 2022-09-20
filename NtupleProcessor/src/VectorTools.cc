@@ -7,6 +7,7 @@ VectorTools.cpp
 #include <TMath.h>
 #include <Math/Vector3D.h>
 #include <Math/Vector4D.h>
+
 #include "VectorTools.hh"
 
 VectorTools::VectorTools() {}
