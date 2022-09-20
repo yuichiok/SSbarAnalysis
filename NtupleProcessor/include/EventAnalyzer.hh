@@ -15,8 +15,8 @@
 #include <TFile.h>
 #include <vector>
 #include <fstream>
+#include "../../SSbarLibrary/TreeStructures.hh"
 #include "TreeReader.hh"
-#include "TreeStructures.hh"
 
 class EventAnalyzer
 {
@@ -27,10 +27,11 @@ class EventAnalyzer
     enum MCParticlePair { FIRST_ENTRY, dd, uu, ss, cc, bb, tt };
 
   // methods
-    bool             MapTree(TTree*); // Maps class variables to an input TTree.
-    void             Analyze();
+    bool             MapTree( TTree* ); // Maps class variables to an input TTree.
+    void             Analyze( Long64_t entry );
     bool             Select();  // Evaluates the class' list of event selection criteria
-    bool             GenPairPicker(Float_t mc_particle, MCParticlePair pair);
+    bool             GenPairPicker( Float_t mc_particle, MCParticlePair pair );
+    bool             ISRPicker( Float_t Kvcut );
     virtual Bool_t   Notify();
 
 
@@ -45,11 +46,15 @@ class EventAnalyzer
 
   // Fixed size dimensions of array or collections stored in the TTree if any.
 
+  // Leading PFO
+    PFO_Info LPFO[2];
+
   private:
 
-    StatsData_QQbar _stats  ;
-    Branch_QQbar    _branch ;
-
+    MC_QQbar      _mc      ;
+    Jet_QQbar     _jet     ;
+    PFO_QQbar     _pfo     ;
+    Branch_QQbar  _branch  ;
 
 };
 

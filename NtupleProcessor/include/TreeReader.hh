@@ -10,7 +10,7 @@
 #include <TString.h>
 #include <TFile.h>
 #include <TTree.h>
-#include "TreeStructures.hh"
+#include "../../SSbarLibrary/TreeStructures.hh"
 
 class TreeReader
 {
@@ -18,7 +18,9 @@ class TreeReader
     TreeReader();
     virtual ~TreeReader() {};
 
-    void InitializeReadTree(TTree *tree, StatsData_QQbar & _data, Branch_QQbar & _branch);
+    void InitializeMCReadTree (TTree *tree, MC_QQbar & _data,  Branch_QQbar & _branch);
+    void InitializeJetReadTree(TTree *tree, Jet_QQbar & _data, Branch_QQbar & _branch);
+    void InitializePFOReadTree(TTree *tree, PFO_QQbar & _data, Branch_QQbar & _branch);
 
   private: 
 
