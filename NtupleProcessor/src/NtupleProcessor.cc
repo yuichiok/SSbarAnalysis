@@ -7,7 +7,7 @@ NtupleProcessor.cpp
 #include <iostream>
 #include <TString.h>
 #include <TFile.h> 
-#include "../include/NtupleProcessor.hh"
+#include "NtupleProcessor.hh"
 
 using std::cout;   using std::endl;
 

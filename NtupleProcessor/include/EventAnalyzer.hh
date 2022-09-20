@@ -15,7 +15,7 @@
 #include <TFile.h>
 #include <vector>
 #include <fstream>
-#include "../../SSbarLibrary/TreeStructures.hh"
+#include "TreeStructures.hh"
 #include "TreeReader.hh"
 
 class EventAnalyzer
