@@ -66,8 +66,6 @@ bool EventAnalyzer::MapTree(TTree* tree)
 void EventAnalyzer::Analyze(Long64_t entry)
 {
 
-  Bool_t debug = entry < 100;
-
   // PFO Analysis
     PFOTools pfot( &_pfo );
     if ( !pfot.ValidPFO() ) return;
@@ -81,6 +79,10 @@ void EventAnalyzer::Analyze(Long64_t entry)
       // SPFOs[ijet].erase(SPFOs[ijet].begin());
       pop_front(SPFOs[ijet]); // faster algorithm wise?
     }
+
+  // Selection
+  
+
 
 }
 
