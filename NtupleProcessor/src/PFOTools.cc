@@ -8,7 +8,9 @@ PFOTools.cpp
 #include <algorithm>
 #include <TString.h>
 #include <TFile.h> 
+
 #include "PFOTools.hh"
+#include "VectorTools.hh"
 
 using std::cout;   using std::endl;
 
@@ -23,13 +25,13 @@ PFOTools::PFOTools( PFO_QQbar *ptr )
         // Make suer PFO has only one reconstructed track to avoid (lambda/sigma)
         if (data->pfo_ntracks[ipfo] != 1) continue;
 
-        TVector3 p3(data->pfo_px[ipfo], data->pfo_py[ipfo], data->pfo_pz[ipfo]);
+        VectorTools vt(data->pfo_px[ipfo], data->pfo_py[ipfo], data->pfo_pz[ipfo], data->pfo_E[ipfo]);
 
         // Initialize & categorize PFO variables with different jets
         const int ijet = data->pfo_match[ipfo];
         PFO = {
-            p3,
-            (Float_t) p3.Mag(),
+            vt,
+            (Float_t) vt.v3().R(),
             data->pfo_E[ipfo],
             data->pfo_charge[ipfo],
             data->pfo_pdgcheat[ipfo],
@@ -40,7 +42,7 @@ PFOTools::PFOTools( PFO_QQbar *ptr )
             data->pfo_piddedx_p_dedxdist[ipfo],
             data->pfo_piddedx_pi_dedxdist[ipfo],
         };
-        PFO.cos  = PFO.p3.CosTheta();
+        PFO.cos  = std::cos(PFO.vt.v3().Theta());
         PFO.qcos = (PFO.charge < 0) ? PFO.cos : -PFO.cos;
 
         PFO_jet[ijet].push_back(PFO);
@@ -48,9 +50,10 @@ PFOTools::PFOTools( PFO_QQbar *ptr )
 
 }
 
-void PFOTools::SortJet( vector<PFO_Info> jet )
+vector<PFO_Info> PFOTools::SortJet( vector<PFO_Info> jet )
 {
     std::sort(jet.begin(), jet.end(),std::greater<PFO_Info>());
+    return jet;
 }
 
 bool PFOTools::ValidPFO()
@@ -68,6 +71,6 @@ vector<PFO_Info> PFOTools::GetJet( int ijet )
 vector<PFO_Info> PFOTools::GetSortedJet( int ijet )
 {
     vector<PFO_Info> sorted_jet = PFO_jet[ijet];
-    SortJet( sorted_jet );
+    sorted_jet = SortJet( sorted_jet );
     return sorted_jet;
 }
