@@ -38,6 +38,7 @@ class EventAnalyzer
 
   // LPFO checks
     Bool_t           is_charge_config ( ChargeConfig cc );
+    Bool_t           is_momentum      ( Float_t MINP_CUT, Float_t MAXP_CUT );
 
 
   // Running Variables

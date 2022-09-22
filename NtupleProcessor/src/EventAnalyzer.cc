@@ -112,7 +112,8 @@ Bool_t EventAnalyzer::Select(Selector sel)
 
     case kLPFO:
       // LPFO checks
-        boolNest.push_back( is_charge_config( kOpposite ) );
+        boolNest.push_back( is_charge_config( kOpposite ) );    // Charge opposite check
+        boolNest.push_back( is_momentum( 20.0, 60.0 ) );        // MIN/MAX momentum check
         break;
 
     default:
@@ -200,5 +201,20 @@ Bool_t EventAnalyzer::is_charge_config( ChargeConfig cc )
   }
 
   return false;
+
+}
+
+Bool_t EventAnalyzer::is_momentum( Float_t MINP_CUT = 20.0, Float_t MAXP_CUT = 60.0 )
+{
+  Bool_t mom_checks[2] = {0};
+  for (int i=0; i < 2; i++){
+    mom_checks[i] = ( MINP_CUT < LPFO[i].p_mag && LPFO[i].p_mag < MAXP_CUT);
+  }
+
+  for (auto icheck : mom_checks ){
+    if (!icheck) { return icheck; }
+  }
+
+  return true;
 
 }
