@@ -112,7 +112,7 @@ Bool_t EventAnalyzer::Select(Selector sel)
     case kLPFO:
       // LPFO checks
         CutTrigger.push_back( is_charge_config( kOpposite ) );    // Charge opposite check
-        CutTrigger.push_back( Double_Tagger() );    // Double Tagger
+        CutTrigger.push_back( PFO_Quality_checks() );    // Double Tagger
         break;
 
     default:
@@ -203,7 +203,7 @@ Bool_t EventAnalyzer::is_charge_config( ChargeConfig cc )
 
 }
 
-Bool_t EventAnalyzer::Double_Tagger()
+Bool_t EventAnalyzer::PFO_Quality_checks()
 {
   vector<Bool_t> CutTrigger;
 

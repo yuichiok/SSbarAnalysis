@@ -39,10 +39,10 @@ class EventAnalyzer
   // LPFO checks
     Bool_t           is_charge_config ( ChargeConfig cc );
 
-    Bool_t           Double_Tagger    ();
-    Bool_t           is_momentum      ( PFO_Info iPFO, Float_t MINP, Float_t MAXP );
-    Bool_t           is_tpc_hits      ( PFO_Info iPFO, Int_t MIN_TPC_HITS );
-    Bool_t           is_offset_small  ( PFO_Info iPFO, Int_t MAX_OFFSET );
+    Bool_t           PFO_Quality_checks    ();
+    Bool_t           is_momentum           ( PFO_Info iPFO, Float_t MINP, Float_t MAXP );
+    Bool_t           is_tpc_hits           ( PFO_Info iPFO, Int_t MIN_TPC_HITS );
+    Bool_t           is_offset_small       ( PFO_Info iPFO, Int_t MAX_OFFSET );
 
 
   // Running Variables
