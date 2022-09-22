@@ -97,8 +97,7 @@ Bool_t EventAnalyzer::Select(Selector sel)
     - TString FILE_OUT (?)
   */
 
-  Bool_t check = true;
-  vector<Bool_t> boolNest;
+  vector<Bool_t> CutTrigger;
 
   // Options
 
@@ -106,14 +105,14 @@ Bool_t EventAnalyzer::Select(Selector sel)
 
     case kMC:
       // QQbar checks
-        boolNest.push_back( GenPairPicker( _mc.mc_quark_pdg[0], kSS ) );
-        boolNest.push_back( ISRPicker( 35 ) );
+        CutTrigger.push_back( GenPairPicker( _mc.mc_quark_pdg[0], kSS ) );
+        CutTrigger.push_back( ISRPicker( 35 ) );
         break;
 
     case kLPFO:
       // LPFO checks
-        boolNest.push_back( is_charge_config( kOpposite ) );    // Charge opposite check
-        boolNest.push_back( is_momentum( 20.0, 60.0 ) );        // MIN/MAX momentum check
+        CutTrigger.push_back( is_charge_config( kOpposite ) );    // Charge opposite check
+        CutTrigger.push_back( Double_Tagger() );    // Double Tagger
         break;
 
     default:
@@ -121,11 +120,11 @@ Bool_t EventAnalyzer::Select(Selector sel)
 
   }
 
-  for (auto icheck : boolNest ){
-    if (!icheck) { check = icheck; break; }
+  for (auto trigger : CutTrigger ){
+    if (!trigger) { return false; }
   }
 
-  return check;
+  return true;
 
 
 }
@@ -204,17 +203,35 @@ Bool_t EventAnalyzer::is_charge_config( ChargeConfig cc )
 
 }
 
-Bool_t EventAnalyzer::is_momentum( Float_t MINP_CUT = 20.0, Float_t MAXP_CUT = 60.0 )
+Bool_t EventAnalyzer::Double_Tagger()
 {
-  Bool_t mom_checks[2] = {0};
-  for (int i=0; i < 2; i++){
-    mom_checks[i] = ( MINP_CUT < LPFO[i].p_mag && LPFO[i].p_mag < MAXP_CUT);
-  }
+  vector<Bool_t> CutTrigger;
 
-  for (auto icheck : mom_checks ){
-    if (!icheck) { return icheck; }
+  for (auto iLPFO : LPFO ){
+    CutTrigger.push_back( is_momentum( iLPFO, 20.0, 60.0 ) );     // MIN/MAX momentum check
+    CutTrigger.push_back( is_tpc_hits( iLPFO, 210 ) );            // Number of TPC hit check
+    CutTrigger.push_back( is_offset_small( iLPFO, 1.0 ) );        // Offset distance check
+  }
+  
+  for (auto trigger : CutTrigger ){
+    if (!trigger) { return false; }
   }
 
   return true;
 
+}
+
+Bool_t EventAnalyzer::is_momentum( PFO_Info iPFO, Float_t MINP_CUT, Float_t MAXP_CUT )
+{
+  return ( MINP_CUT < iPFO.p_mag && iPFO.p_mag < MAXP_CUT);
+}
+
+Bool_t EventAnalyzer::is_tpc_hits( PFO_Info iPFO, Int_t MIN_TPC_HITS )
+{
+  return ( MIN_TPC_HITS < iPFO.tpc_hits );
+}
+
+Bool_t EventAnalyzer::is_offset_small( PFO_Info iPFO, Int_t MAX_OFFSET )
+{
+  return ( iPFO.pv < MAX_OFFSET );
 }
