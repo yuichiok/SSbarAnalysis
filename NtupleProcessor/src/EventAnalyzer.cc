@@ -9,7 +9,6 @@ EventAnalyzer.cpp
 #include <iostream>
 #include <utility>
 #include <vector>
-#include <ranges>
 #include <TBranch.h>
 #include <TLeaf.h>
 #include <TMath.h>
@@ -59,7 +58,6 @@ Bool_t EventAnalyzer::MapTree(TTree* tree)
 void EventAnalyzer::Analyze(Long64_t entry)
 {
 
-
   // PFO Analysis
     PFOTools pfot( &_pfo );
     if ( !pfot.ValidPFO() ) return;
@@ -71,12 +69,27 @@ void EventAnalyzer::Analyze(Long64_t entry)
   // Base Selection (mom, tpc_hit, offset)
     Bool_t LPFO_double_quality    = true;
     for ( auto iLPFO : pfot.LPFO ){
-      if( pfot.PFO_Quality_checks(iLPFO) ){
+      if( !pfot.PFO_Quality_checks(iLPFO) ){
         LPFO_double_quality = false;
         break;
       }
     }
     CutTrigger.push_back(LPFO_double_quality);
+
+  // SPFO opposite check
+    Bool_t is_gluon_K[2] = {0};
+    Bool_t is_there_a_gluon_K = false;
+    for ( int ijet=0; ijet<2; ijet++){
+      for ( auto iSPFO_K : pfot.SPFOs_K[ijet] ){
+        Bool_t charge_opposite = iSPFO_K.charge * pfot.LPFO[ijet].charge < 0;
+        Bool_t momentum_above  = iSPFO_K.p_mag > 10;
+        if( charge_opposite && momentum_above ) is_gluon_K[ijet] = true;
+      }
+    }
+    for ( auto ibool : is_gluon_K ){
+      if( ibool ) is_there_a_gluon_K = true;
+    }
+    CutTrigger.push_back(!is_there_a_gluon_K);
 
   // dEdx dist PDG check
     enum PDGConfig { K_K, K_Pi, Pi_Pi };
@@ -88,15 +101,16 @@ void EventAnalyzer::Analyze(Long64_t entry)
         ( pfot.isKaon(pfot.LPFO[1]) && pfot.isPion(pfot.LPFO[0]) ) ) dEdx_pdg_check = K_Pi;
 
 
-  // SPFO opposite check
-    Bool_t is_gluon_K[2] = {0};
-    for ( int ijet=0; ijet<2; ijet++){
-      for ( auto iSPFO_K : pfot.SPFOs_K[ijet] ){
-        Bool_t charge_opposite = iSPFO_K.charge * pfot.LPFO[ijet].charge < 0;
-        Bool_t momentum_above  = iSPFO_K.p_mag > 10;
-        if( charge_opposite && momentum_above ) is_gluon_K[ijet] = true;
+  // Check all bools
+    Bool_t all_checks = false;
+    for (auto ibool : CutTrigger){
+      if (!ibool) {
+        all_checks = false;
+        break;
       }
-    }    
+    }
+
+
 
 
 
