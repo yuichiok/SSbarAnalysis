@@ -33,49 +33,49 @@ PFOTools::PFOTools( PFO_QQbar *ptr )
 void PFOTools::InitializePFOTools( PFO_QQbar *data )
 {
 
-    for (int ipfo=0; ipfo < data->pfo_n; ipfo++)
-    {
-        // Make sure PFO belongs to either jet0 or jet 1
-        if (data->pfo_match[ipfo] < 0 || 1 < data->pfo_match[ipfo]) continue;
+  for (int ipfo=0; ipfo < data->pfo_n; ipfo++)
+  {
+    // Make sure PFO belongs to either jet0 or jet 1
+    if (data->pfo_match[ipfo] < 0 || 1 < data->pfo_match[ipfo]) continue;
 
-        // Make suer PFO has only one reconstructed track to avoid (lambda/sigma)
-        if (data->pfo_ntracks[ipfo] != 1) continue;
+    // Make suer PFO has only one reconstructed track to avoid (lambda/sigma)
+    if (data->pfo_ntracks[ipfo] != 1) continue;
 
-        VectorTools vt(data->pfo_px[ipfo], data->pfo_py[ipfo], data->pfo_pz[ipfo], data->pfo_E[ipfo]);
+    VectorTools vt(data->pfo_px[ipfo], data->pfo_py[ipfo], data->pfo_pz[ipfo], data->pfo_E[ipfo]);
 
-        // Initialize & categorize PFO variables with different jets
-        const int ijet = data->pfo_match[ipfo];
-        PFO = {
-            vt,
-            (Float_t) vt.v3().R(),
-            data->pfo_E[ipfo],
-            data->pfo_charge[ipfo],
-            data->pfo_pdgcheat[ipfo],
-            data->pfo_tpc_hits[ipfo],
-            sqrt(data->pfo_d0[ipfo] * data->pfo_d0[ipfo] + data->pfo_z0[ipfo] * data->pfo_z0[ipfo]),
-            data->pfo_dedx[ipfo],
-            data->pfo_piddedx_k_dedxdist[ipfo],
-            data->pfo_piddedx_pi_dedxdist[ipfo],
-            data->pfo_piddedx_p_dedxdist[ipfo],
-        };
-        PFO.dEdx_dist_pdg = Get_dEdx_dist_PID( PFO.kdEdx_dist, PFO.pidEdx_dist, PFO.pdEdx_dist );
-        PFO.cos           = std::cos(PFO.vt.v3().Theta());
-        PFO.qcos          = (PFO.charge < 0) ? PFO.cos : -PFO.cos;
+    // Initialize & categorize PFO variables with different jets
+    const int ijet = data->pfo_match[ipfo];
+    PFO = {
+      vt,
+      (Float_t) vt.v3().R(),
+      data->pfo_E[ipfo],
+      data->pfo_charge[ipfo],
+      data->pfo_pdgcheat[ipfo],
+      data->pfo_tpc_hits[ipfo],
+      sqrt(data->pfo_d0[ipfo] * data->pfo_d0[ipfo] + data->pfo_z0[ipfo] * data->pfo_z0[ipfo]),
+      data->pfo_dedx[ipfo],
+      data->pfo_piddedx_k_dedxdist[ipfo],
+      data->pfo_piddedx_pi_dedxdist[ipfo],
+      data->pfo_piddedx_p_dedxdist[ipfo],
+    };
+    PFO.dEdx_dist_pdg = Get_dEdx_dist_PID( PFO.kdEdx_dist, PFO.pidEdx_dist, PFO.pdEdx_dist );
+    PFO.cos           = std::cos(PFO.vt.v3().Theta());
+    PFO.qcos          = (PFO.charge < 0) ? PFO.cos : -PFO.cos;
 
-        PFO_jet[ijet].push_back(PFO);
-        
+    PFO_jet[ijet].push_back(PFO);
+    
+  }
+
+  if( ValidPFO() ){
+    for (int ijet=0; ijet < 2; ijet++){
+      LPFO[ijet]  = GetSortedJet(ijet).at(0);
+      if( PFO_jet[ijet].size() > 1 ){
+        SPFOs[ijet] = GetSortedJet(ijet);
+        // SPFOs[ijet].erase(SPFOs[ijet].begin());
+        pop_front(SPFOs[ijet]); // faster algorithm wise?
+      }
     }
-
-    if( ValidPFO() ){
-        for (int ijet=0; ijet < 2; ijet++){
-            LPFO[ijet]  = GetSortedJet(ijet).at(0);
-            if( PFO_jet[ijet].size() > 1 ){
-                SPFOs[ijet] = GetSortedJet(ijet);
-                // SPFOs[ijet].erase(SPFOs[ijet].begin());
-                pop_front(SPFOs[ijet]); // faster algorithm wise?
-            }
-        }
-    }
+  }
 
 }
 
