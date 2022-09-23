@@ -27,6 +27,12 @@ PFOTools::PFOTools() {}
 PFOTools::PFOTools( PFO_QQbar *ptr )
 : data(ptr)
 {
+    InitializePFOTools( data );
+}
+
+void PFOTools::InitializePFOTools( PFO_QQbar *data )
+{
+
     for (int ipfo=0; ipfo < data->pfo_n; ipfo++)
     {
         // Make sure PFO belongs to either jet0 or jet 1
@@ -70,8 +76,6 @@ PFOTools::PFOTools( PFO_QQbar *ptr )
             }
         }
     }
-
-
 
 }
 

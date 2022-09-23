@@ -21,6 +21,7 @@ class PFOTools
     PFOTools();
     PFOTools( PFO_QQbar *ptr );
     virtual ~PFOTools() {};
+    virtual void InitializePFOTools( PFO_QQbar *ptr );
 
     enum   ChargeConfig { kSame, kOpposite };
 
