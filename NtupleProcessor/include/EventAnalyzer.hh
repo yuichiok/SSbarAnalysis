@@ -25,7 +25,6 @@ class EventAnalyzer
     virtual ~EventAnalyzer(){};
 
     enum       Selector { kMC, kLPFO };
-    enum   ChargeConfig { kSame, kOpposite };
     enum MCParticlePair { FIRST_ENTRY, kDD, kUU, kSS, kCC, kBB, kTT };
 
   // methods
@@ -36,13 +35,6 @@ class EventAnalyzer
     Bool_t           ISRPicker( Float_t Kvcut );
     virtual Bool_t   Notify();
 
-  // LPFO checks
-    Bool_t           is_charge_config ( ChargeConfig cc );
-
-    Bool_t           PFO_Quality_checks    ( PFO_Info iPFO );
-    Bool_t           is_momentum           ( PFO_Info iPFO, Float_t MINP, Float_t MAXP );
-    Bool_t           is_tpc_hits           ( PFO_Info iPFO, Int_t MIN_TPC_HITS );
-    Bool_t           is_offset_small       ( PFO_Info iPFO, Int_t MAX_OFFSET );
 
 
   // Running Variables
@@ -56,10 +48,6 @@ class EventAnalyzer
 
   // Fixed size dimensions of array or collections stored in the TTree if any.
 
-  // Leading PFO
-    PFO_Info LPFO[2];
-    std::vector<PFO_Info> SPFOs[2];
-    std::vector<PFO_Info> SPFOs_K[2];
 
   private:
 

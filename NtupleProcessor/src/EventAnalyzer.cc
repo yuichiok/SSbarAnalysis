@@ -24,14 +24,6 @@ EventAnalyzer.cpp
 using std::cout;   using std::endl;
 typedef unsigned int Index;
 
-template<typename T>
-void pop_front(std::vector<T>& vec)
-{
-    assert(!vec.empty());
-    vec.front() = std::move(vec.back());
-    vec.pop_back();
-}
-
 EventAnalyzer::EventAnalyzer(TString o)
 : options(o)
 {
@@ -71,15 +63,16 @@ void EventAnalyzer::Analyze(Long64_t entry)
     PFOTools pfot( &_pfo );
     if ( !pfot.ValidPFO() ) return;
 
-    vector<PFO_Info> sorted_jets[2] = {pfot.GetSortedJet(0), pfot.GetSortedJet(1)};
 
-    for (int ijet=0; ijet < 2; ijet++ )
-    {
-      LPFO[ijet]  = sorted_jets[ijet].at(0);
-      SPFOs[ijet] = sorted_jets[ijet];
-      // SPFOs[ijet].erase(SPFOs[ijet].begin());
-      pop_front(SPFOs[ijet]); // faster algorithm wise?
-    }
+    // vector<PFO_Info> sorted_jets[2] = {pfot.GetSortedJet(0), pfot.GetSortedJet(1)};
+
+    // for (int ijet=0; ijet < 2; ijet++ )
+    // {
+    //   LPFO[ijet]  = sorted_jets[ijet].at(0);
+    //   SPFOs[ijet] = sorted_jets[ijet];
+    //   // SPFOs[ijet].erase(SPFOs[ijet].begin());
+    //   pop_front(SPFOs[ijet]); // faster algorithm wise?
+    // }
 
 
   // Secondary Kaons
@@ -99,11 +92,11 @@ void EventAnalyzer::Analyze(Long64_t entry)
     //     return iPFO.dEdx_dist_pdg == 321;
     // });
 
-    // cout << "SPFOs0:";
-    // for ( auto iSPFO : SPFOs[0] ){
-    //   cout << " " << iSPFO.dEdx_dist_pdg;
-    // }
-    // cout << endl;
+    cout << "SPFOs0:";
+    for ( auto iSPFO : pfot.SPFOs[0] ){
+      cout << " " << iSPFO.dEdx_dist_pdg;
+    }
+    cout << endl;
 
     // cout << "SPFOs_K0:";
     // for ( auto iSPFO : SPFOs_K[0] ){
@@ -220,57 +213,3 @@ Bool_t EventAnalyzer::Notify()
    return kTRUE;
 }
 
-Bool_t EventAnalyzer::is_charge_config( ChargeConfig cc )
-{
-
-  Int_t charge_config = LPFO[0].charge * LPFO[1].charge;
-
-  switch (cc)
-  {
-    case kSame:
-      if ( charge_config > 0 ) return true;
-      break;
-    
-    case kOpposite:
-      if ( charge_config < 0 ) return true;
-      break;
-
-    default:
-      return false;
-      break;
-  }
-
-  return false;
-
-}
-
-Bool_t EventAnalyzer::PFO_Quality_checks( PFO_Info iPFO )
-{
-  vector<Bool_t> CutTrigger;
-
-  CutTrigger.push_back( is_momentum( iPFO, 20.0, 60.0 ) );     // MIN/MAX momentum check
-  CutTrigger.push_back( is_tpc_hits( iPFO, 210 ) );            // Number of TPC hit check
-  CutTrigger.push_back( is_offset_small( iPFO, 1.0 ) );        // Offset distance check
-  
-  for (auto trigger : CutTrigger ){
-    if (!trigger) { return false; }
-  }
-
-  return true;
-
-}
-
-Bool_t EventAnalyzer::is_momentum( PFO_Info iPFO, Float_t MINP_CUT, Float_t MAXP_CUT )
-{
-  return ( MINP_CUT < iPFO.p_mag && iPFO.p_mag < MAXP_CUT);
-}
-
-Bool_t EventAnalyzer::is_tpc_hits( PFO_Info iPFO, Int_t MIN_TPC_HITS )
-{
-  return ( MIN_TPC_HITS < iPFO.tpc_hits );
-}
-
-Bool_t EventAnalyzer::is_offset_small( PFO_Info iPFO, Int_t MAX_OFFSET )
-{
-  return ( iPFO.pv < MAX_OFFSET );
-}

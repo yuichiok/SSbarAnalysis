@@ -18,8 +18,11 @@ using std::vector;
 class PFOTools
 {
   public:
+    PFOTools();
     PFOTools( PFO_QQbar *ptr );
     virtual ~PFOTools() {};
+
+    enum   ChargeConfig { kSame, kOpposite };
 
     virtual vector<PFO_Info>  SortJet  ( vector<PFO_Info> jet );
     virtual Bool_t            ValidPFO ();
@@ -31,8 +34,23 @@ class PFOTools
     virtual Bool_t            isPion            ( PFO_Info iPFO );
     virtual Bool_t            isProton          ( PFO_Info iPFO );
 
-    // List of PFOs in jets
+  // LPFO checks
+    Bool_t           is_charge_config ( ChargeConfig cc );
+
+    Bool_t           PFO_Quality_checks    ( PFO_Info iPFO );
+    Bool_t           is_momentum           ( PFO_Info iPFO, Float_t MINP, Float_t MAXP );
+    Bool_t           is_tpc_hits           ( PFO_Info iPFO, Int_t MIN_TPC_HITS );
+    Bool_t           is_offset_small       ( PFO_Info iPFO, Int_t MAX_OFFSET );
+
+
+  // List of PFOs in jets
     vector<PFO_Info> PFO_jet[2];
+
+  // Leading/Sub-Leading PFOs
+    PFO_Info LPFO[2];
+    std::vector<PFO_Info> SPFOs[2];
+    std::vector<PFO_Info> SPFOs_K[2];
+
 
   private:
     PFO_QQbar *data     ;

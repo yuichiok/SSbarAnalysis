@@ -14,6 +14,16 @@ PFOTools.cpp
 
 using std::cout;   using std::endl;
 
+template<typename T>
+void pop_front(std::vector<T>& vec)
+{
+    assert(!vec.empty());
+    vec.front() = std::move(vec.back());
+    vec.pop_back();
+}
+
+PFOTools::PFOTools() {}
+
 PFOTools::PFOTools( PFO_QQbar *ptr )
 : data(ptr)
 {
@@ -47,7 +57,21 @@ PFOTools::PFOTools( PFO_QQbar *ptr )
         PFO.qcos          = (PFO.charge < 0) ? PFO.cos : -PFO.cos;
 
         PFO_jet[ijet].push_back(PFO);
+        
     }
+
+    if( ValidPFO() ){
+        for (int ijet=0; ijet < 2; ijet++){
+            LPFO[ijet]  = GetSortedJet(ijet).at(0);
+            if( PFO_jet[ijet].size() > 1 ){
+                SPFOs[ijet] = GetSortedJet(ijet);
+                // SPFOs[ijet].erase(SPFOs[ijet].begin());
+                pop_front(SPFOs[ijet]); // faster algorithm wise?
+            }
+        }
+    }
+
+
 
 }
 
@@ -103,4 +127,59 @@ Bool_t PFOTools::isPion( PFO_Info iPFO )
 Bool_t PFOTools::isProton( PFO_Info iPFO )
 {
     return iPFO.dEdx_dist_pdg == 2212;
+}
+
+Bool_t PFOTools::is_charge_config( ChargeConfig cc )
+{
+
+  Int_t charge_config = LPFO[0].charge * LPFO[1].charge;
+
+  switch (cc)
+  {
+    case kSame:
+      if ( charge_config > 0 ) return true;
+      break;
+    
+    case kOpposite:
+      if ( charge_config < 0 ) return true;
+      break;
+
+    default:
+      return false;
+      break;
+  }
+
+  return false;
+
+}
+
+Bool_t PFOTools::PFO_Quality_checks( PFO_Info iPFO )
+{
+  vector<Bool_t> CutTrigger;
+
+  CutTrigger.push_back( is_momentum( iPFO, 20.0, 60.0 ) );     // MIN/MAX momentum check
+  CutTrigger.push_back( is_tpc_hits( iPFO, 210 ) );            // Number of TPC hit check
+  CutTrigger.push_back( is_offset_small( iPFO, 1.0 ) );        // Offset distance check
+  
+  for (auto trigger : CutTrigger ){
+    if (!trigger) { return false; }
+  }
+
+  return true;
+
+}
+
+Bool_t PFOTools::is_momentum( PFO_Info iPFO, Float_t MINP_CUT, Float_t MAXP_CUT )
+{
+  return ( MINP_CUT < iPFO.p_mag && iPFO.p_mag < MAXP_CUT);
+}
+
+Bool_t PFOTools::is_tpc_hits( PFO_Info iPFO, Int_t MIN_TPC_HITS )
+{
+  return ( MIN_TPC_HITS < iPFO.tpc_hits );
+}
+
+Bool_t PFOTools::is_offset_small( PFO_Info iPFO, Int_t MAX_OFFSET )
+{
+  return ( iPFO.pv < MAX_OFFSET );
 }
