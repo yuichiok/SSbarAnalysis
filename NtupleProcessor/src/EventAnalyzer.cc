@@ -9,6 +9,7 @@ EventAnalyzer.cpp
 #include <iostream>
 #include <utility>
 #include <vector>
+#include <ranges>
 #include <TBranch.h>
 #include <TLeaf.h>
 #include <TMath.h>
@@ -80,9 +81,49 @@ void EventAnalyzer::Analyze(Long64_t entry)
       pop_front(SPFOs[ijet]); // faster algorithm wise?
     }
 
+
+  // Secondary Kaons
+    // for ( int ijet=0; ijet < 2; ijet++ ){
+    //   for ( auto iSPFO : SPFOs[ijet] ){
+    //     if( pfot.isKaon(iSPFO) ) SPFOs_K[ijet].push_back(iSPFO);
+    //   }
+    // }
+
+    // std::vector<PFO_Info> SPFOs_K[2];
+
+    // std::copy_if(SPFOs[0].begin(), SPFOs[0].end(), std::back_inserter(SPFOs_K[0]), [](PFO_Info iPFO) {
+    //     return iPFO.dEdx_dist_pdg == 321;
+    // });
+
+    // SPFOs_K[0] = SPFOs[0] | std::ranges::views::filter([](PFO_Info &iPFO) {
+    //     return iPFO.dEdx_dist_pdg == 321;
+    // });
+
+    // cout << "SPFOs0:";
+    // for ( auto iSPFO : SPFOs[0] ){
+    //   cout << " " << iSPFO.dEdx_dist_pdg;
+    // }
+    // cout << endl;
+
+    // cout << "SPFOs_K0:";
+    // for ( auto iSPFO : SPFOs_K[0] ){
+    //   cout << " " << iSPFO.dEdx_dist_pdg;
+    // }
+    // cout << endl;
+
+
   // Selection
-    Select( kLPFO );
-  
+    // Bool_t LPFO_double_quality = true;
+    // for ( auto iLPFO : LPFO ){
+    //   if( !PFO_Quality_checks(iLPFO) ){
+    //     LPFO_double_quality = false;
+    //     break;
+    //   }
+    // }
+
+
+
+
 
 
 }
@@ -111,8 +152,8 @@ Bool_t EventAnalyzer::Select(Selector sel)
 
     case kLPFO:
       // LPFO checks
-        CutTrigger.push_back( is_charge_config( kOpposite ) );    // Charge opposite check
-        CutTrigger.push_back( PFO_Quality_checks() );             // Double Tagger
+        // CutTrigger.push_back( is_charge_config( kOpposite ) );    // Charge opposite check
+        // CutTrigger.push_back( PFO_Quality_checks() );             // Double Tagger
         break;
 
     default:
@@ -203,15 +244,13 @@ Bool_t EventAnalyzer::is_charge_config( ChargeConfig cc )
 
 }
 
-Bool_t EventAnalyzer::PFO_Quality_checks()
+Bool_t EventAnalyzer::PFO_Quality_checks( PFO_Info iPFO )
 {
   vector<Bool_t> CutTrigger;
 
-  for (auto iLPFO : LPFO ){
-    CutTrigger.push_back( is_momentum( iLPFO, 20.0, 60.0 ) );     // MIN/MAX momentum check
-    CutTrigger.push_back( is_tpc_hits( iLPFO, 210 ) );            // Number of TPC hit check
-    CutTrigger.push_back( is_offset_small( iLPFO, 1.0 ) );        // Offset distance check
-  }
+  CutTrigger.push_back( is_momentum( iPFO, 20.0, 60.0 ) );     // MIN/MAX momentum check
+  CutTrigger.push_back( is_tpc_hits( iPFO, 210 ) );            // Number of TPC hit check
+  CutTrigger.push_back( is_offset_small( iPFO, 1.0 ) );        // Offset distance check
   
   for (auto trigger : CutTrigger ){
     if (!trigger) { return false; }
