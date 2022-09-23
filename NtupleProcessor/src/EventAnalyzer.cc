@@ -58,6 +58,8 @@ Bool_t EventAnalyzer::MapTree(TTree* tree)
 void EventAnalyzer::Analyze(Long64_t entry)
 {
 
+  Bool_t debug = (entry == 7515);
+
   // PFO Analysis
     PFOTools pfot( &_pfo );
     if ( !pfot.ValidPFO() ) return;
@@ -100,9 +102,23 @@ void EventAnalyzer::Analyze(Long64_t entry)
     if( ( pfot.isKaon(pfot.LPFO[0]) && pfot.isPion(pfot.LPFO[1]) ) ||
         ( pfot.isKaon(pfot.LPFO[1]) && pfot.isPion(pfot.LPFO[0]) ) ) dEdx_pdg_check = K_Pi;
 
+  // charge config check
+    Bool_t charge_check = false;
+    switch ( dEdx_pdg_check )
+    {
+      case K_K:
+        charge_check = pfot.is_charge_config(pfot.kOpposite);
+        break;
+      case K_Pi:
+        charge_check = pfot.is_charge_config(pfot.kSame);
+
+    default:
+      break;
+    }
+    CutTrigger.push_back(charge_check);
 
   // Check all bools
-    Bool_t all_checks = false;
+    Bool_t all_checks = true;
     for (auto ibool : CutTrigger){
       if (!ibool) {
         all_checks = false;
@@ -110,7 +126,27 @@ void EventAnalyzer::Analyze(Long64_t entry)
       }
     }
 
+    if( debug ) {
 
+      cout << entry << endl;
+      cout << "check: " << LPFO_double_quality << "\n";
+
+      for ( auto iLPFO : pfot.LPFO ){
+        cout << "mom: " << pfot.is_momentum(iLPFO,20,60) << ", tpc: " << pfot.is_tpc_hits(iLPFO,210) << ", offset: " << pfot.is_offset_small(iLPFO,1.0) << endl;
+      }
+      cout << "is there a gluon K? -> " << is_there_a_gluon_K << endl;
+      cout << "is charge check? -> " << charge_check << endl;
+      cout << "all check? -> " << all_checks << endl;
+
+    }
+
+
+
+  // Kaon
+    if( dEdx_pdg_check == K_K && all_checks ){
+    // if( debug && dEdx_pdg_check == K_K ){
+      cout << "K_K event!" << endl;
+    }
 
 
 
