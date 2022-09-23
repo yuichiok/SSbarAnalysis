@@ -63,56 +63,24 @@ void EventAnalyzer::Analyze(Long64_t entry)
     PFOTools pfot( &_pfo );
     if ( !pfot.ValidPFO() ) return;
 
+  // SPFO opposite check
+    Bool_t is_gluon_K[2] = {0};
+    for ( int ijet=0; ijet<2; ijet++){
+      for ( auto iSPFO_K : pfot.SPFOs_K[ijet] ){
+        Bool_t charge_opposite = iSPFO_K.charge * pfot.LPFO[ijet].charge < 0;
+        Bool_t momentum_above  = iSPFO_K.p_mag > 10;
+        if( charge_opposite && momentum_above ) is_gluon_K[ijet] = true;
+      }
+    }    
 
-    // vector<PFO_Info> sorted_jets[2] = {pfot.GetSortedJet(0), pfot.GetSortedJet(1)};
-
-    // for (int ijet=0; ijet < 2; ijet++ )
-    // {
-    //   LPFO[ijet]  = sorted_jets[ijet].at(0);
-    //   SPFOs[ijet] = sorted_jets[ijet];
-    //   // SPFOs[ijet].erase(SPFOs[ijet].begin());
-    //   pop_front(SPFOs[ijet]); // faster algorithm wise?
-    // }
-
-
-  // Secondary Kaons
-    // for ( int ijet=0; ijet < 2; ijet++ ){
-    //   for ( auto iSPFO : SPFOs[ijet] ){
-    //     if( pfot.isKaon(iSPFO) ) SPFOs_K[ijet].push_back(iSPFO);
-    //   }
-    // }
-
-    // std::vector<PFO_Info> SPFOs_K[2];
-
-    // std::copy_if(SPFOs[0].begin(), SPFOs[0].end(), std::back_inserter(SPFOs_K[0]), [](PFO_Info iPFO) {
-    //     return iPFO.dEdx_dist_pdg == 321;
-    // });
-
-    // SPFOs_K[0] = SPFOs[0] | std::ranges::views::filter([](PFO_Info &iPFO) {
-    //     return iPFO.dEdx_dist_pdg == 321;
-    // });
-
-    cout << "SPFOs0:";
-    for ( auto iSPFO : pfot.SPFOs[0] ){
-      cout << " " << iSPFO.dEdx_dist_pdg;
+  // Selection (mom, tpc_hit, offset)
+    Bool_t LPFO_double_quality = true;
+    for ( auto iLPFO : pfot.LPFO ){
+      if( !pfot.PFO_Quality_checks(iLPFO) ){
+        LPFO_double_quality = false;
+        break;
+      }
     }
-    cout << endl;
-
-    // cout << "SPFOs_K0:";
-    // for ( auto iSPFO : SPFOs_K[0] ){
-    //   cout << " " << iSPFO.dEdx_dist_pdg;
-    // }
-    // cout << endl;
-
-
-  // Selection
-    // Bool_t LPFO_double_quality = true;
-    // for ( auto iLPFO : LPFO ){
-    //   if( !PFO_Quality_checks(iLPFO) ){
-    //     LPFO_double_quality = false;
-    //     break;
-    //   }
-    // }
 
 
 

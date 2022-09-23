@@ -31,17 +31,17 @@ class PFOTools
     virtual vector<PFO_Info>  GetJet            ( int ijet );
     virtual vector<PFO_Info>  GetSortedJet      ( int ijet );
     virtual Int_t             Get_dEdx_dist_PID ( Float_t kdEdx_dist, Float_t pidEdx_dist, Float_t pdEdx_dist );
-    virtual Bool_t            isKaon            ( PFO_Info iPFO );
-    virtual Bool_t            isPion            ( PFO_Info iPFO );
-    virtual Bool_t            isProton          ( PFO_Info iPFO );
+    static  Bool_t            isKaon            ( PFO_Info iPFO );
+    static  Bool_t            isPion            ( PFO_Info iPFO );
+    static  Bool_t            isProton          ( PFO_Info iPFO );
 
   // LPFO checks
-    Bool_t           is_charge_config ( ChargeConfig cc );
+    virtual Bool_t           is_charge_config ( ChargeConfig cc );
 
-    Bool_t           PFO_Quality_checks    ( PFO_Info iPFO );
-    Bool_t           is_momentum           ( PFO_Info iPFO, Float_t MINP, Float_t MAXP );
-    Bool_t           is_tpc_hits           ( PFO_Info iPFO, Int_t MIN_TPC_HITS );
-    Bool_t           is_offset_small       ( PFO_Info iPFO, Int_t MAX_OFFSET );
+    virtual Bool_t           PFO_Quality_checks    ( PFO_Info iPFO );
+    virtual Bool_t           is_momentum           ( PFO_Info iPFO, Float_t MINP, Float_t MAXP );
+    virtual Bool_t           is_tpc_hits           ( PFO_Info iPFO, Int_t MIN_TPC_HITS );
+    virtual Bool_t           is_offset_small       ( PFO_Info iPFO, Int_t MAX_OFFSET );
 
 
   // List of PFOs in jets
@@ -51,6 +51,7 @@ class PFOTools
     PFO_Info LPFO[2];
     std::vector<PFO_Info> SPFOs[2];
     std::vector<PFO_Info> SPFOs_K[2];
+    std::vector<PFO_Info> SPFOs_Pi[2];
 
 
   private:
