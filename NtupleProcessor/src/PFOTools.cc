@@ -81,11 +81,26 @@ Int_t PFOTools::Get_dEdx_dist_PID( Float_t kdEdx_dist, Float_t pidEdx_dist, Floa
 {
     const static int nparticles = 3;
     Int_t        k_pi_p[nparticles] = { 321, 211, 2212 };
-    Float_t k_pi_p_dEdx[nparticles] = { kdEdx_dist, pidEdx_dist, pdEdx_dist };
+    Float_t k_pi_p_dEdx[nparticles] = { abs(kdEdx_dist), abs(pidEdx_dist), abs(pdEdx_dist) };
 
     Float_t  min_dEdx_dist = *std::min_element(k_pi_p_dEdx, k_pi_p_dEdx + nparticles );
     Int_t   imin_dEdx_dist =  std::find( k_pi_p_dEdx, k_pi_p_dEdx + nparticles, min_dEdx_dist ) - k_pi_p_dEdx;
 
     return k_pi_p[imin_dEdx_dist];
 
+}
+
+Bool_t PFOTools::isKaon( PFO_Info iPFO )
+{
+    return iPFO.dEdx_dist_pdg == 321;
+}
+
+Bool_t PFOTools::isPion( PFO_Info iPFO )
+{
+    return iPFO.dEdx_dist_pdg == 211;
+}
+
+Bool_t PFOTools::isProton( PFO_Info iPFO )
+{
+    return iPFO.dEdx_dist_pdg == 2212;
 }

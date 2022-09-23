@@ -27,6 +27,9 @@ class PFOTools
     virtual vector<PFO_Info>  GetJet            ( int ijet );
     virtual vector<PFO_Info>  GetSortedJet      ( int ijet );
     virtual Int_t             Get_dEdx_dist_PID ( Float_t kdEdx_dist, Float_t pidEdx_dist, Float_t pdEdx_dist );
+    virtual Bool_t            isKaon            ( PFO_Info iPFO );
+    virtual Bool_t            isPion            ( PFO_Info iPFO );
+    virtual Bool_t            isProton          ( PFO_Info iPFO );
 
     // List of PFOs in jets
     vector<PFO_Info> PFO_jet[2];
