@@ -146,20 +146,21 @@ struct PFO_Info {
 
   public:
     VectorTools vt;
-    Float_t p_mag       =  0;
-    Float_t E           =  0;
-    Int_t   charge      =  0;
-    Int_t   pdgcheat    =  0;
-    Int_t   tpc_hits    =  0;
-    Float_t pv          = -2;
-    Float_t dEdx        =  0;
-    Float_t kdEdx_dist  =  0;
-    Float_t pdEdx_dist  =  0;
-    Float_t pidEdx_dist =  0;
-    Float_t cos         = -2;
-    Float_t qcos        = -2;
-    Float_t q_sep       = -2;
-    Float_t qbar_sep    = -2;
+    Float_t p_mag         =  0;
+    Float_t E             =  0;
+    Int_t   charge        =  0;
+    Int_t   pdgcheat      =  0;
+    Int_t   tpc_hits      =  0;
+    Float_t pv            = -2;
+    Float_t dEdx          =  0;
+    Float_t kdEdx_dist    =  0;
+    Float_t pidEdx_dist   =  0;
+    Float_t pdEdx_dist    =  0;
+    Int_t   dEdx_dist_pdg =  0;
+    Float_t cos           = -2;
+    Float_t qcos          = -2;
+    Float_t q_sep         = -2;
+    Float_t qbar_sep      = -2;
 
     bool operator > (const PFO_Info& apfo) const
     {

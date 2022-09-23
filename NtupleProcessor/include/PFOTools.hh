@@ -22,10 +22,11 @@ class PFOTools
     virtual ~PFOTools() {};
 
     virtual vector<PFO_Info>  SortJet  ( vector<PFO_Info> jet );
-    virtual bool              ValidPFO ();
+    virtual Bool_t            ValidPFO ();
 
-    virtual vector<PFO_Info>  GetJet        ( int ijet );
-    virtual vector<PFO_Info>  GetSortedJet  ( int ijet );
+    virtual vector<PFO_Info>  GetJet            ( int ijet );
+    virtual vector<PFO_Info>  GetSortedJet      ( int ijet );
+    virtual Int_t             Get_dEdx_dist_PID ( Float_t kdEdx_dist, Float_t pidEdx_dist, Float_t pdEdx_dist );
 
     // List of PFOs in jets
     vector<PFO_Info> PFO_jet[2];

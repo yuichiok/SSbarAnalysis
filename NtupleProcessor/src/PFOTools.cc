@@ -39,11 +39,12 @@ PFOTools::PFOTools( PFO_QQbar *ptr )
             sqrt(data->pfo_d0[ipfo] * data->pfo_d0[ipfo] + data->pfo_z0[ipfo] * data->pfo_z0[ipfo]),
             data->pfo_dedx[ipfo],
             data->pfo_piddedx_k_dedxdist[ipfo],
-            data->pfo_piddedx_p_dedxdist[ipfo],
             data->pfo_piddedx_pi_dedxdist[ipfo],
+            data->pfo_piddedx_p_dedxdist[ipfo],
         };
-        PFO.cos  = std::cos(PFO.vt.v3().Theta());
-        PFO.qcos = (PFO.charge < 0) ? PFO.cos : -PFO.cos;
+        PFO.dEdx_dist_pdg = Get_dEdx_dist_PID( PFO.kdEdx_dist, PFO.pidEdx_dist, PFO.pdEdx_dist );
+        PFO.cos           = std::cos(PFO.vt.v3().Theta());
+        PFO.qcos          = (PFO.charge < 0) ? PFO.cos : -PFO.cos;
 
         PFO_jet[ijet].push_back(PFO);
     }
@@ -56,11 +57,12 @@ vector<PFO_Info> PFOTools::SortJet( vector<PFO_Info> jet )
     return jet;
 }
 
-bool PFOTools::ValidPFO()
+Bool_t PFOTools::ValidPFO()
 {
-    bool isValid = false;
-    for (int ijet=0; ijet < 2; ijet++) isValid = PFO_jet[ijet].size();
-    return isValid;
+    for ( auto iPFO_jet : PFO_jet ) {
+        if( !iPFO_jet.size() ) return false;
+    }
+    return true;
 }
 
 vector<PFO_Info> PFOTools::GetJet( int ijet )
@@ -73,4 +75,17 @@ vector<PFO_Info> PFOTools::GetSortedJet( int ijet )
     vector<PFO_Info> sorted_jet = PFO_jet[ijet];
     sorted_jet = SortJet( sorted_jet );
     return sorted_jet;
+}
+
+Int_t PFOTools::Get_dEdx_dist_PID( Float_t kdEdx_dist, Float_t pidEdx_dist, Float_t pdEdx_dist )
+{
+    const static int nparticles = 3;
+    Int_t        k_pi_p[nparticles] = { 321, 211, 2212 };
+    Float_t k_pi_p_dEdx[nparticles] = { kdEdx_dist, pidEdx_dist, pdEdx_dist };
+
+    Float_t  min_dEdx_dist = *std::min_element(k_pi_p_dEdx, k_pi_p_dEdx + nparticles );
+    Int_t   imin_dEdx_dist =  std::find( k_pi_p_dEdx, k_pi_p_dEdx + nparticles, min_dEdx_dist ) - k_pi_p_dEdx;
+
+    return k_pi_p[imin_dEdx_dist];
+
 }
