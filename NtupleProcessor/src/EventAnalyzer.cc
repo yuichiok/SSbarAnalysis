@@ -59,9 +59,34 @@ Bool_t EventAnalyzer::MapTree(TTree* tree)
 void EventAnalyzer::Analyze(Long64_t entry)
 {
 
+
   // PFO Analysis
     PFOTools pfot( &_pfo );
     if ( !pfot.ValidPFO() ) return;
+
+
+  // Selections
+    vector<Bool_t> CutTrigger;
+
+  // Base Selection (mom, tpc_hit, offset)
+    Bool_t LPFO_double_quality    = true;
+    for ( auto iLPFO : pfot.LPFO ){
+      if( pfot.PFO_Quality_checks(iLPFO) ){
+        LPFO_double_quality = false;
+        break;
+      }
+    }
+    CutTrigger.push_back(LPFO_double_quality);
+
+  // dEdx dist PDG check
+    enum PDGConfig { K_K, K_Pi, Pi_Pi };
+    Int_t dEdx_pdg_check = -1;
+    
+    if(   pfot.isKaon(pfot.LPFO[0]) && pfot.isKaon(pfot.LPFO[1]) )   dEdx_pdg_check = K_K;
+    if(   pfot.isPion(pfot.LPFO[0]) && pfot.isPion(pfot.LPFO[1]) )   dEdx_pdg_check = Pi_Pi;
+    if( ( pfot.isKaon(pfot.LPFO[0]) && pfot.isPion(pfot.LPFO[1]) ) ||
+        ( pfot.isKaon(pfot.LPFO[1]) && pfot.isPion(pfot.LPFO[0]) ) ) dEdx_pdg_check = K_Pi;
+
 
   // SPFO opposite check
     Bool_t is_gluon_K[2] = {0};
@@ -72,17 +97,6 @@ void EventAnalyzer::Analyze(Long64_t entry)
         if( charge_opposite && momentum_above ) is_gluon_K[ijet] = true;
       }
     }    
-
-  // Selection (mom, tpc_hit, offset)
-    Bool_t LPFO_double_quality = true;
-    for ( auto iLPFO : pfot.LPFO ){
-      if( !pfot.PFO_Quality_checks(iLPFO) ){
-        LPFO_double_quality = false;
-        break;
-      }
-    }
-
-
 
 
 
@@ -99,34 +113,17 @@ Bool_t EventAnalyzer::Select(Selector sel)
     - TString FILE_OUT (?)
   */
 
-  vector<Bool_t> CutTrigger;
+    vector<Bool_t> CutTrigger;
 
   // Options
+    CutTrigger.push_back( GenPairPicker( _mc.mc_quark_pdg[0], kSS ) );
+    CutTrigger.push_back( ISRPicker( 35 ) );
 
-  switch (sel) {
+    for (auto trigger : CutTrigger ){
+      if (!trigger) { return false; }
+    }
 
-    case kMC:
-      // QQbar checks
-        CutTrigger.push_back( GenPairPicker( _mc.mc_quark_pdg[0], kSS ) );
-        CutTrigger.push_back( ISRPicker( 35 ) );
-        break;
-
-    case kLPFO:
-      // LPFO checks
-        // CutTrigger.push_back( is_charge_config( kOpposite ) );    // Charge opposite check
-        // CutTrigger.push_back( PFO_Quality_checks() );             // Double Tagger
-        break;
-
-    default:
-      break;
-
-  }
-
-  for (auto trigger : CutTrigger ){
-    if (!trigger) { return false; }
-  }
-
-  return true;
+    return true;
 
 
 }
