@@ -126,19 +126,7 @@ void EventAnalyzer::Analyze(Long64_t entry)
       }
     }
 
-    if( debug ) {
 
-      cout << entry << endl;
-      cout << "check: " << LPFO_double_quality << "\n";
-
-      for ( auto iLPFO : pfot.LPFO ){
-        cout << "mom: " << pfot.is_momentum(iLPFO,20,60) << ", tpc: " << pfot.is_tpc_hits(iLPFO,210) << ", offset: " << pfot.is_offset_small(iLPFO,1.0) << endl;
-      }
-      cout << "is there a gluon K? -> " << is_there_a_gluon_K << endl;
-      cout << "is charge check? -> " << charge_check << endl;
-      cout << "all check? -> " << all_checks << endl;
-
-    }
 
 
 
@@ -228,3 +216,19 @@ Bool_t EventAnalyzer::Notify()
    return kTRUE;
 }
 
+/*
+  // Some debug comments we might use later...
+    if( debug ) {
+
+      cout << entry << endl;
+      cout << "check: " << LPFO_double_quality << "\n";
+
+      for ( auto iLPFO : pfot.LPFO ){
+        cout << "mom: " << pfot.is_momentum(iLPFO,20,60) << ", tpc: " << pfot.is_tpc_hits(iLPFO,210) << ", offset: " << pfot.is_offset_small(iLPFO,1.0) << endl;
+      }
+      cout << "is there a gluon K? -> " << is_there_a_gluon_K << endl;
+      cout << "is charge check? -> " << charge_check << endl;
+      cout << "all check? -> " << all_checks << endl;
+
+    }
+*/
