@@ -19,6 +19,7 @@ EventAnalyzer.cpp
 #include "TreeReader.hh"
 #include "PFOTools.hh"
 #include "VectorTools.hh"
+#include "TreeWriter.hh"
 
 using std::cout;   using std::endl;
 typedef unsigned int Index;
@@ -30,7 +31,7 @@ EventAnalyzer::EventAnalyzer(TString o)
     entriesInNtuple   = 0;
 }
 
-Bool_t EventAnalyzer::MapTree(TTree* tree)
+Bool_t EventAnalyzer::InitReadTree(TTree* tree)
 {
   // Maps TTree to class' variables.
   // TO DO: Implement check for correct mapping, return result?
@@ -44,6 +45,7 @@ Bool_t EventAnalyzer::MapTree(TTree* tree)
     fCurrent = -1;
     fChain->SetMakeClass(1);
 
+  // Read Tree
     TreeReader reader;
     reader.InitializeMCReadTree(fChain, _mc, _branch);
     reader.InitializeJetReadTree(fChain, _jet, _branch);
@@ -55,6 +57,32 @@ Bool_t EventAnalyzer::MapTree(TTree* tree)
 
 }
 
+void EventAnalyzer::InitWriteTree()
+{
+
+  // Initialize Write Tree
+    TreeWriter writer;
+    _hfile = new TFile( _hfilename, "RECREATE", _hfilename ) ;
+    
+    _hTree_LPFO     = new TTree( "LPFO", "tree" );
+    _hTree_LPFO_KK  = new TTree( "LPFO_KK", "tree" );
+    _hTree_LPFO_KPi = new TTree( "LPFO_KPi", "tree" );
+
+    writer.InitializeLPFOTree(_hTree_LPFO, _tree_lpfo);
+    writer.InitializeLPFOTree(_hTree_LPFO_KK, _tree_lpfo_kk);
+    writer.InitializeLPFOTree(_hTree_LPFO_KPi, _tree_lpfo_kpi);
+
+}
+
+void EventAnalyzer::WriteTree()
+{
+
+  // Write Tree
+    _hfile->Write();
+    _hfile->Close();
+
+}
+
 void EventAnalyzer::Analyze(Long64_t entry)
 {
 
@@ -63,6 +91,9 @@ void EventAnalyzer::Analyze(Long64_t entry)
   // PFO Analysis
     PFOTools pfot( &_pfo );
     if ( !pfot.ValidPFO() ) return;
+
+  // Fill raw LPFO info
+    
 
 
   // Selections

@@ -35,7 +35,9 @@ void TreeIterator::Init(TTree *tree)
     finalEntry = nEntries-1;
 
   // Initialize Event Handler, adding the criteria of each HistoMaker to it's list of criteria.
-    eAnalyzer.MapTree(fChain);
+    eAnalyzer.InitReadTree(fChain);  
+    eAnalyzer.InitWriteTree();
+
 }
 
 
@@ -64,4 +66,8 @@ Bool_t TreeIterator::Process(Long64_t entry)
 }
 
 void TreeIterator::SlaveTerminate(){}
-void TreeIterator::Terminate(){}
+void TreeIterator::Terminate()
+{
+  // Write Trees
+    eAnalyzer.WriteTree();
+}

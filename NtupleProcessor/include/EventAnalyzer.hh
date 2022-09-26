@@ -28,13 +28,16 @@ class EventAnalyzer
     enum MCParticlePair { FIRST_ENTRY, kDD, kUU, kSS, kCC, kBB, kTT };
 
   // methods
-    Bool_t           MapTree( TTree* ); // Maps class variables to an input TTree.
+    Bool_t           InitReadTree( TTree* ); // Maps class variables to an input TTree.
+    void             InitWriteTree(); // 
+    void             WriteTree(); // 
     void             Analyze( Long64_t entry );
     Bool_t           Select( Selector s );          // Evaluates the class' list of event selection criteria
     Bool_t           GenPairPicker( Float_t mc_particle, MCParticlePair pair );
     Bool_t           ISRPicker( Float_t Kvcut );
     virtual Bool_t   Notify();
 
+    void             WriteVariables( Tree_SSbar data );
 
 
   // Running Variables
@@ -55,6 +58,16 @@ class EventAnalyzer
     Jet_QQbar     _jet     ;
     PFO_QQbar     _pfo     ;
     Branch_QQbar  _branch  ;
+
+    TFile * _hfile;
+    TTree * _hTree_LPFO;
+    TTree * _hTree_LPFO_KK;
+    TTree * _hTree_LPFO_KPi;
+
+    TString       _hfilename = "rootfiles/tmp_root/output.root";
+    Tree_SSbar    _tree_lpfo;
+    Tree_SSbar    _tree_lpfo_kk;
+    Tree_SSbar    _tree_lpfo_kpi;
 
 };
 
