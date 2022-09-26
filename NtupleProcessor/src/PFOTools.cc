@@ -46,6 +46,7 @@ void PFOTools::InitializePFOTools( PFO_QQbar *data )
     // Initialize & categorize PFO variables with different jets
     const int ijet = data->pfo_match[ipfo];
     PFO = {
+      ipfo,
       vt,
       (Float_t) vt.v3().R(),
       data->pfo_E[ipfo],
