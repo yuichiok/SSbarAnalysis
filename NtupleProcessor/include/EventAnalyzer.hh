@@ -15,6 +15,7 @@
 #include <TFile.h>
 #include <vector>
 #include <fstream>
+#include "PFOTools.hh"
 #include "TreeStructures.hh"
 #include "TreeReader.hh"
 
@@ -30,14 +31,14 @@ class EventAnalyzer
   // methods
     Bool_t           InitReadTree( TTree* ); // Maps class variables to an input TTree.
     void             InitWriteTree(); // 
-    void             WriteTree(); // 
+    void             WriteFile(); // 
     void             Analyze( Long64_t entry );
     Bool_t           Select( Selector s );          // Evaluates the class' list of event selection criteria
     Bool_t           GenPairPicker( Float_t mc_particle, MCParticlePair pair );
     Bool_t           ISRPicker( Float_t Kvcut );
     virtual Bool_t   Notify();
 
-    void             WriteVariables( Tree_SSbar data );
+    void             WriteLPFOVariables( PFOTools pt, Tree_SSbar *data );
 
 
   // Running Variables

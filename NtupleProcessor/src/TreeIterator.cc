@@ -69,5 +69,5 @@ void TreeIterator::SlaveTerminate(){}
 void TreeIterator::Terminate()
 {
   // Write Trees
-    eAnalyzer.WriteTree();
+    eAnalyzer.WriteFile();
 }
