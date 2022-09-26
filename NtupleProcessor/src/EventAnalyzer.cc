@@ -19,7 +19,6 @@ EventAnalyzer.cpp
 #include "TreeReader.hh"
 #include "PFOTools.hh"
 #include "VectorTools.hh"
-#include "TreeWriter.hh"
 
 using std::cout;   using std::endl;
 typedef unsigned int Index;
@@ -61,7 +60,6 @@ void EventAnalyzer::InitWriteTree()
 {
 
   // Initialize Write Tree
-    TreeWriter writer;
     _hfile = new TFile( _hfilename, "RECREATE", _hfilename ) ;
     
     _hTree_LPFO     = new TTree( "LPFO", "tree" );
@@ -76,97 +74,9 @@ void EventAnalyzer::InitWriteTree()
 
 void EventAnalyzer::WriteFile()
 {
-
   // Write Tree
     _hfile->Write();
     _hfile->Close();
-
-}
-
-void EventAnalyzer::WriteLPFOVariables(PFOTools pt, Tree_SSbar *data)
-{
-  Int_t iLPFOs[2] = {pt.LPFO[0].ipfo, pt.LPFO[1].ipfo};
-  int i = 0;
-  for (auto iLPFO : iLPFOs){
-    data->lpfo_match                       [i] = _pfo.pfo_match                       [iLPFO];
-    data->lpfo_truejet_pdg                 [i] = _pfo.pfo_truejet_pdg                 [iLPFO];
-    data->lpfo_truejet_type                [i] = _pfo.pfo_truejet_type                [iLPFO];
-    data->lpfo_pdgcheat                    [i] = _pfo.pfo_pdgcheat                    [iLPFO];
-    data->lpfo_nparents                    [i] = _pfo.pfo_nparents                    [iLPFO];
-    // data->lpfo_pdgcheat_parent             [i] = _pfo.pfo_pdgcheat_parent             [iLPFO];
-    data->lpfo_E                           [i] = _pfo.pfo_E                           [iLPFO];
-    data->lpfo_px                          [i] = _pfo.pfo_px                          [iLPFO];
-    data->lpfo_py                          [i] = _pfo.pfo_py                          [iLPFO];
-    data->lpfo_pz                          [i] = _pfo.pfo_pz                          [iLPFO];
-    data->lpfo_m                           [i] = _pfo.pfo_m                           [iLPFO];
-    data->lpfo_type                        [i] = _pfo.pfo_type                        [iLPFO];
-    data->lpfo_isoverlay                   [i] = _pfo.pfo_isoverlay                   [iLPFO];
-    data->lpfo_isisr                       [i] = _pfo.pfo_isisr                       [iLPFO];
-    data->lpfo_vtx                         [i] = _pfo.pfo_vtx                         [iLPFO];
-    data->lpfo_charge                      [i] = _pfo.pfo_charge                      [iLPFO];
-    data->lpfo_ntracks                     [i] = _pfo.pfo_ntracks                     [iLPFO];
-    data->lpfo_tpc_hits                    [i] = _pfo.pfo_tpc_hits                    [iLPFO];
-    data->lpfo_dedx                        [i] = _pfo.pfo_dedx                        [iLPFO];
-    data->lpfo_dedxerror                   [i] = _pfo.pfo_dedxerror                   [iLPFO];
-    data->lpfo_d0                          [i] = _pfo.pfo_d0                          [iLPFO];
-    data->lpfo_d0error                     [i] = _pfo.pfo_d0error                     [iLPFO];
-    data->lpfo_z0                          [i] = _pfo.pfo_z0                          [iLPFO];
-    data->lpfo_z0error                     [i] = _pfo.pfo_z0error                     [iLPFO];
-    data->lpfo_phi                         [i] = _pfo.pfo_phi                         [iLPFO];
-    data->lpfo_phierror                    [i] = _pfo.pfo_phierror                    [iLPFO];
-    data->lpfo_omega                       [i] = _pfo.pfo_omega                       [iLPFO];
-    data->lpfo_omegaerror                  [i] = _pfo.pfo_omegaerror                  [iLPFO];
-    data->lpfo_tanlambda                   [i] = _pfo.pfo_tanlambda                   [iLPFO];
-    data->lpfo_tanlambdaerror              [i] = _pfo.pfo_tanlambdaerror              [iLPFO];
-    data->lpfo_chi2                        [i] = _pfo.pfo_chi2                        [iLPFO];
-    data->lpfo_ndf                         [i] = _pfo.pfo_ndf                         [iLPFO];
-    // data->lpfo_vtxpt                       [i] = _pfo.pfo_vtxpt                       [iLPFO];
-    // data->lpfo_endpt                       [i] = _pfo.pfo_endpt                       [iLPFO];
-    data->lpfo_pid                         [i] = _pfo.pfo_pid                         [iLPFO];
-    data->lpfo_pid_likelihood              [i] = _pfo.pfo_pid_likelihood              [iLPFO];
-    data->lpfo_pid_eprob                   [i] = _pfo.pfo_pid_eprob                   [iLPFO];
-    data->lpfo_pid_muprob                  [i] = _pfo.pfo_pid_muprob                  [iLPFO];
-    data->lpfo_pid_piprob                  [i] = _pfo.pfo_pid_piprob                  [iLPFO];
-    data->lpfo_pid_kprob                   [i] = _pfo.pfo_pid_kprob                   [iLPFO];
-    data->lpfo_pid_pprob                   [i] = _pfo.pfo_pid_pprob                   [iLPFO];
-    data->lpfo_pid_hprob                   [i] = _pfo.pfo_pid_hprob                   [iLPFO];
-    data->lpfo_piddedx                     [i] = _pfo.pfo_piddedx                     [iLPFO];
-    data->lpfo_piddedx_likelihood          [i] = _pfo.pfo_piddedx_likelihood          [iLPFO];
-    data->lpfo_piddedx_eprob               [i] = _pfo.pfo_piddedx_eprob               [iLPFO];
-    data->lpfo_piddedx_muprob              [i] = _pfo.pfo_piddedx_muprob              [iLPFO];
-    data->lpfo_piddedx_piprob              [i] = _pfo.pfo_piddedx_piprob              [iLPFO];
-    data->lpfo_piddedx_kprob               [i] = _pfo.pfo_piddedx_kprob               [iLPFO];
-    data->lpfo_piddedx_pprob               [i] = _pfo.pfo_piddedx_pprob               [iLPFO];
-    data->lpfo_piddedx_hprob               [i] = _pfo.pfo_piddedx_hprob               [iLPFO];
-    data->lpfo_piddedx_e_dedxdist          [i] = _pfo.pfo_piddedx_e_dedxdist          [iLPFO];
-    data->lpfo_piddedx_mu_dedxdist         [i] = _pfo.pfo_piddedx_mu_dedxdist         [iLPFO];
-    data->lpfo_piddedx_pi_dedxdist         [i] = _pfo.pfo_piddedx_pi_dedxdist         [iLPFO];
-    data->lpfo_piddedx_k_dedxdist          [i] = _pfo.pfo_piddedx_k_dedxdist          [iLPFO];
-    data->lpfo_piddedx_p_dedxdist          [i] = _pfo.pfo_piddedx_p_dedxdist          [iLPFO];
-    data->lpfo_piddedx_e_lkhood            [i] = _pfo.pfo_piddedx_e_lkhood            [iLPFO];
-    data->lpfo_piddedx_mu_lkhood           [i] = _pfo.pfo_piddedx_mu_lkhood           [iLPFO];
-    data->lpfo_piddedx_pi_lkhood           [i] = _pfo.pfo_piddedx_pi_lkhood           [iLPFO];
-    data->lpfo_piddedx_k_lkhood            [i] = _pfo.pfo_piddedx_k_lkhood            [iLPFO];
-    data->lpfo_piddedx_p_lkhood            [i] = _pfo.pfo_piddedx_p_lkhood            [iLPFO];
-    data->lpfo_pidtof_p_at_calo            [i] = _pfo.pfo_pidtof_p_at_calo            [iLPFO];
-    data->lpfo_pidtof_closest_beta_0ps     [i] = _pfo.pfo_pidtof_closest_beta_0ps     [iLPFO];
-    data->lpfo_pidtof_closest_beta_10ps    [i] = _pfo.pfo_pidtof_closest_beta_10ps    [iLPFO];
-    data->lpfo_pidtof_closest_beta_50ps    [i] = _pfo.pfo_pidtof_closest_beta_50ps    [iLPFO];
-    data->lpfo_pidtof_closest_beta_100ps   [i] = _pfo.pfo_pidtof_closest_beta_100ps   [iLPFO];
-    data->lpfo_pidtof_fastest_beta_0ps     [i] = _pfo.pfo_pidtof_fastest_beta_0ps     [iLPFO];
-    data->lpfo_pidtof_fastest_beta_10ps    [i] = _pfo.pfo_pidtof_fastest_beta_10ps    [iLPFO];
-    data->lpfo_pidtof_fastest_beta_50ps    [i] = _pfo.pfo_pidtof_fastest_beta_50ps    [iLPFO];
-    data->lpfo_pidtof_fastest_beta_100ps   [i] = _pfo.pfo_pidtof_fastest_beta_100ps   [iLPFO];
-    data->lpfo_pidtof_cylfit_beta_0ps      [i] = _pfo.pfo_pidtof_cylfit_beta_0ps      [iLPFO];
-    data->lpfo_pidtof_cylfit_beta_10ps     [i] = _pfo.pfo_pidtof_cylfit_beta_10ps     [iLPFO];
-    data->lpfo_pidtof_cylfit_beta_50ps     [i] = _pfo.pfo_pidtof_cylfit_beta_50ps     [iLPFO];
-    data->lpfo_pidtof_cylfit_beta_100ps    [i] = _pfo.pfo_pidtof_cylfit_beta_100ps    [iLPFO];
-    data->lpfo_pidtof_closestfit_beta_0ps  [i] = _pfo.pfo_pidtof_closestfit_beta_0ps  [iLPFO];
-    data->lpfo_pidtof_closestfit_beta_10ps [i] = _pfo.pfo_pidtof_closestfit_beta_10ps [iLPFO];
-    data->lpfo_pidtof_closestfit_beta_50ps [i] = _pfo.pfo_pidtof_closestfit_beta_50ps [iLPFO];
-    data->lpfo_pidtof_closestfit_beta_100ps[i] = _pfo.pfo_pidtof_closestfit_beta_100ps[iLPFO];
-    i++;
-  }
 
 }
 
@@ -180,12 +90,9 @@ void EventAnalyzer::Analyze(Long64_t entry)
     if ( !pfot.ValidPFO() ) return;
 
   // Fill raw LPFO info
-    // if(debug) {
-      WriteLPFOVariables(pfot,&_tree_lpfo);      
-    // }
+    writer.WriteLPFOVariables(pfot,&_pfo,&_tree_lpfo);
+    _hTree_LPFO->Fill();
     
-
-
   // Selections
     vector<Bool_t> CutTrigger;
 
@@ -247,6 +154,27 @@ void EventAnalyzer::Analyze(Long64_t entry)
       }
     }
 
+  
+  if (all_checks){
+
+    switch ( dEdx_pdg_check )
+    {
+      case K_K:
+        writer.WriteLPFOVariables(pfot,&_pfo,&_tree_lpfo_kk);
+        _hTree_LPFO_KK->Fill();
+        break;
+
+      case K_Pi:
+        writer.WriteLPFOVariables(pfot,&_pfo,&_tree_lpfo_kpi);
+        _hTree_LPFO_KPi->Fill();
+        break;
+
+
+      default:
+        break;
+    }
+
+  }
 
 
 
@@ -258,7 +186,6 @@ void EventAnalyzer::Analyze(Long64_t entry)
     }
 
 
-    _hTree_LPFO->Fill();
 
 
 }

@@ -18,6 +18,7 @@
 #include "PFOTools.hh"
 #include "TreeStructures.hh"
 #include "TreeReader.hh"
+#include "TreeWriter.hh"
 
 class EventAnalyzer
 {
@@ -38,7 +39,6 @@ class EventAnalyzer
     Bool_t           ISRPicker( Float_t Kvcut );
     virtual Bool_t   Notify();
 
-    void             WriteLPFOVariables( PFOTools pt, Tree_SSbar *data );
 
 
   // Running Variables
@@ -60,6 +60,7 @@ class EventAnalyzer
     PFO_QQbar     _pfo     ;
     Branch_QQbar  _branch  ;
 
+    TreeWriter writer;
     TFile * _hfile;
     TTree * _hTree_LPFO;
     TTree * _hTree_LPFO_KK;
