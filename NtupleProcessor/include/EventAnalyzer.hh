@@ -19,6 +19,7 @@
 #include "TreeStructures.hh"
 #include "TreeReader.hh"
 #include "TreeWriter.hh"
+#include "FileSelector.hh"
 
 class EventAnalyzer
 {
@@ -66,7 +67,8 @@ class EventAnalyzer
     TTree * _hTree_LPFO_KK;
     TTree * _hTree_LPFO_KPi;
 
-    TString       _hfilename = "rootfiles/tmp_root/output.root";
+    FileSelector  _fs;
+    TString       _hfilename;
     Tree_SSbar    _tree_lpfo;
     Tree_SSbar    _tree_lpfo_kk;
     Tree_SSbar    _tree_lpfo_kpi;

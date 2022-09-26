@@ -17,6 +17,14 @@ using namespace std;
 // int main(int argc, char* argv[])
 int main()
 {
+
+  if (__cplusplus == 201703L) std::cout << "C++17\n";
+  else if (__cplusplus == 201402L) std::cout << "C++14\n";
+  else if (__cplusplus == 201103L) std::cout << "C++11\n";
+  else if (__cplusplus == 199711L) std::cout << "C++98\n";
+  else std::cout << "pre-standard C++\n";
+
+
   // Record the time main starts processing.
   string ts_mainBegin  = timeStamp();
   string fts_mainBegin = fileTimeStamp();
@@ -28,7 +36,8 @@ int main()
           "  Processing Begun: " << ts_mainBegin << "\n"
           "\n";
 
-  NtupleProcessor ntplproc("",-1);
+  // NtupleProcessor ntplproc(argv[1],-1);
+  NtupleProcessor ntplproc("data/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.n002.d_dstm_15162_000.root",-1);
 
   // CLOSING OUTPUT.
     string ts_mainEnd = timeStamp();

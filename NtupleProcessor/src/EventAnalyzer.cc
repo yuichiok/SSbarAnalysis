@@ -26,6 +26,7 @@ typedef unsigned int Index;
 EventAnalyzer::EventAnalyzer(TString o)
 : options(o)
 {
+    _fs.SetNames(o.Data());
     patEventsAnalyzed = 0;
     entriesInNtuple   = 0;
 }
@@ -60,6 +61,7 @@ void EventAnalyzer::InitWriteTree()
 {
 
   // Initialize Write Tree
+    _hfilename = TString(_fs.GetOutName_withPath());
     _hfile = new TFile( _hfilename, "RECREATE", _hfilename ) ;
     
     _hTree_LPFO     = new TTree( "LPFO", "tree" );

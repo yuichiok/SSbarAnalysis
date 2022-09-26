@@ -26,7 +26,6 @@ class NtupleProcessor
     int            maxEvents;      // Max number of events to run over in this ntuple
 
     TFile          *ntupleFile;
-    FileSelector    fs;
 
   private: 
 
