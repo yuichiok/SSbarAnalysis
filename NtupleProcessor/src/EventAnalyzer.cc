@@ -176,18 +176,6 @@ void EventAnalyzer::Analyze(Long64_t entry)
 
   }
 
-
-
-
-  // Kaon
-    if( dEdx_pdg_check == K_K && all_checks ){
-    // if( debug && dEdx_pdg_check == K_K ){
-      cout << "K_K event!" << endl;
-    }
-
-
-
-
 }
 
 Bool_t EventAnalyzer::Select(Selector sel)

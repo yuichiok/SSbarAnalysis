@@ -9,8 +9,8 @@
 #include <TFile.h>                  // ROOT class headers
 #include <TString.h>
 #include <TTree.h>
-#include "SSbarLibrary/timestamp.hh"
-#include "NtupleProcessor/include/NtupleProcessor.hh"
+#include "timestamp.hh"
+#include "NtupleProcessor.hh"
 
 using namespace std;
 
@@ -23,8 +23,8 @@ int main()
 
   // BEGIN OUTPUT
   cout << "\n\n"
-          "============================================\n"
-          "==========SSbarHistogramExtractor===========\n"
+          "=============================================\n"
+          "===============SSbarProcessor================\n"
           "  Processing Begun: " << ts_mainBegin << "\n"
           "\n";
 
@@ -35,8 +35,8 @@ int main()
 
     cout << "\n"
             "   Completion time: " << ts_mainEnd <<      "\n"
-            "=====SSbarHistogramExtractor - FINISHED=====\n"
-            "============================================\n" << endl;
+            "==========SSbarProcessor - FINISHED==========\n"
+            "=============================================\n" << endl;
 
     return 0;
 }

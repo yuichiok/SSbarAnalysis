@@ -12,8 +12,12 @@ NtupleProcessor.cpp
 using std::cout;   using std::endl;
 
 NtupleProcessor::NtupleProcessor(TString o, int me)
-: eAnalyzer(o), tIter(eAnalyzer), options(o), maxEvents(me)
+: eAnalyzer(o), tIter(eAnalyzer), options(o), maxEvents(me), fs(o)
 {
+
+  FileSelector fss("/path/to/this.root");
+
+
   // PARAM output
     cout << "  [NtupleProcessor]\n"
             "    Options:    " << options   << "\n"

@@ -12,6 +12,7 @@
 #include <TString.h>
 #include "EventAnalyzer.hh"
 #include "TreeIterator.hh"
+#include "FileSelector.hh"
 
 class NtupleProcessor
 {
@@ -25,6 +26,7 @@ class NtupleProcessor
     int            maxEvents;      // Max number of events to run over in this ntuple
 
     TFile          *ntupleFile;
+    FileSelector    fs;
 
   private: 
 
