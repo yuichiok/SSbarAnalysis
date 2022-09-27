@@ -9,26 +9,23 @@
 #include <TObjString.h>
 #include <map>
 
-using std::string;
-
 class FileSelector
 {
   public:
     FileSelector();
-    FileSelector(string o);
+    FileSelector(TString input);
     ~FileSelector(){}
 
-    virtual void   SetNames(string o);
-    virtual string GetOutName();
-    virtual string GetOutName_withPath();
+    void   SetNames(TString input);
+    TString GetOutName();
+    TString GetOutName_withPath();
 
   private:
-    string _full;
-    string _name_ext;
-    string _name;
-    string _suffix = ".ss.tmp.root";
+    TString _full;
+    TString _name;
+    TString _suffix = ".ss.tmp.root";
 
-    string _out_path = "rootfiles/tmp_root/";
+    TString _out_path = "rootfiles/tmp_root/";
 
 
 };

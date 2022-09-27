@@ -1,31 +1,31 @@
 #include "FileSelector.hh"
 
 using std::cout;   using std::endl;
-using std::string;
 
 FileSelector::FileSelector() {}
 
-FileSelector::FileSelector(string o)
-:_full(o)
+FileSelector::FileSelector(TString input)
+:_full(input)
 {
-  SetNames(o);
+  SetNames(_full);
 }
 
-void FileSelector::SetNames(string o)
+void FileSelector::SetNames(TString input)
 {
-  _full     = o;
-  _name_ext = _full.substr(_full.find_last_of("/") + 1);
+  _full     = input;
+  std::string str_full = _full.Data();
+  std::string name_ext = str_full.substr(str_full.find_last_of("/") + 1);
 
-  string::size_type const p(_name_ext.find_last_of('.'));
-  _name = _name_ext.substr(0, p);
+  std::string::size_type const p(name_ext.find_last_of('.'));
+  _name = TString(name_ext.substr(0, p));
 }
 
-string FileSelector::GetOutName()
+TString FileSelector::GetOutName()
 {
   return _name + _suffix;
 }
 
-string FileSelector::GetOutName_withPath()
+TString FileSelector::GetOutName_withPath()
 {
   return _out_path + _name + _suffix;
 }
