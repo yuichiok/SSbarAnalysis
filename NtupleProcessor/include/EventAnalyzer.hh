@@ -19,6 +19,7 @@
 #include "TreeStructures.hh"
 #include "TreeReader.hh"
 #include "TreeWriter.hh"
+#include "FileSelector.hh"
 
 class EventAnalyzer
 {
@@ -51,6 +52,7 @@ class EventAnalyzer
     long entriesInNtuple  ;     // Number of events that were processed to make the Ntuple.
 
   // Fixed size dimensions of array or collections stored in the TTree if any.
+    FileSelector  _fs;
 
 
   private:
@@ -66,7 +68,7 @@ class EventAnalyzer
     TTree * _hTree_LPFO_KK;
     TTree * _hTree_LPFO_KPi;
 
-    TString       _hfilename = "rootfiles/tmp_root/output.root";
+    TString       _hfilename;
     Tree_SSbar    _tree_lpfo;
     Tree_SSbar    _tree_lpfo_kk;
     Tree_SSbar    _tree_lpfo_kpi;
