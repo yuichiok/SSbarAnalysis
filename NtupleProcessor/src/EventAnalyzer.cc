@@ -27,6 +27,7 @@ EventAnalyzer::EventAnalyzer(TString o)
 : options(o)
 {
     _fs.SetNames(o.Data());
+    cout << _fs.GetOutName() << endl;
     patEventsAnalyzed = 0;
     entriesInNtuple   = 0;
 }

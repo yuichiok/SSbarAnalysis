@@ -13,11 +13,11 @@ FileSelector::FileSelector(string o)
 
 void FileSelector::SetNames(string o)
 {
+  _full     = o;
   _name_ext = _full.substr(_full.find_last_of("/") + 1);
 
   string::size_type const p(_name_ext.find_last_of('.'));
   _name = _name_ext.substr(0, p);
-  cout << _name << endl;
 }
 
 string FileSelector::GetOutName()
