@@ -26,10 +26,10 @@ NtupleProcessor::NtupleProcessor(TString o, int me)
   // TString filename = "data/" + dummy_label + ".root";
 
 
-  ntupleFile = TFile::Open(o);
-  if(!ntupleFile) cout << "NtupleProcessor: ERROR: Unable to open file " << o << endl;
+  ntupleFile = TFile::Open(options);
+  if(!ntupleFile) cout << "NtupleProcessor: ERROR: Unable to open file " << options << endl;
   TTree *ntuple   = (TTree*) ntupleFile->Get("Stats");
-  if(!ntuple) cout << "NtupleProcessor: ERROR: Unable to open ttree in " << o << endl;
+  if(!ntuple) cout << "NtupleProcessor: ERROR: Unable to open ttree in " << options << endl;
   ntuple->Process(&tIter, "");
 
 
