@@ -12,40 +12,56 @@
 #include "timestamp.hh"
 #include "NtupleProcessor.hh"
 
-using namespace std;
-
-// int main(int argc, char* argv[])
-int main()
+int main(int argc, char* argv[])
+// int main()
 {
 
-  if (__cplusplus == 201703L) std::cout << "C++17\n";
-  else if (__cplusplus == 201402L) std::cout << "C++14\n";
-  else if (__cplusplus == 201103L) std::cout << "C++11\n";
-  else if (__cplusplus == 199711L) std::cout << "C++98\n";
-  else std::cout << "pre-standard C++\n";
+  using std::cout; using std::endl;
 
+  // C++ version check
+    cout << "Current C++ version: ";
+    if (__cplusplus == 201703L) cout << "C++17\n";
+    else if (__cplusplus == 201402L) cout << "C++14\n";
+    else if (__cplusplus == 201103L) cout << "C++11\n";
+    else if (__cplusplus == 199711L) cout << "C++98\n";
+    else cout << "pre-standard C++\n";
 
-  // Record the time main starts processing.
-  string ts_mainBegin  = timeStamp();
-  string fts_mainBegin = fileTimeStamp();
+  // Input check
+    try
+    {
+      if ( argv[1] ){
+        cout << "Processing file: " << argv[1] << endl;
+      }else{
+        throw 0;
+      }  
 
-  // BEGIN OUTPUT
-  cout << "\n\n"
-          "=============================================\n"
-          "===============SSbarProcessor================\n"
-          "  Processing Begun: " << ts_mainBegin << "\n"
-          "\n";
+    // Record the time main starts processing.
+      std::string ts_mainBegin  = timeStamp();
+      std::string fts_mainBegin = fileTimeStamp();
 
-  // NtupleProcessor ntplproc(argv[1],-1);
-  NtupleProcessor ntplproc("data/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.n002.d_dstm_15162_000.root",-1);
+    // BEGIN OUTPUT
+      cout << "\n\n"
+              "=============================================\n"
+              "===============SSbarProcessor================\n"
+              "  Processing Begun: " << ts_mainBegin << "\n"
+              "\n";
 
-  // CLOSING OUTPUT.
-    string ts_mainEnd = timeStamp();
+      NtupleProcessor ntplproc(argv[1],-1);
 
-    cout << "\n"
-            "   Completion time: " << ts_mainEnd <<      "\n"
-            "==========SSbarProcessor - FINISHED==========\n"
-            "=============================================\n" << endl;
+    // CLOSING OUTPUT.
+      std::string ts_mainEnd = timeStamp();
 
-    return 0;
+      cout << "\n"
+              "   Completion time: " << ts_mainEnd <<      "\n"
+              "==========SSbarProcessor - FINISHED==========\n"
+              "=============================================\n" << endl;
+
+      return 0;
+
+    }
+    catch(int exc)
+    {
+      std::cerr << "[Error] Input file not given.\n";
+    }
+
 }
