@@ -10,3 +10,5 @@ rootfiles
 # batch job related
 batch_jobs
 throw_jobs.sh
+
+merge.sh
