@@ -1,7 +1,12 @@
 .vscode
 data
 build
+rootfiles
 
 *.o
 *.exe
 *.root
+
+# batch job related
+batch_jobs
+throw_jobs.sh
