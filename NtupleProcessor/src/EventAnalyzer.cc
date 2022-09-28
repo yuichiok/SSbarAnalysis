@@ -23,6 +23,8 @@ EventAnalyzer.cpp
 using std::cout;   using std::endl;
 typedef unsigned int Index;
 
+ClassImp(TreeVariables);
+
 EventAnalyzer::EventAnalyzer(TString o)
 : options(o)
 {
@@ -64,14 +66,22 @@ void EventAnalyzer::InitWriteTree()
   // Initialize Write Tree
     _hfilename = TString(_fs.GetOutName_withPath());
     _hfile = new TFile( _hfilename, "RECREATE", _hfilename ) ;
-    
-    _hTree_LPFO     = new TTree( "LPFO", "tree" );
-    _hTree_LPFO_KK  = new TTree( "LPFO_KK", "tree" );
-    _hTree_LPFO_KPi = new TTree( "LPFO_KPi", "tree" );
 
-    writer.InitializeLPFOTree(_hTree_LPFO, _tree_lpfo);
-    writer.InitializeLPFOTree(_hTree_LPFO_KK, _tree_lpfo_kk);
-    writer.InitializeLPFOTree(_hTree_LPFO_KPi, _tree_lpfo_kpi);
+    
+    _hTree     = new TTree( "tree", "tree" );
+
+    // _hTree_LPFO     = new TTree( "LPFO", "tree" );
+    // _hTree_LPFO_KK  = new TTree( "LPFO_KK", "tree" );
+    // _hTree_LPFO_KPi = new TTree( "LPFO_KPi", "tree" );
+
+    _hTree->Branch("LPFO", &_tree_lpfo);
+    _hTree->Branch("LPFO_KK", &_tree_lpfo_kk);
+    _hTree->Branch("LPFO_KPi", &_tree_lpfo_kpi);
+
+
+    // writer.InitializeLPFOTree(_hTree_LPFO, _tree_lpfo);
+    // writer.InitializeLPFOTree(_hTree_LPFO_KK, _tree_lpfo_kk);
+    // writer.InitializeLPFOTree(_hTree_LPFO_KPi, _tree_lpfo_kpi);
 
 }
 
@@ -86,7 +96,7 @@ void EventAnalyzer::WriteFile()
 void EventAnalyzer::Analyze(Long64_t entry)
 {
 
-  Bool_t debug = (entry == 7515);
+  // Bool_t debug = (entry == 7515);
 
   // PFO Analysis
     PFOTools pfot( &_pfo );
@@ -94,7 +104,6 @@ void EventAnalyzer::Analyze(Long64_t entry)
 
   // Fill raw LPFO info
     writer.WriteLPFOVariables(pfot,&_pfo,&_tree_lpfo);
-    _hTree_LPFO->Fill();
     
   // Selections
     vector<Bool_t> CutTrigger;
@@ -164,12 +173,10 @@ void EventAnalyzer::Analyze(Long64_t entry)
     {
       case K_K:
         writer.WriteLPFOVariables(pfot,&_pfo,&_tree_lpfo_kk);
-        _hTree_LPFO_KK->Fill();
         break;
 
       case K_Pi:
         writer.WriteLPFOVariables(pfot,&_pfo,&_tree_lpfo_kpi);
-        _hTree_LPFO_KPi->Fill();
         break;
 
 
@@ -178,6 +185,8 @@ void EventAnalyzer::Analyze(Long64_t entry)
     }
 
   }
+
+  _hTree->Fill();
 
 }
 

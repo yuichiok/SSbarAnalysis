@@ -21,6 +21,9 @@
 #include "TreeWriter.hh"
 #include "FileSelector.hh"
 
+#include "TreeVariables.hh"
+ClassImp(TreeVariables)
+
 class EventAnalyzer
 {
   public:
@@ -64,14 +67,16 @@ class EventAnalyzer
 
     TreeWriter writer;
     TFile * _hfile;
+    TTree * _hTree;
     TTree * _hTree_LPFO;
     TTree * _hTree_LPFO_KK;
     TTree * _hTree_LPFO_KPi;
 
     TString       _hfilename;
-    Tree_SSbar    _tree_lpfo;
-    Tree_SSbar    _tree_lpfo_kk;
-    Tree_SSbar    _tree_lpfo_kpi;
+
+    TreeVariables    _tree_lpfo;
+    TreeVariables    _tree_lpfo_kk;
+    TreeVariables    _tree_lpfo_kpi;
 
 };
 

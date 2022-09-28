@@ -85,7 +85,7 @@ void TreeWriter::InitializeLPFOTree(TTree * _hTree, Tree_SSbar& data)
 
 }
 
-void TreeWriter::WriteLPFOVariables(PFOTools pt, PFO_QQbar *pqq, Tree_SSbar *data)
+void TreeWriter::WriteLPFOVariables(PFOTools pt, PFO_QQbar *pqq, TreeVariables *data)
 {
   int iLPFOs[2] = {pt.LPFO[0].ipfo, pt.LPFO[1].ipfo};
   int i = 0;

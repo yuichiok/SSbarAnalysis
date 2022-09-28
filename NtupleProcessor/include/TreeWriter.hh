@@ -5,6 +5,7 @@
 #include <TTree.h>
 #include "PFOTools.hh"
 #include "TreeStructures.hh"
+#include "TreeVariables.hh"
 #ifndef _TreeWriter_hh
 #define _TreeWriter_hh
 
@@ -25,7 +26,7 @@ class TreeWriter
     //
     
     void InitializeLPFOTree( TTree * tree, Tree_SSbar & data);
-    void WriteLPFOVariables( PFOTools pt, PFO_QQbar *pqq, Tree_SSbar *data );
+    void WriteLPFOVariables( PFOTools pt, PFO_QQbar *pqq, TreeVariables *data );
 
   private:
     //
