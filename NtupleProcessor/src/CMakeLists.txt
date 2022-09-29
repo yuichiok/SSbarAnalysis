@@ -9,7 +9,14 @@ FILE(GLOB SOURCE_FILES
      "*.cc"
 )
 
-ROOT_GENERATE_DICTIONARY(RootLibDict ../include/TreeVariables.hh LINKDEF ../LinkDef.hh)
+INCLUDE_DIRECTORIES(NtupleProcessor
+  PUBLIC
+  ../include
+  ../../SSbarLibrary
+)
+
+
+ROOT_GENERATE_DICTIONARY(RootLibDict ../../SSbarLibrary/TreeStructures.hh LINKDEF ../LinkDef.hh)
 
 ADD_LIBRARY(NtupleProcessor
   SHARED
@@ -26,7 +33,7 @@ TARGET_INCLUDE_DIRECTORIES(NtupleProcessor
 target_link_libraries(NtupleProcessor ${ROOT_LIBRARIES})
 
 install(TARGETS NtupleProcessor LIBRARY DESTINATION ../lib)
-install(FILES ../include/TreeVariables.hh DESTINATION ../include)
+install(FILES ../../SSbarLibrary/TreeStructures.hh DESTINATION ../include)
 
 
 # add_library(NtupleProcessor SHARED src/RootClass1.cpp src/RootClass2.cpp RootLibDict)
