@@ -67,21 +67,9 @@ void EventAnalyzer::InitWriteTree()
     _hfilename = TString(_fs.GetOutName_withPath());
     _hfile = new TFile( _hfilename, "RECREATE", _hfilename ) ;
 
-    
     _hTree     = new TTree( "event", "tree" );
-
-    // _hTree_LPFO     = new TTree( "LPFO", "tree" );
-    // _hTree_LPFO_KK  = new TTree( "LPFO_KK", "tree" );
-    // _hTree_LPFO_KPi = new TTree( "LPFO_KPi", "tree" );
-
-    _hTree->Branch("LPFO", &_tree_lpfo);
-    // _hTree->Branch("LPFO_KK", &_tree_lpfo_kk);
-    // _hTree->Branch("LPFO_KPi", &_tree_lpfo_kpi);
-
-
-    // writer.InitializeLPFOTree(_hTree_LPFO, _tree_lpfo);
-    // writer.InitializeLPFOTree(_hTree_LPFO_KK, _tree_lpfo_kk);
-    // writer.InitializeLPFOTree(_hTree_LPFO_KPi, _tree_lpfo_kpi);
+    _hTree->Branch("Stats_LPFO", &_stats_lpfo);
+    _hTree->Branch("Data_LPFO", &_data_lpfo);
 
 }
 
@@ -106,7 +94,7 @@ void EventAnalyzer::Analyze(Long64_t entry)
     if ( !pfot.ValidPFO() ) return;
 
   // Fill raw LPFO info
-    writer.WriteLPFOVariables(pfot,&_pfo,&_tree_lpfo);
+    writer.WriteLPFOVariables(pfot,&_pfo,&_stats_lpfo);
     
   // Selections
     vector<Bool_t> CutTrigger;
@@ -173,31 +161,38 @@ void EventAnalyzer::Analyze(Long64_t entry)
   
   if (all_checks){
 
-    _tree_lpfo.lpfo_config = dEdx_pdg_check;
+    _data_lpfo.lpfo_config = dEdx_pdg_check;
 
     // switch ( dEdx_pdg_check )
     // {
     //   case K_K:
-    //     _tree_lpfo.lpfo_config = 3;
-    //     cout << "fill kk " << _tree_lpfo.lpfo_config << endl;
-    //     // writer.WriteLPFOVariables(pfot,&_pfo,&_tree_lpfo_kk);
+    //     _stats_lpfo.lpfo_config = 3;
+    //     cout << "fill kk " << _stats_lpfo.lpfo_config << endl;
+    //     // writer.WriteLPFOVariables(pfot,&_pfo,&_stats_lpfo_kk);
     //     break;
 
     //   case K_Pi:
-    //     _tree_lpfo.lpfo_config = 2;
-    //     // writer.WriteLPFOVariables(pfot,&_pfo,&_tree_lpfo_kpi);
+    //     _stats_lpfo.lpfo_config = 2;
+    //     // writer.WriteLPFOVariables(pfot,&_pfo,&_stats_lpfo_kpi);
     //     break;
 
     //   default:
-    //     _tree_lpfo.lpfo_config = 0;
+    //     _stats_lpfo.lpfo_config = 0;
     //     break;
     // }
 
   }
 
   _hTree->Fill();
-  _tree_lpfo = {};
+  
+  ClearStructs();
 
+}
+
+void EventAnalyzer::ClearStructs()
+{
+  _stats_lpfo = {};
+  _data_lpfo  = {};
 }
 
 Bool_t EventAnalyzer::Select(Selector sel)

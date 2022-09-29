@@ -18,7 +18,6 @@ const static int NJETS          = 2;
 
 
   public:
-    Int_t   lpfo_config = 0;
     Int_t   lpfo_match[NJETS] = {0};
     Int_t   lpfo_truejet_pdg[NJETS] = {0};
     Int_t   lpfo_truejet_type[NJETS] = {0};
@@ -98,6 +97,20 @@ const static int NJETS          = 2;
     Float_t lpfo_pidtof_closestfit_beta_100ps[NJETS] = {0};
 
     ClassDef(TreeVariables,1)
+
+};
+
+struct LPFOVariables {
+
+  const static int MAX_NPARTICLES = 1000;
+  const static int NTRUE_JETS     = 5;
+  const static int NQUARKS        = 2;
+  const static int NJETS          = 2;
+
+  public:
+    Int_t   lpfo_config = 0;
+
+    ClassDef(LPFOVariables,1)
 
 };
 

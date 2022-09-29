@@ -41,6 +41,7 @@ class EventAnalyzer
     Bool_t           Select( Selector s );          // Evaluates the class' list of event selection criteria
     Bool_t           GenPairPicker( Float_t mc_particle, MCParticlePair pair );
     Bool_t           ISRPicker( Float_t Kvcut );
+    void             ClearStructs();
     virtual Bool_t   Notify();
 
 
@@ -74,9 +75,10 @@ class EventAnalyzer
 
     TString       _hfilename;
 
-    TreeVariables    _tree_lpfo;
-    TreeVariables    _tree_lpfo_kk;
-    TreeVariables    _tree_lpfo_kpi;
+    TreeVariables    _stats_lpfo;
+    LPFOVariables    _data_lpfo;
+    // TreeVariables    _stats_lpfo_kk;
+    // TreeVariables    _stats_lpfo_kpi;
 
 };
 

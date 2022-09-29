@@ -4,4 +4,5 @@
 #pragma link off all functions;
 // #pragma link C++ class TreeVariables+;
 #pragma link C++ struct TreeVariables+;
+#pragma link C++ struct LPFOVariables+;
 #endif
