@@ -23,13 +23,14 @@ EventAnalyzer.cpp
 using std::cout;   using std::endl;
 typedef unsigned int Index;
 
-ClassImp(TreeVariables);
+ClassImp(MC_QQbar)
+ClassImp(TreeVariables)
+ClassImp(LPFOVariables)
 
 EventAnalyzer::EventAnalyzer(TString o)
 : options(o)
 {
     _fs.SetNames(o.Data());
-    cout << _fs.GetOutName() << endl;
     patEventsAnalyzed = 0;
     entriesInNtuple   = 0;
 }
@@ -68,6 +69,8 @@ void EventAnalyzer::InitWriteTree()
     _hfile = new TFile( _hfilename, "RECREATE", _hfilename ) ;
 
     _hTree     = new TTree( "event", "tree" );
+    _hTree->Branch("Event", &_eve);
+    _hTree->Branch("MC", &_mc);
     _hTree->Branch("Stats_LPFO", &_stats_lpfo);
     _hTree->Branch("Data_LPFO", &_data_lpfo);
 
@@ -91,7 +94,12 @@ void EventAnalyzer::Analyze(Long64_t entry)
 
   // PFO Analysis
     PFOTools pfot( &_pfo );
-    if ( !pfot.ValidPFO() ) return;
+    if ( !pfot.ValidPFO() ) {
+      _eve.eve_valid_lpfo = 0;
+      _hTree->Fill();
+      return;
+    }
+    _eve.eve_valid_lpfo = 1;
 
   // Fill raw LPFO info
     writer.WriteLPFOVariables(pfot,&_pfo,&_stats_lpfo);
@@ -191,6 +199,7 @@ void EventAnalyzer::Analyze(Long64_t entry)
 
 void EventAnalyzer::ClearStructs()
 {
+  _eve        = {};
   _stats_lpfo = {};
   _data_lpfo  = {};
 }

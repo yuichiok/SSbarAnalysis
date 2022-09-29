@@ -6,6 +6,7 @@
  Created : 2022-09-09  okugawa
  Main class of TreeReader program.
 ------------------------------------------------------------------------------*/
+#include <TTree.h>
 #include "VectorTools.hh"
 
 const static int MAX_NPARTICLES = 1000;
@@ -17,25 +18,59 @@ struct MC_QQbar  {
 
   public:
   // MC VARIABLES
-    Float_t mc_quark_E[NQUARKS]      = {0};   Int_t   mc_quark_ps_n   = 0;                        Int_t   mc_stable_n = 0;
-    Float_t mc_quark_px[NQUARKS]     = {0};   Float_t mc_quark_ps_E[MAX_NPARTICLES]      = {0};   Float_t mc_stable_E[MAX_NPARTICLES]         = {0};
-    Float_t mc_quark_py[NQUARKS]     = {0};   Float_t mc_quark_ps_px[MAX_NPARTICLES]     = {0};   Float_t mc_stable_px[MAX_NPARTICLES]        = {0};
-    Float_t mc_quark_pz[NQUARKS]     = {0};   Float_t mc_quark_ps_py[MAX_NPARTICLES]     = {0};   Float_t mc_stable_py[MAX_NPARTICLES]        = {0};
-    Float_t mc_quark_m[NQUARKS]      = {0};   Float_t mc_quark_ps_pz[MAX_NPARTICLES]     = {0};   Float_t mc_stable_pz[MAX_NPARTICLES]        = {0};
-    Float_t mc_quark_pdg[NQUARKS]    = {0};   Float_t mc_quark_ps_m[MAX_NPARTICLES]      = {0};   Float_t mc_stable_m[MAX_NPARTICLES]         = {0};
-    Float_t mc_quark_charge[NQUARKS] = {0};   Float_t mc_quark_ps_pdg[MAX_NPARTICLES]    = {0};   Int_t   mc_stable_pdg[MAX_NPARTICLES]       = {0};
-    Float_t mc_ISR_E[NQUARKS]        = {0};   Float_t mc_quark_ps_charge[MAX_NPARTICLES] = {0};   Float_t mc_stable_charge[MAX_NPARTICLES]    = {0}; 
-    Float_t mc_ISR_px[NQUARKS]       = {0};   Float_t mc_quark_ps_y12 = 0;                        Int_t   mc_stable_isoverlay[MAX_NPARTICLES] = {0};
-    Float_t mc_ISR_py[NQUARKS]       = {0};   Float_t mc_quark_ps_y23 = 0;                        Int_t   mc_stable_isisr[MAX_NPARTICLES]     = {0};
-    Float_t mc_ISR_pz[NQUARKS]       = {0};   Float_t mc_quark_ps_d12 = 0;                        Float_t mc_stable_y12 = 0;
-    Float_t mc_ISR_m[NQUARKS]        = {0};   Float_t mc_quark_ps_d23 = 0;                        Float_t mc_stable_y23 = 0;
-    Float_t mc_ISR_pdg[NQUARKS]      = {0};   Float_t mc_quark_ps_jet_E[NJETS]  = {0};            Float_t mc_stable_d12 = 0;
-    Float_t mc_ISR_charge[NQUARKS]   = {0};   Float_t mc_quark_ps_jet_px[NJETS] = {0};            Float_t mc_stable_d23 = 0;
-                                              Float_t mc_quark_ps_jet_py[NJETS] = {0};            Float_t mc_stable_jet_E[NJETS]  = {0};
-                                              Float_t mc_quark_ps_jet_pz[NJETS] = {0};            Float_t mc_stable_jet_px[NJETS] = {0};
-                                                                                                  Float_t mc_stable_jet_py[NJETS] = {0};
-                                                                                                  Float_t mc_stable_jet_pz[NJETS] = {0};
-                                                                                      
+    Float_t mc_quark_E[NQUARKS]      = {0};
+    Float_t mc_quark_px[NQUARKS]     = {0};
+    Float_t mc_quark_py[NQUARKS]     = {0};
+    Float_t mc_quark_pz[NQUARKS]     = {0};
+    Float_t mc_quark_m[NQUARKS]      = {0};
+    Float_t mc_quark_pdg[NQUARKS]    = {0};
+    Float_t mc_quark_charge[NQUARKS] = {0};
+    Float_t mc_ISR_E[NQUARKS]        = {0}; 
+    Float_t mc_ISR_px[NQUARKS]       = {0};
+    Float_t mc_ISR_py[NQUARKS]       = {0};
+    Float_t mc_ISR_pz[NQUARKS]       = {0};
+    Float_t mc_ISR_m[NQUARKS]        = {0};
+    Float_t mc_ISR_pdg[NQUARKS]      = {0};
+    Float_t mc_ISR_charge[NQUARKS]   = {0};
+                                           
+    Int_t   mc_quark_ps_n   = 0;                     
+    Float_t mc_quark_ps_E[MAX_NPARTICLES]      = {0};
+    Float_t mc_quark_ps_px[MAX_NPARTICLES]     = {0};
+    Float_t mc_quark_ps_py[MAX_NPARTICLES]     = {0};
+    Float_t mc_quark_ps_pz[MAX_NPARTICLES]     = {0};
+    Float_t mc_quark_ps_m[MAX_NPARTICLES]      = {0};
+    Float_t mc_quark_ps_pdg[MAX_NPARTICLES]    = {0};
+    Float_t mc_quark_ps_charge[MAX_NPARTICLES] = {0};
+    Float_t mc_quark_ps_y12 = 0;                     
+    Float_t mc_quark_ps_y23 = 0;                     
+    Float_t mc_quark_ps_d12 = 0;                     
+    Float_t mc_quark_ps_d23 = 0;                     
+    Float_t mc_quark_ps_jet_E[NJETS]  = {0};         
+    Float_t mc_quark_ps_jet_px[NJETS] = {0};         
+    Float_t mc_quark_ps_jet_py[NJETS] = {0};         
+    Float_t mc_quark_ps_jet_pz[NJETS] = {0};         
+
+    Int_t   mc_stable_n = 0;                          
+    Float_t mc_stable_E[MAX_NPARTICLES]         = {0};
+    Float_t mc_stable_px[MAX_NPARTICLES]        = {0};
+    Float_t mc_stable_py[MAX_NPARTICLES]        = {0};
+    Float_t mc_stable_pz[MAX_NPARTICLES]        = {0};
+    Float_t mc_stable_m[MAX_NPARTICLES]         = {0};
+    Int_t   mc_stable_pdg[MAX_NPARTICLES]       = {0};
+    Float_t mc_stable_charge[MAX_NPARTICLES]    = {0};
+    Int_t   mc_stable_isoverlay[MAX_NPARTICLES] = {0};
+    Int_t   mc_stable_isisr[MAX_NPARTICLES]     = {0};
+    Float_t mc_stable_y12 = 0;                        
+    Float_t mc_stable_y23 = 0;                        
+    Float_t mc_stable_d12 = 0;                        
+    Float_t mc_stable_d23 = 0;                        
+    Float_t mc_stable_jet_E[NJETS]  = {0};            
+    Float_t mc_stable_jet_px[NJETS] = {0};            
+    Float_t mc_stable_jet_py[NJETS] = {0};            
+    Float_t mc_stable_jet_pz[NJETS] = {0};            
+
+  ClassDef(MC_QQbar,1)
+
 };
 
 struct Jet_QQbar  {
@@ -340,7 +375,16 @@ struct Branch_QQbar  {
 
 };
 
-struct Tree_SSbar {
+struct TEvent {
+
+  public:
+    Int_t   eve_valid_lpfo = -1;
+
+    ClassDef(TEvent,1)
+
+};
+
+struct TreeVariables {
   public:
     Int_t   lpfo_match[NJETS] = {0};
     Int_t   lpfo_truejet_pdg[NJETS] = {0};
@@ -419,6 +463,17 @@ struct Tree_SSbar {
     Float_t lpfo_pidtof_closestfit_beta_10ps[NJETS] = {0};
     Float_t lpfo_pidtof_closestfit_beta_50ps[NJETS] = {0};
     Float_t lpfo_pidtof_closestfit_beta_100ps[NJETS] = {0};
+
+    ClassDef(TreeVariables,1)
+
+};
+
+struct LPFOVariables {
+
+  public:
+    Int_t   lpfo_config = 0;
+
+    ClassDef(LPFOVariables,1)
 
 };
 
