@@ -9,9 +9,7 @@ FILE(GLOB SOURCE_FILES
      "*.cc"
 )
 
-
-
-root_generate_dictionary(RootLibDict ../include/TreeVariables.hh LINKDEF ../LinkDef.hh)
+ROOT_GENERATE_DICTIONARY(RootLibDict ../include/TreeVariables.hh LINKDEF ../LinkDef.hh)
 
 ADD_LIBRARY(NtupleProcessor
   SHARED

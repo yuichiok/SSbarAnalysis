@@ -8,7 +8,7 @@
 ------------------------------------------------------------------------------*/
 #include <TTree.h>
 
-class TreeVariables
+struct TreeVariables
 {
   
 const static int MAX_NPARTICLES = 1000;
@@ -18,6 +18,7 @@ const static int NJETS          = 2;
 
 
   public:
+    Int_t   lpfo_config = 0;
     Int_t   lpfo_match[NJETS] = {0};
     Int_t   lpfo_truejet_pdg[NJETS] = {0};
     Int_t   lpfo_truejet_type[NJETS] = {0};
