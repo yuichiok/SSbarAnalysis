@@ -12,7 +12,6 @@ FILE(GLOB SOURCE_FILES
 INCLUDE_DIRECTORIES(SSbarLibrary
   PUBLIC
   ../include
-  ../../SSbarLibrary/include
 )
 
 ADD_LIBRARY(SSbarLibrary
