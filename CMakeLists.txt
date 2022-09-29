@@ -34,7 +34,10 @@ ADD_DEFINITIONS( "-c -Wall -fdiagnostics-color -std=gnu++17" )
 SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR} )
 
 ADD_SUBDIRECTORY( NtupleProcessor )
+ADD_SUBDIRECTORY( SSbarLibrary )
+
 ADD_EXECUTABLE( main.exe main.cc )
 TARGET_LINK_LIBRARIES( main.exe NtupleProcessor )
+TARGET_LINK_LIBRARIES( main.exe SSbarLibrary )
 
 ADD_SUBDIRECTORY( Scripts )
