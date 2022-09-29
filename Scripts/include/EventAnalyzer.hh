@@ -26,10 +26,7 @@ class EventAnalyzer
 
   // methods
     Bool_t           InitReadTree( TTree* ); // Maps class variables to an input TTree.
-    void             InitWriteTree(); // 
-    void             WriteFile(); // 
     void             Analyze( Long64_t entry );
-    Bool_t           Select( Selector s );          // Evaluates the class' list of event selection criteria
     virtual Bool_t   Notify();
 
 

@@ -57,29 +57,6 @@ Bool_t EventAnalyzer::InitReadTree(TTree* tree)
 
 }
 
-void EventAnalyzer::InitWriteTree()
-{
-
-  // Initialize Write Tree
-    _hfilename = TString(_fs.GetOutName_withPath());
-    _hfile = new TFile( _hfilename, "RECREATE", _hfilename ) ;
-
-    _hTree     = new TTree( "event", "tree" );
-    _hTree->Branch("Event", &_eve);
-    _hTree->Branch("MC", &_mc);
-    _hTree->Branch("Stats_LPFO", &_stats_lpfo);
-    _hTree->Branch("Data_LPFO", &_data_lpfo);
-
-}
-
-void EventAnalyzer::WriteFile()
-{
-  // Write Tree
-    _hfile->Write();
-    _hfile->Close();
-
-}
-
 void EventAnalyzer::Analyze(Long64_t entry)
 {
 
