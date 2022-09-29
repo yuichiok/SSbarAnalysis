@@ -40,4 +40,8 @@ ADD_EXECUTABLE( main.exe main.cc )
 TARGET_LINK_LIBRARIES( main.exe NtupleProcessor )
 TARGET_LINK_LIBRARIES( main.exe SSbarLibrary )
 
+SET( EXECUTABLE_OUTPUT_PATH Scripts )
 ADD_SUBDIRECTORY( Scripts )
+ADD_EXECUTABLE( main_scripts.exe Scripts/main_scripts.cc )
+TARGET_LINK_LIBRARIES( main_scripts.exe Scripts )
+
