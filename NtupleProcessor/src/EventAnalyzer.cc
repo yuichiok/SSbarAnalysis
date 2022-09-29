@@ -68,15 +68,15 @@ void EventAnalyzer::InitWriteTree()
     _hfile = new TFile( _hfilename, "RECREATE", _hfilename ) ;
 
     
-    _hTree     = new TTree( "tree", "tree" );
+    _hTree     = new TTree( "event", "tree" );
 
     // _hTree_LPFO     = new TTree( "LPFO", "tree" );
     // _hTree_LPFO_KK  = new TTree( "LPFO_KK", "tree" );
     // _hTree_LPFO_KPi = new TTree( "LPFO_KPi", "tree" );
 
     _hTree->Branch("LPFO", &_tree_lpfo);
-    _hTree->Branch("LPFO_KK", &_tree_lpfo_kk);
-    _hTree->Branch("LPFO_KPi", &_tree_lpfo_kpi);
+    // _hTree->Branch("LPFO_KK", &_tree_lpfo_kk);
+    // _hTree->Branch("LPFO_KPi", &_tree_lpfo_kpi);
 
 
     // writer.InitializeLPFOTree(_hTree_LPFO, _tree_lpfo);
@@ -97,6 +97,9 @@ void EventAnalyzer::Analyze(Long64_t entry)
 {
 
   // Bool_t debug = (entry == 7515);
+  // Bool_t debug = (entry < 1000);
+
+  // if(debug) cout << _mc.mc_stable_pdg[0] << endl;
 
   // PFO Analysis
     PFOTools pfot( &_pfo );
@@ -134,13 +137,14 @@ void EventAnalyzer::Analyze(Long64_t entry)
     CutTrigger.push_back(!is_there_a_gluon_K);
 
   // dEdx dist PDG check
-    enum PDGConfig { K_K, K_Pi, Pi_Pi };
+    enum PDGConfig { noKPi, K_K, K_Pi, Pi_Pi };
     Int_t dEdx_pdg_check = -1;
     
-    if(   pfot.isKaon(pfot.LPFO[0]) && pfot.isKaon(pfot.LPFO[1]) )   dEdx_pdg_check = K_K;
-    if(   pfot.isPion(pfot.LPFO[0]) && pfot.isPion(pfot.LPFO[1]) )   dEdx_pdg_check = Pi_Pi;
-    if( ( pfot.isKaon(pfot.LPFO[0]) && pfot.isPion(pfot.LPFO[1]) ) ||
-        ( pfot.isKaon(pfot.LPFO[1]) && pfot.isPion(pfot.LPFO[0]) ) ) dEdx_pdg_check = K_Pi;
+    if     (   pfot.isKaon(pfot.LPFO[0]) && pfot.isKaon(pfot.LPFO[1]) )  {  dEdx_pdg_check = K_K;    }
+    else if(   pfot.isPion(pfot.LPFO[0]) && pfot.isPion(pfot.LPFO[1]) )  {  dEdx_pdg_check = Pi_Pi;  }
+    else if( ( pfot.isKaon(pfot.LPFO[0]) && pfot.isPion(pfot.LPFO[1]) ) ||
+             ( pfot.isKaon(pfot.LPFO[1]) && pfot.isPion(pfot.LPFO[0]) ) ){  dEdx_pdg_check = K_Pi;   }
+    else{ dEdx_pdg_check = noKPi; }
 
   // charge config check
     Bool_t charge_check = false;
@@ -169,24 +173,30 @@ void EventAnalyzer::Analyze(Long64_t entry)
   
   if (all_checks){
 
-    switch ( dEdx_pdg_check )
-    {
-      case K_K:
-        writer.WriteLPFOVariables(pfot,&_pfo,&_tree_lpfo_kk);
-        break;
+    _tree_lpfo.lpfo_config = dEdx_pdg_check;
 
-      case K_Pi:
-        writer.WriteLPFOVariables(pfot,&_pfo,&_tree_lpfo_kpi);
-        break;
+    // switch ( dEdx_pdg_check )
+    // {
+    //   case K_K:
+    //     _tree_lpfo.lpfo_config = 3;
+    //     cout << "fill kk " << _tree_lpfo.lpfo_config << endl;
+    //     // writer.WriteLPFOVariables(pfot,&_pfo,&_tree_lpfo_kk);
+    //     break;
 
+    //   case K_Pi:
+    //     _tree_lpfo.lpfo_config = 2;
+    //     // writer.WriteLPFOVariables(pfot,&_pfo,&_tree_lpfo_kpi);
+    //     break;
 
-      default:
-        break;
-    }
+    //   default:
+    //     _tree_lpfo.lpfo_config = 0;
+    //     break;
+    // }
 
   }
 
   _hTree->Fill();
+  _tree_lpfo = {};
 
 }
 
