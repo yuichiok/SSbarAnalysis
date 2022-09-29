@@ -468,12 +468,16 @@ struct TreeVariables {
 
 };
 
-struct LPFOVariables {
+struct LPFO_Info {
 
   public:
-    Int_t   lpfo_config = 0;
+    Int_t   lpfo_config               =  0;
+    Float_t lpfo_p_mag        [NJETS] = {0};
+    Int_t   lpfo_dEdx_dist_pdg[NJETS] = {0};
+    Float_t lpfo_cos          [NJETS] = {-2,-2};
+    Float_t lpfo_qcos         [NJETS] = {-2,-2};
 
-    ClassDef(LPFOVariables,1)
+    ClassDef(LPFO_Info,1)
 
 };
 

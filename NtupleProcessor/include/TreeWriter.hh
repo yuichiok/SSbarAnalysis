@@ -25,7 +25,7 @@ class TreeWriter
     //
     
     void InitializeLPFOTree( TTree * tree, TreeVariables & data);
-    void WriteLPFOVariables( PFOTools pt, PFO_QQbar *pqq, TreeVariables *data );
+    void WriteLPFO_Info( PFOTools pt, PFO_QQbar *pqq, TreeVariables *data );
 
   private:
     //

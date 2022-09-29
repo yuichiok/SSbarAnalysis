@@ -6,5 +6,5 @@
 #pragma link C++ struct MC_QQbar+;
 #pragma link C++ struct TEvent+;
 #pragma link C++ struct TreeVariables+;
-#pragma link C++ struct LPFOVariables+;
+#pragma link C++ struct LPFO_Info+;
 #endif

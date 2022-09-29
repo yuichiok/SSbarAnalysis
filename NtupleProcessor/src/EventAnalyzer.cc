@@ -25,7 +25,7 @@ typedef unsigned int Index;
 
 ClassImp(MC_QQbar)
 ClassImp(TreeVariables)
-ClassImp(LPFOVariables)
+ClassImp(LPFO_Info)
 
 EventAnalyzer::EventAnalyzer(TString o)
 : options(o)
@@ -102,7 +102,7 @@ void EventAnalyzer::Analyze(Long64_t entry)
     _eve.eve_valid_lpfo = 1;
 
   // Fill raw LPFO info
-    writer.WriteLPFOVariables(pfot,&_pfo,&_stats_lpfo);
+    writer.WriteLPFO_Info(pfot,&_pfo,&_stats_lpfo);
     
   // Selections
     vector<Bool_t> CutTrigger;
@@ -170,24 +170,13 @@ void EventAnalyzer::Analyze(Long64_t entry)
   if (all_checks){
 
     _data_lpfo.lpfo_config = dEdx_pdg_check;
-
-    // switch ( dEdx_pdg_check )
-    // {
-    //   case K_K:
-    //     _stats_lpfo.lpfo_config = 3;
-    //     cout << "fill kk " << _stats_lpfo.lpfo_config << endl;
-    //     // writer.WriteLPFOVariables(pfot,&_pfo,&_stats_lpfo_kk);
-    //     break;
-
-    //   case K_Pi:
-    //     _stats_lpfo.lpfo_config = 2;
-    //     // writer.WriteLPFOVariables(pfot,&_pfo,&_stats_lpfo_kpi);
-    //     break;
-
-    //   default:
-    //     _stats_lpfo.lpfo_config = 0;
-    //     break;
-    // }
+    
+    for (int i=0; i<2; i++){
+      _data_lpfo.lpfo_p_mag[i]         = pfot.LPFO[i].p_mag;
+      _data_lpfo.lpfo_dEdx_dist_pdg[i] = pfot.LPFO[i].dEdx_dist_pdg;
+      _data_lpfo.lpfo_cos[i]           = pfot.LPFO[i].cos;
+      _data_lpfo.lpfo_qcos[i]          = pfot.LPFO[i].qcos;
+    }
 
   }
 

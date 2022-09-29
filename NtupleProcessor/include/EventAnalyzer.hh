@@ -74,7 +74,7 @@ class EventAnalyzer
 
     TEvent           _eve;
     TreeVariables    _stats_lpfo;
-    LPFOVariables    _data_lpfo;
+    LPFO_Info        _data_lpfo;
 
 };
 
