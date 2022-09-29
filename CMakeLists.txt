@@ -3,6 +3,8 @@ SET(CMAKE_OSX_ARCHITECTURES "x86_64")
 
 PROJECT(SSbarProcessor CXX)
 
+set(CMAKE_MODULE_PATH $ENV{ROOTSYS}/etc/cmake)
+
 ### DEPENDENCIES ############################################################
 
 list(APPEND CMAKE_PREFIX_PATH $ENV{ROOTSYS})

@@ -3,7 +3,7 @@ using std::string;
 using std::vector;
 
 TreeWriter:: TreeWriter() {}
-void TreeWriter::InitializeLPFOTree(TTree * _hTree, Tree_SSbar& data)
+void TreeWriter::InitializeLPFOTree(TTree * _hTree, TreeVariables& data)
 {
   _hTree->Branch("lpfo_match", data.lpfo_match, "lpfo_match[2]/I");
   _hTree->Branch("lpfo_truejet_pdg", data.lpfo_truejet_pdg, "lpfo_truejet_pdg[2]/I");
@@ -85,7 +85,7 @@ void TreeWriter::InitializeLPFOTree(TTree * _hTree, Tree_SSbar& data)
 
 }
 
-void TreeWriter::WriteLPFOVariables(PFOTools pt, PFO_QQbar *pqq, Tree_SSbar *data)
+void TreeWriter::WriteLPFO_Info(PFOTools pt, PFO_QQbar *pqq, TreeVariables *data)
 {
   int iLPFOs[2] = {pt.LPFO[0].ipfo, pt.LPFO[1].ipfo};
   int i = 0;
