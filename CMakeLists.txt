@@ -44,4 +44,5 @@ SET( EXECUTABLE_OUTPUT_PATH Scripts )
 ADD_SUBDIRECTORY( Scripts )
 ADD_EXECUTABLE( main_scripts.exe Scripts/main_scripts.cc )
 TARGET_LINK_LIBRARIES( main_scripts.exe Scripts )
+TARGET_LINK_LIBRARIES( main_scripts.exe SSbarLibrary )
 

@@ -32,7 +32,7 @@ TARGET_INCLUDE_DIRECTORIES(Scripts
 
 target_link_libraries(Scripts ${ROOT_LIBRARIES})
 
-install(TARGETS Scripts LIBRARY DESTINATION ../lib)
+# install(TARGETS Scripts LIBRARY DESTINATION ../lib)
 install(FILES ../../SSbarLibrary/include/TreeStructures.hh DESTINATION ../include)
 
 

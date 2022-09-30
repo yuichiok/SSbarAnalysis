@@ -10,7 +10,7 @@
 #include <TString.h>
 #include <TTree.h>
 #include "timestamp.hh"
-#include "NtupleProcessor.hh"
+#include "HistProcessor.hh"
 
 int main(int argc, char* argv[])
 // int main()
@@ -46,7 +46,7 @@ int main(int argc, char* argv[])
               "  Processing Begun: " << ts_mainBegin << "\n"
               "\n";
 
-      // NtupleProcessor ntplproc(argv[1],-1);
+      HistProcessor ntplproc(argv[1],-1);
 
     // CLOSING OUTPUT.
       std::string ts_mainEnd = timeStamp();

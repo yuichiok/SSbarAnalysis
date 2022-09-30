@@ -16,7 +16,8 @@
 #include <vector>
 #include <fstream>
 #include "TreeStructures.hh"
-// #include "TreeReader.hh"
+#include "TreeReader.hh"
+#include "FileSelector.hh"
 
 class EventAnalyzer
 {
@@ -42,8 +43,29 @@ class EventAnalyzer
 
   // Fixed size dimensions of array or collections stored in the TTree if any.
 
+    FileSelector _fs;
+
 
   private:
+
+
+    MC_QQbar      _mc      ;
+    Jet_QQbar     _jet     ;
+    PFO_QQbar     _lpfo     ;
+    Branch_QQbar  _branch  ;
+
+    // TreeWriter writer;
+    // TFile * _hfile;
+    // TTree * _hTree;
+    // TTree * _hTree_LPFO;
+    // TTree * _hTree_LPFO_KK;
+    // TTree * _hTree_LPFO_KPi;
+
+    // TString       _hfilename;
+
+    // TEvent           _eve;
+    // TreeVariables    _stats_lpfo;
+    // LPFO_Info        _data_lpfo;
 
 };
 

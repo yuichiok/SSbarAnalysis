@@ -27,6 +27,7 @@ ClassImp(LPFO_Info)
 EventAnalyzer::EventAnalyzer(TString o)
 : options(o)
 {
+    // _fs.SetNames(o.Data());
     patEventsAnalyzed = 0;
     entriesInNtuple   = 0;
 }
@@ -46,10 +47,9 @@ Bool_t EventAnalyzer::InitReadTree(TTree* tree)
     fChain->SetMakeClass(1);
 
   // Read Tree
-    // TreeReader reader;
-    // reader.InitializeMCReadTree(fChain, _mc, _branch);
-    // reader.InitializeJetReadTree(fChain, _jet, _branch);
-    // reader.InitializePFOReadTree(fChain, _pfo, _branch);
+    TreeReader reader;
+    reader.InitializeMCReadTree(fChain, _mc, _branch);
+    reader.InitializePFOReadTree(fChain, _lpfo, _branch);
 
     Notify();
 

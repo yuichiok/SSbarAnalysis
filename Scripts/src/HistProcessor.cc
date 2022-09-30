@@ -1,31 +1,31 @@
 
 /*------------------------------------------------------------------------------
-NtupleProcessor.cpp
+HistProcessor.cpp
  Created : 2022-09-02  okugawa
 ------------------------------------------------------------------------------*/
 
 #include <iostream>
 #include <TString.h>
 #include <TFile.h> 
-#include "NtupleProcessor.hh"
+#include "HistProcessor.hh"
 
 using std::cout;   using std::endl;
 using std::string;
 
-NtupleProcessor::NtupleProcessor(TString o, int me)
+HistProcessor::HistProcessor(TString o, int me)
 : eAnalyzer(o), tIter(eAnalyzer), options(o), maxEvents(me)
 {
 
   // PARAM output
-    cout << "  [NtupleProcessor]\n"
+    cout << "  [HistProcessor]\n"
             "    Options:    " << options   << "\n"
             "    MaxEntries: " << me   << "\n"
     << endl;
 
-  ntupleFile = TFile::Open(options);
-  if(!ntupleFile) cout << "NtupleProcessor: ERROR: Unable to open file " << options << endl;
-  TTree *ntuple   = (TTree*) ntupleFile->Get("Stats");
-  if(!ntuple) cout << "NtupleProcessor: ERROR: Unable to open ttree in " << options << endl;
-  ntuple->Process(&tIter, "");
+  // ntupleFile = TFile::Open(options);
+  // if(!ntupleFile) cout << "HistProcessor: ERROR: Unable to open file " << options << endl;
+  // TTree *ntuple   = (TTree*) ntupleFile->Get("Stats");
+  // if(!ntuple) cout << "HistProcessor: ERROR: Unable to open ttree in " << options << endl;
+  // ntuple->Process(&tIter, "");
 
 }

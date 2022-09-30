@@ -1,10 +1,10 @@
-#ifndef GUARD_NtupleProcessor_h
-#define GUARD_NtupleProcessor_h
+#ifndef GUARD_HistProcessor_h
+#define GUARD_HistProcessor_h
 
 /*------------------------------------------------------------------------------
-   NtupleProcessor
+   HistProcessor
  Created : 2022-09-02  okugawa
- Main class of NtupleProcessor program. Created to handle input and running of
+ Main class of HistProcessor program. Created to handle input and running of
  ntuple processing.
  Takes input variables (datasets, configurations, etc) and sets up the
  appropriate classes to handle each portion of the analysis process.
@@ -13,11 +13,11 @@
 #include "EventAnalyzer.hh"
 #include "TreeIterator.hh"
 
-class NtupleProcessor
+class HistProcessor
 {
   public:
-    NtupleProcessor(TString o="", int me = -1);
-    ~NtupleProcessor(){}
+    HistProcessor(TString o="", int me = -1);
+    ~HistProcessor(){}
 
     EventAnalyzer  eAnalyzer;
     TreeIterator   tIter;
