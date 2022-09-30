@@ -48,8 +48,12 @@ Bool_t EventAnalyzer::InitReadTree(TTree* tree)
 
   // Read Tree
     TreeReader reader;
-    reader.InitializeMCReadTree(fChain, _mc, _branch);
-    reader.InitializePFOReadTree(fChain, _lpfo, _branch);
+    // reader.InitializeMCReadTree(fChain, _mc, _branch);
+    // reader.InitializePFOReadTree(fChain, _lpfo, _branch);
+    fChain->SetBranchAddress("Event",_eve,_b_eve);
+    fChain->SetBranchAddress("MC",_mc,_b_mc);
+    fChain->SetBranchAddress("Stats_LPFO",_stats_lpfo,_b_stats_lpfo);
+    fChain->SetBranchAddress("Data_LPFO",_data_lpfo,_b_data_lpfo);
 
     Notify();
 

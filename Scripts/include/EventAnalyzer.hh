@@ -60,9 +60,14 @@ class EventAnalyzer
 
     // TString       _hfilename;
 
-    // TEvent           _eve;
-    // TreeVariables    _stats_lpfo;
-    // LPFO_Info        _data_lpfo;
+    TEvent           _eve;
+    TreeVariables    _stats_lpfo;
+    LPFO_Info        _data_lpfo;
+
+    TBranch*         _b_eve;
+    TBranch*         _b_mc;
+    TBranch*         _b_stats_lpfo;
+    TBranch*         _b_data_lpfo;
 
 };
 
