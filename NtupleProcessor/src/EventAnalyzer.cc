@@ -23,6 +23,7 @@ EventAnalyzer.cpp
 using std::cout;   using std::endl;
 typedef unsigned int Index;
 
+ClassImp(TEvent)
 ClassImp(MC_QQbar)
 ClassImp(TreeVariables)
 ClassImp(LPFO_Info)

@@ -20,6 +20,7 @@ EventAnalyzer.cpp
 using std::cout;   using std::endl;
 typedef unsigned int Index;
 
+ClassImp(TEvent)
 ClassImp(MC_QQbar)
 ClassImp(TreeVariables)
 ClassImp(LPFO_Info)
@@ -47,13 +48,10 @@ Bool_t EventAnalyzer::InitReadTree(TTree* tree)
     fChain->SetMakeClass(1);
 
   // Read Tree
-    TreeReader reader;
-    // reader.InitializeMCReadTree(fChain, _mc, _branch);
-    // reader.InitializePFOReadTree(fChain, _lpfo, _branch);
-    fChain->SetBranchAddress("Event",_eve,_b_eve);
-    fChain->SetBranchAddress("MC",_mc,_b_mc);
-    fChain->SetBranchAddress("Stats_LPFO",_stats_lpfo,_b_stats_lpfo);
-    fChain->SetBranchAddress("Data_LPFO",_data_lpfo,_b_data_lpfo);
+    // fChain->SetBranchAddress("Event",&_eve);
+    // fChain->SetBranchAddress("MC",&_mc);
+    // fChain->SetBranchAddress("Stats_LPFO",&_stats_lpfo);
+    fChain->SetBranchAddress("Data_LPFO",&_data_lpfo);
 
     Notify();
 
@@ -64,6 +62,7 @@ Bool_t EventAnalyzer::InitReadTree(TTree* tree)
 void EventAnalyzer::Analyze(Long64_t entry)
 {
 
+  if(_data_lpfo->lpfo_config) cout << "HERE!!!!" << endl;
 
 }
 

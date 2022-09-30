@@ -57,7 +57,7 @@ Bool_t TreeIterator::Process(Long64_t entry)
   // Evaluate the criteria for this entry
     // if(eAnalyzer.Select( EventAnalyzer::kMC )){
 
-    //   eAnalyzer.Analyze(entry);
+      eAnalyzer.Analyze(entry);
 
     // }
 
