@@ -62,12 +62,18 @@ Bool_t EventAnalyzer::InitReadTree(TTree* tree)
 
 }
 
+void EventAnalyzer::CreateFile()
+{
+  // Write Tree
+    _hfilename = TString(_fs.GetOutName_withPath());
+    _hfile = new TFile( _hfilename, "RECREATE", _hfilename ) ;
+
+}
+
 void EventAnalyzer::InitWriteTree()
 {
 
   // Initialize Write Tree
-    _hfilename = TString(_fs.GetOutName_withPath());
-    _hfile = new TFile( _hfilename, "RECREATE", _hfilename ) ;
 
     _hTree     = new TTree( "event", "tree" );
     _hTree->Branch("Event", &_eve);
@@ -85,7 +91,6 @@ void EventAnalyzer::InitHists()
 void EventAnalyzer::WriteFile()
 {
   // Write Tree
-    _hm.WriteLists(_hfile);
     _hfile->Write();
     _hfile->Close();
 
@@ -193,23 +198,12 @@ void EventAnalyzer::Analyze(Long64_t entry)
   // Fill Hists
 
   for (auto iLPFO : pfot.LPFO){
-    if( pfot.isKaon(iLPFO) ) _hm.h_lpfo_K_mom->Fill(iLPFO.p_mag);
+    if( pfot.isKaon(iLPFO) ) _hm.h_lpfo_reco_K_mom->Fill(iLPFO.p_mag);
   }
 
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
+  for (int i=0; i<2; i++){
+    if( abs(_stats_lpfo.lpfo_pdgcheat[i]) == 321 ) _hm.h_lpfo_gen_K_mom->Fill(pfot.LPFO[i].p_mag);
+  }
 
 
 

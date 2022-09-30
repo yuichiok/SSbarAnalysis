@@ -23,6 +23,7 @@ void TreeIterator::SlaveBegin(TTree * /*tree*/)
     nEntries          = 0;
     nEntriesProcessed = 0;
 
+    eAnalyzer.CreateFile();
     eAnalyzer.InitHists();
     eAnalyzer.InitWriteTree();
 
