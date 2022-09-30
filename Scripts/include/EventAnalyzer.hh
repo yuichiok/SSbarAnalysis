@@ -43,11 +43,8 @@ class EventAnalyzer
 
   // Fixed size dimensions of array or collections stored in the TTree if any.
 
-    FileSelector _fs;
-
-
   private:
-
+    FileSelector _fs;
 
     MC_QQbar      _mc      ;
     Jet_QQbar     _jet     ;

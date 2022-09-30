@@ -27,7 +27,7 @@ ClassImp(LPFO_Info)
 EventAnalyzer::EventAnalyzer(TString o)
 : options(o)
 {
-    // _fs.SetNames(o.Data());
+    _fs.SetNames(o.Data());
     patEventsAnalyzed = 0;
     entriesInNtuple   = 0;
 }

@@ -22,10 +22,10 @@ HistProcessor::HistProcessor(TString o, int me)
             "    MaxEntries: " << me   << "\n"
     << endl;
 
-  // ntupleFile = TFile::Open(options);
-  // if(!ntupleFile) cout << "HistProcessor: ERROR: Unable to open file " << options << endl;
-  // TTree *ntuple   = (TTree*) ntupleFile->Get("Stats");
-  // if(!ntuple) cout << "HistProcessor: ERROR: Unable to open ttree in " << options << endl;
-  // ntuple->Process(&tIter, "");
+  ntupleFile = TFile::Open(options);
+  if(!ntupleFile) cout << "HistProcessor: ERROR: Unable to open file " << options << endl;
+  TTree *ntuple   = (TTree*) ntupleFile->Get("event");
+  if(!ntuple) cout << "HistProcessor: ERROR: Unable to open ttree in " << options << endl;
+  ntuple->Process(&tIter, "");
 
 }
