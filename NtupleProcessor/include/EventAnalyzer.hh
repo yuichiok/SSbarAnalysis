@@ -20,6 +20,7 @@
 #include "TreeReader.hh"
 #include "TreeWriter.hh"
 #include "FileSelector.hh"
+#include "HistManager.hh"
 
 class EventAnalyzer
 {
@@ -33,6 +34,7 @@ class EventAnalyzer
   // methods
     Bool_t           InitReadTree( TTree* ); // Maps class variables to an input TTree.
     void             InitWriteTree(); // 
+    void             InitHists();
     void             WriteFile(); // 
     void             Analyze( Long64_t entry );
     Bool_t           Select( Selector s );          // Evaluates the class' list of event selection criteria
@@ -54,6 +56,7 @@ class EventAnalyzer
 
   // Fixed size dimensions of array or collections stored in the TTree if any.
     FileSelector  _fs;
+    HistManager   _hm;
 
 
   private:

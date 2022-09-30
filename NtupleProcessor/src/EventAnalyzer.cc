@@ -76,9 +76,15 @@ void EventAnalyzer::InitWriteTree()
 
 }
 
+void EventAnalyzer::InitHists()
+{
+    _hm.InitializeHists();
+}
+
 void EventAnalyzer::WriteFile()
 {
   // Write Tree
+    _hm.WriteLists(_hfile);
     _hfile->Write();
     _hfile->Close();
 
@@ -182,6 +188,30 @@ void EventAnalyzer::Analyze(Long64_t entry)
 
   _hTree->Fill();
   
+
+  // Fill Hists
+
+  for (auto iLPFO : pfot.LPFO){
+    if( pfot.isKaon(iLPFO) ) _hm.h_lpfo_K_mom->Fill(iLPFO.p_mag);
+  }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   ClearStructs();
 
 }
