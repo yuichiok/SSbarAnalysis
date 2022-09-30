@@ -9,6 +9,7 @@ TreeIterator.cpp
 #include <string>
 #include <TString.h>
 #include "TreeIterator.hh"
+#include "HistManager.hh"
 
 using std::cout;  using std::endl;   using std::setw;   using std::string;
 
