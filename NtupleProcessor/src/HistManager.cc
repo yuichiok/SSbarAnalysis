@@ -9,16 +9,12 @@
 
 using std::cout;   using std::endl;
 
-HistManager::HistManager()
-{
-  // Initialization
-    // InitializeHists();
-    // Hist2List();
-}
+HistManager::HistManager() {}
 
 void HistManager::InitializeHists()
 {
-    h_lpfo_K_mom = new TH1F("h_lpfo_K_mom","; Leading Kaon momentum (GeV); Entries",100,0,100);
+    h_lpfo_gen_K_mom = new TH1F("h_lpfo_gen_K_mom","; Leading Gen Kaon momentum (GeV); Entries",100,0,100);
+    h_lpfo_reco_K_mom = new TH1F("h_lpfo_reco_K_mom","; Leading Reco Kaon momentum (GeV); Entries",100,0,100);
 
     Hist2List();
 
@@ -26,7 +22,8 @@ void HistManager::InitializeHists()
 
 void HistManager::Hist2List()
 {
-    hList->Add(h_lpfo_K_mom);
+    hList->Add(h_lpfo_gen_K_mom);
+    hList->Add(h_lpfo_reco_K_mom);
 
 }
 
