@@ -6,15 +6,18 @@ then
     echo "rm -rf build/"
 fi
 
-if [[ -f "main.exe" ]]
+if compgen -G "*.exe" > /dev/null
 then
-    rm -rf main.exe
-    echo "rm -rf main.exe"
+    rm -rf *.exe
+    echo "rm -rf *.exe"
 fi
 
 mkdir build
 cd build
+
 cmake ..
+# cmake --build . --target Scripts
+
 # make VERBOSE=1
 make
 cd -

@@ -9,6 +9,7 @@ TreeIterator.cpp
 #include <string>
 #include <TString.h>
 #include "TreeIterator.hh"
+#include "HistManager.hh"
 
 using std::cout;  using std::endl;   using std::setw;   using std::string;
 
@@ -21,6 +22,10 @@ void TreeIterator::SlaveBegin(TTree * /*tree*/)
   // Initialize log, counters
     nEntries          = 0;
     nEntriesProcessed = 0;
+
+    eAnalyzer.InitHists();
+    eAnalyzer.InitWriteTree();
+
 }
 
 
@@ -36,7 +41,6 @@ void TreeIterator::Init(TTree *tree)
 
   // Initialize Event Handler, adding the criteria of each HistoMaker to it's list of criteria.
     eAnalyzer.InitReadTree(fChain);  
-    eAnalyzer.InitWriteTree();
 
 }
 

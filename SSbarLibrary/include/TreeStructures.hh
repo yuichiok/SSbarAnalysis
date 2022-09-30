@@ -182,16 +182,16 @@ struct PFO_Info {
   public:
     Int_t   ipfo          = -1;
     VectorTools vt;
-    Float_t p_mag         =  0;
-    Float_t E             =  0;
-    Int_t   charge        =  0;
+    Float_t p_mag         =  -1;
+    Float_t E             =  -1;
+    Int_t   charge        =  -100;
     Int_t   pdgcheat      =  0;
-    Int_t   tpc_hits      =  0;
+    Int_t   tpc_hits      =  -1;
     Float_t pv            = -2;
-    Float_t dEdx          =  0;
-    Float_t kdEdx_dist    =  0;
-    Float_t pidEdx_dist   =  0;
-    Float_t pdEdx_dist    =  0;
+    Float_t dEdx          =  -1;
+    Float_t kdEdx_dist    =  -100;
+    Float_t pidEdx_dist   =  -100;
+    Float_t pdEdx_dist    =  -100;
     Int_t   dEdx_dist_pdg =  0;
     Float_t cos           = -2;
     Float_t qcos          = -2;
