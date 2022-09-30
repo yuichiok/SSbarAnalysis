@@ -62,7 +62,8 @@ Bool_t EventAnalyzer::InitReadTree(TTree* tree)
 void EventAnalyzer::Analyze(Long64_t entry)
 {
 
-  if(_data_lpfo->lpfo_config) cout << "HERE!!!!" << endl;
+  cout << _data_lpfo->lpfo_cos[0] << endl;
+  if(_data_lpfo->lpfo_cos[0] > -2) cout << "HERE!!!!" << endl;
 
 }
 

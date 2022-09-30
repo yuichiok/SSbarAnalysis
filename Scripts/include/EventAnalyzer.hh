@@ -46,7 +46,7 @@ class EventAnalyzer
   private:
     FileSelector _fs;
 
-    MC_QQbar      _mc      ;
+    MC_QQbar*      _mc      ;
     Jet_QQbar     _jet     ;
     PFO_QQbar     _lpfo     ;
     Branch_QQbar  _branch  ;
@@ -62,7 +62,7 @@ class EventAnalyzer
 
     TEvent*           _eve;
     TreeVariables*    _stats_lpfo;
-    LPFO_Info*        _data_lpfo;
+    LPFO_Info*        _data_lpfo = nullptr;
 
     TBranch          *_b_data_lpfo;
 
