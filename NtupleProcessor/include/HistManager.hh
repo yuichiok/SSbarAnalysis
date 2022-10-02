@@ -23,6 +23,9 @@ class HistManager
     virtual void WriteLists( TFile * output );
 
   // Declear histograms
+    TH1F * h_gen_K_cos;
+    TH1F * h_reco_K_cos;
+
     TH1F * h_lpfo_gen_K_mom;
     TH1F * h_lpfo_reco_K_mom;
 
