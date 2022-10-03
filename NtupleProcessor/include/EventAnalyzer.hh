@@ -44,6 +44,9 @@ class EventAnalyzer
     void             ClearStructs();
     virtual Bool_t   Notify();
 
+  // Histogram extractor
+    void             PolarAngle(PFOTools mct, PFOTools pfot);
+
 
 
   // Running Variables

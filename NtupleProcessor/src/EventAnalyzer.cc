@@ -100,8 +100,10 @@ void EventAnalyzer::Analyze(Long64_t entry)
 {
   Bool_t TreeWrite = 0;
 
-  // PFO Analysis
+  // MC, PFO Analysis
+    PFOTools mct( &_mc );
     PFOTools pfot( &_pfo );
+
     if ( !pfot.ValidPFO() ) {
       _eve.eve_valid_lpfo = 0;
       if(TreeWrite) _hTree->Fill();
@@ -204,16 +206,8 @@ void EventAnalyzer::Analyze(Long64_t entry)
 
 
   // Fill Hists can make another class called histogram extractor?
+  PolarAngle(mct,pfot);
 
-  for ( int imc=0; imc < 2; imc++){
-    VectorTools mcqv(_mc.mc_quark_px[imc],_mc.mc_quark_py[imc],_mc.mc_quark_pz[imc],_mc.mc_quark_E[imc]);
-    Float_t mc_qq_cos  = std::cos(mcqv.v3().Theta());
-    Float_t mc_qq_qcos = (_mc.mc_quark_charge < 0) ? mc_qq_cos : -mc_qq_cos;
-
-    _hm.h[_hm.gen_q_cos]->Fill(mc_qq_cos);
-    _hm.h[_hm.gen_q_qcos]->Fill(mc_qq_qcos);
-
-  }
 
   for ( int imc=0; imc < _mc.mc_stable_n; imc++ ){
     VectorTools mcv(_mc.mc_stable_px[imc],_mc.mc_stable_py[imc],_mc.mc_stable_pz[imc],_mc.mc_stable_E[imc]);
@@ -345,4 +339,12 @@ Bool_t EventAnalyzer::Notify()
    // user if needed. The return value is currently not used.
 
    return kTRUE;
+}
+
+void EventAnalyzer::PolarAngle(PFOTools mct, PFOTools pfot)
+{
+  for ( int iqq=0; iqq < 2; iqq++){
+    _hm.h[_hm.gen_q_cos]->Fill(mct.mc_quark[iqq].cos);
+    _hm.h[_hm.gen_q_qcos]->Fill(mct.mc_quark[iqq].qcos);
+  }
 }
