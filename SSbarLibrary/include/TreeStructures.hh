@@ -177,21 +177,95 @@ struct PFO_QQbar  {
 
 };
 
-struct PFO_Info {
+struct QQbar_Single_PFO {
+  public:
+    Int_t   pfo_match = 0;
+    Int_t   pfo_truejet_pdg = 0;
+    Int_t   pfo_truejet_type = 0;
+    Int_t   pfo_pdgcheat = 0;
+    Int_t   pfo_nparents = 0;
+    Int_t   pfo_pdgcheat_parent[MAX_NPARTICLES] = {0};
+    Float_t pfo_E = -1;
+    Float_t pfo_E_calo = 0;
+    Float_t pfo_px = 0;
+    Float_t pfo_py = 0;
+    Float_t pfo_pz = 0;
+    Float_t pfo_m = 0;
+    Int_t   pfo_type = 0;
+    Int_t   pfo_isoverlay = 0;
+    Int_t   pfo_isisr = 0;
+    Int_t   pfo_vtx = 0;
+    Int_t   pfo_charge = -100;
+    Int_t   pfo_ntracks = 0;
+    Int_t   pfo_tpc_hits = -1;
+    Float_t pfo_dedx = -1;
+    Float_t pfo_dedxerror = 0;
+    Float_t pfo_d0 = 0;
+    Float_t pfo_d0error = 0;
+    Float_t pfo_z0 = 0;
+    Float_t pfo_z0error = 0;
+    Float_t pfo_phi = 0;
+    Float_t pfo_phierror = 0;
+    Float_t pfo_omega = 0;
+    Float_t pfo_omegaerror = 0;
+    Float_t pfo_tanlambda = 0;
+    Float_t pfo_tanlambdaerror = 0;
+    Float_t pfo_chi2 = 0;
+    Float_t pfo_ndf = 0;
+    Float_t pfo_vtxpt[3] = {0};
+    Float_t pfo_endpt[3] = {0};
+    Int_t   pfo_pid = 0;
+    Float_t pfo_pid_likelihood = 0;
+    Float_t pfo_pid_eprob = 0;
+    Float_t pfo_pid_muprob = 0;
+    Float_t pfo_pid_piprob = 0;
+    Float_t pfo_pid_kprob = 0;
+    Float_t pfo_pid_pprob = 0;
+    Float_t pfo_pid_hprob = 0;
+    Int_t   pfo_piddedx = 0;
+    Float_t pfo_piddedx_likelihood = -1;
+    Float_t pfo_piddedx_eprob = -1;
+    Float_t pfo_piddedx_muprob = -1;
+    Float_t pfo_piddedx_piprob = -1;
+    Float_t pfo_piddedx_kprob = -1;
+    Float_t pfo_piddedx_pprob = -1;
+    Float_t pfo_piddedx_hprob = -1;
+    Float_t pfo_piddedx_e_dedxdist = -100;
+    Float_t pfo_piddedx_mu_dedxdist = -100;
+    Float_t pfo_piddedx_pi_dedxdist = -100;
+    Float_t pfo_piddedx_k_dedxdist = -100;
+    Float_t pfo_piddedx_p_dedxdist = -100;
+    Float_t pfo_piddedx_e_lkhood = -100;
+    Float_t pfo_piddedx_mu_lkhood = -100;
+    Float_t pfo_piddedx_pi_lkhood = -100;
+    Float_t pfo_piddedx_k_lkhood = -100;
+    Float_t pfo_piddedx_p_lkhood = -100;
+    Float_t pfo_pidtof_p_at_calo = -100;
+    Float_t pfo_pidtof_closest_beta_0ps = 0;
+    Float_t pfo_pidtof_closest_beta_10ps = 0;
+    Float_t pfo_pidtof_closest_beta_50ps = 0;
+    Float_t pfo_pidtof_closest_beta_100ps = 0;
+    Float_t pfo_pidtof_fastest_beta_0ps = 0;
+    Float_t pfo_pidtof_fastest_beta_10ps = 0;
+    Float_t pfo_pidtof_fastest_beta_50ps = 0;
+    Float_t pfo_pidtof_fastest_beta_100ps = 0;
+    Float_t pfo_pidtof_cylfit_beta_0ps = 0;
+    Float_t pfo_pidtof_cylfit_beta_10ps = 0;
+    Float_t pfo_pidtof_cylfit_beta_50ps = 0;
+    Float_t pfo_pidtof_cylfit_beta_100ps = 0;
+    Float_t pfo_pidtof_closestfit_beta_0ps = 0;
+    Float_t pfo_pidtof_closestfit_beta_10ps = 0;
+    Float_t pfo_pidtof_closestfit_beta_50ps = 0;
+    Float_t pfo_pidtof_closestfit_beta_100ps = 0;
+};
+
+struct PFO_Info : QQbar_Single_PFO {
 
   public:
     Int_t   ipfo          = -1;
     VectorTools vt;
-    Float_t p_mag         =  -1;
-    Float_t E             =  -1;
-    Int_t   charge        =  -100;
-    Int_t   pdgcheat      =  0;
-    Int_t   tpc_hits      =  -1;
+    Float_t p_mag         = -1;
     Float_t pv            = -2;
-    Float_t dEdx          =  -1;
-    Float_t kdEdx_dist    =  -100;
-    Float_t pidEdx_dist   =  -100;
-    Float_t pdEdx_dist    =  -100;
     Int_t   dEdx_dist_pdg =  0;
     Float_t cos           = -2;
     Float_t qcos          = -2;
