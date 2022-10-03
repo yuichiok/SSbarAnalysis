@@ -73,7 +73,7 @@ struct MC_QQbar  {
 
 };
 
-struct MC_Info : MC_QQbar {
+struct MC_Info {
 
   public:
     VectorTools vt;

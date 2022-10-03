@@ -48,7 +48,7 @@ class PFOTools
 
   // MC gen info
     MC_Info    mc_quark[2];
-    MC_Info    mc_stable[100];
+    MC_Info    mc_stable[1000];
 
   // List of PFOs in jets
     vector<PFO_Info> PFO_jet[2];

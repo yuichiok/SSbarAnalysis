@@ -45,7 +45,6 @@ void PFOTools::InitializeMCTools( MC_QQbar *mc_data )
     mc_quark[iqq].cos   = std::cos(mcqv.v3().Theta());
     mc_quark[iqq].qcos  = (mc_data->mc_quark_charge[iqq] < 0) ? mc_quark[iqq].cos : -mc_quark[iqq].cos;
   }
-
   for ( int istable=0; istable < mc_data->mc_stable_n; istable++){
     VectorTools mcsv(mc_data->mc_stable_px[istable],mc_data->mc_stable_py[istable],mc_data->mc_stable_pz[istable],mc_data->mc_stable_E[istable]);
     mc_stable[istable].vt    = mcsv;
