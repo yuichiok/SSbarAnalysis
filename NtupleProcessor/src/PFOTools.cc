@@ -45,20 +45,6 @@ void PFOTools::InitializePFOTools( PFO_QQbar *data )
 
     // Initialize & categorize PFO variables with different jets
     const int ijet = data->pfo_match[ipfo];
-    // PFO = {
-    //   .ipfo  = ipfo,
-    //   .vt    = vt,
-    //   .p_mag = (Float_t) vt.v3().R(),
-    //   .pfo_E = data->pfo_E[ipfo],
-    //   .pfo_charge = data->pfo_charge[ipfo],
-    //   .pfo_pdgcheat = data->pfo_pdgcheat[ipfo],
-    //   .pfo_tpc_hits = data->pfo_tpc_hits[ipfo],
-    //   .pv = sqrt(data->pfo_d0[ipfo] * data->pfo_d0[ipfo] + data->pfo_z0[ipfo] * data->pfo_z0[ipfo]),
-    //   .pfo_dEdx = data->pfo_dedx[ipfo],
-    //   .pfo_piddedx_k_dedxdist = data->pfo_piddedx_k_dedxdist[ipfo],
-    //   .pfo_piddedx_pi_dedxdist = data->pfo_piddedx_pi_dedxdist[ipfo],
-    //   .pfo_piddedx_p_dedxdist = data->pfo_piddedx_p_dedxdist[ipfo],
-    // };
 
     PFO.ipfo  = ipfo,
     PFO.vt    = vt,
