@@ -24,11 +24,38 @@ void pop_front(std::vector<T>& vec)
 
 PFOTools::PFOTools() {}
 
+PFOTools::PFOTools( MC_QQbar *ptr )
+: mc_data(ptr)
+{
+    InitializeMCTools( mc_data );
+}
+
 PFOTools::PFOTools( PFO_QQbar *ptr )
 : data(ptr)
 {
     InitializePFOTools( data );
 }
+
+void PFOTools::InitializeMCTools( MC_QQbar *mc_data )
+{
+  for (int iqq=0; iqq < 2; iqq++){
+    VectorTools mcqv(mc_data->mc_quark_px[iqq],mc_data->mc_quark_py[iqq],mc_data->mc_quark_pz[iqq],mc_data->mc_quark_E[iqq]);
+    mc_quark[iqq].vt    = mcqv;
+    mc_quark[iqq].p_mag = (Float_t) mcqv.v3().R();
+    mc_quark[iqq].cos   = std::cos(mcqv.v3().Theta());
+    mc_quark[iqq].qcos  = (mc_data->mc_quark_charge[iqq] < 0) ? mc_quark[iqq].cos : -mc_quark[iqq].cos;
+  }
+
+  for ( int istable=0; istable < mc_data->mc_stable_n; istable++){
+    VectorTools mcsv(mc_data->mc_stable_px[istable],mc_data->mc_stable_py[istable],mc_data->mc_stable_pz[istable],mc_data->mc_stable_E[istable]);
+    mc_stable[istable].vt    = mcsv;
+    mc_stable[istable].p_mag = (Float_t) mcsv.v3().R();
+    mc_stable[istable].cos   = std::cos(mcsv.v3().Theta());
+    mc_stable[istable].qcos  = (mc_data->mc_stable_charge[istable] < 0) ? mc_stable[istable].cos : -mc_stable[istable].cos;
+  }
+
+}
+
 
 void PFOTools::InitializePFOTools( PFO_QQbar *data )
 {
@@ -46,10 +73,10 @@ void PFOTools::InitializePFOTools( PFO_QQbar *data )
     // Initialize & categorize PFO variables with different jets
     const int ijet = data->pfo_match[ipfo];
 
-    PFO.ipfo  = ipfo,
-    PFO.vt    = vt,
-    PFO.p_mag = (Float_t) vt.v3().R(),
-    PFO.pv = sqrt(data->pfo_d0[ipfo] * data->pfo_d0[ipfo] + data->pfo_z0[ipfo] * data->pfo_z0[ipfo]),
+    PFO.ipfo  = ipfo;
+    PFO.vt    = vt;
+    PFO.p_mag = (Float_t) vt.v3().R();
+    PFO.pv    = sqrt(data->pfo_d0[ipfo] * data->pfo_d0[ipfo] + data->pfo_z0[ipfo] * data->pfo_z0[ipfo]);
 
 
     PFO.pfo_match = data->pfo_match[ipfo];

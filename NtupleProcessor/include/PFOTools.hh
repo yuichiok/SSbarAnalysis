@@ -19,8 +19,10 @@ class PFOTools
 {
   public:
     PFOTools();
+    PFOTools( MC_QQbar *ptr );
     PFOTools( PFO_QQbar *ptr );
     virtual ~PFOTools() {};
+    virtual void InitializeMCTools( MC_QQbar *ptr );
     virtual void InitializePFOTools( PFO_QQbar *ptr );
 
     enum   ChargeConfig { kSame, kOpposite };
@@ -44,6 +46,10 @@ class PFOTools
     virtual Bool_t           is_offset_small       ( PFO_Info iPFO, Int_t MAX_OFFSET );
 
 
+  // MC gen info
+    MC_Info    mc_quark[2];
+    MC_Info    mc_stable[100];
+
   // List of PFOs in jets
     vector<PFO_Info> PFO_jet[2];
 
@@ -55,6 +61,7 @@ class PFOTools
 
 
   private:
+    MC_QQbar  *mc_data  ;
     PFO_QQbar *data     ;
     PFO_Info   PFO      ;
 

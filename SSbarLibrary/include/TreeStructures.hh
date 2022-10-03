@@ -73,6 +73,16 @@ struct MC_QQbar  {
 
 };
 
+struct MC_Info : MC_QQbar {
+
+  public:
+    VectorTools vt;
+    Float_t p_mag         = -1;
+    Float_t cos           = -2;
+    Float_t qcos          = -2;
+
+};
+
 struct Jet_QQbar  {
 
   public:
