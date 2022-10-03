@@ -205,12 +205,15 @@ void EventAnalyzer::Analyze(Long64_t entry)
 
   // Fill Hists can make another class called histogram extractor?
 
-  for ( int imc=0; imc < _mc.mc_stable_n; imc++ ){
+  for ( int imc=0; imc < 2; imc++){
+    VectorTools mcqv(_mc.mc_quark_px[imc],_mc.mc_quark_py[imc],_mc.mc_quark_pz[imc],_mc.mc_quark_E[imc]);
 
+  }
+
+  for ( int imc=0; imc < _mc.mc_stable_n; imc++ ){
     VectorTools mcv(_mc.mc_stable_px[imc],_mc.mc_stable_py[imc],_mc.mc_stable_pz[imc],_mc.mc_stable_E[imc]);
     Float_t mc_stable_cos = std::cos(mcv.v3().Theta());
-    if(abs(_mc.mc_stable_pdg[imc]) == 321)  _hm.h_gen_K_cos->Fill(mc_stable_cos);
-
+    if(abs(_mc.mc_stable_pdg[imc]) == 321)  _hm.h[_hm.gen_K_cos]->Fill(mc_stable_cos);
   }
 
   for ( int ijet=0; ijet < 2; ijet++ ){
@@ -219,7 +222,7 @@ void EventAnalyzer::Analyze(Long64_t entry)
 
     for (auto ijet : jet ){
 
-      if( pfot.isKaon(ijet) ) _hm.h_reco_K_cos->Fill(ijet.cos);
+      if( pfot.isKaon(ijet) ) _hm.h[_hm.reco_K_cos]->Fill(ijet.cos);
 
     }
 
@@ -230,11 +233,11 @@ void EventAnalyzer::Analyze(Long64_t entry)
   if(_eve.eve_valid_lpfo){
 
     for (auto iLPFO : pfot.LPFO){
-      if( pfot.isKaon(iLPFO) ) _hm.h_lpfo_reco_K_mom->Fill(iLPFO.p_mag);
+      if( pfot.isKaon(iLPFO) ) _hm.h[_hm.lpfo_reco_K_mom]->Fill(iLPFO.p_mag);
     }
 
     for (int i=0; i<2; i++){
-      if( abs(_stats_lpfo.lpfo_pdgcheat[i]) == 321 ) _hm.h_lpfo_gen_K_mom->Fill(pfot.LPFO[i].p_mag);
+      if( abs(_stats_lpfo.lpfo_pdgcheat[i]) == 321 ) _hm.h[_hm.lpfo_gen_K_mom]->Fill(pfot.LPFO[i].p_mag);
     }
   }
 
