@@ -177,27 +177,8 @@ struct PFO_QQbar  {
 
 };
 
-struct PFO_Info {
-
+struct QQbar_Single_PFO {
   public:
-    Int_t   ipfo          = -1;
-    VectorTools vt;
-    Float_t p_mag         =  -1;
-    Float_t E             =  -1;
-    Int_t   charge        =  -100;
-    Int_t   pdgcheat      =  0;
-    Int_t   tpc_hits      =  -1;
-    Float_t pv            = -2;
-    Float_t dEdx          =  -1;
-    Float_t kdEdx_dist    =  -100;
-    Float_t pidEdx_dist   =  -100;
-    Float_t pdEdx_dist    =  -100;
-    Int_t   dEdx_dist_pdg =  0;
-    Float_t cos           = -2;
-    Float_t qcos          = -2;
-    Float_t q_sep         = -2;
-    Float_t qbar_sep      = -2;
-
     Int_t   pfo_match = 0;
     Int_t   pfo_truejet_pdg = 0;
     Int_t   pfo_truejet_type = 0;
@@ -276,7 +257,29 @@ struct PFO_Info {
     Float_t pfo_pidtof_closestfit_beta_10ps = 0;
     Float_t pfo_pidtof_closestfit_beta_50ps = 0;
     Float_t pfo_pidtof_closestfit_beta_100ps = 0;
-    
+};
+
+struct PFO_Info : QQbar_Single_PFO {
+
+  public:
+    Int_t   ipfo          = -1;
+    VectorTools vt;
+    Float_t p_mag         =  -1;
+    Float_t E             =  -1;
+    Int_t   charge        =  -100;
+    Int_t   pdgcheat      =  0;
+    Int_t   tpc_hits      =  -1;
+    Float_t pv            = -2;
+    Float_t dEdx          =  -1;
+    Float_t kdEdx_dist    =  -100;
+    Float_t pidEdx_dist   =  -100;
+    Float_t pdEdx_dist    =  -100;
+    Int_t   dEdx_dist_pdg =  0;
+    Float_t cos           = -2;
+    Float_t qcos          = -2;
+    Float_t q_sep         = -2;
+    Float_t qbar_sep      = -2;
+
     bool operator > (const PFO_Info& apfo) const
     {
         return (p_mag > apfo.p_mag);

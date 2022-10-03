@@ -45,20 +45,119 @@ void PFOTools::InitializePFOTools( PFO_QQbar *data )
 
     // Initialize & categorize PFO variables with different jets
     const int ijet = data->pfo_match[ipfo];
-    PFO = {
-      ipfo,
-      vt,
-      (Float_t) vt.v3().R(),
-      data->pfo_E[ipfo],
-      data->pfo_charge[ipfo],
-      data->pfo_pdgcheat[ipfo],
-      data->pfo_tpc_hits[ipfo],
-      sqrt(data->pfo_d0[ipfo] * data->pfo_d0[ipfo] + data->pfo_z0[ipfo] * data->pfo_z0[ipfo]),
-      data->pfo_dedx[ipfo],
-      data->pfo_piddedx_k_dedxdist[ipfo],
-      data->pfo_piddedx_pi_dedxdist[ipfo],
-      data->pfo_piddedx_p_dedxdist[ipfo],
-    };
+    // PFO = {
+    //   .ipfo  = ipfo,
+    //   .vt    = vt,
+    //   .p_mag = (Float_t) vt.v3().R(),
+    //   .pfo_E = data->pfo_E[ipfo],
+    //   .pfo_charge = data->pfo_charge[ipfo],
+    //   .pfo_pdgcheat = data->pfo_pdgcheat[ipfo],
+    //   .pfo_tpc_hits = data->pfo_tpc_hits[ipfo],
+    //   .pv = sqrt(data->pfo_d0[ipfo] * data->pfo_d0[ipfo] + data->pfo_z0[ipfo] * data->pfo_z0[ipfo]),
+    //   .pfo_dEdx = data->pfo_dedx[ipfo],
+    //   .pfo_piddedx_k_dedxdist = data->pfo_piddedx_k_dedxdist[ipfo],
+    //   .pfo_piddedx_pi_dedxdist = data->pfo_piddedx_pi_dedxdist[ipfo],
+    //   .pfo_piddedx_p_dedxdist = data->pfo_piddedx_p_dedxdist[ipfo],
+    // };
+
+    PFO.ipfo  = ipfo,
+    PFO.vt    = vt,
+    PFO.p_mag = (Float_t) vt.v3().R(),
+    PFO.pv = sqrt(data->pfo_d0[ipfo] * data->pfo_d0[ipfo] + data->pfo_z0[ipfo] * data->pfo_z0[ipfo]),
+
+
+    PFO.pfo_match = data->pfo_match[ipfo];
+    PFO.pfo_truejet_pdg = data->pfo_truejet_pdg[ipfo];
+    PFO.pfo_truejet_type = data->pfo_truejet_type[ipfo];
+    PFO.pfo_pdgcheat = data->pfo_pdgcheat[ipfo];
+    PFO.pfo_nparents = data->pfo_nparents[ipfo];
+    for (int iparent=0; iparent<PFO.pfo_nparents; iparent++){
+    PFO.pfo_pdgcheat_parent[iparent] = data->pfo_pdgcheat_parent[ipfo][iparent];
+    }
+    PFO.pfo_E = data->pfo_E[ipfo];
+    PFO.pfo_E_calo = data->pfo_E_calo[ipfo];
+    PFO.pfo_px = data->pfo_px[ipfo];
+    PFO.pfo_py = data->pfo_py[ipfo];
+    PFO.pfo_pz = data->pfo_pz[ipfo];
+    PFO.pfo_m = data->pfo_m[ipfo];
+    PFO.pfo_type = data->pfo_type[ipfo];
+    PFO.pfo_isoverlay = data->pfo_isoverlay[ipfo];
+    PFO.pfo_isisr = data->pfo_isisr[ipfo];
+    PFO.pfo_vtx = data->pfo_vtx[ipfo];
+    PFO.pfo_charge = data->pfo_charge[ipfo];
+    PFO.pfo_ntracks = data->pfo_ntracks[ipfo];
+    PFO.pfo_tpc_hits = data->pfo_tpc_hits[ipfo];
+    PFO.pfo_dedx = data->pfo_dedx[ipfo];
+    PFO.pfo_dedxerror = data->pfo_dedxerror[ipfo];
+    PFO.pfo_d0 = data->pfo_d0[ipfo];
+    PFO.pfo_d0error = data->pfo_d0error[ipfo];
+    PFO.pfo_z0 = data->pfo_z0[ipfo];
+    PFO.pfo_z0error = data->pfo_z0error[ipfo];
+    PFO.pfo_phi = data->pfo_phi[ipfo];
+    PFO.pfo_phierror = data->pfo_phierror[ipfo];
+    PFO.pfo_omega = data->pfo_omega[ipfo];
+    PFO.pfo_omegaerror = data->pfo_omegaerror[ipfo];
+    PFO.pfo_tanlambda = data->pfo_tanlambda[ipfo];
+    PFO.pfo_tanlambdaerror = data->pfo_tanlambdaerror[ipfo];
+    PFO.pfo_chi2 = data->pfo_chi2[ipfo];
+    PFO.pfo_ndf = data->pfo_ndf[ipfo];
+    for (int i=0; i<3; i++){
+    PFO.pfo_vtxpt[i] = data->pfo_vtxpt[ipfo][i];
+    PFO.pfo_endpt[i] = data->pfo_endpt[ipfo][i];
+    }
+    PFO.pfo_pid = data->pfo_pid[ipfo];
+    PFO.pfo_pid_likelihood = data->pfo_pid_likelihood[ipfo];
+    PFO.pfo_pid_eprob = data->pfo_pid_eprob[ipfo];
+    PFO.pfo_pid_muprob = data->pfo_pid_muprob[ipfo];
+    PFO.pfo_pid_piprob = data->pfo_pid_piprob[ipfo];
+    PFO.pfo_pid_kprob = data->pfo_pid_kprob[ipfo];
+    PFO.pfo_pid_pprob = data->pfo_pid_pprob[ipfo];
+    PFO.pfo_pid_hprob = data->pfo_pid_hprob[ipfo];
+    PFO.pfo_piddedx = data->pfo_piddedx[ipfo];
+    PFO.pfo_piddedx_likelihood = data->pfo_piddedx_likelihood[ipfo];
+    PFO.pfo_piddedx_eprob = data->pfo_piddedx_eprob[ipfo];
+    PFO.pfo_piddedx_muprob = data->pfo_piddedx_muprob[ipfo];
+    PFO.pfo_piddedx_piprob = data->pfo_piddedx_piprob[ipfo];
+    PFO.pfo_piddedx_kprob = data->pfo_piddedx_kprob[ipfo];
+    PFO.pfo_piddedx_pprob = data->pfo_piddedx_pprob[ipfo];
+    PFO.pfo_piddedx_hprob = data->pfo_piddedx_hprob[ipfo];
+    PFO.pfo_piddedx_e_dedxdist = data->pfo_piddedx_e_dedxdist[ipfo];
+    PFO.pfo_piddedx_mu_dedxdist = data->pfo_piddedx_mu_dedxdist[ipfo];
+    PFO.pfo_piddedx_pi_dedxdist = data->pfo_piddedx_pi_dedxdist[ipfo];
+    PFO.pfo_piddedx_k_dedxdist = data->pfo_piddedx_k_dedxdist[ipfo];
+    PFO.pfo_piddedx_p_dedxdist = data->pfo_piddedx_p_dedxdist[ipfo];
+    PFO.pfo_piddedx_e_lkhood = data->pfo_piddedx_e_lkhood[ipfo];
+    PFO.pfo_piddedx_mu_lkhood = data->pfo_piddedx_mu_lkhood[ipfo];
+    PFO.pfo_piddedx_pi_lkhood = data->pfo_piddedx_pi_lkhood[ipfo];
+    PFO.pfo_piddedx_k_lkhood = data->pfo_piddedx_k_lkhood[ipfo];
+    PFO.pfo_piddedx_p_lkhood = data->pfo_piddedx_p_lkhood[ipfo];
+    PFO.pfo_pidtof_p_at_calo = data->pfo_pidtof_p_at_calo[ipfo];
+    PFO.pfo_pidtof_closest_beta_0ps = data->pfo_pidtof_closest_beta_0ps[ipfo];
+    PFO.pfo_pidtof_closest_beta_10ps = data->pfo_pidtof_closest_beta_10ps[ipfo];
+    PFO.pfo_pidtof_closest_beta_50ps = data->pfo_pidtof_closest_beta_50ps[ipfo];
+    PFO.pfo_pidtof_closest_beta_100ps = data->pfo_pidtof_closest_beta_100ps[ipfo];
+    PFO.pfo_pidtof_fastest_beta_0ps = data->pfo_pidtof_fastest_beta_0ps[ipfo];
+    PFO.pfo_pidtof_fastest_beta_10ps = data->pfo_pidtof_fastest_beta_10ps[ipfo];
+    PFO.pfo_pidtof_fastest_beta_50ps = data->pfo_pidtof_fastest_beta_50ps[ipfo];
+    PFO.pfo_pidtof_fastest_beta_100ps = data->pfo_pidtof_fastest_beta_100ps[ipfo];
+    PFO.pfo_pidtof_cylfit_beta_0ps = data->pfo_pidtof_cylfit_beta_0ps[ipfo];
+    PFO.pfo_pidtof_cylfit_beta_10ps = data->pfo_pidtof_cylfit_beta_10ps[ipfo];
+    PFO.pfo_pidtof_cylfit_beta_50ps = data->pfo_pidtof_cylfit_beta_50ps [ipfo]; 
+    PFO.pfo_pidtof_cylfit_beta_100ps = data->pfo_pidtof_cylfit_beta_100ps[ipfo];
+    PFO.pfo_pidtof_closestfit_beta_0ps = data->pfo_pidtof_closestfit_beta_0ps[ipfo];
+    PFO.pfo_pidtof_closestfit_beta_10ps = data->pfo_pidtof_closestfit_beta_10ps[ipfo];
+    PFO.pfo_pidtof_closestfit_beta_50ps = data->pfo_pidtof_closestfit_beta_50ps[ipfo];
+    PFO.pfo_pidtof_closestfit_beta_100ps = data->pfo_pidtof_closestfit_beta_100ps[ipfo];
+
+
+
+
+
+
+
+
+
+
     PFO.dEdx_dist_pdg = Get_dEdx_dist_PID( PFO.kdEdx_dist, PFO.pidEdx_dist, PFO.pdEdx_dist );
     PFO.cos           = std::cos(PFO.vt.v3().Theta());
     PFO.qcos          = (PFO.charge < 0) ? PFO.cos : -PFO.cos;
