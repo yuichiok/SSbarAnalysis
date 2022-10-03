@@ -14,7 +14,7 @@ HistManager::HistManager() {}
 void HistManager::InitializeHists()
 {
     h[gen_q_cos]   = new TH1F("h_gen_q_cos","; Generated q#bar{q} cos#theta; Entries",100,-1,1);
-    h[gen_q_qcos]  = new TH1F("h_gen_q_qcos","; Generated #bar{q} qcos#theta; Entries",100,-1,1);
+    h[gen_q_qcos]  = new TH1F("h_gen_q_qcos","; Generated q#bar{q} qcos#theta; Entries",100,-1,1);
 
     h[gen_K_cos]   = new TH1F("h_gen_K_cos","; Generated Kaon cos#theta; Entries",100,-1,1);
     h[gen_K_qcos]  = new TH1F("h_gen_K_qcos","; Generated Kaon qcos#theta; Entries",100,-1,1);

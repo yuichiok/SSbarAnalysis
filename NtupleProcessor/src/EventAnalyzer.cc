@@ -207,13 +207,24 @@ void EventAnalyzer::Analyze(Long64_t entry)
 
   for ( int imc=0; imc < 2; imc++){
     VectorTools mcqv(_mc.mc_quark_px[imc],_mc.mc_quark_py[imc],_mc.mc_quark_pz[imc],_mc.mc_quark_E[imc]);
+    Float_t mc_qq_cos  = std::cos(mcqv.v3().Theta());
+    Float_t mc_qq_qcos = (_mc.mc_quark_charge < 0) ? mc_qq_cos : -mc_qq_cos;
+
+    _hm.h[_hm.gen_q_cos]->Fill(mc_qq_cos);
+    _hm.h[_hm.gen_q_qcos]->Fill(mc_qq_qcos);
 
   }
 
   for ( int imc=0; imc < _mc.mc_stable_n; imc++ ){
     VectorTools mcv(_mc.mc_stable_px[imc],_mc.mc_stable_py[imc],_mc.mc_stable_pz[imc],_mc.mc_stable_E[imc]);
-    Float_t mc_stable_cos = std::cos(mcv.v3().Theta());
-    if(abs(_mc.mc_stable_pdg[imc]) == 321)  _hm.h[_hm.gen_K_cos]->Fill(mc_stable_cos);
+    Float_t mc_stable_cos  = std::cos(mcv.v3().Theta());
+    Float_t mc_stable_qcos = (_mc.mc_stable_charge[imc] < 0) ? mc_stable_cos : -mc_stable_cos;
+
+    if(abs(_mc.mc_stable_pdg[imc]) == 321) {
+      _hm.h[_hm.gen_K_cos]->Fill(mc_stable_cos);
+      _hm.h[_hm.gen_K_qcos]->Fill(mc_stable_qcos);
+    }
+
   }
 
   for ( int ijet=0; ijet < 2; ijet++ ){
