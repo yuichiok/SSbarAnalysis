@@ -136,7 +136,7 @@ void EventAnalyzer::Analyze(Long64_t entry)
     Bool_t is_there_a_gluon_K = false;
     for ( int ijet=0; ijet<2; ijet++){
       for ( auto iSPFO_K : pfot.SPFOs_K[ijet] ){
-        Bool_t charge_opposite = iSPFO_K.charge * pfot.LPFO[ijet].charge < 0;
+        Bool_t charge_opposite = iSPFO_K.pfo_charge * pfot.LPFO[ijet].pfo_charge < 0;
         Bool_t momentum_above  = iSPFO_K.p_mag > 10;
         if( charge_opposite && momentum_above ) is_gluon_K[ijet] = true;
       }

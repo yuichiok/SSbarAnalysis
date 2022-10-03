@@ -135,18 +135,9 @@ void PFOTools::InitializePFOTools( PFO_QQbar *data )
     PFO.pfo_pidtof_closestfit_beta_50ps = data->pfo_pidtof_closestfit_beta_50ps[ipfo];
     PFO.pfo_pidtof_closestfit_beta_100ps = data->pfo_pidtof_closestfit_beta_100ps[ipfo];
 
-
-
-
-
-
-
-
-
-
-    PFO.dEdx_dist_pdg = Get_dEdx_dist_PID( PFO.kdEdx_dist, PFO.pidEdx_dist, PFO.pdEdx_dist );
+    PFO.dEdx_dist_pdg = Get_dEdx_dist_PID( PFO.pfo_piddedx_k_dedxdist, PFO.pfo_piddedx_pi_dedxdist, PFO.pfo_piddedx_p_dedxdist );
     PFO.cos           = std::cos(PFO.vt.v3().Theta());
-    PFO.qcos          = (PFO.charge < 0) ? PFO.cos : -PFO.cos;
+    PFO.qcos          = (PFO.pfo_charge < 0) ? PFO.cos : -PFO.cos;
 
     PFO_jet[ijet].push_back(PFO);
     
@@ -231,7 +222,7 @@ Bool_t PFOTools::isProton( PFO_Info iPFO )
 Bool_t PFOTools::is_charge_config( ChargeConfig cc )
 {
 
-  Int_t charge_config = LPFO[0].charge * LPFO[1].charge;
+  Int_t charge_config = LPFO[0].pfo_charge * LPFO[1].pfo_charge;
 
   switch (cc)
   {
@@ -275,7 +266,7 @@ Bool_t PFOTools::is_momentum( PFO_Info iPFO, Float_t MINP_CUT, Float_t MAXP_CUT 
 
 Bool_t PFOTools::is_tpc_hits( PFO_Info iPFO, Int_t MIN_TPC_HITS )
 {
-  return ( MIN_TPC_HITS < iPFO.tpc_hits );
+  return ( MIN_TPC_HITS < iPFO.pfo_tpc_hits );
 }
 
 Bool_t PFOTools::is_offset_small( PFO_Info iPFO, Int_t MAX_OFFSET )
