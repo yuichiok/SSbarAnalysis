@@ -61,9 +61,10 @@ Bool_t TreeIterator::Process(Long64_t entry)
 
     if ( entry % 1000 == 0 ) cout << "    [TreeIterator] Event " << entry << endl;
   // Evaluate the criteria for this entry
-    if(eAnalyzer.Select( EventAnalyzer::kMC )){
+    if ( eAnalyzer.Select( EventAnalyzer::kQQ ) ){
 
-      eAnalyzer.Analyze(entry);
+      if( eAnalyzer.Select( EventAnalyzer::kMC ) )  eAnalyzer.AnalyzeGen();
+      if( eAnalyzer.Select( EventAnalyzer::kISR ) ) eAnalyzer.Analyze(entry);
 
     }
 

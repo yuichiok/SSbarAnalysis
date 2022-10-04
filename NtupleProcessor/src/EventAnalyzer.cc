@@ -96,6 +96,13 @@ void EventAnalyzer::WriteFile()
 
 }
 
+void EventAnalyzer::AnalyzeGen()
+{
+    PFOTools mct( &_mc );
+    
+    PolarAngleGen(mct);
+}
+
 void EventAnalyzer::Analyze(Long64_t entry)
 {
   Bool_t TreeWrite = 0;
@@ -209,19 +216,14 @@ void EventAnalyzer::Analyze(Long64_t entry)
 
   // Fill Hists can make another class called histogram extractor?
   Bool_t all_K_K = all_checks && (dEdx_pdg_check == K_K);
-  PolarAngle(mct,pfot,all_K_K);
+  PolarAngle(pfot,all_K_K);
 
 
   for ( int ijet=0; ijet < 2; ijet++ ){
-
     std::vector<PFO_Info> jet = pfot.GetJet(ijet);
-
     for (auto ijet : jet ){
-
       if( pfot.isKaon(ijet) ) _hm.h[_hm.reco_K_cos]->Fill(ijet.cos);
-
     }
-
   }
 
 
@@ -269,16 +271,28 @@ Bool_t EventAnalyzer::Select(Selector sel)
 
     vector<Bool_t> CutTrigger;
 
+    switch (sel){
+      case kQQ:
+        CutTrigger.push_back( GenPairPicker( _mc.mc_quark_pdg[0], kSS ) );
+        break;
+      case kMC:
+        CutTrigger.push_back( ( GenESum() || GenACol() ) );
+        break;
+      case kISR:
+        CutTrigger.push_back( ISRPicker( 35 ) );
+        break;
+
+      default:
+        break;
+    }
+
   // Options
-    CutTrigger.push_back( GenPairPicker( _mc.mc_quark_pdg[0], kSS ) );
-    CutTrigger.push_back( ISRPicker( 35 ) );
 
     for (auto trigger : CutTrigger ){
       if (!trigger) { return false; }
     }
 
     return true;
-
 
 }
 
@@ -289,6 +303,24 @@ Bool_t EventAnalyzer::GenPairPicker ( Float_t mc_particle, MCParticlePair pair )
     Bool_t isGoodPair = (abs_mc_particle == pair) ? true : false;
 
     return isGoodPair;
+}
+
+Bool_t EventAnalyzer::GenESum ()
+{
+  Float_t SumE = _mc.mc_quark_E[0] + _mc.mc_quark_E[1];
+
+  return (SumE > 220) ? true : false;
+}
+
+Bool_t EventAnalyzer::GenACol ()
+{
+  VectorTools mcvt[2];
+  for (int i=0; i<2; i++){
+    mcvt[i].SetCoordinates(_mc.mc_quark_px[i],_mc.mc_quark_py[i],_mc.mc_quark_pz[i],_mc.mc_quark_E[i]);
+  }
+  Float_t acol = VectorTools::GetSinacol( mcvt[0].v3(), mcvt[1].v3() );
+
+  return (acol > 0.95) ? true : false;
 }
 
 Bool_t EventAnalyzer::ISRPicker ( Float_t Kvcut = 25)
@@ -332,7 +364,7 @@ Bool_t EventAnalyzer::Notify()
    return kTRUE;
 }
 
-void EventAnalyzer::PolarAngle(PFOTools mct, PFOTools pfot, Bool_t b_reco)
+void EventAnalyzer::PolarAngleGen(PFOTools mct)
 {
   // Gen QQbar
   for ( auto iq : mct.mc_quark ){
@@ -348,6 +380,10 @@ void EventAnalyzer::PolarAngle(PFOTools mct, PFOTools pfot, Bool_t b_reco)
     }
   }
 
+}
+
+void EventAnalyzer::PolarAngle(PFOTools pfot, Bool_t b_reco)
+{
   // Reco K_K
   if(b_reco){
 

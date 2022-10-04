@@ -28,24 +28,31 @@ class EventAnalyzer
     EventAnalyzer(TString o="");
     virtual ~EventAnalyzer(){};
 
-    enum       Selector { kMC, kLPFO };
+    enum       Selector { kQQ, kMC, kISR };
     enum MCParticlePair { FIRST_ENTRY, kDD, kUU, kSS, kCC, kBB, kTT };
 
   // methods
     Bool_t           InitReadTree( TTree* ); // Maps class variables to an input TTree.
-    void             InitWriteTree(); // 
+    void             InitWriteTree();
     void             InitHists();
-    void             CreateFile(); // 
-    void             WriteFile(); // 
+    
+    void             CreateFile();
+    void             WriteFile();
+
+    void             AnalyzeGen();
     void             Analyze( Long64_t entry );
+    
     Bool_t           Select( Selector s );          // Evaluates the class' list of event selection criteria
     Bool_t           GenPairPicker( Float_t mc_particle, MCParticlePair pair );
+    Bool_t           GenESum();
+    Bool_t           GenACol();
     Bool_t           ISRPicker( Float_t Kvcut );
     void             ClearStructs();
     virtual Bool_t   Notify();
 
   // Histogram extractor
-    void             PolarAngle(PFOTools mct, PFOTools pfot, Bool_t b_reco);
+    void             PolarAngleGen(PFOTools mct);
+    void             PolarAngle(PFOTools pfot, Bool_t b_reco);
 
 
 
