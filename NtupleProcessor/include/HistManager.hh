@@ -34,6 +34,9 @@ class HistManager
       reco_K_cos,
       reco_K_qcos,
 
+      reco_sum_jetE,
+      reco_jet_sep,
+
       lpfo_gen_K_mom,
       lpfo_reco_K_mom,
       Last = lpfo_reco_K_mom
