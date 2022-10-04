@@ -174,6 +174,8 @@ void EventAnalyzer::Analyze(Long64_t entry)
     CutTrigger.push_back(charge_check);
 
   // Check all bools
+  // Check all does double tagging
+  // CheckTrigger = [ Valid_LPFO, Quality, Not_Gluon_K, charge_check ]
     Bool_t all_checks = true;
     for (auto ibool : CutTrigger){
       if (!ibool) {
@@ -206,20 +208,9 @@ void EventAnalyzer::Analyze(Long64_t entry)
 
 
   // Fill Hists can make another class called histogram extractor?
-  PolarAngle(mct,pfot);
+  Bool_t all_K_K = all_checks && (dEdx_pdg_check == K_K);
+  PolarAngle(mct,pfot,all_K_K);
 
-
-  for ( int imc=0; imc < _mc.mc_stable_n; imc++ ){
-    VectorTools mcv(_mc.mc_stable_px[imc],_mc.mc_stable_py[imc],_mc.mc_stable_pz[imc],_mc.mc_stable_E[imc]);
-    Float_t mc_stable_cos  = std::cos(mcv.v3().Theta());
-    Float_t mc_stable_qcos = (_mc.mc_stable_charge[imc] < 0) ? mc_stable_cos : -mc_stable_cos;
-
-    if(abs(_mc.mc_stable_pdg[imc]) == 321) {
-      _hm.h[_hm.gen_K_cos]->Fill(mc_stable_cos);
-      _hm.h[_hm.gen_K_qcos]->Fill(mc_stable_qcos);
-    }
-
-  }
 
   for ( int ijet=0; ijet < 2; ijet++ ){
 
@@ -341,10 +332,30 @@ Bool_t EventAnalyzer::Notify()
    return kTRUE;
 }
 
-void EventAnalyzer::PolarAngle(PFOTools mct, PFOTools pfot)
+void EventAnalyzer::PolarAngle(PFOTools mct, PFOTools pfot, Bool_t b_reco)
 {
-  for ( int iqq=0; iqq < 2; iqq++){
-    _hm.h[_hm.gen_q_cos]->Fill(mct.mc_quark[iqq].cos);
-    _hm.h[_hm.gen_q_qcos]->Fill(mct.mc_quark[iqq].qcos);
+  // Gen QQbar
+  for ( auto iq : mct.mc_quark ){
+    _hm.h[_hm.gen_q_cos]->Fill(iq.cos);
+    _hm.h[_hm.gen_q_qcos]->Fill(iq.qcos);
   }
+
+  // Gen K
+  for ( int istable=0; istable < _mc.mc_stable_n; istable++ ){
+    if(abs(_mc.mc_stable_pdg[istable]) == 321) {
+      _hm.h[_hm.gen_K_cos]->Fill(mct.mc_quark[istable].cos);
+      _hm.h[_hm.gen_K_qcos]->Fill(mct.mc_quark[istable].cos);
+    }
+  }
+
+  // Reco K_K
+  if(b_reco){
+
+    for ( auto iLPFO : pfot.LPFO ){
+      _hm.h[_hm.reco_K_cos]->Fill( iLPFO.cos );
+      _hm.h[_hm.reco_K_qcos]->Fill( iLPFO.qcos );
+    }
+    
+  }
+
 }
