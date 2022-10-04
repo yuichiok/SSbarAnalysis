@@ -28,7 +28,7 @@ class EventAnalyzer
     EventAnalyzer(TString o="");
     virtual ~EventAnalyzer(){};
 
-    enum       Selector { kQQ, kMC, kISR };
+    enum       Selector { kQQ, kMC, kReco };
     enum MCParticlePair { FIRST_ENTRY, kDD, kUU, kSS, kCC, kBB, kTT };
 
   // methods
@@ -44,15 +44,18 @@ class EventAnalyzer
     
     Bool_t           Select( Selector s );          // Evaluates the class' list of event selection criteria
     Bool_t           GenPairPicker( Float_t mc_particle, MCParticlePair pair );
-    Bool_t           GenESum();
-    Bool_t           GenACol();
-    Bool_t           ISRPicker( Float_t Kvcut );
+
+    Bool_t           Cut_ESum( VectorTools v[2] );
+    Bool_t           Cut_ACol( VectorTools v[2] );
+    Bool_t           Cut_ISR ( VectorTools v[2] );
     void             ClearStructs();
     virtual Bool_t   Notify();
 
   // Histogram extractor
     void             PolarAngleGen(PFOTools mct);
     void             PolarAngle(PFOTools pfot, Bool_t b_reco);
+
+    void             Jet_sum_n_acol();
 
 
 
@@ -89,6 +92,10 @@ class EventAnalyzer
     TEvent           _eve;
     TreeVariables    _stats_lpfo;
     LPFO_Info        _data_lpfo;
+
+    TTree * _hInfo;
+    Float_t sum_jet_E = -1;
+    Float_t jet_acol = -1;
 
 };
 

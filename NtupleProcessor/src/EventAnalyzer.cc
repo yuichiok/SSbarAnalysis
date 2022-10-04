@@ -81,6 +81,11 @@ void EventAnalyzer::InitWriteTree()
     _hTree->Branch("Stats_LPFO", &_stats_lpfo);
     _hTree->Branch("Data_LPFO", &_data_lpfo);
 
+    _hInfo     = new TTree( "info", "tree" );
+    _hInfo->Branch("sum_jet_E",&sum_jet_E,"sum_jet_E/F");
+    _hInfo->Branch("jet_acol",&jet_acol,"jet_acol/F");
+
+
 }
 
 void EventAnalyzer::InitHists()
@@ -101,6 +106,7 @@ void EventAnalyzer::AnalyzeGen()
     PFOTools mct( &_mc );
     
     PolarAngleGen(mct);
+
 }
 
 void EventAnalyzer::Analyze(Long64_t entry)
@@ -269,6 +275,13 @@ Bool_t EventAnalyzer::Select(Selector sel)
     - TString FILE_OUT (?)
   */
 
+    VectorTools mcvt[2];
+    VectorTools jetvt[2];
+    for (int i=0; i<2; i++){
+      mcvt[i].SetCoordinates(_mc.mc_quark_px[i],_mc.mc_quark_py[i],_mc.mc_quark_pz[i],_mc.mc_quark_E[i]);
+      jetvt[i].SetCoordinates(_jet.jet_px[i],_jet.jet_py[i],_jet.jet_pz[i],_jet.jet_E[i]);
+    }
+
     vector<Bool_t> CutTrigger;
 
     switch (sel){
@@ -276,10 +289,16 @@ Bool_t EventAnalyzer::Select(Selector sel)
         CutTrigger.push_back( GenPairPicker( _mc.mc_quark_pdg[0], kSS ) );
         break;
       case kMC:
-        CutTrigger.push_back( ( GenESum() || GenACol() ) );
+        CutTrigger.push_back( Cut_ESum( mcvt ) );
+        CutTrigger.push_back( Cut_ACol( mcvt ) );
+        CutTrigger.push_back( Cut_ISR ( mcvt ) );
+        // cout << "Cut MC : " << Cut_ESum( mcvt ) << "," << Cut_ACol( mcvt ) << "," << Cut_ISR ( mcvt ) << "\n";
         break;
-      case kISR:
-        CutTrigger.push_back( ISRPicker( 35 ) );
+      case kReco:
+        CutTrigger.push_back( Cut_ESum( jetvt ) );
+        CutTrigger.push_back( Cut_ACol( jetvt ) );
+        CutTrigger.push_back( Cut_ISR ( jetvt ) );
+        // cout << "Cut Jet: " << Cut_ESum( jetvt ) << "," << Cut_ACol( jetvt ) << "," << Cut_ISR ( jetvt ) << "\n";
         break;
 
       default:
@@ -305,48 +324,42 @@ Bool_t EventAnalyzer::GenPairPicker ( Float_t mc_particle, MCParticlePair pair )
     return isGoodPair;
 }
 
-Bool_t EventAnalyzer::GenESum ()
+Bool_t EventAnalyzer::Cut_ESum ( VectorTools v[2] )
 {
-  Float_t SumE = _mc.mc_quark_E[0] + _mc.mc_quark_E[1];
+  Float_t SumE = v[0].v4().E() + v[1].v4().E();
 
   return (SumE > 220) ? true : false;
 }
 
-Bool_t EventAnalyzer::GenACol ()
+Bool_t EventAnalyzer::Cut_ACol ( VectorTools v[2] )
 {
-  VectorTools mcvt[2];
-  for (int i=0; i<2; i++){
-    mcvt[i].SetCoordinates(_mc.mc_quark_px[i],_mc.mc_quark_py[i],_mc.mc_quark_pz[i],_mc.mc_quark_E[i]);
-  }
-  Float_t acol = VectorTools::GetSinacol( mcvt[0].v3(), mcvt[1].v3() );
+  Float_t acol = VectorTools::GetSinacol( v[0].v3(), v[1].v3() );
 
   return (acol > 0.95) ? true : false;
 }
 
-Bool_t EventAnalyzer::ISRPicker ( Float_t Kvcut = 25)
+Bool_t EventAnalyzer::Cut_ISR ( VectorTools v[2] )
 {
   using namespace ROOT::Math;
 
-	if (_jet.jet_E[0] < 0.5 || _jet.jet_E[1] < 0.5)
+	if (v[0].v4().E() < 0.5 || v[1].v4().E() < 0.5)
 		return false;
 
-  VectorTools    jet_vec[2];
-  Float_t     jet_abscos[2] = {0};
-  for (int ijet=0; ijet < 2; ijet++)
+  Float_t abscos[2] = {0};
+  for (int i=0; i < 2; i++)
   {
-    jet_vec[ijet].SetCoordinates(_jet.jet_px[ijet],_jet.jet_py[ijet],_jet.jet_pz[ijet],_jet.jet_E[ijet]);
-    jet_abscos[ijet] = fabs( std::cos( jet_vec[ijet].v3().Theta() ) );
+    abscos[i] = fabs( std::cos( v[i].v3().Theta() ) );
   }
 
-	Float_t ssmass = (jet_vec[0].v4() + jet_vec[1].v4()).M();
-  Float_t acol   = VectorTools::GetSinacol( jet_vec[0].v3(), jet_vec[1].v3() );
+	Float_t ssmass = (v[0].v4() + v[1].v4()).M();
+  Float_t acol   = VectorTools::GetSinacol( v[0].v3(), v[1].v3() );
 
-	Float_t Kv = 250. * acol / (acol + sqrt(1 - jet_abscos[0] * jet_abscos[0]) + sqrt(1 - jet_abscos[1] * jet_abscos[1]));
+	Float_t Kv = 250. * acol / (acol + sqrt(1 - abscos[0] * abscos[0]) + sqrt(1 - abscos[1] * abscos[1]));
   // Float_t K[2] = {0};
-  //         K[0] = jet_vec[0].v3().R() * acol / sqrt(1 - jet_abscos[1] * jet_abscos[1]);
-  //         K[1] = jet_vec[1].v3().R() * acol / sqrt(1 - jet_abscos[0] * jet_abscos[0]);
+  //         K[0] = jet_vec[0].v3().R() * acol / sqrt(1 - abscos[1] * abscos[1]);
+  //         K[1] = jet_vec[1].v3().R() * acol / sqrt(1 - abscos[0] * abscos[0]);
 
-  if (Kv < Kvcut && ssmass > 130)
+  if (Kv < 35 && ssmass > 130)
     return true;
 
 	return false;
@@ -376,7 +389,7 @@ void EventAnalyzer::PolarAngleGen(PFOTools mct)
   for ( int istable=0; istable < _mc.mc_stable_n; istable++ ){
     if(abs(_mc.mc_stable_pdg[istable]) == 321) {
       _hm.h[_hm.gen_K_cos]->Fill(mct.mc_quark[istable].cos);
-      _hm.h[_hm.gen_K_qcos]->Fill(mct.mc_quark[istable].cos);
+      _hm.h[_hm.gen_K_qcos]->Fill(mct.mc_quark[istable].qcos);
     }
   }
 
@@ -394,4 +407,21 @@ void EventAnalyzer::PolarAngle(PFOTools pfot, Bool_t b_reco)
     
   }
 
+}
+
+void EventAnalyzer::Jet_sum_n_acol()
+{
+  VectorTools jetvt[2];
+  for (int i=0; i<2; i++){
+    jetvt[i].SetCoordinates(_jet.jet_px[i],_jet.jet_py[i],_jet.jet_pz[i],_jet.jet_E[i]);
+  }
+  Float_t acol = VectorTools::GetSinacol( jetvt[0].v3(), jetvt[1].v3() );
+
+  sum_jet_E = _jet.jet_E[0] + _jet.jet_E[1];
+  jet_acol  = acol;
+
+  _hm.h[_hm.reco_sum_jetE]->Fill( sum_jet_E );
+  _hm.h[_hm.reco_jet_sep]->Fill( acol );
+
+  _hInfo->Fill();
 }
