@@ -25,7 +25,7 @@ class VectorTools
       virtual void SetCoordinates ( Float_t x, Float_t y, Float_t z, Float_t E );
 
     // Common Tools
-      static Float_t GetSinacol ( ROOT::Math::XYZVector v1, ROOT::Math::XYZVector v2 );
+      static Float_t GetThetaBetween ( ROOT::Math::XYZVector v1, ROOT::Math::XYZVector v2 );
 
     // return private members
       virtual ROOT::Math::XYZVector     v3 ();

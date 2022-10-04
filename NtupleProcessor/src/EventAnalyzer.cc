@@ -333,9 +333,9 @@ Bool_t EventAnalyzer::Cut_ESum ( VectorTools v[2] )
 
 Bool_t EventAnalyzer::Cut_ACol ( VectorTools v[2] )
 {
-  Float_t acol = VectorTools::GetSinacol( v[0].v3(), v[1].v3() );
+  Float_t cosacol = std::cos( VectorTools::GetThetaBetween( v[0].v3(), v[1].v3() ) );
 
-  return (acol > 0.95) ? true : false;
+  return (cosacol > 0.95) ? true : false;
 }
 
 Bool_t EventAnalyzer::Cut_ISR ( VectorTools v[2] )
@@ -351,13 +351,13 @@ Bool_t EventAnalyzer::Cut_ISR ( VectorTools v[2] )
     abscos[i] = fabs( std::cos( v[i].v3().Theta() ) );
   }
 
-	Float_t ssmass = (v[0].v4() + v[1].v4()).M();
-  Float_t acol   = VectorTools::GetSinacol( v[0].v3(), v[1].v3() );
+	Float_t ssmass  = (v[0].v4() + v[1].v4()).M();
+  Float_t sinacol = std::sin( VectorTools::GetThetaBetween( v[0].v3(), v[1].v3() ) );
 
-	Float_t Kv = 250. * acol / (acol + sqrt(1 - abscos[0] * abscos[0]) + sqrt(1 - abscos[1] * abscos[1]));
+	Float_t Kv = 250. * sinacol / (sinacol + sqrt(1 - abscos[0] * abscos[0]) + sqrt(1 - abscos[1] * abscos[1]));
   // Float_t K[2] = {0};
-  //         K[0] = jet_vec[0].v3().R() * acol / sqrt(1 - abscos[1] * abscos[1]);
-  //         K[1] = jet_vec[1].v3().R() * acol / sqrt(1 - abscos[0] * abscos[0]);
+  //         K[0] = jet_vec[0].v3().R() * sinacol / sqrt(1 - abscos[1] * abscos[1]);
+  //         K[1] = jet_vec[1].v3().R() * sinacol / sqrt(1 - abscos[0] * abscos[0]);
 
   if (Kv < 35 && ssmass > 130)
     return true;
@@ -415,13 +415,13 @@ void EventAnalyzer::Jet_sum_n_acol()
   for (int i=0; i<2; i++){
     jetvt[i].SetCoordinates(_jet.jet_px[i],_jet.jet_py[i],_jet.jet_pz[i],_jet.jet_E[i]);
   }
-  Float_t acol = VectorTools::GetSinacol( jetvt[0].v3(), jetvt[1].v3() );
+  Float_t cosacol = std::cos( VectorTools::GetThetaBetween( jetvt[0].v3(), jetvt[1].v3() ) );
 
   sum_jet_E = _jet.jet_E[0] + _jet.jet_E[1];
-  jet_acol  = acol;
+  jet_acol  = cosacol;
 
   _hm.h[_hm.reco_sum_jetE]->Fill( sum_jet_E );
-  _hm.h[_hm.reco_jet_sep]->Fill( acol );
+  _hm.h[_hm.reco_jet_sep]->Fill( cosacol );
 
   _hInfo->Fill();
 }

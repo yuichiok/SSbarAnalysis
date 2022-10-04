@@ -31,12 +31,12 @@ void VectorTools::SetCoordinates(Float_t x, Float_t y, Float_t z, Float_t E)
 }
 
 // Common tools
-Float_t VectorTools::GetSinacol( ROOT::Math::XYZVector v1, ROOT::Math::XYZVector v2 )
+Float_t VectorTools::GetThetaBetween( ROOT::Math::XYZVector v1, ROOT::Math::XYZVector v2 )
 {
-  Float_t sinacol =  -2.0;
+  Float_t acol =  -2.0;
   ROOT::Math::XYZVector v = v1.Cross(v2);
-  sinacol = (v.R()/(v1.R()*v2.R()));// * v2.Mag()/(v1+v2).Mag(); 
-  return sinacol;
+  acol = std::asin( (v.R()/(v1.R()*v2.R())) );// * v2.Mag()/(v1+v2).Mag(); 
+  return acol;
 }
 
 ROOT::Math::XYZVector     VectorTools::v3() { return vector3; }
