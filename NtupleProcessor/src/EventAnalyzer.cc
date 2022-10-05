@@ -389,9 +389,9 @@ void EventAnalyzer::Gen_Reco_Stats( PFOTools mct, PFOTools pfot )
     }
   }
 
-  Int_t N_K_Gen = Gen_K_Collection.size();
-  Int_t N_K_PFO = PFO_K_Collection.size();
-  Int_t N_corr  = 0;
+  _data.N_K_Gen = Gen_K_Collection.size();
+  _data.N_K_PFO = PFO_K_Collection.size();
+  Int_t N_K_corr  = 0;
 
   Float_t cos_r = 0.02;
   std::vector<PFO_Info> PFO_K_Remain = PFO_K_Collection;
@@ -411,14 +411,15 @@ void EventAnalyzer::Gen_Reco_Stats( PFOTools mct, PFOTools pfot )
     }
 
     if( min_cos_diff < cos_r ) {
-      N_corr++;
+      N_K_corr++;
       PFO_K_Remain.erase( PFO_K_Remain.begin() + i_min_cos_diff );
     }
 
   }
 
-  Float_t stability = (Float_t) N_corr / (Float_t) N_K_Gen;
-  Float_t purity    = (Float_t) N_corr / (Float_t) N_K_PFO;
+  _data.N_K_corr = N_K_corr;
+  if( _data.N_K_Gen ) _data.stability = (Float_t) N_K_corr / (Float_t) _data.N_K_Gen;
+  if( _data.N_K_PFO ) _data.purity    = (Float_t) N_K_corr / (Float_t) _data.N_K_PFO;
 
 
 }

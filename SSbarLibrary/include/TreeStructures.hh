@@ -571,6 +571,12 @@ struct Tree_Data {
     Float_t sum_jet_E = -100;
     Float_t jet_acol  = -100;
 
+    Int_t N_K_Gen  = -1;
+    Int_t N_K_PFO  = -1;
+    Int_t N_K_corr = -1;
+    Float_t stability = -1;
+    Float_t purity    = -1;
+
 
 };
 
