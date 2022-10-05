@@ -21,8 +21,8 @@ void Gen_Reco_Stats()
 
   TTree *t_data = (TTree*) file->Get("data");
 
-  Int_t bin  = 20;
-  Float_t xmax = 1.1;
+  Int_t bin  = 21;
+  Float_t xmax = 1.05;
 
   TCanvas *c0 = new TCanvas("c0","c0",800,800);
   TH1F *h_stable = new TH1F("h_stable",";stability;a.u.",bin,0,xmax);
@@ -44,21 +44,27 @@ void Gen_Reco_Stats()
   Normalize(h_purity_KK);
   
   StyleHist(h_stable,kBlack);
-  StyleHist(h_purity,kGreen);
+  StyleHist(h_purity,kGreen+2);
   h_stable->SetLineStyle(2);
   h_purity->SetLineStyle(2);
 
   StyleHist(h_stable_KK,kBlack);
-  StyleHist(h_purity_KK,kGreen);
+  StyleHist(h_purity_KK,kGreen+2);
   h_stable_KK->SetLineStyle(3004);
   h_purity_KK->SetLineStyle(3004);
-
-  h_stable->GetYaxis()->SetRangeUser(0,0.3);
 
   h_stable->Draw("h");
   h_purity->Draw("hsame");
   h_stable_KK->Draw("hsame");
   h_purity_KK->Draw("hsame");
+
+  TLegend *leg = new TLegend(0.15,0.75,0.45,0.85);
+  leg->SetLineColor(0);
+  leg->AddEntry(h_stable,"Stability","l");
+  leg->AddEntry(h_purity,"Purity","l");
+  leg->AddEntry(h_stable_KK,"Stability (KK events)","l");
+  leg->AddEntry(h_purity_KK,"Purity (KK events)","l");
+  leg->Draw();
 
   gPad->SetGrid(1,1);
 
