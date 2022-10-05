@@ -153,17 +153,17 @@ void EventAnalyzer::Analyze(Long64_t entry)
 
   // dEdx dist PDG check
     enum PDGConfig { noKPi, K_K, K_Pi, Pi_Pi };
-    Int_t dEdx_pdg_check = -1;
+    Int_t dEdx_pdg_match = -1;
     
-    if     (   pfot.isKaon(pfot.LPFO[0]) && pfot.isKaon(pfot.LPFO[1]) )  {  dEdx_pdg_check = K_K;    }
-    else if(   pfot.isPion(pfot.LPFO[0]) && pfot.isPion(pfot.LPFO[1]) )  {  dEdx_pdg_check = Pi_Pi;  }
+    if     (   pfot.isKaon(pfot.LPFO[0]) && pfot.isKaon(pfot.LPFO[1]) )  {  dEdx_pdg_match = K_K;    }
+    else if(   pfot.isPion(pfot.LPFO[0]) && pfot.isPion(pfot.LPFO[1]) )  {  dEdx_pdg_match = Pi_Pi;  }
     else if( ( pfot.isKaon(pfot.LPFO[0]) && pfot.isPion(pfot.LPFO[1]) ) ||
-             ( pfot.isKaon(pfot.LPFO[1]) && pfot.isPion(pfot.LPFO[0]) ) ){  dEdx_pdg_check = K_Pi;   }
-    else{ dEdx_pdg_check = noKPi; }
+             ( pfot.isKaon(pfot.LPFO[1]) && pfot.isPion(pfot.LPFO[0]) ) ){  dEdx_pdg_match = K_Pi;   }
+    else{ dEdx_pdg_match = noKPi; }
 
   // charge config check
     Bool_t charge_check = false;
-    switch ( dEdx_pdg_check )
+    switch ( dEdx_pdg_match )
     {
       case K_K:
         charge_check = pfot.is_charge_config(pfot.kOpposite);
@@ -190,14 +190,16 @@ void EventAnalyzer::Analyze(Long64_t entry)
   
   if (all_checks){
 
-    _data_lpfo.lpfo_config = dEdx_pdg_check;
-    
+    _data_lpfo.lpfo_config = dEdx_pdg_match;
+    _data.dEdx_pdg_match   = dEdx_pdg_match;
+
     for (int i=0; i<2; i++){
       _data_lpfo.lpfo_p_mag[i]         = pfot.LPFO[i].p_mag;
       _data_lpfo.lpfo_dEdx_dist_pdg[i] = pfot.LPFO[i].dEdx_dist_pdg;
       _data_lpfo.lpfo_cos[i]           = pfot.LPFO[i].cos;
       _data_lpfo.lpfo_qcos[i]          = pfot.LPFO[i].qcos;
     }
+
 
   }
   
@@ -211,7 +213,7 @@ void EventAnalyzer::Analyze(Long64_t entry)
 
 
   // Fill Hists can make another class called histogram extractor?
-  Bool_t all_K_K = all_checks && (dEdx_pdg_check == K_K);
+  Bool_t all_K_K = all_checks && (dEdx_pdg_match == K_K);
   PolarAngle(pfot,all_K_K);
 
   for ( int ijet=0; ijet < 2; ijet++ ){
