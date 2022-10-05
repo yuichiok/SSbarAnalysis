@@ -53,6 +53,8 @@ void Gen_Reco_Stats()
   h_stable_KK->SetLineStyle(3004);
   h_purity_KK->SetLineStyle(3004);
 
+  h_stable->SetTitle(";Ratio;a.u.");
+
   h_stable->Draw("h");
   h_purity->Draw("hsame");
   h_stable_KK->Draw("hsame");
