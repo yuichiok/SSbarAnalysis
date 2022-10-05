@@ -3,8 +3,8 @@
 void Normalize(TH1F *h)
 {
   // h->Scale( 1.0 / h->GetEntries() );
-  // h->Scale( 1.0 / h->Integral(30,70) );
-  h->Scale( 1.0 / h->Integral(12,88) );
+  h->Scale( 1.0 / h->Integral(30,70) );
+  // h->Scale( 1.0 / h->Integral(12,88) );
 }
 
 void StyleHist(TH1F *h, Color_t col)
