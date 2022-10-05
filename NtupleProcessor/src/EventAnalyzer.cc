@@ -74,16 +74,8 @@ void EventAnalyzer::InitWriteTree()
 {
 
   // Initialize Write Tree
-
-    _hTree     = new TTree( "event", "tree" );
-    _hTree->Branch("Event", &_eve);
-    _hTree->Branch("MC", &_mc);
-    _hTree->Branch("Stats_LPFO", &_stats_lpfo);
-    _hTree->Branch("Data_LPFO", &_data_lpfo);
-
-    _hInfo     = new TTree( "info", "tree" );
-    _hInfo->Branch("sum_jet_E",&sum_jet_E,"sum_jet_E/F");
-    _hInfo->Branch("jet_acol",&jet_acol,"jet_acol/F");
+    _hTree     = new TTree( "data", "tree" );
+    writer.InitializeDataTree(_hTree,_data);
 
 
 }
@@ -119,8 +111,6 @@ void EventAnalyzer::Analyze(Long64_t entry)
 
     if ( !pfot.ValidPFO() ) {
       _eve.eve_valid_lpfo = 0;
-      if(TreeWrite) _hTree->Fill();
-      // return;
     }else{ _eve.eve_valid_lpfo = 1; }
     
 
@@ -210,8 +200,6 @@ void EventAnalyzer::Analyze(Long64_t entry)
     }
 
   }
-
-  if(TreeWrite) _hTree->Fill();
   
 
 
@@ -253,7 +241,7 @@ void EventAnalyzer::Analyze(Long64_t entry)
 
 
 
-
+  _hTree->Fill();
 
   ClearStructs();
 
@@ -264,6 +252,8 @@ void EventAnalyzer::ClearStructs()
   _eve        = {};
   _stats_lpfo = {};
   _data_lpfo  = {};
+
+  _data       = {};
 }
 
 Bool_t EventAnalyzer::Select(Selector sel)
@@ -428,7 +418,7 @@ void EventAnalyzer::Gen_Reco_Stats( PFOTools mct, PFOTools pfot )
   }
 
   Float_t stability = (Float_t) N_corr / (Float_t) N_K_Gen;
-  Float_t purity = (Float_t) N_corr / (Float_t) N_K_PFO;
+  Float_t purity    = (Float_t) N_corr / (Float_t) N_K_PFO;
 
 
 }
@@ -473,11 +463,10 @@ void EventAnalyzer::Jet_sum_n_acol()
   }
   Float_t cosacol = std::cos( VectorTools::GetThetaBetween( jetvt[0].v3(), jetvt[1].v3() ) );
 
-  sum_jet_E = _jet.jet_E[0] + _jet.jet_E[1];
-  jet_acol  = cosacol;
+  _data.sum_jet_E = _jet.jet_E[0] + _jet.jet_E[1];
+  _data.jet_acol  = cosacol;
 
-  _hm.h[_hm.reco_sum_jetE]->Fill( sum_jet_E );
-  _hm.h[_hm.reco_jet_sep]->Fill( cosacol );
+  _hm.h[_hm.reco_sum_jetE]->Fill( _data.sum_jet_E );
+  _hm.h[_hm.reco_jet_sep]->Fill( _data.jet_acol );
 
-  _hInfo->Fill();
 }

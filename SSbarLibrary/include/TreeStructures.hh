@@ -565,4 +565,13 @@ struct LPFO_Info {
 
 };
 
+struct Tree_Data {
+
+  public:
+    Float_t sum_jet_E = -100;
+    Float_t jet_acol  = -100;
+
+
+};
+
 #endif

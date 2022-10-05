@@ -3,86 +3,10 @@ using std::string;
 using std::vector;
 
 TreeWriter:: TreeWriter() {}
-void TreeWriter::InitializeLPFOTree(TTree * _hTree, TreeVariables& data)
+void TreeWriter::InitializeDataTree(TTree * _hTree, Tree_Data& data)
 {
-  _hTree->Branch("lpfo_match", data.lpfo_match, "lpfo_match[2]/I");
-  _hTree->Branch("lpfo_truejet_pdg", data.lpfo_truejet_pdg, "lpfo_truejet_pdg[2]/I");
-  _hTree->Branch("lpfo_truejet_type", data.lpfo_truejet_type, "lpfo_truejet_type[2]/I");
-  _hTree->Branch("lpfo_pdgcheat", data.lpfo_pdgcheat , "lpfo_pdgcheat[2]/I");
-  _hTree->Branch("lpfo_nparents", data.lpfo_nparents , "lpfo_nparents[2]/I");
-  _hTree->Branch("lpfo_pdgcheat_parent", data.lpfo_pdgcheat_parent, "lpfo_pdgcheat_parent[2][1000]/I");
-  _hTree->Branch("lpfo_E", data.lpfo_E, "lpfo_E[2]/F");
-  _hTree->Branch("lpfo_px", data.lpfo_px, "lpfo_px[2]/F");
-  _hTree->Branch("lpfo_py", data.lpfo_py, "lpfo_py[2]/F");
-  _hTree->Branch("lpfo_pz", data.lpfo_pz, "lpfo_pz[2]/F");
-  _hTree->Branch("lpfo_m", data.lpfo_m, "lpfo_m[2]/F");
-  _hTree->Branch("lpfo_type", data.lpfo_type, "lpfo_type[2]/I");
-  _hTree->Branch("lpfo_isoverlay", data.lpfo_isoverlay, "lpfo_isoverlay[2]/I");
-  _hTree->Branch("lpfo_isisr", data.lpfo_isisr, "lpfo_isisr[2]/I");
-  _hTree->Branch("lpfo_vtx", data.lpfo_vtx , "lpfo_vtx[2]/I");
-  _hTree->Branch("lpfo_charge", data.lpfo_charge, "lpfo_charge[2]/I");
-  _hTree->Branch("lpfo_ntracks", data.lpfo_ntracks, "lpfo_ntracks[2]/I");
-  _hTree->Branch("lpfo_tpc_hits", data.lpfo_tpc_hits , "lpfo_tpc_hits[2]/I");
-  _hTree->Branch("lpfo_dedx", data.lpfo_dedx, "lpfo_dedx[2]/F");
-  _hTree->Branch("lpfo_dedxerror", data.lpfo_dedxerror, "lpfo_dedxerror[2]/F");
-  _hTree->Branch("lpfo_d0", data.lpfo_d0, "lpfo_d0[2]/F");
-  _hTree->Branch("lpfo_d0error", data.lpfo_d0error, "lpfo_d0error[2]/F");
-  _hTree->Branch("lpfo_z0", data.lpfo_z0, "lpfo_z0[2]/F");
-  _hTree->Branch("lpfo_z0error", data.lpfo_z0error, "lpfo_z0error[2]/F");
-  _hTree->Branch("lpfo_phi", data.lpfo_phi , "lpfo_phi[2]/F");
-  _hTree->Branch("lpfo_phierror", data.lpfo_phierror , "lpfo_phierror[2]/F");
-  _hTree->Branch("lpfo_omega", data.lpfo_omega, "lpfo_omega[2]/F");
-  _hTree->Branch("lpfo_omegaerror", data.lpfo_omegaerror, "lpfo_omegaerror[2]/F");
-  _hTree->Branch("lpfo_tanlambda", data.lpfo_tanlambda, "lpfo_tanlambda[2]/F");
-  _hTree->Branch("lpfo_tanlambdaerror", data.lpfo_tanlambdaerror, "lpfo_tanlambdaerror[2]/F");
-  _hTree->Branch("lpfo_chi2", data.lpfo_chi2, "lpfo_chi2[2]/F");
-  _hTree->Branch("lpfo_ndf", data.lpfo_ndf , "lpfo_ndf[2]/F");
-  _hTree->Branch("lpfo_vtxpt", data.lpfo_vtxpt, "lpfo_vtxpt[2][3]/F");
-  _hTree->Branch("lpfo_endpt", data.lpfo_endpt, "lpfo_endpt[2][3]/F");
-  _hTree->Branch("lpfo_pid", data.lpfo_pid , "lpfo_pid[2]/I");
-  _hTree->Branch("lpfo_pid_likelihood", data.lpfo_pid_likelihood, "lpfo_pid_likelihood[2]/F");
-  _hTree->Branch("lpfo_pid_eprob", data.lpfo_pid_eprob, "lpfo_pid_eprob[2]/F");
-  _hTree->Branch("lpfo_pid_muprob", data.lpfo_pid_muprob, "lpfo_pid_muprob[2]/F");
-  _hTree->Branch("lpfo_pid_piprob", data.lpfo_pid_piprob, "lpfo_pid_piprob[2]/F");
-  _hTree->Branch("lpfo_pid_kprob", data.lpfo_pid_kprob, "lpfo_pid_kprob[2]/F");
-  _hTree->Branch("lpfo_pid_pprob", data.lpfo_pid_pprob, "lpfo_pid_pprob[2]/F");
-  _hTree->Branch("lpfo_pid_hprob", data.lpfo_pid_hprob, "lpfo_pid_hprob[2]/F");
-  _hTree->Branch("lpfo_piddedx", data.lpfo_piddedx, "lpfo_piddedx[2]/I");
-  _hTree->Branch("lpfo_piddedx_likelihood", data.lpfo_piddedx_likelihood , "lpfo_piddedx_likelihood[2]/F");
-  _hTree->Branch("lpfo_piddedx_eprob", data.lpfo_piddedx_eprob , "lpfo_piddedx_eprob[2]/F");
-  _hTree->Branch("lpfo_piddedx_muprob", data.lpfo_piddedx_muprob, "lpfo_piddedx_muprob[2]/F");
-  _hTree->Branch("lpfo_piddedx_piprob", data.lpfo_piddedx_piprob, "lpfo_piddedx_piprob[2]/F");
-  _hTree->Branch("lpfo_piddedx_kprob", data.lpfo_piddedx_kprob , "lpfo_piddedx_kprob[2]/F");
-  _hTree->Branch("lpfo_piddedx_pprob", data.lpfo_piddedx_pprob , "lpfo_piddedx_pprob[2]/F");
-  _hTree->Branch("lpfo_piddedx_hprob", data.lpfo_piddedx_hprob , "lpfo_piddedx_hprob[2]/F");
-  _hTree->Branch("lpfo_piddedx_e_dedxdist", data.lpfo_piddedx_e_dedxdist , "lpfo_piddedx_e_dedxdist[2]/F");
-  _hTree->Branch("lpfo_piddedx_mu_dedxdist", data.lpfo_piddedx_mu_dedxdist, "lpfo_piddedx_mu_dedxdist[2]/F");
-  _hTree->Branch("lpfo_piddedx_pi_dedxdist", data.lpfo_piddedx_pi_dedxdist, "lpfo_piddedx_pi_dedxdist[2]/F");
-  _hTree->Branch("lpfo_piddedx_k_dedxdist", data.lpfo_piddedx_k_dedxdist , "lpfo_piddedx_k_dedxdist[2]/F");
-  _hTree->Branch("lpfo_piddedx_p_dedxdist", data.lpfo_piddedx_p_dedxdist , "lpfo_piddedx_p_dedxdist[2]/F");
-  _hTree->Branch("lpfo_piddedx_e_lkhood", data.lpfo_piddedx_e_lkhood, "lpfo_piddedx_e_lkhood[2]/F");
-  _hTree->Branch("lpfo_piddedx_mu_lkhood", data.lpfo_piddedx_mu_lkhood, "lpfo_piddedx_mu_lkhood[2]/F");
-  _hTree->Branch("lpfo_piddedx_pi_lkhood", data.lpfo_piddedx_pi_lkhood, "lpfo_piddedx_pi_lkhood[2]/F");
-  _hTree->Branch("lpfo_piddedx_k_lkhood", data.lpfo_piddedx_k_lkhood, "lpfo_piddedx_k_lkhood[2]/F");
-  _hTree->Branch("lpfo_piddedx_p_lkhood", data.lpfo_piddedx_p_lkhood, "lpfo_piddedx_p_lkhood[2]/F");
-  _hTree->Branch("lpfo_pidtof_p_at_calo", data.lpfo_pidtof_p_at_calo, "lpfo_pidtof_p_at_calo[2]/F");
-  _hTree->Branch("lpfo_pidtof_closest_beta_0ps", data.lpfo_pidtof_closest_beta_0ps , "lpfo_pidtof_closest_beta_0ps[2]/F");
-  _hTree->Branch("lpfo_pidtof_closest_beta_10ps", data.lpfo_pidtof_closest_beta_10ps, "lpfo_pidtof_closest_beta_10ps[2]/F");
-  _hTree->Branch("lpfo_pidtof_closest_beta_50ps", data.lpfo_pidtof_closest_beta_50ps, "lpfo_pidtof_closest_beta_50ps[2]/F");
-  _hTree->Branch("lpfo_pidtof_closest_beta_100ps", data.lpfo_pidtof_closest_beta_100ps, "lpfo_pidtof_closest_beta_100ps[2]/F");
-  _hTree->Branch("lpfo_pidtof_fastest_beta_0ps", data.lpfo_pidtof_fastest_beta_0ps , "lpfo_pidtof_fastest_beta_0ps[2]/F");
-  _hTree->Branch("lpfo_pidtof_fastest_beta_10ps", data.lpfo_pidtof_fastest_beta_10ps, "lpfo_pidtof_fastest_beta_10ps[2]/F");
-  _hTree->Branch("lpfo_pidtof_fastest_beta_50ps", data.lpfo_pidtof_fastest_beta_50ps, "lpfo_pidtof_fastest_beta_50ps[2]/F");
-  _hTree->Branch("lpfo_pidtof_fastest_beta_100ps", data.lpfo_pidtof_fastest_beta_100ps, "lpfo_pidtof_fastest_beta_100ps[2]/F");
-  _hTree->Branch("lpfo_pidtof_cylfit_beta_0ps", data.lpfo_pidtof_cylfit_beta_0ps, "lpfo_pidtof_cylfit_beta_0ps[2]/F");
-  _hTree->Branch("lpfo_pidtof_cylfit_beta_10ps", data.lpfo_pidtof_cylfit_beta_10ps , "lpfo_pidtof_cylfit_beta_10ps[2]/F");
-  _hTree->Branch("lpfo_pidtof_cylfit_beta_50ps", data.lpfo_pidtof_cylfit_beta_50ps , "lpfo_pidtof_cylfit_beta_50ps[2]/F");
-  _hTree->Branch("lpfo_pidtof_cylfit_beta_100ps", data.lpfo_pidtof_cylfit_beta_100ps, "lpfo_pidtof_cylfit_beta_100ps[2]/F");
-  _hTree->Branch("lpfo_pidtof_closestfit_beta_0ps", data.lpfo_pidtof_closestfit_beta_0ps, "lpfo_pidtof_closestfit_beta_0ps[2]/F");
-  _hTree->Branch("lpfo_pidtof_closestfit_beta_10ps", data.lpfo_pidtof_closestfit_beta_10ps, "lpfo_pidtof_closestfit_beta_10ps[2]/F");
-  _hTree->Branch("lpfo_pidtof_closestfit_beta_50ps", data.lpfo_pidtof_closestfit_beta_50ps, "lpfo_pidtof_closestfit_beta_50ps[2]/F");
-  _hTree->Branch("lpfo_pidtof_closestfit_beta_100ps", data.lpfo_pidtof_closestfit_beta_100ps , "lpfo_pidtof_closestfit_beta_100ps[2]/F");
-
+    _hTree->Branch("sum_jet_E",&data.sum_jet_E,"sum_jet_E/F");
+    _hTree->Branch("jet_acol",&data.jet_acol,"jet_acol/F");
 }
 
 void TreeWriter::WriteLPFO_Info(PFOTools pt, PFO_QQbar *pqq, TreeVariables *data)

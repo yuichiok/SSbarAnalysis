@@ -85,20 +85,15 @@ class EventAnalyzer
 
     TreeWriter writer;
     TFile * _hfile;
-    TTree * _hTree;
-    TTree * _hTree_LPFO;
-    TTree * _hTree_LPFO_KK;
-    TTree * _hTree_LPFO_KPi;
 
-    TString       _hfilename;
+    TTree * _hTree;
+    Tree_Data _data;
 
     TEvent           _eve;
     TreeVariables    _stats_lpfo;
     LPFO_Info        _data_lpfo;
 
-    TTree * _hInfo;
-    Float_t sum_jet_E = -1;
-    Float_t jet_acol = -1;
+    TString _hfilename;
 
 };
 
