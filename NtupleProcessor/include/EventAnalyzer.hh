@@ -51,6 +51,9 @@ class EventAnalyzer
     void             ClearStructs();
     virtual Bool_t   Notify();
 
+  // Gadgets
+    void             Gen_Reco_Stats( PFOTools mct, PFOTools pfot );
+
   // Histogram extractor
     void             PolarAngleGen(PFOTools mct);
     void             PolarAngle(PFOTools pfot, Bool_t b_reco);

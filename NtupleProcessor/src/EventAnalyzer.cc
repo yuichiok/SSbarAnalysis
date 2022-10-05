@@ -217,13 +217,14 @@ void EventAnalyzer::Analyze(Long64_t entry)
 
 
 
+  // Try Stability and Purity Calculation here.
+  Gen_Reco_Stats( mct, pfot );
 
 
 
   // Fill Hists can make another class called histogram extractor?
   Bool_t all_K_K = all_checks && (dEdx_pdg_check == K_K);
   PolarAngle(pfot,all_K_K);
-
 
   for ( int ijet=0; ijet < 2; ijet++ ){
     std::vector<PFO_Info> jet = pfot.GetJet(ijet);
@@ -375,6 +376,61 @@ Bool_t EventAnalyzer::Notify()
    // user if needed. The return value is currently not used.
 
    return kTRUE;
+}
+
+void EventAnalyzer::Gen_Reco_Stats( PFOTools mct, PFOTools pfot )
+{
+  std::vector<PFO_Info> PFO_Collection;
+  std::vector<PFO_Info> jet[2] = { pfot.GetJet(0), pfot.GetJet(1) };
+
+  PFO_Collection.reserve( jet[0].size() + jet[1].size() );
+  PFO_Collection.insert( PFO_Collection.begin(), jet[0].begin(), jet[0].end() );
+  PFO_Collection.insert( PFO_Collection.end(), jet[1].begin(), jet[1].end() );
+
+  std::vector<PFO_Info> PFO_K_Collection;
+  for ( auto iPFO : PFO_Collection ){
+    if( PFOTools::isKaon(iPFO) ) PFO_K_Collection.push_back(iPFO);
+  }
+
+  std::vector<MC_Info> Gen_K_Collection;
+  for ( int istable=0; istable < _mc.mc_stable_n; istable++ ){
+    if(abs(_mc.mc_stable_pdg[istable]) == 321) {
+      Gen_K_Collection.push_back( mct.mc_stable[istable] );
+    }
+  }
+
+  Int_t N_K_Gen = Gen_K_Collection.size();
+  Int_t N_K_PFO = PFO_K_Collection.size();
+  Int_t N_corr  = 0;
+
+  Float_t cos_r = 0.02;
+  std::vector<PFO_Info> PFO_K_Remain = PFO_K_Collection;
+
+  for ( auto igen : Gen_K_Collection ){
+    Float_t min_cos_diff   = 1000.0;
+    Int_t   i_min_cos_diff = -1;
+
+    Int_t counter = 0;
+    for ( auto iremain : PFO_K_Remain ){
+      Float_t cos_diff = igen.cos - iremain.cos;
+      if( cos_diff < min_cos_diff ) {
+        min_cos_diff = cos_diff;
+        i_min_cos_diff = counter;
+      }
+      counter++;
+    }
+
+    if( min_cos_diff < cos_r ) {
+      N_corr++;
+      PFO_K_Remain.erase( PFO_K_Remain.begin() + i_min_cos_diff );
+    }
+
+  }
+
+  Float_t stability = (Float_t) N_corr / (Float_t) N_K_Gen;
+  Float_t purity = (Float_t) N_corr / (Float_t) N_K_PFO;
+
+
 }
 
 void EventAnalyzer::PolarAngleGen(PFOTools mct)
