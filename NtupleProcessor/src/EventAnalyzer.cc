@@ -210,7 +210,7 @@ void EventAnalyzer::Analyze(Long64_t entry)
 
 
   // Try Stability and Purity Calculation here.
-  Gen_Reco_Stats( mct, pfot );
+  Gen_Reco_Stats( mct, pfot, -1, 1 );
 
 
 
@@ -287,13 +287,11 @@ Bool_t EventAnalyzer::Select(Selector sel)
         CutTrigger.push_back( Cut_ESum( mcvt ) );
         CutTrigger.push_back( Cut_ACol( mcvt ) );
         CutTrigger.push_back( Cut_ISR ( mcvt ) );
-        // cout << "Cut MC : " << Cut_ESum( mcvt ) << "," << Cut_ACol( mcvt ) << "," << Cut_ISR ( mcvt ) << "\n";
         break;
       case kReco:
         CutTrigger.push_back( Cut_ESum( jetvt ) );
         CutTrigger.push_back( Cut_ACol( jetvt ) );
         CutTrigger.push_back( Cut_ISR ( jetvt ) );
-        // cout << "Cut Jet: " << Cut_ESum( jetvt ) << "," << Cut_ACol( jetvt ) << "," << Cut_ISR ( jetvt ) << "\n";
         break;
 
       default:
@@ -372,7 +370,7 @@ Bool_t EventAnalyzer::Notify()
    return kTRUE;
 }
 
-void EventAnalyzer::Gen_Reco_Stats( PFOTools mct, PFOTools pfot )
+void EventAnalyzer::Gen_Reco_Stats( PFOTools mct, PFOTools pfot, Float_t cos_min, Float_t cos_max )
 {
   std::vector<PFO_Info> PFO_Collection;
   std::vector<PFO_Info> jet[2] = { pfot.GetJet(0), pfot.GetJet(1) };
@@ -383,12 +381,14 @@ void EventAnalyzer::Gen_Reco_Stats( PFOTools mct, PFOTools pfot )
 
   std::vector<PFO_Info> PFO_K_Collection;
   for ( auto iPFO : PFO_Collection ){
-    if( PFOTools::isKaon(iPFO) ) PFO_K_Collection.push_back(iPFO);
+    Bool_t cos_range = (cos_min < iPFO.cos && iPFO.cos < cos_max );
+    if( PFOTools::isKaon(iPFO) && cos_range ) PFO_K_Collection.push_back(iPFO);
   }
 
   std::vector<MC_Info> Gen_K_Collection;
   for ( int istable=0; istable < _mc.mc_stable_n; istable++ ){
-    if(abs(_mc.mc_stable_pdg[istable]) == 321) {
+    Bool_t cos_range = ( cos_min < mct.mc_stable[istable].cos && mct.mc_stable[istable].cos < cos_max );
+    if(abs(_mc.mc_stable_pdg[istable]) == 321 && cos_range) {
       Gen_K_Collection.push_back( mct.mc_stable[istable] );
     }
   }
