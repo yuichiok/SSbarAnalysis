@@ -116,7 +116,18 @@ void EventAnalyzer::Analyze(Long64_t entry)
 
   // Fill raw LPFO info
     writer.WriteLPFO_Info(pfot,&_pfo,&_stats_lpfo);
-    
+    for (int i=0; i<2; i++){
+      _data_lpfo.lpfo_p_mag[i]         = pfot.LPFO[i].p_mag;
+      _data_lpfo.lpfo_dEdx_dist_pdg[i] = pfot.LPFO[i].dEdx_dist_pdg;
+      _data_lpfo.lpfo_cos[i]           = pfot.LPFO[i].cos;
+      _data_lpfo.lpfo_qcos[i]          = pfot.LPFO[i].qcos;
+    }
+
+    for (int i=0; i<2; i++){
+      _data.LPFO_cos[i]  = pfot.LPFO[i].cos;
+      _data.LPFO_qcos[i] = pfot.LPFO[i].qcos;
+    }
+
   ////////////////
   // Selections //
   ////////////////
@@ -190,16 +201,7 @@ void EventAnalyzer::Analyze(Long64_t entry)
   
   if (all_checks){
 
-    _data_lpfo.lpfo_config = dEdx_pdg_match;
     _data.dEdx_pdg_match   = dEdx_pdg_match;
-
-    for (int i=0; i<2; i++){
-      _data_lpfo.lpfo_p_mag[i]         = pfot.LPFO[i].p_mag;
-      _data_lpfo.lpfo_dEdx_dist_pdg[i] = pfot.LPFO[i].dEdx_dist_pdg;
-      _data_lpfo.lpfo_cos[i]           = pfot.LPFO[i].cos;
-      _data_lpfo.lpfo_qcos[i]          = pfot.LPFO[i].qcos;
-    }
-
 
   }
   
@@ -422,7 +424,6 @@ void EventAnalyzer::Gen_Reco_Stats( PFOTools mct, PFOTools pfot )
   _data.N_K_corr = N_K_corr;
   if( _data.N_K_Gen ) _data.stability = (Float_t) N_K_corr / (Float_t) _data.N_K_Gen;
   if( _data.N_K_PFO ) _data.purity    = (Float_t) N_K_corr / (Float_t) _data.N_K_PFO;
-
 
 }
 

@@ -579,6 +579,10 @@ struct Tree_Data {
     Float_t stability = -1;
     Float_t purity    = -1;
 
+    // LPFO parameters
+    Float_t LPFO_cos[2]  = {-2};
+    Float_t LPFO_qcos[2] = {-2};
+
 
 };
 

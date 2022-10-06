@@ -15,6 +15,9 @@ void TreeWriter::InitializeDataTree(TTree * _hTree, Tree_Data& data)
     _hTree->Branch("N_K_corr",  &data.N_K_corr,  "N_K_corr/I");
     _hTree->Branch("stability", &data.stability, "stability/F");
     _hTree->Branch("purity",    &data.purity,    "purity/F");
+
+    _hTree->Branch("LPFO_cos",   data.LPFO_cos,    "LPFO_cos[2]/F");
+    _hTree->Branch("LPFO_qcos",  data.LPFO_qcos,  "LPFO_qcos[2]/F");
 }
 
 void TreeWriter::WriteLPFO_Info(PFOTools pt, PFO_QQbar *pqq, TreeVariables *data)
