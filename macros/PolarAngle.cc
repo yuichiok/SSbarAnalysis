@@ -21,10 +21,16 @@ void PolarAngle()
 
   TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ss.hists.root","READ");
 
+  TCanvas *c0 = new TCanvas("c1","c1",800,800);
+  gPad->SetGrid(1,1);
+
   TH1F *h_gen_q_qcos  = (TH1F*) file->Get("h_gen_q_qcos");
-  TH1F *h_reco_K_qcos = (TH1F*) file->Get("h_reco_K_qcos");
-  h_gen_q_qcos->Sumw2();
-  h_reco_K_qcos->Sumw2();
+
+  TTree *tree = (TTree*) file->Get("data");
+  tree->Draw("LPFO_qcos[0] >> htmp_reco_K_qcos","dEdx_pdg_match==1");
+  tree->Draw("LPFO_qcos[1] >> +htmp_reco_K_qcos","dEdx_pdg_match==1");
+
+  TH1F *h_reco_K_qcos = (TH1F*)gDirectory->Get("htmp_reco_K_qcos");
 
   Normalize(h_gen_q_qcos);
   Normalize(h_reco_K_qcos);
@@ -32,20 +38,15 @@ void PolarAngle()
   StyleHist(h_gen_q_qcos,kBlack);
   StyleHist(h_reco_K_qcos,kBlue);
 
-
-  TCanvas *c0 = new TCanvas("c0","c0",800,800);
-  gPad->SetGrid(1,1);
-
   h_gen_q_qcos->Draw("h");
   h_reco_K_qcos->Draw("hsame");
   h_reco_K_qcos->SetTitle(";Kaon cos#theta (no filter); Entries / 0.02");
   c0->Draw();
 
-  TCanvas *c1 = new TCanvas("c1","c1",800,800);
+  TCanvas *c1 = new TCanvas("c0","c0",800,800);
   gPad->SetGrid(1,1);
 
   TH1F *eff = (TH1F*) h_reco_K_qcos->Clone();
-  eff->Sumw2();
   StyleHist(eff,kGreen+1);
   eff->Divide(h_gen_q_qcos);
   eff->Draw("h");
