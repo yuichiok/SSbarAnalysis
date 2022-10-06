@@ -47,6 +47,11 @@ class HistManager
 
   // h2 hist
     enum h2_index {
+
+      gen_N_K_cos,
+      reco_N_K_cos,
+      N_K_corr_cos,
+
       stable_cos,
       purity_cos,
 

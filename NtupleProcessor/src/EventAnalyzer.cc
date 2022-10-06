@@ -227,6 +227,10 @@ void EventAnalyzer::Analyze(Long64_t entry)
     Int_t   *dN_Ks     = Gen_Reco_Stats( mct, pfot, cos_min, cos_max );
     Float_t *dSPs      = Get_Stable_Purity(dN_Ks);
 
+    _hm.h2[_hm.gen_N_K_cos]->Fill( bin_center ,dN_Ks[0]);
+    _hm.h2[_hm.reco_N_K_cos]->Fill( bin_center ,dN_Ks[1]);
+    _hm.h2[_hm.N_K_corr_cos]->Fill( bin_center ,dN_Ks[2]);
+
     _hm.h2[_hm.stable_cos]->Fill( bin_center ,dSPs[0]);
     _hm.h2[_hm.purity_cos]->Fill( bin_center ,dSPs[1]);
 
