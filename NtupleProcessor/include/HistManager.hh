@@ -40,6 +40,10 @@ class HistManager
       lpfo_gen_K_mom,
       lpfo_reco_K_mom,
 
+      gen_N_K_cos,
+      reco_N_K_cos,
+      N_K_corr_cos,
+
       dummy1,
       LastH1 = dummy1
     };
@@ -47,10 +51,6 @@ class HistManager
 
   // h2 hist
     enum h2_index {
-
-      gen_N_K_cos,
-      reco_N_K_cos,
-      N_K_corr_cos,
 
       stable_cos,
       purity_cos,

@@ -30,12 +30,14 @@ void HistManager::InitializeHists()
     h1[lpfo_gen_K_mom]  = new TH1F("h_lpfo_gen_K_mom","; Leading Gen Kaon momentum (GeV); Entries",100,0,100);
     h1[lpfo_reco_K_mom] = new TH1F("h_lpfo_reco_K_mom","; Leading Reco Kaon momentum (GeV); Entries",100,0,100);
 
-  // TH2F
+    // Number of Gen Reco Kaons
     Int_t cos_bin = 100;
-    h2[gen_N_K_cos]     = new TH2F("h2_gen_N_K_cos",";cos#theta;Generated N Kaons",cos_bin,-1,1,10,0,10);
-    h2[reco_N_K_cos]    = new TH2F("h2_reco_N_K_cos",";cos#theta;Reconstructed N Kaons",   cos_bin,-1,1,10,0,10);
-    h2[N_K_corr_cos]    = new TH2F("h2_N_K_corr_cos",";cos#theta;Correctly Reconstructed N Kaons",   cos_bin,-1,1,10,0,10);
+    h1[gen_N_K_cos]     = new TH1F("h2_gen_N_K_cos",";cos#theta;Generated N Kaons",cos_bin,-1,1);
+    h1[reco_N_K_cos]    = new TH1F("h2_reco_N_K_cos",";cos#theta;Reconstructed N Kaons",   cos_bin,-1,1);
+    h1[N_K_corr_cos]    = new TH1F("h2_N_K_corr_cos",";cos#theta;Correctly Reconstructed N Kaons",   cos_bin,-1,1);
 
+
+  // TH2F
     h2[stable_cos]      = new TH2F("h2_stable_cos",";cos#theta;Stability",cos_bin,-1,1,50,0,1);
     h2[purity_cos]      = new TH2F("h2_purity_cos",";cos#theta;Purity",   cos_bin,-1,1,50,0,1);
 
