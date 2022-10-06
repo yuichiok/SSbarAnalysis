@@ -32,9 +32,9 @@ void HistManager::InitializeHists()
 
     // Number of Gen Reco Kaons
     Int_t cos_bin = 100;
-    h1[gen_N_K_cos]     = new TH1F("h2_gen_N_K_cos",";cos#theta;Generated N Kaons",cos_bin,-1,1);
-    h1[reco_N_K_cos]    = new TH1F("h2_reco_N_K_cos",";cos#theta;Reconstructed N Kaons",   cos_bin,-1,1);
-    h1[N_K_corr_cos]    = new TH1F("h2_N_K_corr_cos",";cos#theta;Correctly Reconstructed N Kaons",   cos_bin,-1,1);
+    h1[gen_N_K_cos]     = new TH1F("h_gen_N_K_cos",";cos#theta;Generated N Kaons",cos_bin,-1,1);
+    h1[reco_N_K_cos]    = new TH1F("h_reco_N_K_cos",";cos#theta;Reconstructed N Kaons",   cos_bin,-1,1);
+    h1[N_K_corr_cos]    = new TH1F("h_N_K_corr_cos",";cos#theta;Correctly Reconstructed N Kaons",   cos_bin,-1,1);
 
 
   // TH2F
