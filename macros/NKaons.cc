@@ -5,6 +5,11 @@ void Normalize(TH1F *h)
   h->Scale( 1.0 / h->GetEntries() );
 }
 
+void Normalize_Integral(TH1F *h)
+{
+  h->Scale( 1.0 / h->Integral(1,100) );
+}
+
 void StyleHist(TH1F *h, Color_t col)
 {
   h->SetLineWidth(3);
@@ -52,15 +57,74 @@ void NKaons()
   h_N_K_PFO->Draw("hsame");
   h_N_K_PFO_KK->Draw("hsame");
 
-  TLegend *leg = new TLegend(0.15,0.75,0.45,0.85);
-  leg->SetLineColor(0);
-  leg->AddEntry(h_N_K_Gen,"Generated","l");
-  leg->AddEntry(h_N_K_PFO,"Reconstructed","l");
-  leg->AddEntry(h_N_K_PFO_KK,"KK Reconstructed Events","l");
-  leg->Draw();
+  TLegend *leg0 = new TLegend(0.15,0.75,0.45,0.85);
+  leg0->SetLineColor(0);
+  leg0->AddEntry(h_N_K_Gen,"Generated","l");
+  leg0->AddEntry(h_N_K_PFO,"Reconstructed","l");
+  leg0->AddEntry(h_N_K_PFO_KK,"KK Reconstructed Events","l");
+  leg0->Draw();
 
   gPad->SetGrid(1,1);
 
   c0->Draw();
+
+
+  // For differential cosθ
+  TH1F *h_gen_N_K_cos  = (TH1F*) file->Get("h_gen_N_K_cos");
+  TH1F *h_reco_N_K_cos = (TH1F*) file->Get("h_reco_N_K_cos");
+  TH1F *h_N_K_corr_cos = (TH1F*) file->Get("h_N_K_corr_cos");
+  StyleHist(h_gen_N_K_cos,kBlack);
+  StyleHist(h_reco_N_K_cos,kRed+2);
+  StyleHist(h_N_K_corr_cos,kBlue+2);
+  
+  h_gen_N_K_cos->Sumw2();
+  h_reco_N_K_cos->Sumw2();
+  h_N_K_corr_cos->Sumw2();
+
+  TH1F *h_stable_cos = (TH1F*) h_N_K_corr_cos->Clone();
+  h_stable_cos->Divide(h_gen_N_K_cos);
+  StyleHist(h_stable_cos,kBlack);
+
+  TH1F *h_purity_cos = (TH1F*) h_N_K_corr_cos->Clone();
+  h_purity_cos->Divide(h_reco_N_K_cos);
+  StyleHist(h_purity_cos,kGreen+2);
+
+
+  TCanvas *c1 = new TCanvas("c1","c1",800,800);
+  h_stable_cos->SetTitle(";cos#theta;Ratio");
+  h_stable_cos->GetYaxis()->SetRangeUser(0,1);
+  h_stable_cos->Draw("h");
+  h_purity_cos->Draw("hsame");
+
+  TLegend *leg1 = new TLegend(0.15,0.75,0.45,0.85);
+  leg1->SetLineColor(0);
+  leg1->AddEntry(h_stable_cos,"Stability","l");
+  leg1->AddEntry(h_purity_cos,"Purity","l");
+  leg1->Draw();
+
+  gPad->SetGrid(1,1);
+  c1->Draw();
+
+  TCanvas *c2 = new TCanvas("c2","c2",800,800);
+
+  Normalize_Integral(h_gen_N_K_cos);
+  Normalize_Integral(h_reco_N_K_cos);
+  Normalize_Integral(h_N_K_corr_cos);
+
+  h_gen_N_K_cos->SetTitle(";cos#theta;N Kaons (a.u.)");
+  h_gen_N_K_cos->GetYaxis()->SetRangeUser(0,0.04);
+  h_gen_N_K_cos->Draw("h");
+  h_reco_N_K_cos->Draw("hsame");
+  h_N_K_corr_cos->Draw("hsame");
+
+  TLegend *leg2 = new TLegend(0.15,0.75,0.45,0.85);
+  leg2->SetLineColor(0);
+  leg2->AddEntry(h_gen_N_K_cos,"N Generated Kaons","l");
+  leg2->AddEntry(h_reco_N_K_cos,"N Reconstructed Kaons","l");
+  leg2->AddEntry(h_N_K_corr_cos,"N Correct Reco Kaons","l");
+  leg2->Draw();
+
+  gPad->SetGrid(1,1);
+  c2->Draw();
 
 }
