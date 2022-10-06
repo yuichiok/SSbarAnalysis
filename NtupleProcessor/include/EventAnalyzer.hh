@@ -52,7 +52,8 @@ class EventAnalyzer
     virtual Bool_t   Notify();
 
   // Gadgets
-    void             Gen_Reco_Stats( PFOTools mct, PFOTools pfot, Float_t cos_min, Float_t cos_max );
+    Int_t           *Gen_Reco_Stats( PFOTools mct, PFOTools pfot, Float_t cos_min, Float_t cos_max );
+    Float_t         *Get_Stable_Purity( Int_t *N_Ks );
 
   // Histogram extractor
     void             PolarAngleGen(PFOTools mct);

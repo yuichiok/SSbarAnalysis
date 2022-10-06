@@ -103,8 +103,6 @@ void EventAnalyzer::AnalyzeGen()
 
 void EventAnalyzer::Analyze(Long64_t entry)
 {
-  Bool_t TreeWrite = 0;
-
   // MC, PFO Analysis
     PFOTools mct( &_mc );
     PFOTools pfot( &_pfo );
@@ -210,9 +208,29 @@ void EventAnalyzer::Analyze(Long64_t entry)
 
 
   // Try Stability and Purity Calculation here.
-  Gen_Reco_Stats( mct, pfot, -1, 1 );
+  Int_t   *N_Ks  = Gen_Reco_Stats( mct, pfot, -1, 1 );
+  _data.N_K_Gen  = N_Ks[0];
+  _data.N_K_PFO  = N_Ks[1];
+  _data.N_K_corr = N_Ks[2];
 
+  Float_t *SPs    = Get_Stable_Purity(N_Ks);
+  _data.stability = SPs[0];
+  _data.purity    = SPs[1];
 
+  Int_t nbins_cos = _hm.h2[_hm.stable_cos]->GetNbinsX();
+  TAxis *xaxis    = _hm.h2[_hm.stable_cos]->GetXaxis();
+  for ( int ibin=1; ibin<=nbins_cos; ibin++ ){
+    Float_t bin_center = xaxis->GetBinCenter(ibin);
+    Float_t bin_width  = xaxis->GetBinWidth(ibin);
+    Float_t cos_min    = xaxis->GetBinLowEdge(ibin);
+    Float_t cos_max    = cos_min + bin_width;
+    Int_t   *dN_Ks     = Gen_Reco_Stats( mct, pfot, cos_min, cos_max );
+    Float_t *dSPs      = Get_Stable_Purity(dN_Ks);
+
+    _hm.h2[_hm.stable_cos]->Fill( bin_center ,dSPs[0]);
+    _hm.h2[_hm.purity_cos]->Fill( bin_center ,dSPs[1]);
+
+  }
 
   // Fill Hists can make another class called histogram extractor?
   Bool_t all_K_K = all_checks && (dEdx_pdg_match == K_K);
@@ -221,23 +239,21 @@ void EventAnalyzer::Analyze(Long64_t entry)
   for ( int ijet=0; ijet < 2; ijet++ ){
     std::vector<PFO_Info> jet = pfot.GetJet(ijet);
     for (auto ijet : jet ){
-      if( pfot.isKaon(ijet) ) _hm.h[_hm.reco_K_cos]->Fill(ijet.cos);
+      if( pfot.isKaon(ijet) ) _hm.h1[_hm.reco_K_cos]->Fill(ijet.cos);
     }
   }
-
 
 
   if(_eve.eve_valid_lpfo){
 
     for (auto iLPFO : pfot.LPFO){
-      if( pfot.isKaon(iLPFO) ) _hm.h[_hm.lpfo_reco_K_mom]->Fill(iLPFO.p_mag);
+      if( pfot.isKaon(iLPFO) ) _hm.h1[_hm.lpfo_reco_K_mom]->Fill(iLPFO.p_mag);
     }
 
     for (int i=0; i<2; i++){
-      if( abs(_stats_lpfo.lpfo_pdgcheat[i]) == 321 ) _hm.h[_hm.lpfo_gen_K_mom]->Fill(pfot.LPFO[i].p_mag);
+      if( abs(_stats_lpfo.lpfo_pdgcheat[i]) == 321 ) _hm.h1[_hm.lpfo_gen_K_mom]->Fill(pfot.LPFO[i].p_mag);
     }
   }
-
 
 
 
@@ -370,7 +386,7 @@ Bool_t EventAnalyzer::Notify()
    return kTRUE;
 }
 
-void EventAnalyzer::Gen_Reco_Stats( PFOTools mct, PFOTools pfot, Float_t cos_min, Float_t cos_max )
+Int_t *EventAnalyzer::Gen_Reco_Stats( PFOTools mct, PFOTools pfot, Float_t cos_min, Float_t cos_max )
 {
   std::vector<PFO_Info> PFO_Collection;
   std::vector<PFO_Info> jet[2] = { pfot.GetJet(0), pfot.GetJet(1) };
@@ -393,8 +409,6 @@ void EventAnalyzer::Gen_Reco_Stats( PFOTools mct, PFOTools pfot, Float_t cos_min
     }
   }
 
-  _data.N_K_Gen = Gen_K_Collection.size();
-  _data.N_K_PFO = PFO_K_Collection.size();
   Int_t N_K_corr  = 0;
 
   Float_t cos_r = 0.02;
@@ -421,9 +435,23 @@ void EventAnalyzer::Gen_Reco_Stats( PFOTools mct, PFOTools pfot, Float_t cos_min
 
   }
 
-  _data.N_K_corr = N_K_corr;
-  if( _data.N_K_Gen ) _data.stability = (Float_t) N_K_corr / (Float_t) _data.N_K_Gen;
-  if( _data.N_K_PFO ) _data.purity    = (Float_t) N_K_corr / (Float_t) _data.N_K_PFO;
+  static Int_t N_array[3] = {0};
+  N_array[0] = Gen_K_Collection.size();
+  N_array[1] = PFO_K_Collection.size();
+  N_array[2] = N_K_corr;
+
+  return N_array;
+
+}
+
+Float_t *EventAnalyzer::Get_Stable_Purity( Int_t *N_Ks )
+{
+  // 0: N Gen Kaon, 1: N PFO Kaon, 2: N Correct Kaon
+  static Float_t SP_array[2] = {-1,-1};
+  if( N_Ks[0] )  SP_array[0] = (Float_t) N_Ks[2] / (Float_t) N_Ks[0];
+  if( N_Ks[1] )  SP_array[1] = (Float_t) N_Ks[2] / (Float_t) N_Ks[1];
+
+  return SP_array;
 
 }
 
@@ -431,15 +459,15 @@ void EventAnalyzer::PolarAngleGen(PFOTools mct)
 {
   // Gen QQbar
   for ( auto iq : mct.mc_quark ){
-    _hm.h[_hm.gen_q_cos]->Fill(iq.cos);
-    _hm.h[_hm.gen_q_qcos]->Fill(iq.qcos);
+    _hm.h1[_hm.gen_q_cos]->Fill(iq.cos);
+    _hm.h1[_hm.gen_q_qcos]->Fill(iq.qcos);
   }
 
   // Gen K
   for ( int istable=0; istable < _mc.mc_stable_n; istable++ ){
     if(abs(_mc.mc_stable_pdg[istable]) == 321) {
-      _hm.h[_hm.gen_K_cos]->Fill(mct.mc_quark[istable].cos);
-      _hm.h[_hm.gen_K_qcos]->Fill(mct.mc_quark[istable].qcos);
+      _hm.h1[_hm.gen_K_cos]->Fill(mct.mc_quark[istable].cos);
+      _hm.h1[_hm.gen_K_qcos]->Fill(mct.mc_quark[istable].qcos);
     }
   }
 
@@ -451,8 +479,8 @@ void EventAnalyzer::PolarAngle(PFOTools pfot, Bool_t b_reco)
   if(b_reco){
 
     for ( auto iLPFO : pfot.LPFO ){
-      _hm.h[_hm.reco_K_cos]->Fill( iLPFO.cos );
-      _hm.h[_hm.reco_K_qcos]->Fill( iLPFO.qcos );
+      _hm.h1[_hm.reco_K_cos]->Fill( iLPFO.cos );
+      _hm.h1[_hm.reco_K_qcos]->Fill( iLPFO.qcos );
     }
     
   }
@@ -470,7 +498,7 @@ void EventAnalyzer::Jet_sum_n_acol()
   _data.sum_jet_E = _jet.jet_E[0] + _jet.jet_E[1];
   _data.jet_acol  = cosacol;
 
-  _hm.h[_hm.reco_sum_jetE]->Fill( _data.sum_jet_E );
-  _hm.h[_hm.reco_jet_sep]->Fill( _data.jet_acol );
+  _hm.h1[_hm.reco_sum_jetE]->Fill( _data.sum_jet_E );
+  _hm.h1[_hm.reco_jet_sep]->Fill( _data.jet_acol );
 
 }

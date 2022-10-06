@@ -23,8 +23,8 @@ class HistManager
     virtual void WriteLists( TFile * output );
 
   // Declear histograms
-    const Int_t hmax = 100;
-    enum h_index {
+  // h1 hist
+    enum h1_index {
       gen_q_cos,
       gen_q_qcos,
 
@@ -39,13 +39,26 @@ class HistManager
 
       lpfo_gen_K_mom,
       lpfo_reco_K_mom,
-      Last = lpfo_reco_K_mom
-    };
 
-    TH1F * h[Last];
+      dummy1,
+      LastH1 = dummy1
+    };
+    TH1F * h1[LastH1];
+
+  // h2 hist
+    enum h2_index {
+      stable_cos,
+      purity_cos,
+
+      dummy2,
+      LastH2 = dummy2
+    };
+    TH2F * h2[LastH2];
+
 
   private:
-    TList* hList = new TList();
+    TList* hList1 = new TList();
+    TList* hList2 = new TList();
 
 };
 
