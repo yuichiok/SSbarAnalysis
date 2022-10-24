@@ -21,8 +21,9 @@ void StyleHist(TH1F *h, Color_t col)
 void NKaons()
 {
   gStyle->SetOptStat(0);
+  gStyle->SetPadBorderSize(1);
 
-  TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ss.hists.root","READ");
+  TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ss.hists.p20.root","READ");
 
   TTree *t_data = (TTree*) file->Get("data");
 
@@ -57,7 +58,7 @@ void NKaons()
   h_N_K_PFO->Draw("hsame");
   h_N_K_PFO_KK->Draw("hsame");
 
-  TLegend *leg0 = new TLegend(0.15,0.75,0.45,0.85);
+  TLegend *leg0 = new TLegend(0.6,0.75,0.85,0.85);
   leg0->SetLineColor(0);
   leg0->AddEntry(h_N_K_Gen,"Generated","l");
   leg0->AddEntry(h_N_K_PFO,"Reconstructed","l");
@@ -65,7 +66,7 @@ void NKaons()
   leg0->Draw();
 
   gPad->SetGrid(1,1);
-
+  gPad->SetLeftMargin(0.15);
   c0->Draw();
 
 
@@ -96,13 +97,14 @@ void NKaons()
   h_stable_cos->Draw("h");
   h_purity_cos->Draw("hsame");
 
-  TLegend *leg1 = new TLegend(0.15,0.75,0.45,0.85);
+  TLegend *leg1 = new TLegend(0.3,0.78,0.45,0.85);
   leg1->SetLineColor(0);
   leg1->AddEntry(h_stable_cos,"Stability","l");
   leg1->AddEntry(h_purity_cos,"Purity","l");
   leg1->Draw();
 
   gPad->SetGrid(1,1);
+  gPad->SetLeftMargin(0.15);
   c1->Draw();
 
   TCanvas *c2 = new TCanvas("c2","c2",800,800);
@@ -112,12 +114,12 @@ void NKaons()
   Normalize_Integral(h_N_K_corr_cos);
 
   h_gen_N_K_cos->SetTitle(";cos#theta;N Kaons (a.u.)");
-  h_gen_N_K_cos->GetYaxis()->SetRangeUser(0,0.04);
+  h_gen_N_K_cos->GetYaxis()->SetRangeUser(0.004,0.04);
   h_gen_N_K_cos->Draw("h");
   h_reco_N_K_cos->Draw("hsame");
   h_N_K_corr_cos->Draw("hsame");
 
-  TLegend *leg2 = new TLegend(0.15,0.75,0.45,0.85);
+  TLegend *leg2 = new TLegend(0.3,0.75,0.6,0.85);
   leg2->SetLineColor(0);
   leg2->AddEntry(h_gen_N_K_cos,"N Generated Kaons","l");
   leg2->AddEntry(h_reco_N_K_cos,"N Reconstructed Kaons","l");
@@ -125,6 +127,8 @@ void NKaons()
   leg2->Draw();
 
   gPad->SetGrid(1,1);
+  gPad->SetLeftMargin(0.15);
+  c2->SetLogy();
   c2->Draw();
 
 }
