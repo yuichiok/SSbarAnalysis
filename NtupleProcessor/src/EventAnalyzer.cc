@@ -208,33 +208,36 @@ void EventAnalyzer::Analyze(Long64_t entry)
 
 
   // Try Stability and Purity Calculation here.
-  Int_t   *N_Ks  = Gen_Reco_Stats( mct, pfot, -1, 1 );
-  _data.N_K_Gen  = N_Ks[0];
-  _data.N_K_PFO  = N_Ks[1];
-  _data.N_K_corr = N_Ks[2];
+  // if ( all_checks ) {
+  // if ( pfot.is_momentum(pfot.LPFO[0],20,60) && pfot.is_momentum(pfot.LPFO[1],20,60) ) {
+    Int_t   *N_Ks  = Gen_Reco_Stats( mct, pfot, -1, 1 );
+    _data.N_K_Gen  = N_Ks[0];
+    _data.N_K_PFO  = N_Ks[1];
+    _data.N_K_corr = N_Ks[2];
 
-  Float_t *SPs    = Get_Stable_Purity(N_Ks);
-  _data.stability = SPs[0];
-  _data.purity    = SPs[1];
+    Float_t *SPs    = Get_Stable_Purity(N_Ks);
+    _data.stability = SPs[0];
+    _data.purity    = SPs[1];
 
-  Int_t nbins_cos = _hm.h2[_hm.stable_cos]->GetNbinsX();
-  TAxis *xaxis    = _hm.h2[_hm.stable_cos]->GetXaxis();
-  for ( int ibin=1; ibin<=nbins_cos; ibin++ ){
-    Float_t bin_center = xaxis->GetBinCenter(ibin);
-    Float_t bin_width  = xaxis->GetBinWidth(ibin);
-    Float_t cos_min    = xaxis->GetBinLowEdge(ibin);
-    Float_t cos_max    = cos_min + bin_width;
-    Int_t   *dN_Ks     = Gen_Reco_Stats( mct, pfot, cos_min, cos_max );
-    Float_t *dSPs      = Get_Stable_Purity(dN_Ks);
+    Int_t nbins_cos = _hm.h2[_hm.stable_cos]->GetNbinsX();
+    TAxis *xaxis    = _hm.h2[_hm.stable_cos]->GetXaxis();
+    for ( int ibin=1; ibin<=nbins_cos; ibin++ ){
+      Float_t bin_center = xaxis->GetBinCenter(ibin);
+      Float_t bin_width  = xaxis->GetBinWidth(ibin);
+      Float_t cos_min    = xaxis->GetBinLowEdge(ibin);
+      Float_t cos_max    = cos_min + bin_width;
+      Int_t   *dN_Ks     = Gen_Reco_Stats( mct, pfot, cos_min, cos_max );
+      Float_t *dSPs      = Get_Stable_Purity(dN_Ks);
 
-    _hm.h1[_hm.gen_N_K_cos]->Fill( bin_center ,dN_Ks[0]);
-    _hm.h1[_hm.reco_N_K_cos]->Fill( bin_center ,dN_Ks[1]);
-    _hm.h1[_hm.N_K_corr_cos]->Fill( bin_center ,dN_Ks[2]);
+      _hm.h1[_hm.gen_N_K_cos]->Fill( bin_center ,dN_Ks[0]);
+      _hm.h1[_hm.reco_N_K_cos]->Fill( bin_center ,dN_Ks[1]);
+      _hm.h1[_hm.N_K_corr_cos]->Fill( bin_center ,dN_Ks[2]);
 
-    _hm.h2[_hm.stable_cos]->Fill( bin_center ,dSPs[0]);
-    _hm.h2[_hm.purity_cos]->Fill( bin_center ,dSPs[1]);
+      _hm.h2[_hm.stable_cos]->Fill( bin_center ,dSPs[0]);
+      _hm.h2[_hm.purity_cos]->Fill( bin_center ,dSPs[1]);
 
-  }
+    }
+  // }
 
   // Fill Hists can make another class called histogram extractor?
   Bool_t all_K_K = all_checks && (dEdx_pdg_match == K_K);
@@ -399,16 +402,20 @@ Int_t *EventAnalyzer::Gen_Reco_Stats( PFOTools mct, PFOTools pfot, Float_t cos_m
   PFO_Collection.insert( PFO_Collection.begin(), jet[0].begin(), jet[0].end() );
   PFO_Collection.insert( PFO_Collection.end(), jet[1].begin(), jet[1].end() );
 
+  Float_t p_min = 0;
+
   std::vector<PFO_Info> PFO_K_Collection;
   for ( auto iPFO : PFO_Collection ){
     Bool_t cos_range = (cos_min < iPFO.cos && iPFO.cos < cos_max );
-    if( PFOTools::isKaon(iPFO) && cos_range ) PFO_K_Collection.push_back(iPFO);
+    Bool_t p_range   = p_min < iPFO.p_mag;
+    if( PFOTools::isKaon(iPFO) && cos_range && p_range ) PFO_K_Collection.push_back(iPFO);
   }
 
   std::vector<MC_Info> Gen_K_Collection;
   for ( int istable=0; istable < _mc.mc_stable_n; istable++ ){
     Bool_t cos_range = ( cos_min < mct.mc_stable[istable].cos && mct.mc_stable[istable].cos < cos_max );
-    if(abs(_mc.mc_stable_pdg[istable]) == 321 && cos_range) {
+    Bool_t p_range   = p_min < mct.mc_stable[istable].p_mag;
+    if(abs(_mc.mc_stable_pdg[istable]) == 321 && cos_range && p_range) {
       Gen_K_Collection.push_back( mct.mc_stable[istable] );
     }
   }
