@@ -52,17 +52,18 @@ void NKaons()
   h_N_K_PFO_KK->SetLineStyle(2);
 
   h_N_K_Gen->SetTitle(";N Kaons;a.u.");
-  h_N_K_Gen->GetYaxis()->SetRangeUser(0,0.26);
+  h_N_K_Gen->GetXaxis()->SetRangeUser(0,25);
+  h_N_K_Gen->GetYaxis()->SetRangeUser(0,1);
 
   h_N_K_Gen->Draw("h");
   h_N_K_PFO->Draw("hsame");
-  h_N_K_PFO_KK->Draw("hsame");
+  // h_N_K_PFO_KK->Draw("hsame");
 
   TLegend *leg0 = new TLegend(0.6,0.75,0.85,0.85);
   leg0->SetLineColor(0);
   leg0->AddEntry(h_N_K_Gen,"Generated","l");
   leg0->AddEntry(h_N_K_PFO,"Reconstructed","l");
-  leg0->AddEntry(h_N_K_PFO_KK,"KK Reconstructed Events","l");
+  // leg0->AddEntry(h_N_K_PFO_KK,"KK Reconstructed Events","l");
   leg0->Draw();
 
   gPad->SetGrid(1,1);
@@ -109,12 +110,8 @@ void NKaons()
 
   TCanvas *c2 = new TCanvas("c2","c2",800,800);
 
-  Normalize_Integral(h_gen_N_K_cos);
-  Normalize_Integral(h_reco_N_K_cos);
-  Normalize_Integral(h_N_K_corr_cos);
-
   h_gen_N_K_cos->SetTitle(";cos#theta;N Kaons (a.u.)");
-  h_gen_N_K_cos->GetYaxis()->SetRangeUser(0.004,0.04);
+  h_gen_N_K_cos->GetYaxis()->SetRangeUser(1E3,2E5);
   h_gen_N_K_cos->Draw("h");
   h_reco_N_K_cos->Draw("hsame");
   h_N_K_corr_cos->Draw("hsame");
