@@ -56,6 +56,10 @@ void HistManager::Hist2List()
     hList1->Add(ih);
   }
 
+  for (auto ih : h1_pq) {
+    hList1_pq->Add(ih);
+  }
+
   for (auto ih : h2) {
     hList2->Add(ih);
   }
@@ -69,5 +73,10 @@ void HistManager::WriteLists( TFile * output)
   // Write histogram lists
   hList1->Write();
   hList2->Write();
+
+  TDirectory * d_pq = output->mkdir("pq");
+    d_pq->cd();
+    hList1_pq->Write();
+    output->cd();
 
 }

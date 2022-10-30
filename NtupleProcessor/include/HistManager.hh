@@ -72,8 +72,9 @@ class HistManager
 
 
   private:
-    TList* hList1 = new TList();
-    TList* hList2 = new TList();
+    TList* hList1    = new TList();
+    TList* hList1_pq = new TList();
+    TList* hList2    = new TList();
 
 };
 
