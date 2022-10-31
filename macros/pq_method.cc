@@ -191,8 +191,8 @@ void pq_method()
   Normalize(h_reco_K_pq_cos);
   Normalize(h_reco_K_qcos);
 
-  h_reco_K_pq_cos->Draw("h");
-  h_gen_q_qcos->Draw("hsame");
+  h_gen_q_qcos->Draw("h");
+  h_reco_K_pq_cos->Draw("hsame");
   h_reco_K_qcos->Draw("hsame");
   // p_KK->Draw("h");
 
