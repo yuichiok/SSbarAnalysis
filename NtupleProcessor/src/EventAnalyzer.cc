@@ -243,6 +243,7 @@ void EventAnalyzer::Analyze(Long64_t entry)
   // Fill Hists can make another class called histogram extractor?
   Bool_t all_K_K = all_checks && (dEdx_pdg_match == K_K);
   PolarAngle(pfot,all_K_K);
+  PolarAngle_acc_rej(pfot,CutTrigger,(dEdx_pdg_match == K_K));
 
   for ( int ijet=0; ijet < 2; ijet++ ){
     std::vector<PFO_Info> jet = pfot.GetJet(ijet);
@@ -499,7 +500,7 @@ void EventAnalyzer::PolarAngle(PFOTools pfot, Bool_t s_reco)
 
 }
 
-void EventAnalyzer::PolarAngle_pq(PFOTools pfot, vector<Bool_t> cuts, Bool_t ss_config)
+void EventAnalyzer::PolarAngle_acc_rej(PFOTools pfot, vector<Bool_t> cuts, Bool_t ss_config)
 {
   if (cuts.size()!=4) return;
 
