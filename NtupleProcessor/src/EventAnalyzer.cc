@@ -88,7 +88,9 @@ void EventAnalyzer::InitHists()
 void EventAnalyzer::WriteFile()
 {
   // Write Tree
-    _hfile->Write();
+    _hm.WriteLists(_hfile);
+    _hTree->Write();
+    // _hfile->Write();
     _hfile->Close();
 
 }
@@ -505,7 +507,7 @@ void EventAnalyzer::PolarAngle_acc_rej(PFOTools pfot, vector<Bool_t> cuts, Bool_
   if (cuts.size()!=4) return;
 
   // LPFO present, PFO Quality Good
-  for (int icut=0; icut < 3; ){
+  for (int icut=0; icut < 3; icut++){
     if (!cuts.at(icut)) return;
   }
 
