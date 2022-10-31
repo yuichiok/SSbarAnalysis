@@ -188,6 +188,7 @@ void EventAnalyzer::Analyze(Long64_t entry)
   // Check all bools
   // Check all does double tagging
   // CheckTrigger = [ Valid_LPFO, Quality, Not_Gluon_K, charge_check ]
+  //                            * Quality = {momentum, tpc hits, offset}
     Bool_t all_checks = true;
     for (auto ibool : CutTrigger){
       if (!ibool) {
@@ -484,16 +485,41 @@ void EventAnalyzer::PolarAngleGen(PFOTools mct)
 
 }
 
-void EventAnalyzer::PolarAngle(PFOTools pfot, Bool_t b_reco)
+void EventAnalyzer::PolarAngle(PFOTools pfot, Bool_t s_reco)
 {
   // Reco K_K
-  if(b_reco){
+  if(s_reco){
 
     for ( auto iLPFO : pfot.LPFO ){
       _hm.h1[_hm.reco_K_cos]->Fill( iLPFO.cos );
       _hm.h1[_hm.reco_K_qcos]->Fill( iLPFO.qcos );
     }
     
+  }
+
+}
+
+void EventAnalyzer::PolarAngle_pq(PFOTools pfot, vector<Bool_t> cuts, Bool_t ss_config)
+{
+  if (cuts.size()!=4) return;
+
+  // LPFO present, PFO Quality Good
+  for (int icut=0; icut < 3; ){
+    if (!cuts.at(icut)) return;
+  }
+
+  // K_K config
+  if(!ss_config) return;
+
+  // Last element of cuts vector is charge comparison
+  if(cuts.back()){
+    for ( auto iLPFO : pfot.LPFO ){
+      _hm.h1_pq[_hm.acc_KK]->Fill( iLPFO.qcos );
+    }
+  }else{
+    for ( auto iLPFO : pfot.LPFO ){
+      _hm.h1_pq[_hm.rej_KK]->Fill( iLPFO.qcos );
+    }
   }
 
 }

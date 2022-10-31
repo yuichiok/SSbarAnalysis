@@ -52,7 +52,6 @@ class HistManager
     enum h1_pq_index {
       acc_KK,
       rej_KK,
-      p_KK,
 
       dummy2,
       LastH2 = dummy2

@@ -40,7 +40,6 @@ void HistManager::InitializeHists()
   // pq method
     h1_pq[acc_KK]      = new TH1F("h_acc_KK_cos",";Accepted K^{+}K^{-} cos#theta;N_{acc}",cos_bin,-1,1);
     h1_pq[rej_KK]      = new TH1F("h_rej_KK_cos",";Rejected K^{+}K^{-} cos#theta;N_{rej}",cos_bin,-1,1);
-    h1_pq[p_KK]        = new TH1F("h_p_KK_cos",";K^{+}K^{-} cos#theta;p value",cos_bin,-1,1);
 
   // TH2F
     h2[stable_cos]      = new TH2F("h2_stable_cos",";cos#theta;Stability",cos_bin,-1,1,50,0,1);
