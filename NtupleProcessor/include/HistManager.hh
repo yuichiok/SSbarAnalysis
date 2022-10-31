@@ -49,21 +49,31 @@ class HistManager
     };
     TH1F * h1[LastH1];
 
+    enum h1_pq_index {
+      acc_KK,
+      rej_KK,
+
+      dummy2,
+      LastH2 = dummy2
+    };
+    TH1F * h1_pq[LastH2];
+
   // h2 hist
     enum h2_index {
 
       stable_cos,
       purity_cos,
 
-      dummy2,
-      LastH2 = dummy2
+      dummy3,
+      LastH3 = dummy3
     };
-    TH2F * h2[LastH2];
+    TH2F * h2[LastH3];
 
 
   private:
-    TList* hList1 = new TList();
-    TList* hList2 = new TList();
+    TList* hList1    = new TList();
+    TList* hList1_pq = new TList();
+    TList* hList2    = new TList();
 
 };
 

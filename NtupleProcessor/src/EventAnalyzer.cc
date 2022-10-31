@@ -88,7 +88,9 @@ void EventAnalyzer::InitHists()
 void EventAnalyzer::WriteFile()
 {
   // Write Tree
-    _hfile->Write();
+    _hm.WriteLists(_hfile);
+    _hTree->Write();
+    // _hfile->Write();
     _hfile->Close();
 
 }
@@ -188,6 +190,7 @@ void EventAnalyzer::Analyze(Long64_t entry)
   // Check all bools
   // Check all does double tagging
   // CheckTrigger = [ Valid_LPFO, Quality, Not_Gluon_K, charge_check ]
+  //                            * Quality = {momentum, tpc hits, offset}
     Bool_t all_checks = true;
     for (auto ibool : CutTrigger){
       if (!ibool) {
@@ -242,6 +245,7 @@ void EventAnalyzer::Analyze(Long64_t entry)
   // Fill Hists can make another class called histogram extractor?
   Bool_t all_K_K = all_checks && (dEdx_pdg_match == K_K);
   PolarAngle(pfot,all_K_K);
+  PolarAngle_acc_rej(pfot,CutTrigger,(dEdx_pdg_match == K_K));
 
   for ( int ijet=0; ijet < 2; ijet++ ){
     std::vector<PFO_Info> jet = pfot.GetJet(ijet);
@@ -484,16 +488,41 @@ void EventAnalyzer::PolarAngleGen(PFOTools mct)
 
 }
 
-void EventAnalyzer::PolarAngle(PFOTools pfot, Bool_t b_reco)
+void EventAnalyzer::PolarAngle(PFOTools pfot, Bool_t s_reco)
 {
   // Reco K_K
-  if(b_reco){
+  if(s_reco){
 
     for ( auto iLPFO : pfot.LPFO ){
       _hm.h1[_hm.reco_K_cos]->Fill( iLPFO.cos );
       _hm.h1[_hm.reco_K_qcos]->Fill( iLPFO.qcos );
     }
     
+  }
+
+}
+
+void EventAnalyzer::PolarAngle_acc_rej(PFOTools pfot, vector<Bool_t> cuts, Bool_t ss_config)
+{
+  if (cuts.size()!=4) return;
+
+  // LPFO present, PFO Quality Good
+  for (int icut=0; icut < 3; icut++){
+    if (!cuts.at(icut)) return;
+  }
+
+  // K_K config
+  if(!ss_config) return;
+
+  // Last element of cuts vector is charge comparison
+  if(cuts.back()){
+    for ( auto iLPFO : pfot.LPFO ){
+      _hm.h1_pq[_hm.acc_KK]->Fill( iLPFO.qcos );
+    }
+  }else{
+    for ( auto iLPFO : pfot.LPFO ){
+      _hm.h1_pq[_hm.rej_KK]->Fill( iLPFO.qcos );
+    }
   }
 
 }

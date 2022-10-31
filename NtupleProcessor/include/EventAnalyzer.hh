@@ -57,7 +57,8 @@ class EventAnalyzer
 
   // Histogram extractor
     void             PolarAngleGen(PFOTools mct);
-    void             PolarAngle(PFOTools pfot, Bool_t b_reco);
+    void             PolarAngle(PFOTools pfot, Bool_t s_reco);
+    void             PolarAngle_acc_rej(PFOTools pfot, vector<Bool_t> cuts, Bool_t ss_config);
 
     void             Jet_sum_n_acol();
 
