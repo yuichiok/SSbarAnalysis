@@ -435,13 +435,17 @@ Int_t *EventAnalyzer::Gen_Reco_Stats( PFOTools mct, PFOTools pfot, Float_t cos_m
 
     Int_t counter = 0;
     for ( auto iremain : PFO_K_Remain ){
-      Float_t cos_diff = igen.cos - iremain.cos;
+      // Float_t cos_diff = igen.cos - iremain.cos;
+      Float_t cos_diff = std::cos( igen.vt.v3().Theta() - iremain.vt.v3().Theta() );
       if( cos_diff < min_cos_diff ) {
         min_cos_diff = cos_diff;
         i_min_cos_diff = counter;
       }
       counter++;
     }
+
+    // Fill min_cos_diff
+    _hm.h1[_hm.gen_reco_K_sep_cos]->Fill(min_cos_diff);
 
     if( min_cos_diff < cos_r ) {
       N_K_corr++;
