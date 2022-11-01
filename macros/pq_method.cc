@@ -9,7 +9,7 @@ const int nbins = 100;
 void Normalize(TH1F *h)
 {
   // h->Scale( 1.0 / h->GetEntries() );
-  h->Scale( 1.0 / h->Integral(20,80) );
+  h->Scale( 1.0 / h->Integral(30,70) );
 }
 
 void StyleHist(TH1F *h, Color_t col)
@@ -32,21 +32,24 @@ vector<Float_t> GetP( TH1F * h_accepted, TH1F * h_rejected )
     {
       for (int i2 = -1; i2 < 2; i2 += 2)
       {
-        float accepted = h_accepted->GetBinContent(nbins + 1 - i) + i1 * sqrt(h_accepted->GetBinContent(nbins + 1 - i));
-        float rejected = h_rejected->GetBinContent(nbins + 1 - i) + i2 * sqrt(h_rejected->GetBinContent(nbins + 1 - i));
-        // accepted += h_accepted->GetBinContent(i) + i3 * sqrt(h_accepted->GetBinContent(i));
+        for (int i3 = -1; i3 < 2; i3 += 2)
+        {
+          float accepted = h_accepted->GetBinContent(nbins + 1 - i) + i1 * sqrt(h_accepted->GetBinContent(nbins + 1 - i));
+          float rejected = h_rejected->GetBinContent(nbins + 1 - i) + i2 * sqrt(h_rejected->GetBinContent(nbins + 1 - i));
+          accepted += h_accepted->GetBinContent(i) + i3 * sqrt(h_accepted->GetBinContent(i));
 
-        float a = 1;
-        float b = -1;
-        float c = rejected / (2 * (accepted + rejected));
-        float p = (0.5 / a) * (-b + sqrt(b * b - 4 * a * c));
-        float p2 = (0.5 / a) * (-b - sqrt(b * b - 4 * a * c));
-        if (p > 0.99)
-          p = 0;
-        if (p2 > 0.99)
-          p2 = 0;
-        if (p > 0 || p2 > 0)
-          result_j.push_back(max(p, p2));
+          float a = 1;
+          float b = -1;
+          float c = rejected / (2 * (accepted + rejected));
+          float p = (0.5 / a) * (-b + sqrt(b * b - 4 * a * c));
+          float p2 = (0.5 / a) * (-b - sqrt(b * b - 4 * a * c));
+          if (p > 0.99)
+            p = 0;
+          if (p2 > 0.99)
+            p2 = 0;
+          if (p > 0 || p2 > 0)
+            result_j.push_back(max(p, p2));
+        }
       }
     }
 
@@ -105,8 +108,6 @@ TH1F * CorrectHist( TH1F * h_reco, vector<Float_t> p_vec)
     float q = 1 - p;
     float weight = (p * p + q * q) / (q * q * q * q - p * p * p * p);
 
-    cout << weight << endl;
-
     // calcualte average
     float av_i = 0;
     float av_41i = 0;
@@ -124,6 +125,7 @@ TH1F * CorrectHist( TH1F * h_reco, vector<Float_t> p_vec)
     }
     av_i /= n;
     av_41i /= n;
+    cout << (q * q + p * p) << endl;
     corrected->SetBinContent(i, av_i);
     corrected->SetBinContent(nbins + 1 - i, av_41i);
 
@@ -156,7 +158,7 @@ void pq_method()
 {
   gStyle->SetOptStat(0);
 
-  TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ss.hists.root","READ");
+  TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ss.hists.all.root","READ");
 
   TH1F *h_gen_q_qcos  = (TH1F*) file->Get("h_gen_q_qcos");
   TH1F *h_reco_K_qcos = (TH1F*) file->Get("h_reco_K_qcos");
