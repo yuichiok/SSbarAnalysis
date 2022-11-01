@@ -406,7 +406,7 @@ Int_t *EventAnalyzer::Gen_Reco_Stats( PFOTools mct, PFOTools pfot, Float_t cos_m
   PFO_Collection.insert( PFO_Collection.begin(), jet[0].begin(), jet[0].end() );
   PFO_Collection.insert( PFO_Collection.end(), jet[1].begin(), jet[1].end() );
 
-  Float_t p_min = 0;
+  Float_t p_min = 2.5;
 
   std::vector<PFO_Info> PFO_K_Collection;
   for ( auto iPFO : PFO_Collection ){
@@ -426,7 +426,8 @@ Int_t *EventAnalyzer::Gen_Reco_Stats( PFOTools mct, PFOTools pfot, Float_t cos_m
 
   Int_t N_K_corr  = 0;
 
-  Float_t cos_r = 0.02;
+  // Float_t cos_r = 0.02;
+  Float_t cos_r = 0.37;
   std::vector<PFO_Info> PFO_K_Remain = PFO_K_Collection;
 
   for ( auto igen : Gen_K_Collection ){
@@ -436,7 +437,7 @@ Int_t *EventAnalyzer::Gen_Reco_Stats( PFOTools mct, PFOTools pfot, Float_t cos_m
     Int_t counter = 0;
     for ( auto iremain : PFO_K_Remain ){
       // Float_t cos_diff = igen.cos - iremain.cos;
-      Float_t cos_diff = std::cos( igen.vt.v3().Theta() - iremain.vt.v3().Theta() );
+      Float_t cos_diff = 1.0 - std::cos( igen.vt.v3().Theta() - iremain.vt.v3().Theta() );
       if( cos_diff < min_cos_diff ) {
         min_cos_diff = cos_diff;
         i_min_cos_diff = counter;
