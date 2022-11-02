@@ -240,7 +240,7 @@ void EventAnalyzer::Analyze(Long64_t entry)
 
   // Fill Hists can make another class called histogram extractor?
   Bool_t all_K_K = all_checks && (dEdx_pdg_match == K_K);
-  PolarAngle(pfot,all_K_K);
+  PolarAngle(pfot,mct,all_K_K);
   PolarAngle_acc_rej(pfot,CutTrigger,(dEdx_pdg_match == K_K));
 
   for ( int ijet=0; ijet < 2; ijet++ ){
@@ -396,7 +396,7 @@ Int_t *EventAnalyzer::Gen_Reco_Stats( PFOTools mct, PFOTools pfot, Float_t cos_m
   PFO_Collection.insert( PFO_Collection.begin(), jet[0].begin(), jet[0].end() );
   PFO_Collection.insert( PFO_Collection.end(), jet[1].begin(), jet[1].end() );
 
-  Float_t p_min = 20.0;
+  Float_t p_min = 0.0;
 
   std::vector<PFO_Info> PFO_K_Collection;
   for ( auto iPFO : PFO_Collection ){
@@ -483,7 +483,7 @@ void EventAnalyzer::PolarAngleGen(PFOTools mct)
 
 }
 
-void EventAnalyzer::PolarAngle(PFOTools pfot, Bool_t s_reco)
+void EventAnalyzer::PolarAngle(PFOTools pfot, PFOTools mct, Bool_t s_reco)
 {
   // Reco K_K
   if(s_reco){
@@ -491,6 +491,13 @@ void EventAnalyzer::PolarAngle(PFOTools pfot, Bool_t s_reco)
     for ( auto iLPFO : pfot.LPFO ){
       _hm.h1[_hm.reco_K_cos]->Fill( iLPFO.cos );
       _hm.h1[_hm.reco_K_qcos]->Fill( iLPFO.qcos );
+
+      if ( iLPFO.pfo_charge < 0 ){
+        _hm.h1[_hm.reco_K_scos]->Fill( abs(iLPFO.cos) * mct.mc_quark[0].cos / abs(mct.mc_quark[0].cos) );
+      }else{
+        _hm.h1[_hm.reco_K_scos]->Fill( abs(iLPFO.cos) * mct.mc_quark[1].cos / abs(mct.mc_quark[1].cos) );
+      }
+
     }
     
   }

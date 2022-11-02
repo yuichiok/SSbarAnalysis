@@ -34,6 +34,8 @@ class HistManager
       reco_K_cos,
       reco_K_qcos,
 
+      reco_K_scos,
+
       gen_reco_K_sep_cos,
 
       reco_sum_jetE,
