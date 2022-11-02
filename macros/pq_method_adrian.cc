@@ -167,6 +167,8 @@ void pq_method_adrian()
   TH1F *h_rej_KK_cos  = (TH1F*) file->Get("pq/h_rej_KK_cos");
   StyleHist(h_gen_q_qcos,kBlack);
   StyleHist(h_reco_K_qcos,kRed+2);
+  StyleHist(h_acc_KK_cos,kRed+2);
+  StyleHist(h_rej_KK_cos,kBlue+2);
 
   TH1F *p_KK = new TH1F("p_KK", "p_KK", nbins / 2, 0, 1);
   p_KK->Sumw2();
@@ -194,10 +196,34 @@ void pq_method_adrian()
   Normalize(h_reco_K_pq_cos);
   Normalize(h_reco_K_qcos);
 
+  h_gen_q_qcos->GetXaxis()->SetTitle("K^{+}K^{-} cos#theta");
   h_gen_q_qcos->Draw("h");
   h_reco_K_pq_cos->Draw("hsame");
   h_reco_K_qcos->Draw("hsame");
-  // p_KK->Draw("h");
 
+  TLegend *leg = new TLegend(0.15,0.75,0.45,0.85);
+  leg->SetLineColor(0);
+  leg->AddEntry(h_gen_q_qcos,"Generated","l");
+  leg->AddEntry(h_reco_K_pq_cos,"Reconstructed K^{+}K^{-}","l");
+  leg->AddEntry(h_reco_K_qcos,"Reconstructed K^{+}K^{-} (corrected)","l");
+  leg->Draw();
+
+  TCanvas *c1 = new TCanvas("c1","c1",800,800);
+  gPad->SetGrid(1,1);
+  StyleHist(p_KK,kGreen+2);
+  p_KK->Draw("h");
+
+  TCanvas *c2 = new TCanvas("c2","c2",800,800);
+  TGaxis::SetMaxDigits(3);
+  gPad->SetGrid(1,1);
+  h_acc_KK_cos->SetTitle(";K^{+}K^{-} cos#theta;Entries");
+  h_acc_KK_cos->Draw("h");
+  h_rej_KK_cos->Draw("hsame");
+
+  TLegend *leg2 = new TLegend(0.15,0.75,0.45,0.85);
+  leg2->SetLineColor(0);
+  leg2->AddEntry(h_acc_KK_cos,"N Accepted","l");
+  leg2->AddEntry(h_rej_KK_cos,"N Rejected","l");
+  leg2->Draw();
 
 }
