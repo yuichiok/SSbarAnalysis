@@ -189,8 +189,8 @@ void EventAnalyzer::Analyze(Long64_t entry)
 
   // Check all bools
   // Check all does double tagging
-  // CheckTrigger = [ Valid_LPFO, Quality, Not_Gluon_K, charge_check ]
-  //                            * Quality = {momentum, tpc hits, offset}
+  // CutTrigger = [ Valid_LPFO, Quality, Not_Gluon_K, charge_check ]
+  //                          * Quality = {momentum, tpc hits, offset}
     Bool_t all_checks = true;
     for (auto ibool : CutTrigger){
       if (!ibool) {
@@ -205,10 +205,6 @@ void EventAnalyzer::Analyze(Long64_t entry)
     _data.dEdx_pdg_match   = dEdx_pdg_match;
 
   }
-  
-
-
-
 
   // Try Stability and Purity Calculation here.
   // if ( all_checks ) {
@@ -265,12 +261,6 @@ void EventAnalyzer::Analyze(Long64_t entry)
       if( abs(_stats_lpfo.lpfo_pdgcheat[i]) == 321 ) _hm.h1[_hm.lpfo_gen_K_mom]->Fill(pfot.LPFO[i].p_mag);
     }
   }
-
-
-
-
-
-
 
   _hTree->Fill();
 
@@ -521,13 +511,10 @@ void EventAnalyzer::PolarAngle_acc_rej(PFOTools pfot, vector<Bool_t> cuts, Bool_
 
   // Last element of cuts vector is charge comparison
   if(cuts.back()){
-    for ( auto iLPFO : pfot.LPFO ){
-      _hm.h1_pq[_hm.acc_KK]->Fill( iLPFO.qcos );
-    }
+    _hm.h1_pq[_hm.acc_KK]->Fill( pfot.LPFO[0].qcos );
   }else{
-    for ( auto iLPFO : pfot.LPFO ){
-      _hm.h1_pq[_hm.rej_KK]->Fill( iLPFO.qcos );
-    }
+    _hm.h1_pq[_hm.rej_KK]->Fill( pfot.LPFO[0].cos );
+    _hm.h1_pq[_hm.rej_KK]->Fill( -pfot.LPFO[0].cos );
   }
 
 }
