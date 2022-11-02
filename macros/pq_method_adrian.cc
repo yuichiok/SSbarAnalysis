@@ -12,6 +12,13 @@ void Normalize(TH1F *h)
   h->Scale( 1.0 / h->Integral(30,70) );
 }
 
+void Normalize2Gen(TH1F *h, TH1F *h_gen)
+{
+	double intCosReco = h->Integral(20,80);
+	double intCosGen  = h_gen->Integral(20,80);
+  h->Scale( intCosGen / intCosReco );
+}
+
 void StyleHist(TH1F *h, Color_t col)
 {
   h->SetLineWidth(3);
@@ -159,9 +166,10 @@ void pq_method_adrian()
 {
   gStyle->SetOptStat(0);
 
-  TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ss.hists.all.root","READ");
+  TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ss.hists.root","READ");
 
-  TH1F *h_gen_q_qcos  = (TH1F*) file->Get("h_gen_q_qcos");
+  // TH1F *h_gen_q_qcos  = (TH1F*) file->Get("h_gen_q_qcos");
+  TH1F *h_gen_q_qcos  = (TH1F*) file->Get("h_reco_K_scos");
   TH1F *h_reco_K_qcos = (TH1F*) file->Get("h_reco_K_qcos");
   TH1F *h_acc_KK_cos  = (TH1F*) file->Get("pq/h_acc_KK_cos");
   TH1F *h_rej_KK_cos  = (TH1F*) file->Get("pq/h_rej_KK_cos");
@@ -203,7 +211,8 @@ void pq_method_adrian()
 
   TLegend *leg = new TLegend(0.15,0.75,0.45,0.85);
   leg->SetLineColor(0);
-  leg->AddEntry(h_gen_q_qcos,"Generated","l");
+  // leg->AddEntry(h_gen_q_qcos,"Generated","l");
+  leg->AddEntry(h_gen_q_qcos,"Reconstructed K^{+}K^{-} matched with s-quark angle","l");
   leg->AddEntry(h_reco_K_pq_cos,"Reconstructed K^{+}K^{-}","l");
   leg->AddEntry(h_reco_K_qcos,"Reconstructed K^{+}K^{-} (corrected)","l");
   leg->Draw();
