@@ -406,7 +406,7 @@ Int_t *EventAnalyzer::Gen_Reco_Stats( PFOTools mct, PFOTools pfot, Float_t cos_m
   PFO_Collection.insert( PFO_Collection.begin(), jet[0].begin(), jet[0].end() );
   PFO_Collection.insert( PFO_Collection.end(), jet[1].begin(), jet[1].end() );
 
-  Float_t p_min = 2.5;
+  Float_t p_min = 20.0;
 
   std::vector<PFO_Info> PFO_K_Collection;
   for ( auto iPFO : PFO_Collection ){
