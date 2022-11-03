@@ -28,10 +28,10 @@ ClassImp(MC_QQbar)
 ClassImp(TreeVariables)
 ClassImp(LPFO_Info)
 
-EventAnalyzer::EventAnalyzer(TString fnac, TString o)
+EventAnalyzer::EventAnalyzer(TString input, TString fnac, TString o)
 : anCfg(fnac), config(fnac), options(o)
 {
-    _fs.SetNames(o.Data());
+    _fs.SetNames(input.Data());
     patEventsAnalyzed = 0;
     entriesInNtuple   = 0;
 }

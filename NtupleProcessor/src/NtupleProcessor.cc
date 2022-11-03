@@ -13,7 +13,7 @@ using std::cout;   using std::endl;
 using std::string;
 
 NtupleProcessor::NtupleProcessor(TString input, TString fnac, TString o, int me)
-: eAnalyzer(fnac,o), tIter(eAnalyzer), input_file(input), options(o), maxEvents(me)
+: eAnalyzer(input,fnac,o), tIter(eAnalyzer), input_file(input), options(o), maxEvents(me)
 {
 
   // PARAM output

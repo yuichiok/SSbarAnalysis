@@ -26,7 +26,7 @@
 class EventAnalyzer
 {
   public:
-    EventAnalyzer(TString, TString o="");
+    EventAnalyzer(TString input, TString fnac, TString o="");
     virtual ~EventAnalyzer(){};
 
     AnalysisConfig anCfg;
