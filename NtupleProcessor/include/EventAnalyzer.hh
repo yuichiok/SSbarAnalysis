@@ -21,12 +21,16 @@
 #include "TreeWriter.hh"
 #include "FileSelector.hh"
 #include "HistManager.hh"
+#include "AnalysisConfig.hh"
 
 class EventAnalyzer
 {
   public:
-    EventAnalyzer(TString o="");
+    EventAnalyzer(TString input, TString fnac, TString o="");
     virtual ~EventAnalyzer(){};
+
+    AnalysisConfig anCfg;
+    TString config;
 
     enum       Selector { kQQ, kMC, kReco };
     enum MCParticlePair { FIRST_ENTRY, kDD, kUU, kSS, kCC, kBB, kTT };
@@ -43,7 +47,7 @@ class EventAnalyzer
     void             Analyze( Long64_t entry );
     
     Bool_t           Select( Selector s );          // Evaluates the class' list of event selection criteria
-    Bool_t           GenPairPicker( Float_t mc_particle, MCParticlePair pair );
+    Bool_t           GenPairPicker( Float_t mc_particle, Int_t pair );
 
     Bool_t           Cut_ESum( VectorTools v[2] );
     Bool_t           Cut_ACol( VectorTools v[2] );

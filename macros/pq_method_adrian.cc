@@ -4,12 +4,14 @@
 using std::cout; using std::endl;
 using std::vector;
 
-const int nbins = 100;
-
 void Normalize(TH1F *h)
 {
   // h->Scale( 1.0 / h->GetEntries() );
-  h->Scale( 1.0 / h->Integral(30,70) );
+  const Int_t nbins = h->GetNbinsX();
+  Int_t nbins4 = nbins / 4;
+  Int_t int_high = (nbins / 2) + nbins4;
+  Int_t int_low  = (nbins / 2 + 1) - nbins4;
+  h->Scale( 1.0 / h->Integral(int_low,int_high) );
 }
 
 void Normalize2Gen(TH1F *h, TH1F *h_gen)
@@ -29,6 +31,7 @@ void StyleHist(TH1F *h, Color_t col)
 
 vector<Float_t> GetP( TH1F * h_accepted, TH1F * h_rejected )
 {
+  const Int_t nbins = h_accepted->GetNbinsX();
   vector<Float_t> result_error;
   vector<Float_t> result;
 
@@ -107,6 +110,8 @@ vector<Float_t> GetP( TH1F * h_accepted, TH1F * h_rejected )
 
 TH1F * CorrectHist( TH1F * h_reco, vector<Float_t> p_vec)
 {
+  const Int_t nbins = h_reco->GetNbinsX();
+
   TH1F *corrected = new TH1F("corrected", "corrected", nbins, -1, 1);
   corrected->Sumw2();
   for (int i = 1; i < nbins / 2 + 1; i++)
@@ -171,16 +176,22 @@ void pq_method_adrian()
   TH1F *h_reco_K_qcos = (TH1F*) file->Get("h_reco_K_qcos");
   TH1F *h_acc_KK_cos  = (TH1F*) file->Get("pq/h_acc_KK_cos");
   TH1F *h_rej_KK_cos  = (TH1F*) file->Get("pq/h_rej_KK_cos");
+  h_gen_q_qcos->Rebin(5);
+  h_reco_K_qcos->Rebin(5);
+  h_acc_KK_cos->Rebin(5);
+  h_rej_KK_cos->Rebin(5);
   StyleHist(h_gen_q_qcos,kBlack);
+  h_gen_q_qcos->SetFillStyle(0);
   StyleHist(h_reco_K_qcos,kRed+2);
   StyleHist(h_acc_KK_cos,kRed+2);
   StyleHist(h_rej_KK_cos,kBlue+2);
+
+  const Int_t nbins = h_gen_q_qcos->GetNbinsX();
 
   TH1F *p_KK = new TH1F("p_KK", "p_KK", nbins / 2, 0, 1);
   p_KK->Sumw2();
 
   vector<Float_t> p_vec = GetP(h_acc_KK_cos, h_rej_KK_cos);
-  cout << p_vec.size() << endl;
 
   for (unsigned i = 0; i < p_vec.size() / 2; i++)
   {
@@ -198,12 +209,13 @@ void pq_method_adrian()
   Normalize(h_reco_K_pq_cos);
   Normalize(h_reco_K_qcos);
 
-  h_gen_q_qcos->GetXaxis()->SetTitle("K^{+}K^{-} cos#theta");
-  h_gen_q_qcos->Draw("h");
+  h_reco_K_pq_cos->GetYaxis()->SetRangeUser(0,0.3);
+  h_reco_K_pq_cos->SetTitle(";K^{+}K^{-} cos#theta;a.u.");
+  h_reco_K_pq_cos->Draw("h");
   h_reco_K_qcos->Draw("hsame");
-  h_reco_K_pq_cos->Draw("hsame");
+  h_gen_q_qcos->Draw("hsame");
 
-  TLegend *leg = new TLegend(0.15,0.75,0.45,0.85);
+  TLegend *leg = new TLegend(0.15,0.76,0.65,0.85);
   leg->SetLineColor(0);
   // leg->AddEntry(h_gen_q_qcos,"Generated","l");
   leg->AddEntry(h_gen_q_qcos,"Reconstructed K^{+}K^{-} matched with s-quark angle","l");
