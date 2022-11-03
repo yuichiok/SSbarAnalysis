@@ -273,7 +273,8 @@ Bool_t PFOTools::PFO_Quality_checks( PFO_Info iPFO )
 {
   vector<Bool_t> CutTrigger;
 
-  CutTrigger.push_back( is_momentum( iPFO, 20.0, 60.0 ) );     // MIN/MAX momentum check
+  // CutTrigger.push_back( is_momentum( iPFO, 20.0, 60.0 ) );     // MIN/MAX momentum check
+  CutTrigger.push_back( is_momentum( iPFO, 10.0, 1000.0 ) );     // MIN/MAX momentum check
   CutTrigger.push_back( is_tpc_hits( iPFO, 210 ) );            // Number of TPC hit check
   CutTrigger.push_back( is_offset_small( iPFO, 1.0 ) );        // Offset distance check
   
