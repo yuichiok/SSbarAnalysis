@@ -10,9 +10,7 @@
 #include <TRegexp.h>
 #include <map>
 #include <utility>
-#include <string>
 #include <vector>
-#include <TString.h>
 #include "ConfigReader.hh"
 
 class AnalysisConfig : public ConfigReader
