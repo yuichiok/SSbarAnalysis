@@ -12,12 +12,14 @@ NtupleProcessor.cpp
 using std::cout;   using std::endl;
 using std::string;
 
-NtupleProcessor::NtupleProcessor(TString fnac, TString o, int me)
-: eAnalyzer(fnac,o), tIter(eAnalyzer), options(o), maxEvents(me)
+NtupleProcessor::NtupleProcessor(TString input, TString fnac, TString o, int me)
+: eAnalyzer(fnac,o), tIter(eAnalyzer), input_file(input), options(o), maxEvents(me)
 {
 
   // PARAM output
     cout << "  [NtupleProcessor]\n"
+            "    Input File: " << input_file   << "\n"
+            "    Config:     " << fnac   << "\n"
             "    Options:    " << options   << "\n"
             "    MaxEntries: " << me   << "\n"
     << endl;
@@ -26,10 +28,10 @@ NtupleProcessor::NtupleProcessor(TString fnac, TString o, int me)
   // TString filename = "data/" + dummy_label + ".root";
 
 
-  ntupleFile = TFile::Open(options);
-  if(!ntupleFile) cout << "NtupleProcessor: ERROR: Unable to open file " << options << endl;
+  ntupleFile = TFile::Open(input_file);
+  if(!ntupleFile) cout << "NtupleProcessor: ERROR: Unable to open file " << input_file << endl;
   TTree *ntuple   = (TTree*) ntupleFile->Get("Stats");
-  if(!ntuple) cout << "NtupleProcessor: ERROR: Unable to open ttree in " << options << endl;
+  if(!ntuple) cout << "NtupleProcessor: ERROR: Unable to open ttree in " << input_file << endl;
 
   if(maxEvents!=-1) ntuple->Process(&tIter, options, maxEvents);
   else              ntuple->Process(&tIter, options);
