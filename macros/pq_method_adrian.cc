@@ -181,6 +181,7 @@ void pq_method_adrian()
   h_acc_KK_cos->Rebin(5);
   h_rej_KK_cos->Rebin(5);
   StyleHist(h_gen_q_qcos,kBlack);
+  h_gen_q_qcos->SetFillStyle(0);
   StyleHist(h_reco_K_qcos,kRed+2);
   StyleHist(h_acc_KK_cos,kRed+2);
   StyleHist(h_rej_KK_cos,kBlue+2);
@@ -208,12 +209,13 @@ void pq_method_adrian()
   Normalize(h_reco_K_pq_cos);
   Normalize(h_reco_K_qcos);
 
-  h_gen_q_qcos->GetXaxis()->SetTitle("K^{+}K^{-} cos#theta");
-  h_gen_q_qcos->Draw("h");
-  h_reco_K_pq_cos->Draw("hsame");
+  h_reco_K_pq_cos->GetYaxis()->SetRangeUser(0,0.3);
+  h_reco_K_pq_cos->SetTitle(";K^{+}K^{-} cos#theta;a.u.");
+  h_reco_K_pq_cos->Draw("h");
   h_reco_K_qcos->Draw("hsame");
+  h_gen_q_qcos->Draw("hsame");
 
-  TLegend *leg = new TLegend(0.15,0.75,0.45,0.85);
+  TLegend *leg = new TLegend(0.15,0.76,0.65,0.85);
   leg->SetLineColor(0);
   // leg->AddEntry(h_gen_q_qcos,"Generated","l");
   leg->AddEntry(h_gen_q_qcos,"Reconstructed K^{+}K^{-} matched with s-quark angle","l");
