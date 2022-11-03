@@ -115,8 +115,6 @@ TH1F * CorrectHist( TH1F * h_reco, vector<Float_t> p_vec)
     float q = 1 - p;
     float weight = (p * p + q * q) / (q * q * q * q - p * p * p * p);
 
-    cout << weight << endl;
-
     // calcualte average
     float av_i = 0;
     float av_41i = 0;
@@ -166,7 +164,7 @@ void pq_method_adrian()
 {
   gStyle->SetOptStat(0);
 
-  TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ss.hists.root","READ");
+  TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ss.hists.all.root","READ");
 
   // TH1F *h_gen_q_qcos  = (TH1F*) file->Get("h_gen_q_qcos");
   TH1F *h_gen_q_qcos  = (TH1F*) file->Get("h_reco_K_scos");
@@ -182,17 +180,12 @@ void pq_method_adrian()
   p_KK->Sumw2();
 
   vector<Float_t> p_vec = GetP(h_acc_KK_cos, h_rej_KK_cos);
-  cout << p_vec.size() << endl;
 
   for (unsigned i = 0; i < p_vec.size() / 2; i++)
   {
     p_KK->SetBinContent(nbins / 2 - i, p_vec.at(i));
     p_KK->SetBinError(nbins / 2 - i, p_vec.at(i + nbins / 2));
   }
-
-  cout << endl;
-  for (auto ivec : p_vec) cout << " " << ivec;
-  cout << endl;
 
   TH1F *h_reco_K_pq_cos = CorrectHist(h_reco_K_qcos, p_vec);
   StyleHist(h_reco_K_pq_cos,kBlue);
@@ -213,8 +206,8 @@ void pq_method_adrian()
   leg->SetLineColor(0);
   // leg->AddEntry(h_gen_q_qcos,"Generated","l");
   leg->AddEntry(h_gen_q_qcos,"Reconstructed K^{+}K^{-} matched with s-quark angle","l");
-  leg->AddEntry(h_reco_K_pq_cos,"Reconstructed K^{+}K^{-}","l");
-  leg->AddEntry(h_reco_K_qcos,"Reconstructed K^{+}K^{-} (corrected)","l");
+  leg->AddEntry(h_reco_K_qcos,"Reconstructed K^{+}K^{-}","l");
+  leg->AddEntry(h_reco_K_pq_cos,"Reconstructed K^{+}K^{-} (corrected)","l");
   leg->Draw();
 
   TCanvas *c1 = new TCanvas("c1","c1",800,800);
