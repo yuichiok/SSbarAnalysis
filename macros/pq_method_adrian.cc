@@ -4,8 +4,6 @@
 using std::cout; using std::endl;
 using std::vector;
 
-const int nbins = 100;
-
 void Normalize(TH1F *h)
 {
   // h->Scale( 1.0 / h->GetEntries() );
@@ -29,6 +27,7 @@ void StyleHist(TH1F *h, Color_t col)
 
 vector<Float_t> GetP( TH1F * h_accepted, TH1F * h_rejected )
 {
+  const Int_t nbins = h_accepted->GetNbinsX();
   vector<Float_t> result_error;
   vector<Float_t> result;
 
@@ -107,6 +106,8 @@ vector<Float_t> GetP( TH1F * h_accepted, TH1F * h_rejected )
 
 TH1F * CorrectHist( TH1F * h_reco, vector<Float_t> p_vec)
 {
+  const Int_t nbins = h_reco->GetNbinsX();
+
   TH1F *corrected = new TH1F("corrected", "corrected", nbins, -1, 1);
   corrected->Sumw2();
   for (int i = 1; i < nbins / 2 + 1; i++)
@@ -175,6 +176,8 @@ void pq_method_adrian()
   StyleHist(h_reco_K_qcos,kRed+2);
   StyleHist(h_acc_KK_cos,kRed+2);
   StyleHist(h_rej_KK_cos,kBlue+2);
+
+  const Int_t nbins = h_gen_q_qcos->GetNbinsX();
 
   TH1F *p_KK = new TH1F("p_KK", "p_KK", nbins / 2, 0, 1);
   p_KK->Sumw2();
