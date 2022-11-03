@@ -12,8 +12,8 @@ NtupleProcessor.cpp
 using std::cout;   using std::endl;
 using std::string;
 
-NtupleProcessor::NtupleProcessor(TString o, int me)
-: eAnalyzer(o), tIter(eAnalyzer), options(o), maxEvents(me)
+NtupleProcessor::NtupleProcessor(TString fnac, TString o, int me)
+: eAnalyzer(fnac,o), tIter(eAnalyzer), options(o), maxEvents(me)
 {
 
   // PARAM output
@@ -30,8 +30,9 @@ NtupleProcessor::NtupleProcessor(TString o, int me)
   if(!ntupleFile) cout << "NtupleProcessor: ERROR: Unable to open file " << options << endl;
   TTree *ntuple   = (TTree*) ntupleFile->Get("Stats");
   if(!ntuple) cout << "NtupleProcessor: ERROR: Unable to open ttree in " << options << endl;
-  ntuple->Process(&tIter, "");
 
+  if(maxEvents!=-1) ntuple->Process(&tIter, options, maxEvents);
+  else              ntuple->Process(&tIter, options);
 
 
   // Takes input options and processes appropriately

@@ -17,7 +17,7 @@
 class NtupleProcessor
 {
   public:
-    NtupleProcessor(TString o="", int me = -1);
+    NtupleProcessor(TString fnac="etc/SSbarAnalysisConfig_default.ini",TString o="", int me = -1);
     ~NtupleProcessor(){}
 
     EventAnalyzer  eAnalyzer;

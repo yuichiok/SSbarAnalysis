@@ -28,7 +28,7 @@ ClassImp(MC_QQbar)
 ClassImp(TreeVariables)
 ClassImp(LPFO_Info)
 
-EventAnalyzer::EventAnalyzer(TString o)
+EventAnalyzer::EventAnalyzer(TString fnac, TString o)
 : options(o)
 {
     _fs.SetNames(o.Data());

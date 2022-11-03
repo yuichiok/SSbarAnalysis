@@ -25,7 +25,7 @@
 class EventAnalyzer
 {
   public:
-    EventAnalyzer(TString o="");
+    EventAnalyzer(TString, TString o="");
     virtual ~EventAnalyzer(){};
 
     enum       Selector { kQQ, kMC, kReco };
