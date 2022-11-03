@@ -13,7 +13,7 @@ HistManager::HistManager() {}
 
 void HistManager::InitializeHists()
 {
-  Int_t cos_bin = 20;
+  Int_t cos_bin = 100;
 
   // TH1F
     h1[gen_q_cos]       = new TH1F("h_gen_q_cos","; Generated q#bar{q} cos#theta; Entries",cos_bin,-1,1);
