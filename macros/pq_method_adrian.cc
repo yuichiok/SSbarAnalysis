@@ -7,7 +7,11 @@ using std::vector;
 void Normalize(TH1F *h)
 {
   // h->Scale( 1.0 / h->GetEntries() );
-  h->Scale( 1.0 / h->Integral(30,70) );
+  const Int_t nbins = h->GetNbinsX();
+  Int_t nbins4 = nbins / 4;
+  Int_t int_high = (nbins / 2) + nbins4;
+  Int_t int_low  = (nbins / 2 + 1) - nbins4;
+  h->Scale( 1.0 / h->Integral(int_low,int_high) );
 }
 
 void Normalize2Gen(TH1F *h, TH1F *h_gen)
@@ -172,6 +176,10 @@ void pq_method_adrian()
   TH1F *h_reco_K_qcos = (TH1F*) file->Get("h_reco_K_qcos");
   TH1F *h_acc_KK_cos  = (TH1F*) file->Get("pq/h_acc_KK_cos");
   TH1F *h_rej_KK_cos  = (TH1F*) file->Get("pq/h_rej_KK_cos");
+  h_gen_q_qcos->Rebin(5);
+  h_reco_K_qcos->Rebin(5);
+  h_acc_KK_cos->Rebin(5);
+  h_rej_KK_cos->Rebin(5);
   StyleHist(h_gen_q_qcos,kBlack);
   StyleHist(h_reco_K_qcos,kRed+2);
   StyleHist(h_acc_KK_cos,kRed+2);
