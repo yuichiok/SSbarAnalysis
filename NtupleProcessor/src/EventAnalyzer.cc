@@ -28,8 +28,8 @@ ClassImp(MC_QQbar)
 ClassImp(TreeVariables)
 ClassImp(LPFO_Info)
 
-EventAnalyzer::EventAnalyzer(TString o)
-: options(o)
+EventAnalyzer::EventAnalyzer(TString fnac, TString o)
+: anCfg(fnac), config(fnac), options(o)
 {
     _fs.SetNames(o.Data());
     patEventsAnalyzed = 0;
@@ -97,7 +97,7 @@ void EventAnalyzer::WriteFile()
 
 void EventAnalyzer::AnalyzeGen()
 {
-    PFOTools mct( &_mc );
+    PFOTools mct( &_mc, config );
     
     PolarAngleGen(mct);
 
@@ -106,8 +106,8 @@ void EventAnalyzer::AnalyzeGen()
 void EventAnalyzer::Analyze(Long64_t entry)
 {
   // MC, PFO Analysis
-    PFOTools mct( &_mc );
-    PFOTools pfot( &_pfo );
+    PFOTools mct( &_mc, config );
+    PFOTools pfot( &_pfo, config );
 
     if ( !pfot.ValidPFO() ) {
       _eve.eve_valid_lpfo = 0;
@@ -298,7 +298,7 @@ Bool_t EventAnalyzer::Select(Selector sel)
 
     switch (sel){
       case kQQ:
-        CutTrigger.push_back( GenPairPicker( _mc.mc_quark_pdg[0], kSS ) );
+        CutTrigger.push_back( GenPairPicker( _mc.mc_quark_pdg[0], anCfg.gen_quark ) );
         break;
       case kMC:
         CutTrigger.push_back( Cut_ESum( mcvt ) );
@@ -325,7 +325,7 @@ Bool_t EventAnalyzer::Select(Selector sel)
 
 }
 
-Bool_t EventAnalyzer::GenPairPicker ( Float_t mc_particle, MCParticlePair pair )
+Bool_t EventAnalyzer::GenPairPicker ( Float_t mc_particle, Int_t pair )
 {
     Float_t abs_mc_particle = fabs(mc_particle);
 
@@ -396,7 +396,7 @@ Int_t *EventAnalyzer::Gen_Reco_Stats( PFOTools mct, PFOTools pfot, Float_t cos_m
   PFO_Collection.insert( PFO_Collection.begin(), jet[0].begin(), jet[0].end() );
   PFO_Collection.insert( PFO_Collection.end(), jet[1].begin(), jet[1].end() );
 
-  Float_t p_min = 0.0;
+  Float_t p_min = anCfg.PFO_p_min;
 
   std::vector<PFO_Info> PFO_K_Collection;
   for ( auto iPFO : PFO_Collection ){
