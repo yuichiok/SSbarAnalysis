@@ -9,6 +9,9 @@
 #include <TFile.h>                  // ROOT class headers
 #include <TString.h>
 #include <TTree.h>
+#include <boost/program_options/options_description.hpp>
+#include <boost/program_options/parsers.hpp>
+#include <boost/program_options/variables_map.hpp>
 #include "timestamp.hh"
 #include "NtupleProcessor.hh"
 
@@ -17,6 +20,7 @@ int main(int argc, char* argv[])
 {
 
   using std::cout; using std::endl;
+  namespace po = boost::program_options;
 
   // C++ version check
     cout << "Current C++ version: ";
@@ -33,7 +37,9 @@ int main(int argc, char* argv[])
         cout << "Processing file: " << argv[1] << endl;
       }else{
         throw 0;
-      }  
+      }
+
+      std::string anconfig = "etc/SSbarAnalysisConfig_default.ini";
 
     // Record the time main starts processing.
       std::string ts_mainBegin  = timeStamp();
@@ -46,7 +52,7 @@ int main(int argc, char* argv[])
               "  Processing Begun: " << ts_mainBegin << "\n"
               "\n";
 
-      NtupleProcessor ntplproc(argv[1],-1);
+      NtupleProcessor ntplproc(anconfig,argv[1],-1);
 
     // CLOSING OUTPUT.
       std::string ts_mainEnd = timeStamp();
