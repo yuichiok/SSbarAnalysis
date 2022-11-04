@@ -29,9 +29,6 @@ class EventAnalyzer
     EventAnalyzer(TString input, TString fnac, TString o="");
     virtual ~EventAnalyzer(){};
 
-    AnalysisConfig anCfg;
-    TString config;
-
     enum       Selector { kQQ, kMC, kReco };
     enum MCParticlePair { FIRST_ENTRY, kDD, kUU, kSS, kCC, kBB, kTT };
 
@@ -81,6 +78,8 @@ class EventAnalyzer
     FileSelector  _fs;
     HistManager   _hm;
 
+    AnalysisConfig _anCfg;
+    TString       _config;
 
   private:
 
