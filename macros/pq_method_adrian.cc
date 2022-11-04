@@ -169,7 +169,7 @@ void pq_method_adrian()
 {
   gStyle->SetOptStat(0);
 
-  TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ss.hists.all.root","READ");
+  TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ss.LPFOp10_pNaN.hists.all.root","READ");
 
   // TH1F *h_gen_q_qcos  = (TH1F*) file->Get("h_gen_q_qcos");
   TH1F *h_gen_q_qcos  = (TH1F*) file->Get("h_reco_K_scos");
@@ -226,6 +226,8 @@ void pq_method_adrian()
   TCanvas *c1 = new TCanvas("c1","c1",800,800);
   gPad->SetGrid(1,1);
   StyleHist(p_KK,kGreen+2);
+  p_KK->SetTitle(";cos#theta_{K^{#pm}};p value");
+  p_KK->GetYaxis()->SetRangeUser(0,1);
   p_KK->Draw("h");
 
   TCanvas *c2 = new TCanvas("c2","c2",800,800);
