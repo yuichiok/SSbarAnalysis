@@ -20,8 +20,8 @@ class PFOTools
 {
   public:
     PFOTools();
-    PFOTools( MC_QQbar *ptr, TString fnac );
-    PFOTools( PFO_QQbar *ptr, TString fnac );
+    PFOTools( MC_QQbar *ptr );
+    PFOTools( PFO_QQbar *ptr );
     virtual ~PFOTools() {};
     virtual void InitializeMCTools( MC_QQbar *ptr );
     virtual void InitializePFOTools( PFO_QQbar *ptr );
@@ -46,7 +46,7 @@ class PFOTools
     virtual Bool_t           is_tpc_hits           ( PFO_Info iPFO, Int_t MIN_TPC_HITS );
     virtual Bool_t           is_offset_small       ( PFO_Info iPFO, Int_t MAX_OFFSET );
 
-    AnalysisConfig anCfg;
+    // AnalysisConfig anCfg;
 
   // MC gen info
     MC_Info    mc_quark[2];
