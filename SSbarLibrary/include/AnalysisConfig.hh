@@ -13,11 +13,15 @@
 #include <vector>
 #include "ConfigReader.hh"
 
-class AnalysisConfig : public ConfigReader
+// class AnalysisConfig : public ConfigReader
+class AnalysisConfig
 {
   public:
-    AnalysisConfig(TString fnc = "etc/SSbarAnalysisConfig_default.ini");
+    AnalysisConfig();
    ~AnalysisConfig(){}
+
+    ConfigReader cr;
+    void SetConfig(TString fnc = "etc/SSbarAnalysisConfig_default.ini");
 
   // Config variables
   // Gen cuts

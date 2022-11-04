@@ -29,9 +29,10 @@ ClassImp(TreeVariables)
 ClassImp(LPFO_Info)
 
 EventAnalyzer::EventAnalyzer(TString input, TString fnac, TString o)
-: anCfg(fnac), config(fnac), options(o)
+: options(o), _config(fnac)
 {
     _fs.SetNames(input.Data());
+    _anCfg.SetConfig(_config);
     patEventsAnalyzed = 0;
     entriesInNtuple   = 0;
 }
@@ -72,12 +73,9 @@ void EventAnalyzer::CreateFile()
 
 void EventAnalyzer::InitWriteTree()
 {
-
   // Initialize Write Tree
     _hTree     = new TTree( "data", "tree" );
     writer.InitializeDataTree(_hTree,_data);
-
-
 }
 
 void EventAnalyzer::InitHists()
@@ -97,17 +95,15 @@ void EventAnalyzer::WriteFile()
 
 void EventAnalyzer::AnalyzeGen()
 {
-    PFOTools mct( &_mc, config );
-    
+    PFOTools mct( &_mc, _config );
     PolarAngleGen(mct);
-
 }
 
 void EventAnalyzer::Analyze(Long64_t entry)
 {
   // MC, PFO Analysis
-    PFOTools mct( &_mc, config );
-    PFOTools pfot( &_pfo, config );
+    PFOTools mct( &_mc, _config );
+    PFOTools pfot( &_pfo, _config );
 
     if ( !pfot.ValidPFO() ) {
       _eve.eve_valid_lpfo = 0;
@@ -207,8 +203,6 @@ void EventAnalyzer::Analyze(Long64_t entry)
   }
 
   // Try Stability and Purity Calculation here.
-  // if ( all_checks ) {
-  // if ( pfot.is_momentum(pfot.LPFO[0],20,60) && pfot.is_momentum(pfot.LPFO[1],20,60) ) {
     Int_t   *N_Ks  = Gen_Reco_Stats( mct, pfot, -1, 1 );
     _data.N_K_Gen  = N_Ks[0];
     _data.N_K_PFO  = N_Ks[1];
@@ -236,7 +230,6 @@ void EventAnalyzer::Analyze(Long64_t entry)
       _hm.h2[_hm.purity_cos]->Fill( bin_center ,dSPs[1]);
 
     }
-  // }
 
   // Fill Hists can make another class called histogram extractor?
   Bool_t all_K_K = all_checks && (dEdx_pdg_match == K_K);
@@ -298,7 +291,7 @@ Bool_t EventAnalyzer::Select(Selector sel)
 
     switch (sel){
       case kQQ:
-        CutTrigger.push_back( GenPairPicker( _mc.mc_quark_pdg[0], anCfg.gen_quark ) );
+        CutTrigger.push_back( GenPairPicker( _mc.mc_quark_pdg[0], _anCfg.gen_quark ) );
         break;
       case kMC:
         CutTrigger.push_back( Cut_ESum( mcvt ) );
@@ -396,7 +389,7 @@ Int_t *EventAnalyzer::Gen_Reco_Stats( PFOTools mct, PFOTools pfot, Float_t cos_m
   PFO_Collection.insert( PFO_Collection.begin(), jet[0].begin(), jet[0].end() );
   PFO_Collection.insert( PFO_Collection.end(), jet[1].begin(), jet[1].end() );
 
-  Float_t p_min = anCfg.PFO_p_min;
+  Float_t p_min = _anCfg.PFO_p_min;
 
   std::vector<PFO_Info> PFO_K_Collection;
   for ( auto iPFO : PFO_Collection ){
@@ -476,8 +469,8 @@ void EventAnalyzer::PolarAngleGen(PFOTools mct)
   // Gen K
   for ( int istable=0; istable < _mc.mc_stable_n; istable++ ){
     if(abs(_mc.mc_stable_pdg[istable]) == 321) {
-      _hm.h1[_hm.gen_K_cos]->Fill(mct.mc_quark[istable].cos);
-      _hm.h1[_hm.gen_K_qcos]->Fill(mct.mc_quark[istable].qcos);
+      _hm.h1[_hm.gen_K_cos]->Fill(mct.mc_stable[istable].cos);
+      _hm.h1[_hm.gen_K_qcos]->Fill(mct.mc_stable[istable].qcos);
     }
   }
 

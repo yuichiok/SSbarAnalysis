@@ -46,7 +46,7 @@ class PFOTools
     virtual Bool_t           is_tpc_hits           ( PFO_Info iPFO, Int_t MIN_TPC_HITS );
     virtual Bool_t           is_offset_small       ( PFO_Info iPFO, Int_t MAX_OFFSET );
 
-    AnalysisConfig anCfg;
+    AnalysisConfig _anCfg;
 
   // MC gen info
     MC_Info    mc_quark[2];

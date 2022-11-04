@@ -3,9 +3,13 @@
 using std::cout;     using std::endl;   using std::stringstream;
 using std::string;   using std::pair;   using std::vector;
 
-AnalysisConfig::AnalysisConfig(TString fnc)
-: ConfigReader(fnc)
+AnalysisConfig::AnalysisConfig() {}
+
+void AnalysisConfig::SetConfig(TString fnc)
 {
+  boost::property_tree::ptree pt;
+  boost::property_tree::ini_parser::read_ini(fnc.Data(), pt);
+
   // Gen cuts
     gen_quark  = pt.get<int>("GENERATED.gen_quark");
 
