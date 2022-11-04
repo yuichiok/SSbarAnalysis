@@ -24,15 +24,17 @@ void pop_front(std::vector<T>& vec)
 
 PFOTools::PFOTools() {}
 
-PFOTools::PFOTools( MC_QQbar *ptr )
+PFOTools::PFOTools( MC_QQbar *ptr, TString fnac )
 : mc_data(ptr)
 {
+    _anCfg.SetConfig(fnac);
     InitializeMCTools( mc_data );
 }
 
-PFOTools::PFOTools( PFO_QQbar *ptr )
+PFOTools::PFOTools( PFO_QQbar *ptr, TString fnac )
 : data(ptr)
 {
+    _anCfg.SetConfig(fnac);
     InitializePFOTools( data );
 }
 
@@ -273,13 +275,9 @@ Bool_t PFOTools::PFO_Quality_checks( PFO_Info iPFO )
 {
   vector<Bool_t> CutTrigger;
 
-  // CutTrigger.push_back( is_momentum( iPFO, anCfg.LPFO_p_min, anCfg.LPFO_p_max ) );     // MIN/MAX momentum check
-  // CutTrigger.push_back( is_tpc_hits( iPFO, anCfg.PFO_TPCHits_max ) );            // Number of TPC hit check
-  // CutTrigger.push_back( is_offset_small( iPFO, anCfg.PFO_offset_max ) );        // Offset distance check
-
-  CutTrigger.push_back( is_momentum( iPFO, 20., 60. ) );     // MIN/MAX momentum check
-  CutTrigger.push_back( is_tpc_hits( iPFO, 210 ) );            // Number of TPC hit check
-  CutTrigger.push_back( is_offset_small( iPFO, 1.0 ) );        // Offset distance check
+  CutTrigger.push_back( is_momentum( iPFO, _anCfg.LPFO_p_min, _anCfg.LPFO_p_max ) );     // MIN/MAX momentum check
+  CutTrigger.push_back( is_tpc_hits( iPFO, _anCfg.PFO_TPCHits_max ) );            // Number of TPC hit check
+  CutTrigger.push_back( is_offset_small( iPFO, _anCfg.PFO_offset_max ) );        // Offset distance check
   
   for (auto trigger : CutTrigger ){
     if (!trigger) { return false; }

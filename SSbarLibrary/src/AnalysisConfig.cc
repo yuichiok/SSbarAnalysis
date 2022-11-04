@@ -23,6 +23,4 @@ void AnalysisConfig::SetConfig(TString fnc)
     LPFO_p_min = pt.get<float>("LPFO.LPFO_p_min");
     LPFO_p_max = pt.get<float>("LPFO.LPFO_p_max");
 
-    cout << LPFO_p_max << endl;
-
 }
