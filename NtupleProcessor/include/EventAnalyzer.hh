@@ -41,7 +41,8 @@ class EventAnalyzer
     void             WriteFile();
 
     void             AnalyzeGen();
-    void             Analyze( Long64_t entry );
+    void             AnalyzeGenReco(PFOTools mct, PFOTools pfot);
+    void             AnalyzeReco( Long64_t entry );
     
     Bool_t           Select( Selector s );          // Evaluates the class' list of event selection criteria
     Bool_t           GenPairPicker( Float_t mc_particle, Int_t pair );
@@ -58,6 +59,7 @@ class EventAnalyzer
 
   // Histogram extractor
     void             PolarAngleGen(PFOTools mct);
+    void             Mom_Polar_Gen(PFOTools mct,PFOTools pfot);
     void             PolarAngle(PFOTools pfot, PFOTools mct, Bool_t s_reco);
     void             PolarAngle_acc_rej(PFOTools pfot, vector<Bool_t> cuts, Bool_t ss_config);
 
