@@ -169,7 +169,7 @@ void pq_method_adrian()
 {
   gStyle->SetOptStat(0);
 
-  TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.uu.LPFOp10_pNaN.hists.all.root","READ");
+  TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.uu.LPFOp20_p60.hists.all.root","READ");
 
   // TH1F *h_gen_q_qcos  = (TH1F*) file->Get("h_gen_q_qcos");
   TH1F *h_gen_q_qcos  = (TH1F*) file->Get("h_reco_K_scos");
