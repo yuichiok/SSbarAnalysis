@@ -99,11 +99,18 @@ void EventAnalyzer::AnalyzeGen()
     PolarAngleGen(mct);
 }
 
-void EventAnalyzer::Analyze(Long64_t entry)
+void EventAnalyzer::AnalyzeGenReco(PFOTools mct, PFOTools pfot)
+{
+    Mom_Polar_Gen(mct,pfot);
+}
+
+void EventAnalyzer::AnalyzeReco(Long64_t entry)
 {
   // MC, PFO Analysis
     PFOTools mct( &_mc, _config );
     PFOTools pfot( &_pfo, _config );
+
+    AnalyzeGenReco(mct,pfot);
 
     if ( !pfot.ValidPFO() ) {
       _eve.eve_valid_lpfo = 0;
@@ -476,6 +483,29 @@ void EventAnalyzer::PolarAngleGen(PFOTools mct)
 
 }
 
+void EventAnalyzer::Mom_Polar_Gen(PFOTools mct, PFOTools pfot)
+{
+
+  // Gen K
+  for ( int istable=0; istable < _mc.mc_stable_n; istable++ ){
+    if(abs(_mc.mc_stable_pdg[istable]) == 321) {
+      _hm.h2[_hm.gen_K_p_cos]->Fill(mct.mc_stable[istable].cos,mct.mc_stable[istable].p_mag);
+    }
+  }
+
+  // PFO cheat K
+  for ( int ipfo=0; ipfo < _pfo.pfo_n; ipfo++ ){
+    VectorTools vt(_pfo.pfo_px[ipfo], _pfo.pfo_py[ipfo], _pfo.pfo_pz[ipfo], _pfo.pfo_E[ipfo]);
+    Float_t pfo_p_mag = (Float_t) vt.v3().R();
+    Float_t pfo_cos   = std::cos(vt.v3().Theta());
+
+    if(abs(_pfo.pfo_pdgcheat[ipfo]) == 321) {
+      _hm.h2[_hm.reco_K_p_cos]->Fill(pfo_cos,pfo_p_mag);
+    }
+  }
+
+}
+
 void EventAnalyzer::PolarAngle(PFOTools pfot, PFOTools mct, Bool_t s_reco)
 {
   // Reco K_K
@@ -485,7 +515,7 @@ void EventAnalyzer::PolarAngle(PFOTools pfot, PFOTools mct, Bool_t s_reco)
       _hm.h1[_hm.reco_K_cos]->Fill( iLPFO.cos );
       _hm.h1[_hm.reco_K_qcos]->Fill( iLPFO.qcos );
 
-      if ( iLPFO.pfo_charge < 0 ){
+      if ( - _mc.mc_quark_charge[0] * iLPFO.pfo_charge < 0 ){
         _hm.h1[_hm.reco_K_scos]->Fill( abs(iLPFO.cos) * mct.mc_quark[0].cos / abs(mct.mc_quark[0].cos) );
       }else{
         _hm.h1[_hm.reco_K_scos]->Fill( abs(iLPFO.cos) * -mct.mc_quark[1].cos / abs(mct.mc_quark[1].cos) );

@@ -69,7 +69,7 @@ Bool_t TreeIterator::Process(Long64_t entry)
         eAnalyzer.AnalyzeGen();
       }
       if( eAnalyzer.Select( EventAnalyzer::kReco ) ){
-        eAnalyzer.Analyze(entry);
+        eAnalyzer.AnalyzeReco(entry);
       }
       
     }
