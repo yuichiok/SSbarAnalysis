@@ -23,10 +23,14 @@ EventAnalyzer.cpp
 using std::cout;   using std::endl;
 typedef unsigned int Index;
 
-ClassImp(TEvent)
-ClassImp(MC_QQbar)
-ClassImp(TreeVariables)
-ClassImp(LPFO_Info)
+// ClassImp(TEvent)
+// ClassImp(MC_QQbar)
+// ClassImp(TreeVariables)
+// ClassImp(LPFO_Info)
+
+template <typename T> int sgn(T val) {
+    return (T(0) < val) - (val < T(0));
+}
 
 EventAnalyzer::EventAnalyzer(TString input, TString fnac, TString o)
 : options(o), _config(fnac)
@@ -514,13 +518,7 @@ void EventAnalyzer::PolarAngle(PFOTools pfot, PFOTools mct, Bool_t s_reco)
     for ( auto iLPFO : pfot.LPFO ){
       _hm.h1[_hm.reco_K_cos]->Fill( iLPFO.cos );
       _hm.h1[_hm.reco_K_qcos]->Fill( iLPFO.qcos );
-
-      if ( - _mc.mc_quark_charge[0] * iLPFO.pfo_charge < 0 ){
-        _hm.h1[_hm.reco_K_scos]->Fill( abs(iLPFO.cos) * mct.mc_quark[0].cos / abs(mct.mc_quark[0].cos) );
-      }else{
-        _hm.h1[_hm.reco_K_scos]->Fill( abs(iLPFO.cos) * -mct.mc_quark[1].cos / abs(mct.mc_quark[1].cos) );
-      }
-
+      _hm.h1[_hm.reco_K_scos]->Fill( abs(iLPFO.cos) * sgn( iLPFO.pfo_charge * _mc.mc_quark_charge[0] ) * mct.mc_quark[0].cos / abs(mct.mc_quark[0].cos) );
     }
     
   }
