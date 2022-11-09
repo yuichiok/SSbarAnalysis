@@ -2,6 +2,7 @@
 data
 build
 rootfiles
+etc
 
 *.o
 *.exe
