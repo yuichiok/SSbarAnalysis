@@ -214,7 +214,7 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
   }
 
   // Try Stability and Purity Calculation here.
-    Int_t   *N_Ks  = Gen_Reco_Stats( mct, pfot, -1, 1 );
+    Int_t   *N_Ks  = Gen_Reco_Stats_Stable( mct, pfot, -1, 1 );
     _data.N_K_Gen  = N_Ks[0];
     _data.N_K_PFO  = N_Ks[1];
     _data.N_K_corr = N_Ks[2];
@@ -230,7 +230,7 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
       Float_t bin_width  = xaxis->GetBinWidth(ibin);
       Float_t cos_min    = xaxis->GetBinLowEdge(ibin);
       Float_t cos_max    = cos_min + bin_width;
-      Int_t   *dN_Ks     = Gen_Reco_Stats( mct, pfot, cos_min, cos_max );
+      Int_t   *dN_Ks     = Gen_Reco_Stats_Stable( mct, pfot, cos_min, cos_max );
       Float_t *dSPs      = Get_Stable_Purity(dN_Ks);
 
       _hm.h1[_hm.gen_N_K_cos]->Fill( bin_center ,dN_Ks[0]);
@@ -391,7 +391,7 @@ Bool_t EventAnalyzer::Notify()
    return kTRUE;
 }
 
-Int_t *EventAnalyzer::Gen_Reco_Stats( PFOTools mct, PFOTools pfot, Float_t cos_min, Float_t cos_max )
+Int_t *EventAnalyzer::Gen_Reco_Stats_Stable( PFOTools mct, PFOTools pfot, Float_t cos_min, Float_t cos_max )
 {
   std::vector<PFO_Info> PFO_Collection;
   std::vector<PFO_Info> jet[2] = { pfot.GetJet(0), pfot.GetJet(1) };
