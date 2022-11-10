@@ -214,7 +214,7 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
   }
 
   // Try Stability and Purity Calculation here.
-    Int_t   *N_Ks  = Gen_Reco_Stats_Stable( mct, pfot, -1, 1 );
+    Int_t   *N_Ks  = Gen_Reco_Stats_Cheat( mct, pfot, -1, 1 );
     _data.N_K_Gen  = N_Ks[0];
     _data.N_K_PFO  = N_Ks[1];
     _data.N_K_corr = N_Ks[2];
@@ -230,7 +230,7 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
       Float_t bin_width  = xaxis->GetBinWidth(ibin);
       Float_t cos_min    = xaxis->GetBinLowEdge(ibin);
       Float_t cos_max    = cos_min + bin_width;
-      Int_t   *dN_Ks     = Gen_Reco_Stats_Stable( mct, pfot, cos_min, cos_max );
+      Int_t   *dN_Ks     = Gen_Reco_Stats_Cheat( mct, pfot, cos_min, cos_max );
       Float_t *dSPs      = Get_Stable_Purity(dN_Ks);
 
       _hm.h1[_hm.gen_N_K_cos]->Fill( bin_center ,dN_Ks[0]);
@@ -451,6 +451,72 @@ Int_t *EventAnalyzer::Gen_Reco_Stats_Stable( PFOTools mct, PFOTools pfot, Float_
 
   static Int_t N_array[3] = {0};
   N_array[0] = Gen_K_Collection.size();
+  N_array[1] = PFO_K_Collection.size();
+  N_array[2] = N_K_corr;
+
+  return N_array;
+
+}
+
+Int_t *EventAnalyzer::Gen_Reco_Stats_Cheat( PFOTools mct, PFOTools pfot, Float_t cos_min, Float_t cos_max )
+{
+  std::vector<PFO_Info> PFO_Collection;
+  std::vector<PFO_Info> jet[2] = { pfot.GetJet(0), pfot.GetJet(1) };
+
+  PFO_Collection.reserve( jet[0].size() + jet[1].size() );
+  PFO_Collection.insert( PFO_Collection.begin(), jet[0].begin(), jet[0].end() );
+  PFO_Collection.insert( PFO_Collection.end(), jet[1].begin(), jet[1].end() );
+
+  Float_t p_min = _anCfg.PFO_p_min;
+
+  std::vector<PFO_Info> PFO_K_Collection;
+  for ( auto iPFO : PFO_Collection ){
+    Bool_t cos_range = (cos_min < iPFO.cos && iPFO.cos < cos_max );
+    Bool_t p_range   = p_min < iPFO.p_mag;
+    if( PFOTools::isKaon(iPFO) && cos_range && p_range ) PFO_K_Collection.push_back(iPFO);
+  }
+
+  std::vector<PFO_Info> PFO_Cheat_K_Collection;
+  for ( auto iPFO : PFO_Collection ){
+    Bool_t cos_range = (cos_min < iPFO.cos && iPFO.cos < cos_max );
+    Bool_t p_range   = p_min < iPFO.p_mag;
+    Bool_t k_cheat   = ( abs(iPFO.pfo_pdgcheat) == 321);
+    if( k_cheat && cos_range && p_range ) PFO_Cheat_K_Collection.push_back(iPFO);
+  }
+
+  Int_t N_K_corr  = 0;
+
+  // Float_t cos_r = 0.02;
+  Float_t cos_r = 0.37;
+  std::vector<PFO_Info> PFO_K_Remain = PFO_K_Collection;
+
+  for ( auto igen : PFO_Cheat_K_Collection ){
+    Float_t min_cos_diff   = 1000.0;
+    Int_t   i_min_cos_diff = -1;
+
+    Int_t counter = 0;
+    for ( auto iremain : PFO_K_Remain ){
+      // Float_t cos_diff = igen.cos - iremain.cos;
+      Float_t cos_diff = 1.0 - std::cos( igen.vt.v3().Theta() - iremain.vt.v3().Theta() );
+      if( cos_diff < min_cos_diff ) {
+        min_cos_diff = cos_diff;
+        i_min_cos_diff = counter;
+      }
+      counter++;
+    }
+
+    // Fill min_cos_diff
+    _hm.h1[_hm.gen_reco_K_sep_cos]->Fill(min_cos_diff);
+
+    if( min_cos_diff < cos_r ) {
+      N_K_corr++;
+      PFO_K_Remain.erase( PFO_K_Remain.begin() + i_min_cos_diff );
+    }
+
+  }
+
+  static Int_t N_array[3] = {0};
+  N_array[0] = PFO_Cheat_K_Collection.size();
   N_array[1] = PFO_K_Collection.size();
   N_array[2] = N_K_corr;
 
