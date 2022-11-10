@@ -114,6 +114,7 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
     PFOTools mct( &_mc, _config );
     PFOTools pfot( &_pfo, _config );
 
+    // cout << "evt: " << entry << endl;
     AnalyzeGenReco(mct,pfot);
 
     if ( !pfot.ValidPFO() ) {
@@ -214,7 +215,7 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
   }
 
   // Try Stability and Purity Calculation here.
-    Int_t   *N_Ks  = Gen_Reco_Stats_Cheat( mct, pfot, -1, 1 );
+    Int_t   *N_Ks  = Gen_Reco_Stats_Stable( mct, pfot, -1, 1 );
     _data.N_K_Gen  = N_Ks[0];
     _data.N_K_PFO  = N_Ks[1];
     _data.N_K_corr = N_Ks[2];
@@ -230,7 +231,7 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
       Float_t bin_width  = xaxis->GetBinWidth(ibin);
       Float_t cos_min    = xaxis->GetBinLowEdge(ibin);
       Float_t cos_max    = cos_min + bin_width;
-      Int_t   *dN_Ks     = Gen_Reco_Stats_Cheat( mct, pfot, cos_min, cos_max );
+      Int_t   *dN_Ks     = Gen_Reco_Stats_Stable( mct, pfot, cos_min, cos_max );
       Float_t *dSPs      = Get_Stable_Purity(dN_Ks);
 
       _hm.h1[_hm.gen_N_K_cos]->Fill( bin_center ,dN_Ks[0]);
@@ -555,10 +556,15 @@ void EventAnalyzer::PolarAngleGen(PFOTools mct)
 
 void EventAnalyzer::Mom_Polar_Gen(PFOTools mct, PFOTools pfot)
 {
+  Int_t cnt_gen_K = 0;
+  Int_t cnt_reco_K = 0;
 
   // Gen K
   for ( int istable=0; istable < _mc.mc_stable_n; istable++ ){
-    if(abs(_mc.mc_stable_pdg[istable]) == 321) {
+
+    // if(abs(_mc.mc_stable_pdg[istable]) == 321) cout << "genK E: " << _mc.mc_stable_E[istable] << ", p: " << mct.mc_stable[istable].p_mag << ", px: " << _mc.mc_stable_px[istable] << ", py: " << _mc.mc_stable_py[istable] << endl;
+    if(abs(_mc.mc_stable_pdg[istable]) == 321 && 20 < mct.mc_stable[istable].p_mag) {
+      cnt_gen_K++;
       _hm.h2[_hm.gen_K_p_cos]->Fill(mct.mc_stable[istable].cos,mct.mc_stable[istable].p_mag);
     }
   }
@@ -569,10 +575,23 @@ void EventAnalyzer::Mom_Polar_Gen(PFOTools mct, PFOTools pfot)
     Float_t pfo_p_mag = (Float_t) vt.v3().R();
     Float_t pfo_cos   = std::cos(vt.v3().Theta());
 
-    if(abs(_pfo.pfo_pdgcheat[ipfo]) == 321) {
+    // if(abs(_pfo.pfo_pdgcheat[ipfo]) == 321) {
+    //   cout << "recoK E: " << _pfo.pfo_E[ipfo] << ", p: " << pfo_p_mag << ", px: " << _pfo.pfo_px[ipfo] << ", py: " << _pfo.pfo_py[ipfo] << ", pz: " << _pfo.pfo_pz[ipfo] << "\n";
+    //   if(_pfo.pfo_nparents) {
+    //     cout << "         ";
+    //     for (auto iparent :  _pfo.pfo_pdgcheat_parent[ipfo]) {
+    //       if(iparent != -1000) cout << iparent << " ";
+    //     }
+    //     cout << endl;
+    //   }
+    // }
+    if(abs(_pfo.pfo_pdgcheat[ipfo]) == 321 && 20 < pfo_p_mag) {
+      cnt_reco_K++;
       _hm.h2[_hm.reco_K_p_cos]->Fill(pfo_cos,pfo_p_mag);
     }
   }
+
+  // if( cnt_gen_K != cnt_reco_K ) cout << "genK: " << cnt_gen_K << ", recoK: " << cnt_reco_K << endl;
 
 }
 
