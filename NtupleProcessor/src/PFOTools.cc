@@ -174,6 +174,7 @@ void PFOTools::InitializePFOTools( PFO_QQbar *data )
   if( ValidPFO() ){
     for (int ijet=0; ijet < 2; ijet++){
       LPFO[ijet]  = GetSortedJet(ijet).at(0);
+      KLPFO[ijet] = Get_KLPFO(ijet);
       if( PFO_jet[ijet].size() > 1 ){
         SPFOs[ijet] = GetSortedJet(ijet);
         // SPFOs[ijet].erase(SPFOs[ijet].begin());
@@ -217,6 +218,16 @@ vector<PFO_Info> PFOTools::GetSortedJet( int ijet )
     vector<PFO_Info> sorted_jet = PFO_jet[ijet];
     sorted_jet = SortJet( sorted_jet );
     return sorted_jet;
+}
+
+PFO_Info Get_KLPFO( int ijet )
+{
+    vector<PFO_Info> sorted_jet = GetSortedJet(ijet);
+    for ( auto iPFO : sorted_jet ) {
+      if ( isKaon(iPFO) ) return iPFO;
+    }
+
+    return sorted_jet.at(0);
 }
 
 Int_t PFOTools::Get_dEdx_dist_PID( Float_t kdEdx_dist, Float_t pidEdx_dist, Float_t pdEdx_dist )
