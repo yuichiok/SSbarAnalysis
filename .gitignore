@@ -4,6 +4,7 @@ build
 rootfiles
 etc
 
+*.log
 *.o
 *.exe
 *.root
