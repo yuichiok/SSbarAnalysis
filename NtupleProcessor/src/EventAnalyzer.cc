@@ -125,15 +125,15 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
   // Fill raw LPFO info
     writer.WriteLPFO_Info(pfot,&_pfo,&_stats_lpfo);
     for (int i=0; i<2; i++){
-      _data_lpfo.lpfo_p_mag[i]         = pfot.LPFO[i].p_mag;
-      _data_lpfo.lpfo_dEdx_dist_pdg[i] = pfot.LPFO[i].dEdx_dist_pdg;
-      _data_lpfo.lpfo_cos[i]           = pfot.LPFO[i].cos;
-      _data_lpfo.lpfo_qcos[i]          = pfot.LPFO[i].qcos;
+      _data_lpfo.lpfo_p_mag[i]         = pfot.KLPFO[i].p_mag;
+      _data_lpfo.lpfo_dEdx_dist_pdg[i] = pfot.KLPFO[i].dEdx_dist_pdg;
+      _data_lpfo.lpfo_cos[i]           = pfot.KLPFO[i].cos;
+      _data_lpfo.lpfo_qcos[i]          = pfot.KLPFO[i].qcos;
     }
 
     for (int i=0; i<2; i++){
-      _data.LPFO_cos[i]  = pfot.LPFO[i].cos;
-      _data.LPFO_qcos[i] = pfot.LPFO[i].qcos;
+      _data.LPFO_cos[i]  = pfot.KLPFO[i].cos;
+      _data.LPFO_qcos[i] = pfot.KLPFO[i].qcos;
     }
 
   ////////////////
@@ -160,7 +160,7 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
     Bool_t is_there_a_gluon_K = false;
     for ( int ijet=0; ijet<2; ijet++){
       for ( auto iSPFO_K : pfot.SPFOs_K[ijet] ){
-        Bool_t charge_opposite = iSPFO_K.pfo_charge * pfot.LPFO[ijet].pfo_charge < 0;
+        Bool_t charge_opposite = iSPFO_K.pfo_charge * pfot.KLPFO[ijet].pfo_charge < 0;
         Bool_t momentum_above  = iSPFO_K.p_mag > 10;
         if( charge_opposite && momentum_above ) is_gluon_K[ijet] = true;
       }
@@ -174,10 +174,10 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
     enum PDGConfig { noKPi, K_K, K_Pi, Pi_Pi };
     Int_t dEdx_pdg_match = -1;
     
-    if     (   pfot.isKaon(pfot.LPFO[0]) && pfot.isKaon(pfot.LPFO[1]) )  {  dEdx_pdg_match = K_K;    }
-    else if(   pfot.isPion(pfot.LPFO[0]) && pfot.isPion(pfot.LPFO[1]) )  {  dEdx_pdg_match = Pi_Pi;  }
-    else if( ( pfot.isKaon(pfot.LPFO[0]) && pfot.isPion(pfot.LPFO[1]) ) ||
-             ( pfot.isKaon(pfot.LPFO[1]) && pfot.isPion(pfot.LPFO[0]) ) ){  dEdx_pdg_match = K_Pi;   }
+    if     (   pfot.isKaon(pfot.KLPFO[0]) && pfot.isKaon(pfot.KLPFO[1]) )  {  dEdx_pdg_match = K_K;    }
+    else if(   pfot.isPion(pfot.KLPFO[0]) && pfot.isPion(pfot.KLPFO[1]) )  {  dEdx_pdg_match = Pi_Pi;  }
+    else if( ( pfot.isKaon(pfot.KLPFO[0]) && pfot.isPion(pfot.KLPFO[1]) ) ||
+             ( pfot.isKaon(pfot.KLPFO[1]) && pfot.isPion(pfot.KLPFO[0]) ) ){  dEdx_pdg_match = K_Pi;   }
     else{ dEdx_pdg_match = noKPi; }
 
   // charge config check
@@ -263,7 +263,7 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
     }
 
     for (int i=0; i<2; i++){
-      if( abs(_stats_lpfo.lpfo_pdgcheat[i]) == 321 ) _hm.h1[_hm.lpfo_gen_K_mom]->Fill(pfot.LPFO[i].p_mag);
+      if( abs(_stats_lpfo.lpfo_pdgcheat[i]) == 321 ) _hm.h1[_hm.lpfo_gen_K_mom]->Fill(pfot.KLPFO[i].p_mag);
     }
   }
 
@@ -624,10 +624,10 @@ void EventAnalyzer::PolarAngle_acc_rej(PFOTools pfot, vector<Bool_t> cuts, Bool_
 
   // Last element of cuts vector is charge comparison
   if(cuts.back()){
-    _hm.h1_pq[_hm.acc_KK]->Fill( pfot.LPFO[0].qcos );
+    _hm.h1_pq[_hm.acc_KK]->Fill( pfot.KLPFO[0].qcos );
   }else{
-    _hm.h1_pq[_hm.rej_KK]->Fill( pfot.LPFO[0].cos );
-    _hm.h1_pq[_hm.rej_KK]->Fill( -pfot.LPFO[0].cos );
+    _hm.h1_pq[_hm.rej_KK]->Fill( pfot.KLPFO[0].cos );
+    _hm.h1_pq[_hm.rej_KK]->Fill( -pfot.KLPFO[0].cos );
   }
 
 }

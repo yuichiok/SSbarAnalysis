@@ -220,7 +220,7 @@ vector<PFO_Info> PFOTools::GetSortedJet( int ijet )
     return sorted_jet;
 }
 
-PFO_Info Get_KLPFO( int ijet )
+PFO_Info PFOTools::Get_KLPFO( int ijet )
 {
     vector<PFO_Info> sorted_jet = GetSortedJet(ijet);
     for ( auto iPFO : sorted_jet ) {
