@@ -13,7 +13,9 @@ HistManager::HistManager() {}
 
 void HistManager::InitializeHists()
 {
-  Int_t cos_bin = 100;
+  Int_t   cos_bin = 100;
+  Float_t bins_cos_fine = [-0.98,-0.96,-0.94,-0.92,-0.90,-0.88,-0.86,-0.84,-0.82,-0.80,-0.70,-0.60,-0.50,-0.40,-0.30,-0.20,-0.10,
+                            0.0,0.10,0.20,0.30,0.40,0.50,0.60,0.70,0.80,0.82,0.84,0.86,0.88,0.90,0.92,0.94,0.96,0.98,1.0];
 
   // TH1F
     h1[gen_q_cos]       = new TH1F("h_gen_q_cos","; Generated q#bar{q} cos#theta; Entries",cos_bin,-1,1);

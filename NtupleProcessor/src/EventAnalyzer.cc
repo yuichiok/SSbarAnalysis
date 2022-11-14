@@ -147,7 +147,7 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
 
   // Base Selection (mom, tpc_hit, offset)
     Bool_t LPFO_double_quality    = true;
-    for ( auto iLPFO : pfot.LPFO ){
+    for ( auto iLPFO : pfot.KLPFO ){
       if( !pfot.PFO_Quality_checks(iLPFO) ){
         LPFO_double_quality = false;
         break;
@@ -258,7 +258,7 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
 
   if(_eve.eve_valid_lpfo){
 
-    for (auto iLPFO : pfot.LPFO){
+    for (auto iLPFO : pfot.KLPFO){
       if( pfot.isKaon(iLPFO) ) _hm.h1[_hm.lpfo_reco_K_mom]->Fill(iLPFO.p_mag);
     }
 
@@ -600,10 +600,13 @@ void EventAnalyzer::PolarAngle(PFOTools pfot, PFOTools mct, Bool_t s_reco)
   // Reco K_K
   if(s_reco){
 
-    for ( auto iLPFO : pfot.LPFO ){
+    for ( auto iLPFO : pfot.KLPFO ){
       _hm.h1[_hm.reco_K_cos]->Fill( iLPFO.cos );
       _hm.h1[_hm.reco_K_qcos]->Fill( iLPFO.qcos );
-      _hm.h1[_hm.reco_K_scos]->Fill( abs(iLPFO.cos) * sgn( iLPFO.pfo_charge * _mc.mc_quark_charge[0] ) * mct.mc_quark[0].cos / abs(mct.mc_quark[0].cos) );
+      // _hm.h1[_hm.reco_K_scos]->Fill( abs(iLPFO.cos) * sgn( iLPFO.pfo_charge * _mc.mc_quark_charge[0] ) * mct.mc_quark[0].cos / abs(mct.mc_quark[0].cos) );
+    
+      if (iLPFO.pfo_charge)
+    
     }
     
   }
