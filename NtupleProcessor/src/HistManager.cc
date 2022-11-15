@@ -18,7 +18,9 @@ void HistManager::InitializeHists()
                             0.0,0.10,0.20,0.30,0.40,0.50,0.60,0.70,0.75,0.80,0.82,0.84,0.86,0.88,0.90,0.92,0.94,0.96,0.98,1.0};
   Int_t   nbins_cos = sizeof(bins_cos_fine) / sizeof(Float_t) - 1;
 
-  // TH1F
+  //////////////////
+  //     TH1F     //
+  //////////////////
     h1[gen_q_cos]       = new TH1F("h_gen_q_cos","; Generated q#bar{q} cos#theta; Entries",nbins_cos,bins_cos_fine);
     h1[gen_q_qcos]      = new TH1F("h_gen_q_qcos","; Generated q#bar{q} qcos#theta; Entries",nbins_cos,bins_cos_fine);
 
@@ -48,11 +50,18 @@ void HistManager::InitializeHists()
     h1_pq[acc_KK]      = new TH1F("h_acc_KK_cos",";Accepted K^{+}K^{-} cos#theta;N_{acc}",nbins_cos,bins_cos_fine);
     h1_pq[rej_KK]      = new TH1F("h_rej_KK_cos",";Rejected K^{+}K^{-} cos#theta;N_{rej}",nbins_cos,bins_cos_fine);
 
-  // TH2F
+  //////////////////
+  //     TH2F     //
+  //////////////////
     h2[gen_K_p_cos]  = new TH2F("h2_gen_K_p_cos" ,";cos#theta;p (GeV)",cos_bin,-1,1,100,0,60);
     h2[reco_K_p_cos] = new TH2F("h2_reco_K_p_cos",";cos#theta;p (GeV)",cos_bin,-1,1,100,0,60);
     h2[stable_cos]   = new TH2F("h2_stable_cos",";cos#theta;Stability",cos_bin,-1,1,50,0,1);
     h2[purity_cos]   = new TH2F("h2_purity_cos",";cos#theta;Purity",   cos_bin,-1,1,50,0,1);
+
+  // dEdx
+    h2_dEdx[gen_K_dEdx_p]  = new TH2F("gen_K_dEdx_p"  ,";dE/dx;p (GeV)",200,0,120,200,0.1,0.3);
+    h2_dEdx[gen_pi_dEdx_p] = new TH2F("gen_pi_dEdx_p" ,";dE/dx;p (GeV)",200,0,120,200,0.1,0.3);
+    h2_dEdx[gen_p_dEdx_p]  = new TH2F("gen_p_dEdx_p"  ,";dE/dx;p (GeV)",200,0,120,200,0.1,0.3);
 
     Hist2List();
 
@@ -71,6 +80,10 @@ void HistManager::Hist2List()
   for (auto ih : h2) {
     hList2->Add(ih);
   }
+  
+  for (auto ih : h2_dEdx) {
+    hList2_dEdx->Add(ih);
+  }
 }
 
 void HistManager::WriteLists( TFile * output)
@@ -85,6 +98,11 @@ void HistManager::WriteLists( TFile * output)
   TDirectory * d_pq = output->mkdir("pq");
     d_pq->cd();
     hList1_pq->Write();
+    output->cd();
+
+  TDirectory * d_dEdx = output->mkdir("dEdx");
+    d_dEdx->cd();
+    hList2_dEdx->Write();
     output->cd();
 
 }

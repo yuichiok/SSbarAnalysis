@@ -248,10 +248,30 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
   PolarAngle(pfot,mct,all_K_K);
   PolarAngle_acc_rej(pfot,CutTrigger,(dEdx_pdg_match == K_K));
 
+  // Fill PFO
   for ( int ijet=0; ijet < 2; ijet++ ){
+
     std::vector<PFO_Info> jet = pfot.GetJet(ijet);
-    for (auto ijet : jet ){
-      if( pfot.isKaon(ijet) ) _hm.h1[_hm.reco_K_cos]->Fill(ijet.cos);
+    
+    for (auto jet_pfo : jet ){
+      
+      // cheat
+      switch ( abs(jet_pfo.pfo_pdgcheat) ) {
+        case 321:
+          _hm.h2_dEdx[_hm.gen_K_dEdx_p]->Fill(jet_pfo.p_mag,jet_pfo.pfo_dedx);
+          break;
+        case 211:
+          _hm.h2_dEdx[_hm.gen_pi_dEdx_p]->Fill(jet_pfo.p_mag,jet_pfo.pfo_dedx);
+          break;
+        case 2212:
+          _hm.h2_dEdx[_hm.gen_p_dEdx_p]->Fill(jet_pfo.p_mag,jet_pfo.pfo_dedx);
+          break;
+      }
+
+      if ( pfot.isKaon(jet_pfo) ) {
+        _hm.h1[_hm.reco_K_cos]->Fill(jet_pfo.cos);
+      }
+
     }
   }
 
