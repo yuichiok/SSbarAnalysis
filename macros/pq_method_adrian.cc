@@ -176,8 +176,8 @@ void pq_method_adrian()
 {
   gStyle->SetOptStat(0);
 
-  // TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ss.LPFOp20_p60.hists.all.root","READ");
-  TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ss.hists.root","READ");
+  TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ss.LPFOp20_p60.hists.all.root","READ");
+  // TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ss.hists.root","READ");
 
   // TH1F *h_gen_q_qcos  = (TH1F*) file->Get("h_gen_q_qcos");
   TH1F *h_gen_q_qcos  = (TH1F*) file->Get("h_reco_K_scos");
@@ -225,7 +225,7 @@ void pq_method_adrian()
   Normalize(h_reco_K_pq_cos);
   Normalize(h_reco_K_qcos);
 
-  h_reco_K_pq_cos->GetYaxis()->SetRangeUser(0,0.3);
+  h_reco_K_pq_cos->GetYaxis()->SetRangeUser(0,0.16);
   h_reco_K_pq_cos->SetTitle(";K^{+}K^{-} cos#theta;a.u.");
   h_reco_K_pq_cos->Draw("h");
   h_reco_K_qcos->Draw("hsame");
