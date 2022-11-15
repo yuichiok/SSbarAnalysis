@@ -84,12 +84,12 @@ void PFOTools::InitializePFOTools( PFO_QQbar *data )
     PFO.pfo_truejet_pdg = data->pfo_truejet_pdg[ipfo];
     PFO.pfo_truejet_type = data->pfo_truejet_type[ipfo];
     PFO.pfo_pdgcheat = data->pfo_pdgcheat[ipfo];
+    PFO.pfo_pdgcheat_id = data->pfo_pdgcheat_id[ipfo];
     PFO.pfo_nparents = data->pfo_nparents[ipfo];
     for (int iparent=0; iparent<PFO.pfo_nparents; iparent++){
     PFO.pfo_pdgcheat_parent[iparent] = data->pfo_pdgcheat_parent[ipfo][iparent];
     }
     PFO.pfo_E = data->pfo_E[ipfo];
-    PFO.pfo_E_calo = data->pfo_E_calo[ipfo];
     PFO.pfo_px = data->pfo_px[ipfo];
     PFO.pfo_py = data->pfo_py[ipfo];
     PFO.pfo_pz = data->pfo_pz[ipfo];

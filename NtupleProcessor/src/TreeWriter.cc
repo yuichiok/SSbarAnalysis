@@ -29,6 +29,7 @@ void TreeWriter::WriteLPFO_Info(PFOTools pt, PFO_QQbar *pqq, TreeVariables *data
     data->lpfo_truejet_pdg                 [i] = pqq->pfo_truejet_pdg                 [iLPFO];
     data->lpfo_truejet_type                [i] = pqq->pfo_truejet_type                [iLPFO];
     data->lpfo_pdgcheat                    [i] = pqq->pfo_pdgcheat                    [iLPFO];
+    data->lpfo_pdgcheat_id                 [i] = pqq->pfo_pdgcheat_id                 [iLPFO];
     data->lpfo_nparents                    [i] = pqq->pfo_nparents                    [iLPFO];
     for (int j=0; j<pqq->pfo_nparents[iLPFO]; j++)
    {data->lpfo_pdgcheat_parent          [i][j] = pqq->pfo_pdgcheat_parent             [iLPFO][j];}

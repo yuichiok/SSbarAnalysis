@@ -110,10 +110,10 @@ struct PFO_QQbar  {
     Int_t   pfo_truejet_pdg[MAX_NPARTICLES] = {0};
     Int_t   pfo_truejet_type[MAX_NPARTICLES] = {0};
     Int_t   pfo_pdgcheat[MAX_NPARTICLES] = {0};
+    Int_t   pfo_pdgcheat_id[MAX_NPARTICLES] = {0};
     Int_t   pfo_nparents[MAX_NPARTICLES] = {0};
     Int_t   pfo_pdgcheat_parent[MAX_NPARTICLES][MAX_NPARTICLES] = {{0}};
     Float_t pfo_E[MAX_NPARTICLES] = {0};
-    Float_t pfo_E_calo[MAX_NPARTICLES] = {0};
     Float_t pfo_px[MAX_NPARTICLES] = {0};
     Float_t pfo_py[MAX_NPARTICLES] = {0};
     Float_t pfo_pz[MAX_NPARTICLES] = {0};
@@ -193,10 +193,10 @@ struct QQbar_Single_PFO {
     Int_t   pfo_truejet_pdg = 0;
     Int_t   pfo_truejet_type = 0;
     Int_t   pfo_pdgcheat = 0;
+    Int_t   pfo_pdgcheat_id = 0;
     Int_t   pfo_nparents = 0;
     Int_t   pfo_pdgcheat_parent[MAX_NPARTICLES] = {0};
     Float_t pfo_E = -1;
-    Float_t pfo_E_calo = 0;
     Float_t pfo_px = 0;
     Float_t pfo_py = 0;
     Float_t pfo_pz = 0;
@@ -382,10 +382,10 @@ struct Branch_QQbar  {
     TBranch        *b_pfo_truejet_pdg;   //!
     TBranch        *b_pfo_truejet_type;   //!
     TBranch        *b_pfo_pdgcheat;   //!
+    TBranch        *b_pfo_pdgcheat_id;   //!
     TBranch        *b_pfo_nparents;   //!
     TBranch        *b_pfo_pdgcheat_parent;   //!
     TBranch        *b_pfo_E;   //!
-    TBranch        *b_pfo_E_calo;   //!
     TBranch        *b_pfo_px;   //!
     TBranch        *b_pfo_py;   //!
     TBranch        *b_pfo_pz;   //!
@@ -474,6 +474,7 @@ struct TreeVariables {
     Int_t   lpfo_truejet_pdg[NJETS] = {0};
     Int_t   lpfo_truejet_type[NJETS] = {0};
     Int_t   lpfo_pdgcheat[NJETS] = {0};
+    Int_t   lpfo_pdgcheat_id[NJETS] = {0};
     Int_t   lpfo_nparents[NJETS] = {0};
     Int_t   lpfo_pdgcheat_parent[NJETS][MAX_NPARTICLES] = {{0}};
     Float_t lpfo_E[NJETS] = {0};

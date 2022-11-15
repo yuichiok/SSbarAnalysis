@@ -107,10 +107,10 @@ void TreeReader::InitializePFOReadTree(TTree *_hTree, PFO_QQbar & _data, Branch_
     _hTree->SetBranchAddress("pfo_truejet_pdg", _data.pfo_truejet_pdg, &_branch.b_pfo_truejet_pdg);
     _hTree->SetBranchAddress("pfo_truejet_type", _data.pfo_truejet_type, &_branch.b_pfo_truejet_type);
     _hTree->SetBranchAddress("pfo_pdgcheat", _data.pfo_pdgcheat, &_branch.b_pfo_pdgcheat);
+    _hTree->SetBranchAddress("pfo_pdgcheat_id", _data.pfo_pdgcheat_id, &_branch.b_pfo_pdgcheat_id);
     _hTree->SetBranchAddress("pfo_nparents", _data.pfo_nparents, &_branch.b_pfo_nparents);
     _hTree->SetBranchAddress("pfo_pdgcheat_parent", _data.pfo_pdgcheat_parent, &_branch.b_pfo_pdgcheat_parent);
     _hTree->SetBranchAddress("pfo_E", _data.pfo_E, &_branch.b_pfo_E);
-    _hTree->SetBranchAddress("pfo_E_calo", _data.pfo_E_calo, &_branch.b_pfo_E_calo);
     _hTree->SetBranchAddress("pfo_px", _data.pfo_px, &_branch.b_pfo_px);
     _hTree->SetBranchAddress("pfo_py", _data.pfo_py, &_branch.b_pfo_py);
     _hTree->SetBranchAddress("pfo_pz", _data.pfo_pz, &_branch.b_pfo_pz);
