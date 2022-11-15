@@ -4,6 +4,13 @@
 using std::cout; using std::endl;
 using std::vector;
 
+Float_t bins_cos_fine[] = {-1.0,-0.98,-0.96,-0.94,-0.92,-0.90,-0.88,-0.86,-0.84,-0.82,-0.80,-0.75,-0.70,-0.60,-0.50,-0.40,-0.30,-0.20,-0.10,
+                            0.0,0.10,0.20,0.30,0.40,0.50,0.60,0.70,0.75,0.80,0.82,0.84,0.86,0.88,0.90,0.92,0.94,0.96,0.98,1.0};
+Int_t   nbins_cos = sizeof(bins_cos_fine) / sizeof(Float_t) - 1;
+
+Float_t bins_cos_fine_half[] = {0.0,0.10,0.20,0.30,0.40,0.50,0.60,0.70,0.75,0.80,0.82,0.84,0.86,0.88,0.90,0.92,0.94,0.96,0.98,1.0};
+Int_t   nbins_cos_half = sizeof(bins_cos_fine_half) / sizeof(Float_t) - 1;
+
 void Normalize(TH1F *h)
 {
   // h->Scale( 1.0 / h->GetEntries() );
@@ -112,7 +119,7 @@ TH1F * CorrectHist( TH1F * h_reco, vector<Float_t> p_vec)
 {
   const Int_t nbins = h_reco->GetNbinsX();
 
-  TH1F *corrected = new TH1F("corrected", "corrected", nbins, -1, 1);
+  TH1F *corrected = new TH1F("corrected", "corrected", nbins_cos,bins_cos_fine);
   corrected->Sumw2();
   for (int i = 1; i < nbins / 2 + 1; i++)
   {
@@ -169,17 +176,19 @@ void pq_method_adrian()
 {
   gStyle->SetOptStat(0);
 
-  TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.uu.LPFOp20_p60.hists.all.root","READ");
+  // TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ss.LPFOp20_p60.hists.all.root","READ");
+  TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ss.hists.root","READ");
 
   // TH1F *h_gen_q_qcos  = (TH1F*) file->Get("h_gen_q_qcos");
   TH1F *h_gen_q_qcos  = (TH1F*) file->Get("h_reco_K_scos");
   TH1F *h_reco_K_qcos = (TH1F*) file->Get("h_reco_K_qcos");
   TH1F *h_acc_KK_cos  = (TH1F*) file->Get("pq/h_acc_KK_cos");
   TH1F *h_rej_KK_cos  = (TH1F*) file->Get("pq/h_rej_KK_cos");
-  h_gen_q_qcos->Rebin(5);
-  h_reco_K_qcos->Rebin(5);
-  h_acc_KK_cos->Rebin(5);
-  h_rej_KK_cos->Rebin(5);
+
+  // h_gen_q_qcos->Rebin(5);
+  // h_reco_K_qcos->Rebin(5);
+  // h_acc_KK_cos->Rebin(5);
+  // h_rej_KK_cos->Rebin(5);
   StyleHist(h_gen_q_qcos,kBlack);
   h_gen_q_qcos->SetFillStyle(0);
   StyleHist(h_reco_K_qcos,kRed+2);
@@ -188,10 +197,17 @@ void pq_method_adrian()
 
   const Int_t nbins = h_gen_q_qcos->GetNbinsX();
 
-  TH1F *p_KK = new TH1F("p_KK", "p_KK", nbins / 2, 0, 1);
+  TH1F *p_KK = new TH1F("p_KK", "p_KK", nbins_cos_half,bins_cos_fine_half);
   p_KK->Sumw2();
 
   vector<Float_t> p_vec = GetP(h_acc_KK_cos, h_rej_KK_cos);
+
+  cout << "hist bin size = " << h_gen_q_qcos->GetNbinsX() << endl;
+  cout << "p_vec size = " << p_vec.size() << endl;
+  for ( auto ipvec : p_vec ){
+    cout << ipvec << " ";
+  }
+  cout << endl;
 
   for (unsigned i = 0; i < p_vec.size() / 2; i++)
   {
