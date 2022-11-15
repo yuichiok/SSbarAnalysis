@@ -18,6 +18,14 @@ void HistManager::InitializeHists()
                             0.0,0.10,0.20,0.30,0.40,0.50,0.60,0.70,0.75,0.80,0.82,0.84,0.86,0.88,0.90,0.92,0.94,0.96,0.98,1.0};
   Int_t   nbins_cos = sizeof(bins_cos_fine) / sizeof(Float_t) - 1;
 
+  Float_t bins_p[]={0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1,1.1,1.2,1.3,1.4,1.5,1.6,1.7,1.8,1.9,2,2.5,3,4,5,6,7,8,9,10,12,14,16,18,20,24,28,32,36,40,44,48,52,56,60,64,68,72,80,90,100};
+  Int_t   nbins_p=sizeof(bins_p)/sizeof(Float_t) - 1;
+
+  Float_t bins_dEdx[200];
+  bins_dEdx[0]=0.1;
+  for(int i=1;i<200;i++) bins_dEdx[i]=bins_dEdx[i-1]+0.1/100.;
+  Int_t nbins_dEdx=199;
+
   //////////////////
   //     TH1F     //
   //////////////////
@@ -59,9 +67,9 @@ void HistManager::InitializeHists()
     h2[purity_cos]   = new TH2F("h2_purity_cos",";cos#theta;Purity",   cos_bin,-1,1,50,0,1);
 
   // dEdx
-    h2_dEdx[gen_K_dEdx_p]  = new TH2F("gen_K_dEdx_p"  ,";dE/dx;p (GeV)",200,0,120,200,0.1,0.3);
-    h2_dEdx[gen_pi_dEdx_p] = new TH2F("gen_pi_dEdx_p" ,";dE/dx;p (GeV)",200,0,120,200,0.1,0.3);
-    h2_dEdx[gen_p_dEdx_p]  = new TH2F("gen_p_dEdx_p"  ,";dE/dx;p (GeV)",200,0,120,200,0.1,0.3);
+    h2_dEdx[gen_K_dEdx_p]  = new TH2F("gen_K_dEdx_p"  ,";dE/dx;p (GeV)",nbins_p,bins_p,nbins_dEdx,bins_dEdx);
+    h2_dEdx[gen_pi_dEdx_p] = new TH2F("gen_pi_dEdx_p" ,";dE/dx;p (GeV)",nbins_p,bins_p,nbins_dEdx,bins_dEdx);
+    h2_dEdx[gen_p_dEdx_p]  = new TH2F("gen_p_dEdx_p"  ,";dE/dx;p (GeV)",nbins_p,bins_p,nbins_dEdx,bins_dEdx);
 
     Hist2List();
 
