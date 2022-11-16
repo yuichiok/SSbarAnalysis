@@ -596,7 +596,7 @@ void EventAnalyzer::Mom_Polar_Gen(PFOTools mct, PFOTools pfot)
     Float_t pfo_cos   = std::cos(vt.v3().Theta());
 
     // if(abs(_pfo.pfo_pdgcheat[ipfo]) == 321) {
-    //   cout << "recoK E: " << _pfo.pfo_E[ipfo] << ", p: " << pfo_p_mag << ", px: " << _pfo.pfo_px[ipfo] << ", py: " << _pfo.pfo_py[ipfo] << ", pz: " << _pfo.pfo_pz[ipfo] << "\n";
+    //   cout << "recoK E: " << _pfo.pfo_E[ipfo] << ", p: " << pfo_p_mag << ", px: " << _pfo.pfo_px[ipfo] << ", py: " << _pfo.pfo_py[ipfo] << ", pz: " << _pfo.pfo_pz[ipfo] << ", charge: " << _pfo.pfo_charge[ipfo] << ", ntracks: " << _pfo.pfo_ntracks[ipfo] << ", cheatID: " << _pfo.pfo_pdgcheat_id[ipfo] - 3346305 << "\n";
     //   if(_pfo.pfo_nparents) {
     //     cout << "         ";
     //     for (auto iparent :  _pfo.pfo_pdgcheat_parent[ipfo]) {
