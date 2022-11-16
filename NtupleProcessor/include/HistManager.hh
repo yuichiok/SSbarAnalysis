@@ -76,11 +76,22 @@ class HistManager
     };
     TH2F * h2[LastH3];
 
+    enum h2_dEdx_index {
+
+      gen_K_dEdx_p,
+      gen_pi_dEdx_p,
+      gen_p_dEdx_p,
+
+      dummy4,
+      LastH4 = dummy4
+    };
+    TH2F * h2_dEdx[LastH4];
 
   private:
-    TList* hList1    = new TList();
-    TList* hList1_pq = new TList();
-    TList* hList2    = new TList();
+    TList* hList1      = new TList();
+    TList* hList1_pq   = new TList();
+    TList* hList2      = new TList();
+    TList* hList2_dEdx = new TList();
 
 };
 

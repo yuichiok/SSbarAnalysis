@@ -33,6 +33,7 @@ class PFOTools
 
     virtual vector<PFO_Info>  GetJet            ( int ijet );
     virtual vector<PFO_Info>  GetSortedJet      ( int ijet );
+    virtual PFO_Info          Get_KLPFO         ( int ijet );
     virtual Int_t             Get_dEdx_dist_PID ( Float_t kdEdx_dist, Float_t pidEdx_dist, Float_t pdEdx_dist );
     static  Bool_t            isKaon            ( PFO_Info iPFO );
     static  Bool_t            isPion            ( PFO_Info iPFO );
@@ -57,6 +58,7 @@ class PFOTools
 
   // Leading/Sub-Leading PFOs
     PFO_Info LPFO[2];
+    PFO_Info KLPFO[2];
     std::vector<PFO_Info> SPFOs[2];
     std::vector<PFO_Info> SPFOs_K[2];
     std::vector<PFO_Info> SPFOs_Pi[2];
