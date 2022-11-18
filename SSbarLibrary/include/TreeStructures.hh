@@ -580,9 +580,20 @@ struct Tree_Data {
     Float_t stability = -1;
     Float_t purity    = -1;
 
+    // PFO parameters
+    Int_t   n_valid_pfo = 0;
+    Float_t vpfo_E[1000];
+    Float_t vpfo_p[1000];
+    Float_t vpfo_cos[1000];
+    Float_t vpfo_dedx[1000];
+    Int_t   vpfo_pdgcheat[1000];
+    Float_t vpfo_piddedx_k_dedxdist[1000];
+    Float_t vpfo_piddedx_pi_dedxdist[1000];
+    Float_t vpfo_piddedx_p_dedxdist[1000];
+
     // LPFO parameters
-    Float_t LPFO_cos[2]  = {-2};
-    Float_t LPFO_qcos[2] = {-2};
+    Float_t LPFO_cos[2]  = {-2,-2};
+    Float_t LPFO_qcos[2] = {-2,-2};
 
 
 };
