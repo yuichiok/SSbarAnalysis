@@ -248,32 +248,57 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
   PolarAngle(pfot,mct,all_K_K);
   PolarAngle_acc_rej(pfot,CutTrigger,(dEdx_pdg_match == K_K));
 
+
   // Fill PFO
-  for ( int ijet=0; ijet < 2; ijet++ ){
+  std::vector<PFO_Info> PFO_Collection = pfot.Get_Valid_PFOs();
+  for ( long unsigned int i=0; i < PFO_Collection.size(); i++ )
+  {
+    PFO_Info ipfo = PFO_Collection.at(i);
 
-    std::vector<PFO_Info> jet = pfot.GetJet(ijet);
-    
-    for (auto jet_pfo : jet ){
-      
-      // cheat
-      switch ( abs(jet_pfo.pfo_pdgcheat) ) {
-        case 321:
-          _hm.h2_dEdx[_hm.gen_K_dEdx_p]->Fill(jet_pfo.p_mag,jet_pfo.pfo_dedx);
-          break;
-        case 211:
-          _hm.h2_dEdx[_hm.gen_pi_dEdx_p]->Fill(jet_pfo.p_mag,jet_pfo.pfo_dedx);
-          break;
-        case 2212:
-          _hm.h2_dEdx[_hm.gen_p_dEdx_p]->Fill(jet_pfo.p_mag,jet_pfo.pfo_dedx);
-          break;
-      }
-
-      if ( pfot.isKaon(jet_pfo) ) {
-        _hm.h1[_hm.reco_K_cos]->Fill(jet_pfo.cos);
-      }
-
+    // cheat
+    switch ( abs(ipfo.pfo_pdgcheat) ) {
+      case 321:
+        _hm.h2_dEdx[_hm.gen_K_dEdx_p]->Fill(ipfo.p_mag,ipfo.pfo_dedx);
+        break;
+      case 211:
+        _hm.h2_dEdx[_hm.gen_pi_dEdx_p]->Fill(ipfo.p_mag,ipfo.pfo_dedx);
+        break;
+      case 2212:
+        _hm.h2_dEdx[_hm.gen_p_dEdx_p]->Fill(ipfo.p_mag,ipfo.pfo_dedx);
+        break;
     }
+
+    if ( pfot.isKaon(ipfo) ) {
+      _hm.h1[_hm.reco_K_cos]->Fill(ipfo.cos);
+    }
+
   }
+
+  // for ( int ijet=0; ijet < 2; ijet++ ){
+
+  //   std::vector<PFO_Info> jet = pfot.GetJet(ijet);
+    
+  //   for (auto jet_pfo : jet ){
+      
+  //     // cheat
+  //     switch ( abs(jet_pfo.pfo_pdgcheat) ) {
+  //       case 321:
+  //         _hm.h2_dEdx[_hm.gen_K_dEdx_p]->Fill(jet_pfo.p_mag,jet_pfo.pfo_dedx);
+  //         break;
+  //       case 211:
+  //         _hm.h2_dEdx[_hm.gen_pi_dEdx_p]->Fill(jet_pfo.p_mag,jet_pfo.pfo_dedx);
+  //         break;
+  //       case 2212:
+  //         _hm.h2_dEdx[_hm.gen_p_dEdx_p]->Fill(jet_pfo.p_mag,jet_pfo.pfo_dedx);
+  //         break;
+  //     }
+
+  //     if ( pfot.isKaon(jet_pfo) ) {
+  //       _hm.h1[_hm.reco_K_cos]->Fill(jet_pfo.cos);
+  //     }
+
+  //   }
+  // }
 
 
   if(_eve.eve_valid_lpfo){
@@ -414,12 +439,7 @@ Bool_t EventAnalyzer::Notify()
 
 Int_t *EventAnalyzer::Gen_Reco_Stats_Stable( PFOTools mct, PFOTools pfot, Float_t cos_min, Float_t cos_max )
 {
-  std::vector<PFO_Info> PFO_Collection;
-  std::vector<PFO_Info> jet[2] = { pfot.GetJet(0), pfot.GetJet(1) };
-
-  PFO_Collection.reserve( jet[0].size() + jet[1].size() );
-  PFO_Collection.insert( PFO_Collection.begin(), jet[0].begin(), jet[0].end() );
-  PFO_Collection.insert( PFO_Collection.end(), jet[1].begin(), jet[1].end() );
+  std::vector<PFO_Info> PFO_Collection = pfot.Get_Valid_PFOs();
 
   Float_t p_min = _anCfg.PFO_p_min;
 

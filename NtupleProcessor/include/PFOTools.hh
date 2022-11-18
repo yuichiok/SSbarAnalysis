@@ -31,6 +31,7 @@ class PFOTools
     virtual vector<PFO_Info>  SortJet  ( vector<PFO_Info> jet );
     virtual Bool_t            ValidPFO ();
 
+    virtual vector<PFO_Info>  Get_Valid_PFOs    ();
     virtual vector<PFO_Info>  GetJet            ( int ijet );
     virtual vector<PFO_Info>  GetSortedJet      ( int ijet );
     virtual PFO_Info          Get_KLPFO         ( int ijet );

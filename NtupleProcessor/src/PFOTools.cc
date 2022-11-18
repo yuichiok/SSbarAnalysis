@@ -208,6 +208,16 @@ Bool_t PFOTools::ValidPFO()
     return true;
 }
 
+vector<PFO_Info> PFOTools::Get_Valid_PFOs()
+{
+  // Combines PFO lists in 2 jets
+    std::vector<PFO_Info> PFO_Collection;
+    PFO_Collection.reserve( PFO_jet[0].size() + PFO_jet[1].size() );
+    PFO_Collection.insert( PFO_Collection.begin(), PFO_jet[0].begin(), PFO_jet[0].end() );
+    PFO_Collection.insert( PFO_Collection.end(), PFO_jet[1].begin(), PFO_jet[1].end() );
+    return PFO_Collection;
+}
+
 vector<PFO_Info> PFOTools::GetJet( int ijet )
 {
     return PFO_jet[ijet];
