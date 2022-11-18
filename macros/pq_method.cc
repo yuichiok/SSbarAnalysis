@@ -4,12 +4,28 @@
 using std::cout; using std::endl;
 using std::vector;
 
-const int nbins = 100;
+Float_t bins_cos_fine[] = {-1.0,-0.98,-0.96,-0.94,-0.92,-0.90,-0.88,-0.86,-0.84,-0.82,-0.80,-0.75,-0.70,-0.60,-0.50,-0.40,-0.30,-0.20,-0.10,
+                            0.0,0.10,0.20,0.30,0.40,0.50,0.60,0.70,0.75,0.80,0.82,0.84,0.86,0.88,0.90,0.92,0.94,0.96,0.98,1.0};
+Int_t   nbins_cos = sizeof(bins_cos_fine) / sizeof(Float_t) - 1;
+
+Float_t bins_cos_fine_half[] = {0.0,0.10,0.20,0.30,0.40,0.50,0.60,0.70,0.75,0.80,0.82,0.84,0.86,0.88,0.90,0.92,0.94,0.96,0.98,1.0};
+Int_t   nbins_cos_half = sizeof(bins_cos_fine_half) / sizeof(Float_t) - 1;
 
 void Normalize(TH1F *h)
 {
   // h->Scale( 1.0 / h->GetEntries() );
-  h->Scale( 1.0 / h->Integral(30,70) );
+  const Int_t nbins = h->GetNbinsX();
+  Int_t nbins4 = nbins / 4;
+  Int_t int_high = (nbins / 2) + nbins4;
+  Int_t int_low  = (nbins / 2 + 1) - nbins4;
+  h->Scale( 1.0 / h->Integral(int_low,int_high) );
+}
+
+void Normalize2Gen(TH1F *h, TH1F *h_gen)
+{
+	double intCosReco = h->Integral(20,80);
+	double intCosGen  = h_gen->Integral(20,80);
+  h->Scale( intCosGen / intCosReco );
 }
 
 void StyleHist(TH1F *h, Color_t col)
@@ -22,6 +38,7 @@ void StyleHist(TH1F *h, Color_t col)
 
 vector<Float_t> GetP( TH1F * h_accepted, TH1F * h_rejected )
 {
+  const Int_t nbins = h_accepted->GetNbinsX();
   vector<Float_t> result_error;
   vector<Float_t> result;
 
@@ -100,7 +117,9 @@ vector<Float_t> GetP( TH1F * h_accepted, TH1F * h_rejected )
 
 TH1F * CorrectHist( TH1F * h_reco, vector<Float_t> p_vec)
 {
-  TH1F *corrected = new TH1F("corrected", "corrected", nbins, -1, 1);
+  const Int_t nbins = h_reco->GetNbinsX();
+
+  TH1F *corrected = new TH1F("corrected", "corrected", nbins_cos,bins_cos_fine);
   corrected->Sumw2();
   for (int i = 1; i < nbins / 2 + 1; i++)
   {
@@ -125,7 +144,6 @@ TH1F * CorrectHist( TH1F * h_reco, vector<Float_t> p_vec)
     }
     av_i /= n;
     av_41i /= n;
-    cout << (q * q + p * p) << endl;
     corrected->SetBinContent(i, av_i);
     corrected->SetBinContent(nbins + 1 - i, av_41i);
 
@@ -154,34 +172,48 @@ TH1F * CorrectHist( TH1F * h_reco, vector<Float_t> p_vec)
 
 }
 
-void pq_method()
+void pq_method_adrian()
 {
   gStyle->SetOptStat(0);
 
-  TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ss.hists.all.root","READ");
+  TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ss.LPFOp20_p60.tpc0.hists.all.root","READ");
+  // TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ss.hists.root","READ");
 
-  TH1F *h_gen_q_qcos  = (TH1F*) file->Get("h_gen_q_qcos");
+  // TH1F *h_gen_q_qcos  = (TH1F*) file->Get("h_gen_q_qcos");
+  TH1F *h_gen_q_qcos  = (TH1F*) file->Get("h_reco_K_scos");
   TH1F *h_reco_K_qcos = (TH1F*) file->Get("h_reco_K_qcos");
   TH1F *h_acc_KK_cos  = (TH1F*) file->Get("pq/h_acc_KK_cos");
   TH1F *h_rej_KK_cos  = (TH1F*) file->Get("pq/h_rej_KK_cos");
-  StyleHist(h_gen_q_qcos,kBlack);
-  StyleHist(h_reco_K_qcos,kRed+2);
 
-  TH1F *p_KK = new TH1F("p_KK", "p_KK", nbins / 2, 0, 1);
+  // h_gen_q_qcos->Rebin(5);
+  // h_reco_K_qcos->Rebin(5);
+  // h_acc_KK_cos->Rebin(5);
+  // h_rej_KK_cos->Rebin(5);
+  StyleHist(h_gen_q_qcos,kBlack);
+  h_gen_q_qcos->SetFillStyle(0);
+  StyleHist(h_reco_K_qcos,kRed+2);
+  StyleHist(h_acc_KK_cos,kRed+2);
+  StyleHist(h_rej_KK_cos,kBlue+2);
+
+  const Int_t nbins = h_gen_q_qcos->GetNbinsX();
+
+  TH1F *p_KK = new TH1F("p_KK", "p_KK", nbins_cos_half,bins_cos_fine_half);
   p_KK->Sumw2();
 
   vector<Float_t> p_vec = GetP(h_acc_KK_cos, h_rej_KK_cos);
-  cout << p_vec.size() << endl;
+
+  cout << "hist bin size = " << h_gen_q_qcos->GetNbinsX() << endl;
+  cout << "p_vec size = " << p_vec.size() << endl;
+  for ( auto ipvec : p_vec ){
+    cout << ipvec << " ";
+  }
+  cout << endl;
 
   for (unsigned i = 0; i < p_vec.size() / 2; i++)
   {
     p_KK->SetBinContent(nbins / 2 - i, p_vec.at(i));
     p_KK->SetBinError(nbins / 2 - i, p_vec.at(i + nbins / 2));
   }
-
-  cout << endl;
-  for (auto ivec : p_vec) cout << " " << ivec;
-  cout << endl;
 
   TH1F *h_reco_K_pq_cos = CorrectHist(h_reco_K_qcos, p_vec);
   StyleHist(h_reco_K_pq_cos,kBlue);
@@ -193,10 +225,38 @@ void pq_method()
   Normalize(h_reco_K_pq_cos);
   Normalize(h_reco_K_qcos);
 
-  h_gen_q_qcos->Draw("h");
-  h_reco_K_pq_cos->Draw("hsame");
+  h_reco_K_pq_cos->GetYaxis()->SetRangeUser(0,0.16);
+  h_reco_K_pq_cos->SetTitle(";K^{+}K^{-} cos#theta;a.u.");
+  h_reco_K_pq_cos->Draw("h");
   h_reco_K_qcos->Draw("hsame");
-  // p_KK->Draw("h");
+  h_gen_q_qcos->Draw("hsame");
 
+  TLegend *leg = new TLegend(0.15,0.76,0.65,0.85);
+  leg->SetLineColor(0);
+  // leg->AddEntry(h_gen_q_qcos,"Generated","l");
+  leg->AddEntry(h_gen_q_qcos,"Reconstructed K^{+}K^{-} matched with s-quark angle","l");
+  leg->AddEntry(h_reco_K_qcos,"Reconstructed K^{+}K^{-}","l");
+  leg->AddEntry(h_reco_K_pq_cos,"Reconstructed K^{+}K^{-} (corrected)","l");
+  leg->Draw();
+
+  TCanvas *c1 = new TCanvas("c1","c1",800,800);
+  gPad->SetGrid(1,1);
+  StyleHist(p_KK,kGreen+2);
+  p_KK->SetTitle(";cos#theta_{K^{#pm}};p value");
+  p_KK->GetYaxis()->SetRangeUser(0,1);
+  p_KK->Draw("h");
+
+  TCanvas *c2 = new TCanvas("c2","c2",800,800);
+  TGaxis::SetMaxDigits(3);
+  gPad->SetGrid(1,1);
+  h_acc_KK_cos->SetTitle(";K^{+}K^{-} cos#theta;Entries");
+  h_acc_KK_cos->Draw("h");
+  h_rej_KK_cos->Draw("hsame");
+
+  TLegend *leg2 = new TLegend(0.15,0.75,0.45,0.85);
+  leg2->SetLineColor(0);
+  leg2->AddEntry(h_acc_KK_cos,"N Accepted","l");
+  leg2->AddEntry(h_rej_KK_cos,"N Rejected","l");
+  leg2->Draw();
 
 }
