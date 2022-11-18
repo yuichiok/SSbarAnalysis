@@ -25,15 +25,15 @@ void dEdx()
 {
   gStyle->SetOptStat(0);
 
-  TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ss.LPFOp10_pNaN.tpc0.hists.all.root","READ");
+  TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ss.LPFOp10_pNaN.tpc0.cos08.hists.all.root","READ");
 
   TCanvas *c0 = new TCanvas("c0","c0",800,800);
   TPad *pad0 = new TPad("pad0", "pad0",0,0,1,1);
   StylePad(pad0,0,0.15,0,0.17);
 
-  TH1F *h2_gen_K_dEdx_p  = (TH1F*) file->Get("dEdx/gen_K_dEdx_p");
-  TH1F *h2_gen_pi_dEdx_p = (TH1F*) file->Get("dEdx/gen_pi_dEdx_p");
-  TH1F *h2_gen_p_dEdx_p  = (TH1F*) file->Get("dEdx/gen_p_dEdx_p");
+  TH1F *h2_gen_K_dEdx_p  = (TH1F*) file->Get("dEdx/h2_gen_K_dEdx_p");
+  TH1F *h2_gen_pi_dEdx_p = (TH1F*) file->Get("dEdx/h2_gen_pi_dEdx_p");
+  TH1F *h2_gen_p_dEdx_p  = (TH1F*) file->Get("dEdx/h2_gen_p_dEdx_p");
 
   h2_gen_K_dEdx_p->SetMarkerColor(kRed);
   h2_gen_pi_dEdx_p->SetMarkerColor(kBlue);
