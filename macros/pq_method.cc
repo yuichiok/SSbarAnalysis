@@ -181,11 +181,15 @@ void pq_method()
 
   if (!file->IsOpen()) return;
 
-  // TH1F *h_gen_q_qcos  = (TH1F*) file->Get("h_gen_q_qcos");
+  TH1F *h_gen_q_qcos  = (TH1F*) file->Get("h_gen_q_qcos");
   TH1F *h_reco_K_scos  = (TH1F*) file->Get("h_reco_K_scos");
   TH1F *h_reco_K_qcos = (TH1F*) file->Get("h_reco_K_qcos");
   TH1F *h_acc_KK_cos  = (TH1F*) file->Get("pq/h_acc_KK_cos");
   TH1F *h_rej_KK_cos  = (TH1F*) file->Get("pq/h_rej_KK_cos");
+
+  StyleHist(h_gen_q_qcos,kGreen+1);
+  h_gen_q_qcos->SetFillStyle(0);
+  h_gen_q_qcos->SetLineStyle(2);
 
   StyleHist(h_reco_K_scos,kBlack);
   h_reco_K_scos->SetFillStyle(0);
@@ -212,6 +216,7 @@ void pq_method()
   TCanvas *c0 = new TCanvas("c0","c0",800,800);
   gPad->SetGrid(1,1);
 
+  Normalize(h_gen_q_qcos);
   Normalize(h_reco_K_scos);
   Normalize(h_reco_K_pq_cos);
   Normalize(h_reco_K_qcos);
@@ -221,10 +226,11 @@ void pq_method()
   h_reco_K_pq_cos->Draw("h");
   h_reco_K_qcos->Draw("hsame");
   h_reco_K_scos->Draw("hsame");
+  h_gen_q_qcos->Draw("hsame");
 
   TLegend *leg = new TLegend(0.15,0.76,0.65,0.85);
   leg->SetLineColor(0);
-  // leg->AddEntry(h_reco_K_scos,"Generated","l");
+  leg->AddEntry(h_gen_q_qcos,"Generated s-quark angle","l");
   leg->AddEntry(h_reco_K_scos,"Reconstructed K^{+}K^{-} matched with s-quark angle","l");
   leg->AddEntry(h_reco_K_qcos,"Reconstructed K^{+}K^{-}","l");
   leg->AddEntry(h_reco_K_pq_cos,"Reconstructed K^{+}K^{-} (corrected)","l");
