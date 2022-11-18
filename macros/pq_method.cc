@@ -172,42 +172,33 @@ TH1F * CorrectHist( TH1F * h_reco, vector<Float_t> p_vec)
 
 }
 
-void pq_method_adrian()
+void pq_method()
 {
   gStyle->SetOptStat(0);
 
-  TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ss.LPFOp20_p60.tpc0.hists.all.root","READ");
+  TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ss.LPFOp10_pNaN.tpc0.hists.all.root","READ");
   // TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ss.hists.root","READ");
 
+  if (!file->IsOpen()) return;
+
   // TH1F *h_gen_q_qcos  = (TH1F*) file->Get("h_gen_q_qcos");
-  TH1F *h_gen_q_qcos  = (TH1F*) file->Get("h_reco_K_scos");
+  TH1F *h_reco_K_scos  = (TH1F*) file->Get("h_reco_K_scos");
   TH1F *h_reco_K_qcos = (TH1F*) file->Get("h_reco_K_qcos");
   TH1F *h_acc_KK_cos  = (TH1F*) file->Get("pq/h_acc_KK_cos");
   TH1F *h_rej_KK_cos  = (TH1F*) file->Get("pq/h_rej_KK_cos");
 
-  // h_gen_q_qcos->Rebin(5);
-  // h_reco_K_qcos->Rebin(5);
-  // h_acc_KK_cos->Rebin(5);
-  // h_rej_KK_cos->Rebin(5);
-  StyleHist(h_gen_q_qcos,kBlack);
-  h_gen_q_qcos->SetFillStyle(0);
+  StyleHist(h_reco_K_scos,kBlack);
+  h_reco_K_scos->SetFillStyle(0);
   StyleHist(h_reco_K_qcos,kRed+2);
   StyleHist(h_acc_KK_cos,kRed+2);
   StyleHist(h_rej_KK_cos,kBlue+2);
 
-  const Int_t nbins = h_gen_q_qcos->GetNbinsX();
+  const Int_t nbins = h_reco_K_scos->GetNbinsX();
 
   TH1F *p_KK = new TH1F("p_KK", "p_KK", nbins_cos_half,bins_cos_fine_half);
   p_KK->Sumw2();
 
   vector<Float_t> p_vec = GetP(h_acc_KK_cos, h_rej_KK_cos);
-
-  cout << "hist bin size = " << h_gen_q_qcos->GetNbinsX() << endl;
-  cout << "p_vec size = " << p_vec.size() << endl;
-  for ( auto ipvec : p_vec ){
-    cout << ipvec << " ";
-  }
-  cout << endl;
 
   for (unsigned i = 0; i < p_vec.size() / 2; i++)
   {
@@ -221,7 +212,7 @@ void pq_method_adrian()
   TCanvas *c0 = new TCanvas("c0","c0",800,800);
   gPad->SetGrid(1,1);
 
-  Normalize(h_gen_q_qcos);
+  Normalize(h_reco_K_scos);
   Normalize(h_reco_K_pq_cos);
   Normalize(h_reco_K_qcos);
 
@@ -229,12 +220,12 @@ void pq_method_adrian()
   h_reco_K_pq_cos->SetTitle(";K^{+}K^{-} cos#theta;a.u.");
   h_reco_K_pq_cos->Draw("h");
   h_reco_K_qcos->Draw("hsame");
-  h_gen_q_qcos->Draw("hsame");
+  h_reco_K_scos->Draw("hsame");
 
   TLegend *leg = new TLegend(0.15,0.76,0.65,0.85);
   leg->SetLineColor(0);
-  // leg->AddEntry(h_gen_q_qcos,"Generated","l");
-  leg->AddEntry(h_gen_q_qcos,"Reconstructed K^{+}K^{-} matched with s-quark angle","l");
+  // leg->AddEntry(h_reco_K_scos,"Generated","l");
+  leg->AddEntry(h_reco_K_scos,"Reconstructed K^{+}K^{-} matched with s-quark angle","l");
   leg->AddEntry(h_reco_K_qcos,"Reconstructed K^{+}K^{-}","l");
   leg->AddEntry(h_reco_K_pq_cos,"Reconstructed K^{+}K^{-} (corrected)","l");
   leg->Draw();
