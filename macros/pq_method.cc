@@ -36,6 +36,18 @@ void StyleHist(TH1F *h, Color_t col)
   h->SetFillColor(col);
 }
 
+void StylePad(TPad *pad, Float_t t, Float_t b, Float_t r, Float_t l)
+{
+  pad->SetGrid(1,1);
+  if(t) pad->SetTopMargin(t);
+  if(b) pad->SetBottomMargin(b);
+  if(r) pad->SetRightMargin(r);
+  if(l) pad->SetLeftMargin(l);
+  pad->Draw();
+  pad->cd();
+
+}
+
 vector<Float_t> GetP( TH1F * h_accepted, TH1F * h_rejected )
 {
   const Int_t nbins = h_accepted->GetNbinsX();
@@ -177,7 +189,7 @@ void pq_method()
   gStyle->SetOptStat(0);
 
   TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ss.LPFOp10_pNaN.tpc0.hists.all.root","READ");
-  // TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ss.hists.root","READ");
+  // TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ss.LPFOp20_p60.tpc0.hists.all.root","READ");
 
   if (!file->IsOpen()) return;
 
@@ -214,7 +226,8 @@ void pq_method()
   StyleHist(h_reco_K_pq_cos,kBlue);
 
   TCanvas *c0 = new TCanvas("c0","c0",800,800);
-  gPad->SetGrid(1,1);
+  TPad *pad0 = new TPad("pad0", "pad0",0,0,1,1);
+  StylePad(pad0,0,0.12,0,0.15);
 
   Normalize(h_gen_q_qcos);
   Normalize(h_reco_K_scos);
@@ -228,7 +241,7 @@ void pq_method()
   h_reco_K_scos->Draw("hsame");
   h_gen_q_qcos->Draw("hsame");
 
-  TLegend *leg = new TLegend(0.15,0.76,0.65,0.85);
+  TLegend *leg = new TLegend(0.2,0.76,0.7,0.85);
   leg->SetLineColor(0);
   leg->AddEntry(h_gen_q_qcos,"Generated s-quark angle","l");
   leg->AddEntry(h_reco_K_scos,"Reconstructed K^{+}K^{-} matched with s-quark angle","l");
@@ -237,7 +250,9 @@ void pq_method()
   leg->Draw();
 
   TCanvas *c1 = new TCanvas("c1","c1",800,800);
-  gPad->SetGrid(1,1);
+  TPad *pad1 = new TPad("pad1", "pad1",0,0,1,1);
+  StylePad(pad1,0,0.12,0,0.15);
+  
   StyleHist(p_KK,kGreen+2);
   p_KK->SetTitle(";cos#theta_{K^{#pm}};p value");
   p_KK->GetYaxis()->SetRangeUser(0,1);
