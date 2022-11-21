@@ -82,6 +82,12 @@ class HistManager
       gen_pi_dEdx_p,
       gen_p_dEdx_p,
 
+      gen_K_KdEdx_dist_cos,
+      gen_pi_KdEdx_dist_cos,
+      gen_p_KdEdx_dist_cos,
+
+      reco_K_KdEdx_dist_cos,
+
       dummy4,
       LastH4 = dummy4
     };
