@@ -265,6 +265,7 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
     _data.vpfo_piddedx_k_dedxdist[i]  = ipfo.pfo_piddedx_k_dedxdist;
     _data.vpfo_piddedx_pi_dedxdist[i] = ipfo.pfo_piddedx_pi_dedxdist;
     _data.vpfo_piddedx_p_dedxdist[i]  = ipfo.pfo_piddedx_p_dedxdist;
+    */
     // cheat
     switch ( abs(ipfo.pfo_pdgcheat) ) {
       case 321:
