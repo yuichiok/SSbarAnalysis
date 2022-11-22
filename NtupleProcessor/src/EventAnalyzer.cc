@@ -433,20 +433,22 @@ Int_t *EventAnalyzer::Gen_Reco_Stats_Stable( PFOTools mct, PFOTools pfot, Float_
   Float_t p_min = _anCfg.PFO_p_min;
 
   std::vector<PFO_Info> PFO_K_Collection;
+  std::vector<PFO_Info> Gen_K_Collection;
   for ( auto iPFO : PFO_Collection ){
     Bool_t cos_range = (cos_min < iPFO.cos && iPFO.cos < cos_max );
     Bool_t p_range   = p_min < iPFO.p_mag;
-    if( PFOTools::isKaon(iPFO) && cos_range && p_range ) PFO_K_Collection.push_back(iPFO);
+    if( PFOTools::isKaon(iPFO) && cos_range && p_range )   PFO_K_Collection.push_back(iPFO);
+    if( abs(iPFO.pfo_pdgcheat) == 321 && cos_range && p_range ) Gen_K_Collection.push_back(iPFO);
   }
 
-  std::vector<MC_Info> Gen_K_Collection;
-  for ( int istable=0; istable < _mc.mc_stable_n; istable++ ){
-    Bool_t cos_range = ( cos_min < mct.mc_stable[istable].cos && mct.mc_stable[istable].cos < cos_max );
-    Bool_t p_range   = p_min < mct.mc_stable[istable].p_mag;
-    if(abs(_mc.mc_stable_pdg[istable]) == 321 && cos_range && p_range) {
-      Gen_K_Collection.push_back( mct.mc_stable[istable] );
-    }
-  }
+  // std::vector<MC_Info> Gen_K_Collection;
+  // for ( int istable=0; istable < _mc.mc_stable_n; istable++ ){
+  //   Bool_t cos_range = ( cos_min < mct.mc_stable[istable].cos && mct.mc_stable[istable].cos < cos_max );
+  //   Bool_t p_range   = p_min < mct.mc_stable[istable].p_mag;
+  //   if(abs(_mc.mc_stable_pdg[istable]) == 321 && cos_range && p_range) {
+  //     Gen_K_Collection.push_back( mct.mc_stable[istable] );
+  //   }
+  // }
 
   Int_t N_K_corr  = 0;
 
