@@ -23,7 +23,8 @@ void NKaons()
   gStyle->SetOptStat(0);
   gStyle->SetPadBorderSize(1);
 
-  TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ss.hists.p5.root","READ");
+  // TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ss.hists.p5.root","READ");
+  TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ss.LPFOp10_pNaN.tpc0.hists.all.root","READ");
 
   TTree *t_data = (TTree*) file->Get("data");
 
@@ -111,7 +112,7 @@ void NKaons()
   TCanvas *c2 = new TCanvas("c2","c2",800,800);
 
   h_gen_N_K_cos->SetTitle(";cos#theta;N Kaons (a.u.)");
-  h_gen_N_K_cos->GetYaxis()->SetRangeUser(1E3,2E5);
+  // h_gen_N_K_cos->GetYaxis()->SetRangeUser(1E3,2E5);
   h_gen_N_K_cos->Draw("h");
   h_reco_N_K_cos->Draw("hsame");
   h_N_K_corr_cos->Draw("hsame");
