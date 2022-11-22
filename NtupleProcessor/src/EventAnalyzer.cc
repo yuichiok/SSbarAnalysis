@@ -256,6 +256,7 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
   {
     PFO_Info ipfo = PFO_Collection.at(i);
 
+    /*
     _data.vpfo_E[i] = ipfo.pfo_E;
     _data.vpfo_p[i] = ipfo.p_mag;
     _data.vpfo_cos[i] = ipfo.cos;
@@ -268,17 +269,21 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
     switch ( abs(ipfo.pfo_pdgcheat) ) {
       case 321:
         _hm.h2_dEdx[_hm.gen_K_dEdx_p]->Fill(ipfo.p_mag,ipfo.pfo_dedx);
+        _hm.h2_dEdx[_hm.gen_K_KdEdx_dist_cos]->Fill(ipfo.cos,ipfo.pfo_piddedx_k_dedxdist);
         break;
       case 211:
         _hm.h2_dEdx[_hm.gen_pi_dEdx_p]->Fill(ipfo.p_mag,ipfo.pfo_dedx);
+        _hm.h2_dEdx[_hm.gen_pi_KdEdx_dist_cos]->Fill(ipfo.cos,ipfo.pfo_piddedx_k_dedxdist);
         break;
       case 2212:
         _hm.h2_dEdx[_hm.gen_p_dEdx_p]->Fill(ipfo.p_mag,ipfo.pfo_dedx);
+        _hm.h2_dEdx[_hm.gen_p_KdEdx_dist_cos]->Fill(ipfo.cos,ipfo.pfo_piddedx_k_dedxdist);
         break;
     }
 
     if ( pfot.isKaon(ipfo) ) {
       _hm.h1[_hm.reco_K_cos]->Fill(ipfo.cos);
+      _hm.h2_dEdx[_hm.reco_K_KdEdx_dist_cos]->Fill(ipfo.cos,ipfo.pfo_piddedx_k_dedxdist);
     }
 
   }
