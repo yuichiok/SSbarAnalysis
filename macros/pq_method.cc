@@ -11,6 +11,18 @@ Int_t   nbins_cos = sizeof(bins_cos_fine) / sizeof(Float_t) - 1;
 Float_t bins_cos_fine_half[] = {0.0,0.10,0.20,0.30,0.40,0.50,0.60,0.70,0.75,0.80,0.82,0.84,0.86,0.88,0.90,0.92,0.94,0.96,0.98,1.0};
 Int_t   nbins_cos_half = sizeof(bins_cos_fine_half) / sizeof(Float_t) - 1;
 
+void BinNormal(TH1F *h)
+{
+  const Int_t nbins = h->GetNbinsX();
+  for (int ibin=1; ibin<=nbins; ibin++){
+    Float_t binc = h->GetBinContent(ibin);
+    Float_t binw = h->GetBinWidth(ibin);
+    Float_t bin_normal = binc / binw;
+    h->SetBinContent(ibin,bin_normal);
+  }
+
+}
+
 void Normalize(TH1F *h)
 {
   // h->Scale( 1.0 / h->GetEntries() );
@@ -188,7 +200,7 @@ void pq_method()
 {
   gStyle->SetOptStat(0);
 
-  TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ss.LPFOp10_pNaN.tpc0.hists.all.root","READ");
+  TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ss.LPFOp10_pNaN.hists.all.root","READ");
   // TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ss.LPFOp20_p60.tpc0.hists.all.root","READ");
 
   if (!file->IsOpen()) return;
@@ -229,12 +241,17 @@ void pq_method()
   TPad *pad0 = new TPad("pad0", "pad0",0,0,1,1);
   StylePad(pad0,0,0.12,0,0.15);
 
+  BinNormal(h_gen_q_qcos);
+  BinNormal(h_reco_K_scos);
+  BinNormal(h_reco_K_pq_cos);
+  BinNormal(h_reco_K_qcos);
+
   Normalize(h_gen_q_qcos);
   Normalize(h_reco_K_scos);
   Normalize(h_reco_K_pq_cos);
   Normalize(h_reco_K_qcos);
 
-  h_reco_K_pq_cos->GetYaxis()->SetRangeUser(0,0.16);
+  h_reco_K_pq_cos->GetYaxis()->SetRangeUser(0,0.17);
   h_reco_K_pq_cos->SetTitle(";K^{+}K^{-} cos#theta;a.u.");
   h_reco_K_pq_cos->Draw("h");
   h_reco_K_qcos->Draw("hsame");
