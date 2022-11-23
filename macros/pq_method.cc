@@ -200,7 +200,7 @@ void pq_method()
 {
   gStyle->SetOptStat(0);
 
-  TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ss.LPFOp10_pNaN.hists.all.root","READ");
+  TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ss.LPFOp15_pNaN.tpc0.hists.all.root","READ");
   // TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ss.LPFOp20_p60.tpc0.hists.all.root","READ");
 
   if (!file->IsOpen()) return;
@@ -279,6 +279,10 @@ void pq_method()
   TGaxis::SetMaxDigits(3);
   gPad->SetGrid(1,1);
   h_acc_KK_cos->SetTitle(";K^{+}K^{-} cos#theta;Entries");
+
+  BinNormal(h_acc_KK_cos);
+  BinNormal(h_rej_KK_cos);
+
   h_acc_KK_cos->Draw("h");
   h_rej_KK_cos->Draw("hsame");
 
