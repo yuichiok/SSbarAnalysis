@@ -97,14 +97,6 @@ void dEdx_dist_cos_proj(TH2F *hK,TH2F *hpi,TH2F *hp)
   TCanvas *c2 = new TCanvas("c2","c2",2400,600);
   c2->Divide(nslices,1);
   TPad *pad2s[nslices];
-  // TPad *pad2 = new TPad("pad2", "pad2",0,0,1,1);
-  // StylePad(pad2,0,0.15,0,0.17);
-  // pad2->SetLogy();
-
-  // TH1F * hK_proj_F  = (TH1F*) hK->ProjectionY("hK_proj_F",1,2);
-  // TH1F * hpi_proj_F = (TH1F*) hpi->ProjectionY("hpi_proj_F",1,2);
-  // TH1F * hp_proj_F  = (TH1F*) hp->ProjectionY("hp_proj_F",1,2);
-
 
   TH1F * hK_proj[nslices]; 
   TH1F * hpi_proj[nslices];
@@ -113,7 +105,6 @@ void dEdx_dist_cos_proj(TH2F *hK,TH2F *hpi,TH2F *hp)
   for ( int islice=0; islice < nslices; islice++ ){
 
     c2->cd(islice+1);
-    // pad2s[islice] = (TPad*) c2->FindObject(TString::Format("pad_%d",islice).Data());
     StylePad(gPad,0,0.15,0,0.17);
     // gPad->SetLogy();
 
