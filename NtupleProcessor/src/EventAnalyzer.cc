@@ -441,15 +441,6 @@ Int_t *EventAnalyzer::Gen_Reco_Stats_Stable( PFOTools mct, PFOTools pfot, Float_
     if( abs(iPFO.pfo_pdgcheat) == 321 && cos_range && p_range ) Gen_K_Collection.push_back(iPFO);
   }
 
-  // std::vector<MC_Info> Gen_K_Collection;
-  // for ( int istable=0; istable < _mc.mc_stable_n; istable++ ){
-  //   Bool_t cos_range = ( cos_min < mct.mc_stable[istable].cos && mct.mc_stable[istable].cos < cos_max );
-  //   Bool_t p_range   = p_min < mct.mc_stable[istable].p_mag;
-  //   if(abs(_mc.mc_stable_pdg[istable]) == 321 && cos_range && p_range) {
-  //     Gen_K_Collection.push_back( mct.mc_stable[istable] );
-  //   }
-  // }
-
   Int_t N_K_corr  = 0;
 
   // Float_t cos_r = 0.02;
@@ -593,7 +584,6 @@ void EventAnalyzer::Mom_Polar_Gen(PFOTools mct, PFOTools pfot)
   // Gen K
   for ( int istable=0; istable < _mc.mc_stable_n; istable++ ){
 
-    // if(abs(_mc.mc_stable_pdg[istable]) == 321) cout << "genK E: " << _mc.mc_stable_E[istable] << ", p: " << mct.mc_stable[istable].p_mag << ", px: " << _mc.mc_stable_px[istable] << ", py: " << _mc.mc_stable_py[istable] << endl;
     if(abs(_mc.mc_stable_pdg[istable]) == 321 && 20 < mct.mc_stable[istable].p_mag) {
       cnt_gen_K++;
       _hm.h2[_hm.gen_K_p_cos]->Fill(mct.mc_stable[istable].cos,mct.mc_stable[istable].p_mag);
@@ -606,23 +596,11 @@ void EventAnalyzer::Mom_Polar_Gen(PFOTools mct, PFOTools pfot)
     Float_t pfo_p_mag = (Float_t) vt.v3().R();
     Float_t pfo_cos   = std::cos(vt.v3().Theta());
 
-    // if(abs(_pfo.pfo_pdgcheat[ipfo]) == 321) {
-    //   cout << "recoK E: " << _pfo.pfo_E[ipfo] << ", p: " << pfo_p_mag << ", px: " << _pfo.pfo_px[ipfo] << ", py: " << _pfo.pfo_py[ipfo] << ", pz: " << _pfo.pfo_pz[ipfo] << ", charge: " << _pfo.pfo_charge[ipfo] << ", ntracks: " << _pfo.pfo_ntracks[ipfo] << ", cheatID: " << _pfo.pfo_pdgcheat_id[ipfo] - 3346305 << "\n";
-    //   if(_pfo.pfo_nparents) {
-    //     cout << "         ";
-    //     for (auto iparent :  _pfo.pfo_pdgcheat_parent[ipfo]) {
-    //       if(iparent != -1000) cout << iparent << " ";
-    //     }
-    //     cout << endl;
-    //   }
-    // }
     if(abs(_pfo.pfo_pdgcheat[ipfo]) == 321 && 20 < pfo_p_mag) {
       cnt_reco_K++;
       _hm.h2[_hm.reco_K_p_cos]->Fill(pfo_cos,pfo_p_mag);
     }
   }
-
-  // if( cnt_gen_K != cnt_reco_K ) cout << "genK: " << cnt_gen_K << ", recoK: " << cnt_reco_K << endl;
 
 }
 
