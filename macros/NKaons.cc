@@ -10,6 +10,19 @@ void Normalize_Integral(TH1F *h)
   h->Scale( 1.0 / h->Integral(1,100) );
 }
 
+void BinNormalize(TH1F *h)
+{
+  Int_t nbins = h->GetNbinsX();
+
+  for ( int ibin=1; ibin <= nbins; ibin++ ){
+    Float_t binc = h->GetBinContent(ibin);
+    Float_t binw = h->GetBinWidth(ibin);
+    Float_t bin_div = binc / binw;
+    h->SetBinContent(ibin,bin_div);
+  }
+
+}
+
 void StyleHist(TH1F *h, Color_t col)
 {
   h->SetLineWidth(3);
@@ -23,7 +36,8 @@ void NKaons()
   gStyle->SetOptStat(0);
   gStyle->SetPadBorderSize(1);
 
-  TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ss.hists.p5.root","READ");
+  // TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ss.hists.p5.root","READ");
+  TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ss.LPFOp10_pNaN.tpc0.hists.all.root","READ");
 
   TTree *t_data = (TTree*) file->Get("data");
 
@@ -41,6 +55,10 @@ void NKaons()
   t_data->Draw("N_K_Gen >> h_N_K_Gen");
   t_data->Draw("N_K_PFO >> h_N_K_PFO");
   t_data->Draw("N_K_PFO >> h_N_K_PFO_KK","dEdx_pdg_match == 1");
+
+  BinNormalize(h_N_K_Gen);
+  BinNormalize(h_N_K_PFO);
+  BinNormalize(h_N_K_PFO_KK);
 
   Normalize(h_N_K_Gen);
   Normalize(h_N_K_PFO);
@@ -93,6 +111,10 @@ void NKaons()
 
 
   TCanvas *c1 = new TCanvas("c1","c1",800,800);
+
+  // BinNormalize(h_stable_cos);
+  // BinNormalize(h_purity_cos);
+
   h_stable_cos->SetTitle(";cos#theta;Ratio");
   h_stable_cos->GetYaxis()->SetRangeUser(0,1);
   h_stable_cos->Draw("h");
@@ -110,10 +132,14 @@ void NKaons()
 
   TCanvas *c2 = new TCanvas("c2","c2",800,800);
 
-  h_gen_N_K_cos->SetTitle(";cos#theta;N Kaons (a.u.)");
-  h_gen_N_K_cos->GetYaxis()->SetRangeUser(1E3,2E5);
-  h_gen_N_K_cos->Draw("h");
-  h_reco_N_K_cos->Draw("hsame");
+  BinNormalize(h_gen_N_K_cos);
+  BinNormalize(h_reco_N_K_cos);
+  BinNormalize(h_N_K_corr_cos);
+
+  h_reco_N_K_cos->SetTitle(";cos#theta;N Kaons (a.u.)");
+  // h_gen_N_K_cos->GetYaxis()->SetRangeUser(1E3,2E5);
+  h_reco_N_K_cos->Draw("h");
+  h_gen_N_K_cos->Draw("hsame");
   h_N_K_corr_cos->Draw("hsame");
 
   TLegend *leg2 = new TLegend(0.3,0.75,0.6,0.85);

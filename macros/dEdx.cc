@@ -12,6 +12,13 @@ void StylePad(TPad *pad, Float_t t, Float_t b, Float_t r, Float_t l)
 
 }
 
+void StyleHist(TH2F *h2, Color_t c)
+{
+  h2->SetMarkerColor(c);
+  h2->SetLineColor(c);
+  h2->SetFillColor(c);
+}
+
 double BetheBloch(const double *x, const double *pars){
   double mass=pars[5];
   double bg=x[0]/mass;
@@ -21,31 +28,19 @@ double BetheBloch(const double *x, const double *pars){
   return 1.350e-1*(0.5*pars[0]*TMath::Log(pars[1]*TMath::Power(bg,2.0)*tmax)-pars[3]*b*b-pars[4]*bg/2.0)/(b*b);
 }
 
-void dEdx()
+void dEdx_p(TFile *file)
 {
-  gStyle->SetOptStat(0);
-
-  TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ss.LPFOp10_pNaN.tpc0.cos08.hists.all.root","READ");
-
   TCanvas *c0 = new TCanvas("c0","c0",800,800);
   TPad *pad0 = new TPad("pad0", "pad0",0,0,1,1);
   StylePad(pad0,0,0.15,0,0.17);
 
-  TH1F *h2_gen_K_dEdx_p  = (TH1F*) file->Get("dEdx/h2_gen_K_dEdx_p");
-  TH1F *h2_gen_pi_dEdx_p = (TH1F*) file->Get("dEdx/h2_gen_pi_dEdx_p");
-  TH1F *h2_gen_p_dEdx_p  = (TH1F*) file->Get("dEdx/h2_gen_p_dEdx_p");
+  TH2F *h2_gen_K_dEdx_p  = (TH2F*) file->Get("dEdx/h2_gen_K_dEdx_p");
+  TH2F *h2_gen_pi_dEdx_p = (TH2F*) file->Get("dEdx/h2_gen_pi_dEdx_p");
+  TH2F *h2_gen_p_dEdx_p  = (TH2F*) file->Get("dEdx/h2_gen_p_dEdx_p");
 
-  h2_gen_K_dEdx_p->SetMarkerColor(kRed);
-  h2_gen_pi_dEdx_p->SetMarkerColor(kBlue);
-  h2_gen_p_dEdx_p->SetMarkerColor(kGreen);
-
-  h2_gen_K_dEdx_p->SetLineColor(kRed);
-  h2_gen_pi_dEdx_p->SetLineColor(kBlue);
-  h2_gen_p_dEdx_p->SetLineColor(kGreen);
-
-  h2_gen_K_dEdx_p->SetFillColor(kRed);
-  h2_gen_pi_dEdx_p->SetFillColor(kBlue);
-  h2_gen_p_dEdx_p->SetFillColor(kGreen);
+  StyleHist(h2_gen_K_dEdx_p,kRed);
+  StyleHist(h2_gen_pi_dEdx_p,kBlue);
+  StyleHist(h2_gen_p_dEdx_p,kGreen);
 
   pad0->SetLogx();
   h2_gen_K_dEdx_p->SetTitle(";Track momentum [GeV];#frac{dE}{dx}[MeV]");
@@ -75,5 +70,45 @@ void dEdx()
   leg->AddEntry(h2_gen_p_dEdx_p,"p","l");
   leg->AddEntry(func,"K Bethe-Bloch formula","l");
   leg->Draw();
+}
+
+void dEdx_dist_cos(TFile *file)
+{
+  TCanvas *c1 = new TCanvas("c1","c1",800,800);
+  TPad *pad1 = new TPad("pad1", "pad1",0,0,1,1);
+  StylePad(pad1,0,0.15,0,0.17);
+
+  TH2F *h2_gen_K_KdEdx_dist_cos  = (TH2F*) file->Get("dEdx/h2_gen_K_KdEdx_dist_cos");
+  TH2F *h2_gen_pi_KdEdx_dist_cos = (TH2F*) file->Get("dEdx/h2_gen_pi_KdEdx_dist_cos");
+  TH2F *h2_gen_p_KdEdx_dist_cos  = (TH2F*) file->Get("dEdx/h2_gen_p_KdEdx_dist_cos");
+
+  StyleHist(h2_gen_K_KdEdx_dist_cos,kRed);
+  StyleHist(h2_gen_pi_KdEdx_dist_cos,kBlue);
+  StyleHist(h2_gen_p_KdEdx_dist_cos,kGreen);
+
+  h2_gen_pi_KdEdx_dist_cos->SetTitle(";cos#theta;dE/dx distance");
+  h2_gen_pi_KdEdx_dist_cos->GetXaxis()->SetTitleOffset(1.5);
+  h2_gen_pi_KdEdx_dist_cos->Draw("");
+  h2_gen_p_KdEdx_dist_cos->Draw("same");
+  h2_gen_K_KdEdx_dist_cos->Draw("same");
+
+  TLegend *leg = new TLegend(0.5,0.76,0.75,0.85);
+  leg->SetLineColor(0);
+  leg->AddEntry(h2_gen_K_KdEdx_dist_cos,"K^{#pm}","l");
+  leg->AddEntry(h2_gen_pi_KdEdx_dist_cos,"#pi^{#pm}","l");
+  leg->AddEntry(h2_gen_p_KdEdx_dist_cos,"p","l");
+  leg->Draw();
+}
+
+void dEdx()
+{
+  gStyle->SetOptStat(0);
+
+  TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ss.LPFOp15_pNaN.tpc0.hists.all.root","READ");
+
+  dEdx_p(file);
+  dEdx_dist_cos(file);
+
+
 
 }
