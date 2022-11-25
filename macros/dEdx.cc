@@ -1,6 +1,7 @@
 #include <iostream>
 
-void StylePad(TPad *pad, Float_t t, Float_t b, Float_t r, Float_t l)
+template <class P1>
+void StylePad(P1 *pad, Float_t t, Float_t b, Float_t r, Float_t l)
 {
   pad->SetGrid(1,1);
   if(t) pad->SetTopMargin(t);
@@ -12,11 +13,28 @@ void StylePad(TPad *pad, Float_t t, Float_t b, Float_t r, Float_t l)
 
 }
 
-void StyleHist(TH2F *h2, Color_t c)
+template <class T1>
+void StyleHist1D(T1 *h, Color_t c)
 {
-  h2->SetMarkerColor(c);
-  h2->SetLineColor(c);
-  h2->SetFillColor(c);
+  h->SetLineWidth(3);
+  h->SetFillStyle(3002);
+  h->SetMarkerColor(c);
+  h->SetLineColor(c);
+  h->SetFillColor(c);
+}
+
+template <class T2>
+void StyleHist2D(T2 *h, Color_t c)
+{
+  h->SetMarkerColor(c);
+  h->SetLineColor(c);
+  h->SetFillColor(c);
+}
+
+void Normalize(TH1F *h)
+{
+	double integral = h->Integral(1,h->GetNbinsX());
+  h->Scale( 1 / integral );
 }
 
 double BetheBloch(const double *x, const double *pars){
@@ -38,9 +56,9 @@ void dEdx_p(TFile *file)
   TH2F *h2_gen_pi_dEdx_p = (TH2F*) file->Get("dEdx/h2_gen_pi_dEdx_p");
   TH2F *h2_gen_p_dEdx_p  = (TH2F*) file->Get("dEdx/h2_gen_p_dEdx_p");
 
-  StyleHist(h2_gen_K_dEdx_p,kRed);
-  StyleHist(h2_gen_pi_dEdx_p,kBlue);
-  StyleHist(h2_gen_p_dEdx_p,kGreen);
+  StyleHist2D(h2_gen_K_dEdx_p,kRed);
+  StyleHist2D(h2_gen_pi_dEdx_p,kBlue);
+  StyleHist2D(h2_gen_p_dEdx_p,kGreen);
 
   pad0->SetLogx();
   h2_gen_K_dEdx_p->SetTitle(";Track momentum [GeV];#frac{dE}{dx}[MeV]");
@@ -72,6 +90,64 @@ void dEdx_p(TFile *file)
   leg->Draw();
 }
 
+void dEdx_dist_cos_proj(TH2F *hK,TH2F *hpi,TH2F *hp)
+{
+  Int_t nslices = 3;
+
+  TCanvas *c2 = new TCanvas("c2","c2",2400,600);
+  c2->Divide(nslices,1);
+  TPad *pad2s[nslices];
+  // TPad *pad2 = new TPad("pad2", "pad2",0,0,1,1);
+  // StylePad(pad2,0,0.15,0,0.17);
+  // pad2->SetLogy();
+
+  // TH1F * hK_proj_F  = (TH1F*) hK->ProjectionY("hK_proj_F",1,2);
+  // TH1F * hpi_proj_F = (TH1F*) hpi->ProjectionY("hpi_proj_F",1,2);
+  // TH1F * hp_proj_F  = (TH1F*) hp->ProjectionY("hp_proj_F",1,2);
+
+
+  TH1F * hK_proj[nslices]; 
+  TH1F * hpi_proj[nslices];
+  TH1F * hp_proj[nslices]; 
+
+  for ( int islice=0; islice < nslices; islice++ ){
+
+    c2->cd(islice+1);
+    // pad2s[islice] = (TPad*) c2->FindObject(TString::Format("pad_%d",islice).Data());
+    StylePad(gPad,0,0.15,0,0.17);
+    // gPad->SetLogy();
+
+    Int_t binL = islice * 25 + 1;
+    Int_t binH = binL + 1;
+
+    hK_proj[islice]  = (TH1F*) hK->ProjectionY(TString::Format("hK_proj_%d",islice).Data(),binL,binH);
+    hpi_proj[islice] = (TH1F*) hpi->ProjectionY(TString::Format("hpi_proj_%d",islice).Data(),binL,binH);
+    hp_proj[islice]  = (TH1F*) hp->ProjectionY(TString::Format("hp_proj_%d",islice).Data(),binL,binH);
+
+    Normalize(hK_proj[islice]);
+    Normalize(hpi_proj[islice]);
+    Normalize(hp_proj[islice]);
+
+    StyleHist1D(hK_proj[islice],kRed);
+    StyleHist1D(hpi_proj[islice],kBlue);
+    StyleHist1D(hp_proj[islice],kGreen);
+
+    Float_t binL_low  = hK->GetXaxis()->GetBinLowEdge(binL);
+    Float_t binH_high = hK->GetXaxis()->GetBinLowEdge(binH+1);
+
+    hpi_proj[islice]->SetTitle(TString::Format("Slice %.2f < cos#theta < %.2f;dE/dx distance [MeV];a.u.",binL_low,binH_high).Data());
+    hpi_proj[islice]->GetYaxis()->SetRangeUser(0,0.5);
+    hpi_proj[islice]->Draw("h");
+    hK_proj[islice]->Draw("hsame");
+    hp_proj[islice]->Draw("hsame");
+
+  }
+
+
+
+
+}
+
 void dEdx_dist_cos(TFile *file)
 {
   TCanvas *c1 = new TCanvas("c1","c1",800,800);
@@ -82,9 +158,9 @@ void dEdx_dist_cos(TFile *file)
   TH2F *h2_gen_pi_KdEdx_dist_cos = (TH2F*) file->Get("dEdx/h2_gen_pi_KdEdx_dist_cos");
   TH2F *h2_gen_p_KdEdx_dist_cos  = (TH2F*) file->Get("dEdx/h2_gen_p_KdEdx_dist_cos");
 
-  StyleHist(h2_gen_K_KdEdx_dist_cos,kRed);
-  StyleHist(h2_gen_pi_KdEdx_dist_cos,kBlue);
-  StyleHist(h2_gen_p_KdEdx_dist_cos,kGreen);
+  StyleHist2D(h2_gen_K_KdEdx_dist_cos,kRed);
+  StyleHist2D(h2_gen_pi_KdEdx_dist_cos,kBlue);
+  StyleHist2D(h2_gen_p_KdEdx_dist_cos,kGreen);
 
   h2_gen_pi_KdEdx_dist_cos->SetTitle(";cos#theta;dE/dx distance");
   h2_gen_pi_KdEdx_dist_cos->GetXaxis()->SetTitleOffset(1.5);
@@ -98,7 +174,11 @@ void dEdx_dist_cos(TFile *file)
   leg->AddEntry(h2_gen_pi_KdEdx_dist_cos,"#pi^{#pm}","l");
   leg->AddEntry(h2_gen_p_KdEdx_dist_cos,"p","l");
   leg->Draw();
+
+  dEdx_dist_cos_proj(h2_gen_K_KdEdx_dist_cos,h2_gen_pi_KdEdx_dist_cos,h2_gen_p_KdEdx_dist_cos);
+
 }
+
 
 void dEdx()
 {
@@ -108,7 +188,5 @@ void dEdx()
 
   dEdx_p(file);
   dEdx_dist_cos(file);
-
-
 
 }
