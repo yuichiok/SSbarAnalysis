@@ -21,10 +21,10 @@ class PFOTools
   public:
     PFOTools();
     PFOTools( MC_QQbar *ptr, TString fnac );
-    PFOTools( PFO_QQbar *ptr, TString fnac );
+    PFOTools( MC_QQbar *ptr_mc, PFO_QQbar *ptr, TString fnac );
     virtual ~PFOTools() {};
     virtual void InitializeMCTools( MC_QQbar *ptr );
-    virtual void InitializePFOTools( PFO_QQbar *ptr );
+    virtual void InitializePFOTools( MC_QQbar *ptr_mc, PFO_QQbar *ptr );
 
     enum   ChargeConfig { kSame, kOpposite };
 

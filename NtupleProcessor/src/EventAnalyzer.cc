@@ -112,7 +112,7 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
 {
   // MC, PFO Analysis
     PFOTools mct( &_mc, _config );
-    PFOTools pfot( &_pfo, _config );
+    PFOTools pfot( &_mc, &_pfo, _config );
 
     // cout << "evt: " << entry << endl;
     AnalyzeGenReco(mct,pfot);
@@ -614,10 +614,20 @@ void EventAnalyzer::PolarAngle(PFOTools pfot, PFOTools mct, Bool_t s_reco)
       _hm.h1[_hm.reco_K_qcos]->Fill( iLPFO.qcos );
       // _hm.h1[_hm.reco_K_scos]->Fill( abs(iLPFO.cos) * sgn( iLPFO.pfo_charge * _mc.mc_quark_charge[0] ) * mct.mc_quark[0].cos / abs(mct.mc_quark[0].cos) );
     
-      if ( iLPFO.pfo_charge < 0 ) {
-        _hm.h1[_hm.reco_K_scos]->Fill( abs(iLPFO.cos) * mct.mc_quark[0].cos / abs(mct.mc_quark[0].cos) );
+      if ( _mc.mc_quark_charge[0] < 0) {
+        cout << "NO" << endl;
+        if ( iLPFO.pfo_charge < 0 ) {
+          _hm.h1[_hm.reco_K_scos]->Fill( abs(iLPFO.cos) * mct.mc_quark[0].cos / abs(mct.mc_quark[0].cos) );
+        }else{
+          _hm.h1[_hm.reco_K_scos]->Fill( abs(iLPFO.cos) * -mct.mc_quark[1].cos / abs(mct.mc_quark[1].cos) );
+        }
       }else{
-        _hm.h1[_hm.reco_K_scos]->Fill( abs(iLPFO.cos) * -mct.mc_quark[1].cos / abs(mct.mc_quark[1].cos) );
+        cout << "YES " << iLPFO.pfo_charge << " " << abs(iLPFO.cos) * mct.mc_quark[0].cos / abs(mct.mc_quark[0].cos) << endl;
+        if ( iLPFO.pfo_charge > 0 ) {
+          _hm.h1[_hm.reco_K_scos]->Fill( abs(iLPFO.cos) * mct.mc_quark[0].cos / abs(mct.mc_quark[0].cos) );
+        }else{
+          _hm.h1[_hm.reco_K_scos]->Fill( abs(iLPFO.cos) * -mct.mc_quark[1].cos / abs(mct.mc_quark[1].cos) );
+        }
       }
     
     }

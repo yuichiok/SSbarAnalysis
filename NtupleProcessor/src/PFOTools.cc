@@ -31,11 +31,11 @@ PFOTools::PFOTools( MC_QQbar *ptr, TString fnac )
     InitializeMCTools( mc_data );
 }
 
-PFOTools::PFOTools( PFO_QQbar *ptr, TString fnac )
-: data(ptr)
+PFOTools::PFOTools( MC_QQbar *ptr_mc, PFO_QQbar *ptr, TString fnac )
+: mc_data(ptr_mc), data(ptr)
 {
     _anCfg.SetConfig(fnac);
-    InitializePFOTools( data );
+    InitializePFOTools( mc_data, data );
 }
 
 void PFOTools::InitializeMCTools( MC_QQbar *mc_data )
@@ -58,7 +58,7 @@ void PFOTools::InitializeMCTools( MC_QQbar *mc_data )
 }
 
 
-void PFOTools::InitializePFOTools( PFO_QQbar *data )
+void PFOTools::InitializePFOTools( MC_QQbar *mc_data, PFO_QQbar *data )
 {
 
   for (int ipfo=0; ipfo < data->pfo_n; ipfo++)
@@ -165,7 +165,12 @@ void PFOTools::InitializePFOTools( PFO_QQbar *data )
 
     PFO.dEdx_dist_pdg = Get_dEdx_dist_PID( PFO.pfo_piddedx_k_dedxdist, PFO.pfo_piddedx_pi_dedxdist, PFO.pfo_piddedx_p_dedxdist );
     PFO.cos           = std::cos(PFO.vt.v3().Theta());
-    PFO.qcos          = (PFO.pfo_charge < 0) ? PFO.cos : -PFO.cos;
+
+    if ( mc_data->mc_quark_charge[0] < 0 ){
+      PFO.qcos = (PFO.pfo_charge < 0) ? PFO.cos : -PFO.cos;
+    }else{
+      PFO.qcos = (PFO.pfo_charge > 0) ? PFO.cos : -PFO.cos;
+    }
 
     PFO_jet[ijet].push_back(PFO);
     
