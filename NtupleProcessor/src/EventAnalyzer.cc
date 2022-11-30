@@ -148,7 +148,7 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
   // Base Selection (mom, tpc_hit, offset)
     Bool_t LPFO_double_quality    = true;
     for ( auto iLPFO : pfot.KLPFO ){
-      if( !pfot.PFO_Quality_checks(iLPFO) ){
+      if( !pfot.LPFO_Quality_checks(iLPFO) ){
         LPFO_double_quality = false;
         break;
       }
@@ -615,14 +615,14 @@ void EventAnalyzer::PolarAngle(PFOTools pfot, PFOTools mct, Bool_t s_reco)
       // _hm.h1[_hm.reco_K_scos]->Fill( abs(iLPFO.cos) * sgn( iLPFO.pfo_charge * _mc.mc_quark_charge[0] ) * mct.mc_quark[0].cos / abs(mct.mc_quark[0].cos) );
     
       if ( _mc.mc_quark_charge[0] < 0) {
-        cout << "NO" << endl;
+        // cout << "NO" << endl;
         if ( iLPFO.pfo_charge < 0 ) {
           _hm.h1[_hm.reco_K_scos]->Fill( abs(iLPFO.cos) * mct.mc_quark[0].cos / abs(mct.mc_quark[0].cos) );
         }else{
           _hm.h1[_hm.reco_K_scos]->Fill( abs(iLPFO.cos) * -mct.mc_quark[1].cos / abs(mct.mc_quark[1].cos) );
         }
       }else{
-        cout << "YES " << iLPFO.pfo_charge << " " << abs(iLPFO.cos) * mct.mc_quark[0].cos / abs(mct.mc_quark[0].cos) << endl;
+        // cout << "YES " << iLPFO.pfo_charge << " " << abs(iLPFO.cos) * mct.mc_quark[0].cos / abs(mct.mc_quark[0].cos) << endl;
         if ( iLPFO.pfo_charge > 0 ) {
           _hm.h1[_hm.reco_K_scos]->Fill( abs(iLPFO.cos) * mct.mc_quark[0].cos / abs(mct.mc_quark[0].cos) );
         }else{
