@@ -2,7 +2,7 @@
 data
 build
 rootfiles
-etc/
+etc/*.ini
 !etc/SSbarAnalysisConfig_example.ini
 
 *.log
