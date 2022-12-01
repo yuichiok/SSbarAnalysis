@@ -97,10 +97,6 @@ void NKaons()
   StyleHist(h_reco_N_K_cos,kRed+2);
   StyleHist(h_N_K_corr_cos,kBlue+2);
   
-  h_gen_N_K_cos->Sumw2();
-  h_reco_N_K_cos->Sumw2();
-  h_N_K_corr_cos->Sumw2();
-
   TH1F *h_stable_cos = (TH1F*) h_N_K_corr_cos->Clone();
   h_stable_cos->Divide(h_gen_N_K_cos);
   StyleHist(h_stable_cos,kBlack);
