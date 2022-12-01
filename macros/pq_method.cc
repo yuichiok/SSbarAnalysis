@@ -196,7 +196,32 @@ TH1F * CorrectHist( TH1F * h_reco, vector<Float_t> p_vec)
 
 }
 
-void pq_method()
+TH1F * Efficiency_Correction( TH1F * h, TFile * file )
+{
+  TH1F *h_gen_N_K_cos  = (TH1F*) file->Get("h_gen_N_K_cos");
+  TH1F *h_reco_N_K_cos = (TH1F*) file->Get("h_reco_N_K_cos");
+  TH1F *h_N_K_corr_cos = (TH1F*) file->Get("h_N_K_corr_cos");
+
+  TH1F *h_stable_cos = (TH1F*) h_N_K_corr_cos->Clone();
+  h_stable_cos->Divide(h_gen_N_K_cos);
+
+  if( h->GetNbinsX() != h_stable_cos->GetNbinsX() ) throw std::logic_error("Error");
+
+  Int_t nbins = h_stable_cos->GetNbinsX();
+  TH1F *corrected = (TH1F*) h->Clone();
+  for (int ibin = 1; ibin < nbins + 1; ibin++){
+
+    Float_t binc_h   = h->GetBinContent(ibin);
+    Float_t binc_eff = h_stable_cos->GetBinContent(ibin);
+    corrected->SetBinContent(binc_h / binc_eff, ibin);
+
+  }
+
+  return corrected;
+
+}
+
+void main_pq()
 {
   gStyle->SetOptStat(0);
 
@@ -206,28 +231,39 @@ void pq_method()
 
   if (!file->IsOpen()) return;
 
+  // reco and gen polar
   TH1F *h_gen_q_qcos  = (TH1F*) file->Get("h_gen_q_qcos");
-  TH1F *h_reco_K_scos  = (TH1F*) file->Get("h_reco_K_scos");
+  TH1F *h_reco_K_scos = (TH1F*) file->Get("h_reco_K_scos");
   TH1F *h_reco_K_qcos = (TH1F*) file->Get("h_reco_K_qcos");
+
+  // efficiency correction
+  TH1F *h_reco_K_scos_eff_corr = Efficiency_Correction(h_reco_K_scos,file);
+  TH1F *h_reco_K_qcos_eff_corr = Efficiency_Correction(h_reco_K_qcos,file);
+
+  // used for pq correction
   TH1F *h_acc_KK_cos  = (TH1F*) file->Get("pq/h_acc_KK_cos");
   TH1F *h_rej_KK_cos  = (TH1F*) file->Get("pq/h_rej_KK_cos");
+
+  TH1F *h_acc_KK_cos_eff_corr = Efficiency_Correction(h_acc_KK_cos,file);
+  TH1F *h_rej_KK_cos_eff_corr = Efficiency_Correction(h_rej_KK_cos,file);
+
 
   StyleHist(h_gen_q_qcos,kGreen+1);
   h_gen_q_qcos->SetFillStyle(0);
   h_gen_q_qcos->SetLineStyle(2);
 
-  StyleHist(h_reco_K_scos,kBlack);
-  h_reco_K_scos->SetFillStyle(0);
-  StyleHist(h_reco_K_qcos,kRed+2);
-  StyleHist(h_acc_KK_cos,kRed+2);
-  StyleHist(h_rej_KK_cos,kBlue+2);
+  StyleHist(h_reco_K_scos_eff_corr,kBlack);
+  h_reco_K_scos_eff_corr->SetFillStyle(0);
+  StyleHist(h_reco_K_qcos_eff_corr,kRed+2);
+  StyleHist(h_acc_KK_cos_eff_corr,kRed+2);
+  StyleHist(h_rej_KK_cos_eff_corr,kBlue+2);
 
-  const Int_t nbins = h_reco_K_scos->GetNbinsX();
+  const Int_t nbins = h_reco_K_scos_eff_corr->GetNbinsX();
 
   TH1F *p_KK = new TH1F("p_KK", "p_KK", nbins_cos_half,bins_cos_fine_half);
   p_KK->Sumw2();
 
-  vector<Float_t> p_vec = GetP(h_acc_KK_cos, h_rej_KK_cos);
+  vector<Float_t> p_vec = GetP(h_acc_KK_cos_eff_corr, h_rej_KK_cos_eff_corr);
 
   for (unsigned i = 0; i < p_vec.size() / 2; i++)
   {
@@ -235,7 +271,7 @@ void pq_method()
     p_KK->SetBinError(nbins / 2 - i, p_vec.at(i + nbins / 2));
   }
 
-  TH1F *h_reco_K_pq_cos = CorrectHist(h_reco_K_qcos, p_vec);
+  TH1F *h_reco_K_pq_cos = CorrectHist(h_reco_K_qcos_eff_corr, p_vec);
   StyleHist(h_reco_K_pq_cos,kBlue);
 
   TCanvas *c0 = new TCanvas("c0","c0",800,800);
@@ -243,27 +279,27 @@ void pq_method()
   StylePad(pad0,0,0.12,0,0.15);
 
   BinNormal(h_gen_q_qcos);
-  BinNormal(h_reco_K_scos);
+  BinNormal(h_reco_K_scos_eff_corr);
   BinNormal(h_reco_K_pq_cos);
-  BinNormal(h_reco_K_qcos);
+  BinNormal(h_reco_K_qcos_eff_corr);
 
   Normalize(h_gen_q_qcos);
-  Normalize(h_reco_K_scos);
+  Normalize(h_reco_K_scos_eff_corr);
   Normalize(h_reco_K_pq_cos);
-  Normalize(h_reco_K_qcos);
+  Normalize(h_reco_K_qcos_eff_corr);
 
   h_reco_K_pq_cos->GetYaxis()->SetRangeUser(0,0.17);
   h_reco_K_pq_cos->SetTitle(";K^{+}K^{-} cos#theta;a.u.");
   h_reco_K_pq_cos->Draw("h");
-  h_reco_K_qcos->Draw("hsame");
-  h_reco_K_scos->Draw("hsame");
+  h_reco_K_qcos_eff_corr->Draw("hsame");
+  h_reco_K_scos_eff_corr->Draw("hsame");
   h_gen_q_qcos->Draw("hsame");
 
   TLegend *leg = new TLegend(0.2,0.76,0.7,0.85);
   leg->SetLineColor(0);
   leg->AddEntry(h_gen_q_qcos,"Generated s-quark angle","l");
-  leg->AddEntry(h_reco_K_scos,"Reconstructed K^{+}K^{-} matched with s-quark angle","l");
-  leg->AddEntry(h_reco_K_qcos,"Reconstructed K^{+}K^{-}","l");
+  leg->AddEntry(h_reco_K_scos_eff_corr,"Reconstructed K^{+}K^{-} matched with s-quark angle","l");
+  leg->AddEntry(h_reco_K_qcos_eff_corr,"Reconstructed K^{+}K^{-}","l");
   leg->AddEntry(h_reco_K_pq_cos,"Reconstructed K^{+}K^{-} (corrected)","l");
   leg->Draw();
 
@@ -279,18 +315,31 @@ void pq_method()
   TCanvas *c2 = new TCanvas("c2","c2",800,800);
   TGaxis::SetMaxDigits(3);
   gPad->SetGrid(1,1);
-  h_acc_KK_cos->SetTitle(";K^{+}K^{-} cos#theta;Entries");
+  h_acc_KK_cos_eff_corr->SetTitle(";K^{+}K^{-} cos#theta;Entries");
 
-  BinNormal(h_acc_KK_cos);
-  BinNormal(h_rej_KK_cos);
+  BinNormal(h_acc_KK_cos_eff_corr);
+  BinNormal(h_rej_KK_cos_eff_corr);
 
-  h_acc_KK_cos->Draw("h");
-  h_rej_KK_cos->Draw("hsame");
+  h_acc_KK_cos_eff_corr->Draw("h");
+  h_rej_KK_cos_eff_corr->Draw("hsame");
 
   TLegend *leg2 = new TLegend(0.15,0.75,0.45,0.85);
   leg2->SetLineColor(0);
-  leg2->AddEntry(h_acc_KK_cos,"N Accepted","l");
-  leg2->AddEntry(h_rej_KK_cos,"N Rejected","l");
+  leg2->AddEntry(h_acc_KK_cos_eff_corr,"N Accepted","l");
+  leg2->AddEntry(h_rej_KK_cos_eff_corr,"N Rejected","l");
   leg2->Draw();
+
+}
+
+void pq_method()
+{
+  try
+  {
+    main_pq();
+  }
+  catch(const std::exception& e)
+  {
+    std::cerr << e.what() << '\n';
+  }
 
 }
