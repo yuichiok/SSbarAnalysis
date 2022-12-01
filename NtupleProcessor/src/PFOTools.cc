@@ -173,11 +173,12 @@ void PFOTools::InitializePFOTools( MC_QQbar *mc_data, PFO_QQbar *data )
     PFO.dEdx_dist_pdg = Get_dEdx_dist_PID( PFO.pfo_piddedx_k_dedxdist, PFO.pfo_piddedx_pi_dedxdist, PFO.pfo_piddedx_p_dedxdist );
     PFO.cos           = std::cos(PFO.vt.v3().Theta());
 
-    if ( mc_data->mc_quark_charge[0] < 0 ){
-      PFO.qcos = (PFO.pfo_charge < 0) ? PFO.cos : -PFO.cos;
-    }else{
-      PFO.qcos = (PFO.pfo_charge > 0) ? PFO.cos : -PFO.cos;
-    }
+    PFO.qcos = (PFO.pfo_charge < 0) ? PFO.cos : -PFO.cos;
+    // if ( mc_data->mc_quark_charge[0] < 0 ){
+    //   PFO.qcos = (PFO.pfo_charge < 0) ? PFO.cos : -PFO.cos;
+    // }else{
+    //   PFO.qcos = (PFO.pfo_charge > 0) ? PFO.cos : -PFO.cos;
+    // }
 
     PFO_jet[ijet].push_back(PFO);
     
