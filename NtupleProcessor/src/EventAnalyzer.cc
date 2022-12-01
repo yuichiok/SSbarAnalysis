@@ -613,12 +613,13 @@ void EventAnalyzer::PolarAngle(PFOTools pfot, PFOTools mct, Bool_t s_reco)
       _hm.h1[_hm.reco_K_cos]->Fill( iLPFO.cos );
       _hm.h1[_hm.reco_K_qcos]->Fill( iLPFO.qcos );
       // _hm.h1[_hm.reco_K_scos]->Fill( abs(iLPFO.cos) * sgn( iLPFO.pfo_charge * _mc.mc_quark_charge[0] ) * mct.mc_quark[0].cos / abs(mct.mc_quark[0].cos) );
+      _hm.h1[_hm.reco_K_scos]->Fill( abs(iLPFO.cos) * sgn( -_mc.mc_quark_charge[0] ) * mct.mc_quark[0].cos / abs(mct.mc_quark[0].cos) );
 
-      if ( iLPFO.pfo_charge < 0 ) {
-        _hm.h1[_hm.reco_K_scos]->Fill( abs(iLPFO.cos) * mct.mc_quark[0].cos / abs(mct.mc_quark[0].cos) );
-      }else{
-        _hm.h1[_hm.reco_K_scos]->Fill( abs(iLPFO.cos) * -mct.mc_quark[1].cos / abs(mct.mc_quark[1].cos) );
-      }
+      // if ( iLPFO.pfo_charge < 0 ) {
+      //   _hm.h1[_hm.reco_K_scos]->Fill( abs(iLPFO.cos) * mct.mc_quark[0].cos / abs(mct.mc_quark[0].cos) );
+      // }else{
+      //   _hm.h1[_hm.reco_K_scos]->Fill( abs(iLPFO.cos) * -mct.mc_quark[1].cos / abs(mct.mc_quark[1].cos) );
+      // }
 
       /*
       if ( _mc.mc_quark_charge[0] < 0) {
