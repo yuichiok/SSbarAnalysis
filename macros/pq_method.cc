@@ -196,7 +196,7 @@ TH1F * CorrectHist( TH1F * h_reco, vector<Float_t> p_vec)
 
 }
 
-TH1F * Efficiency_Correction( TH1F * h, TFile * file )
+TH1F * Efficiency_Correction( TH1F * h, TString name, TFile * file )
 {
   TH1F *h_gen_N_K_cos  = (TH1F*) file->Get("h_gen_N_K_cos");
   TH1F *h_reco_N_K_cos = (TH1F*) file->Get("h_reco_N_K_cos");
@@ -208,12 +208,14 @@ TH1F * Efficiency_Correction( TH1F * h, TFile * file )
   if( h->GetNbinsX() != h_stable_cos->GetNbinsX() ) throw std::logic_error("Error");
 
   Int_t nbins = h_stable_cos->GetNbinsX();
-  TH1F *corrected = (TH1F*) h->Clone();
+  TH1F *corrected = new TH1F(name.Data(), "corrected", nbins_cos,bins_cos_fine);
+  corrected->Sumw2();
   for (int ibin = 1; ibin < nbins + 1; ibin++){
 
     Float_t binc_h   = h->GetBinContent(ibin);
     Float_t binc_eff = h_stable_cos->GetBinContent(ibin);
-    corrected->SetBinContent(binc_h / binc_eff, ibin);
+
+    corrected->SetBinContent(ibin,binc_h / binc_eff);
 
   }
 
@@ -225,8 +227,8 @@ void main_pq()
 {
   gStyle->SetOptStat(0);
 
-  // TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.uu.LPFOp15_pNaN.tpc0.hists.all.root","READ");
   TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ss.LPFOp15_pNaN.tpc0.hists.all.root","READ");
+  // TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.uu.LPFOp15_pNaN.tpc0.hists.all.root","READ");
   // TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ss.LPFOp20_p60.tpc0.hists.all.root","READ");
 
   if (!file->IsOpen()) return;
@@ -237,15 +239,15 @@ void main_pq()
   TH1F *h_reco_K_qcos = (TH1F*) file->Get("h_reco_K_qcos");
 
   // efficiency correction
-  TH1F *h_reco_K_scos_eff_corr = Efficiency_Correction(h_reco_K_scos,file);
-  TH1F *h_reco_K_qcos_eff_corr = Efficiency_Correction(h_reco_K_qcos,file);
+  TH1F *h_reco_K_scos_eff_corr = Efficiency_Correction(h_reco_K_scos,"scos_corr",file);
+  TH1F *h_reco_K_qcos_eff_corr = Efficiency_Correction(h_reco_K_qcos,"qcos_corr",file);
 
   // used for pq correction
   TH1F *h_acc_KK_cos  = (TH1F*) file->Get("pq/h_acc_KK_cos");
   TH1F *h_rej_KK_cos  = (TH1F*) file->Get("pq/h_rej_KK_cos");
 
-  TH1F *h_acc_KK_cos_eff_corr = Efficiency_Correction(h_acc_KK_cos,file);
-  TH1F *h_rej_KK_cos_eff_corr = Efficiency_Correction(h_rej_KK_cos,file);
+  TH1F *h_acc_KK_cos_eff_corr = Efficiency_Correction(h_acc_KK_cos,"acc_corr",file);
+  TH1F *h_rej_KK_cos_eff_corr = Efficiency_Correction(h_rej_KK_cos,"rej_corr",file);
 
 
   StyleHist(h_gen_q_qcos,kGreen+1);
