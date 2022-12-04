@@ -112,7 +112,7 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
 {
   // MC, PFO Analysis
     PFOTools mct( &_mc, _config );
-    PFOTools pfot( &_pfo, _config );
+    PFOTools pfot( &_mc, &_pfo, _config );
 
     // cout << "evt: " << entry << endl;
     AnalyzeGenReco(mct,pfot);
@@ -148,7 +148,7 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
   // Base Selection (mom, tpc_hit, offset)
     Bool_t LPFO_double_quality    = true;
     for ( auto iLPFO : pfot.KLPFO ){
-      if( !pfot.PFO_Quality_checks(iLPFO) ){
+      if( !pfot.LPFO_Quality_checks(iLPFO) ){
         LPFO_double_quality = false;
         break;
       }
@@ -433,19 +433,12 @@ Int_t *EventAnalyzer::Gen_Reco_Stats_Stable( PFOTools mct, PFOTools pfot, Float_
   Float_t p_min = _anCfg.PFO_p_min;
 
   std::vector<PFO_Info> PFO_K_Collection;
+  std::vector<PFO_Info> Gen_K_Collection;
   for ( auto iPFO : PFO_Collection ){
     Bool_t cos_range = (cos_min < iPFO.cos && iPFO.cos < cos_max );
     Bool_t p_range   = p_min < iPFO.p_mag;
-    if( PFOTools::isKaon(iPFO) && cos_range && p_range ) PFO_K_Collection.push_back(iPFO);
-  }
-
-  std::vector<MC_Info> Gen_K_Collection;
-  for ( int istable=0; istable < _mc.mc_stable_n; istable++ ){
-    Bool_t cos_range = ( cos_min < mct.mc_stable[istable].cos && mct.mc_stable[istable].cos < cos_max );
-    Bool_t p_range   = p_min < mct.mc_stable[istable].p_mag;
-    if(abs(_mc.mc_stable_pdg[istable]) == 321 && cos_range && p_range) {
-      Gen_K_Collection.push_back( mct.mc_stable[istable] );
-    }
+    if( PFOTools::isKaon(iPFO) && cos_range && p_range )   PFO_K_Collection.push_back(iPFO);
+    if( abs(iPFO.pfo_pdgcheat) == 321 && cos_range && p_range ) Gen_K_Collection.push_back(iPFO);
   }
 
   Int_t N_K_corr  = 0;
@@ -591,7 +584,6 @@ void EventAnalyzer::Mom_Polar_Gen(PFOTools mct, PFOTools pfot)
   // Gen K
   for ( int istable=0; istable < _mc.mc_stable_n; istable++ ){
 
-    // if(abs(_mc.mc_stable_pdg[istable]) == 321) cout << "genK E: " << _mc.mc_stable_E[istable] << ", p: " << mct.mc_stable[istable].p_mag << ", px: " << _mc.mc_stable_px[istable] << ", py: " << _mc.mc_stable_py[istable] << endl;
     if(abs(_mc.mc_stable_pdg[istable]) == 321 && 20 < mct.mc_stable[istable].p_mag) {
       cnt_gen_K++;
       _hm.h2[_hm.gen_K_p_cos]->Fill(mct.mc_stable[istable].cos,mct.mc_stable[istable].p_mag);
@@ -604,23 +596,11 @@ void EventAnalyzer::Mom_Polar_Gen(PFOTools mct, PFOTools pfot)
     Float_t pfo_p_mag = (Float_t) vt.v3().R();
     Float_t pfo_cos   = std::cos(vt.v3().Theta());
 
-    // if(abs(_pfo.pfo_pdgcheat[ipfo]) == 321) {
-    //   cout << "recoK E: " << _pfo.pfo_E[ipfo] << ", p: " << pfo_p_mag << ", px: " << _pfo.pfo_px[ipfo] << ", py: " << _pfo.pfo_py[ipfo] << ", pz: " << _pfo.pfo_pz[ipfo] << ", charge: " << _pfo.pfo_charge[ipfo] << ", ntracks: " << _pfo.pfo_ntracks[ipfo] << ", cheatID: " << _pfo.pfo_pdgcheat_id[ipfo] - 3346305 << "\n";
-    //   if(_pfo.pfo_nparents) {
-    //     cout << "         ";
-    //     for (auto iparent :  _pfo.pfo_pdgcheat_parent[ipfo]) {
-    //       if(iparent != -1000) cout << iparent << " ";
-    //     }
-    //     cout << endl;
-    //   }
-    // }
     if(abs(_pfo.pfo_pdgcheat[ipfo]) == 321 && 20 < pfo_p_mag) {
       cnt_reco_K++;
       _hm.h2[_hm.reco_K_p_cos]->Fill(pfo_cos,pfo_p_mag);
     }
   }
-
-  // if( cnt_gen_K != cnt_reco_K ) cout << "genK: " << cnt_gen_K << ", recoK: " << cnt_reco_K << endl;
 
 }
 
@@ -633,12 +613,31 @@ void EventAnalyzer::PolarAngle(PFOTools pfot, PFOTools mct, Bool_t s_reco)
       _hm.h1[_hm.reco_K_cos]->Fill( iLPFO.cos );
       _hm.h1[_hm.reco_K_qcos]->Fill( iLPFO.qcos );
       // _hm.h1[_hm.reco_K_scos]->Fill( abs(iLPFO.cos) * sgn( iLPFO.pfo_charge * _mc.mc_quark_charge[0] ) * mct.mc_quark[0].cos / abs(mct.mc_quark[0].cos) );
-    
-      if ( iLPFO.pfo_charge < 0 ) {
-        _hm.h1[_hm.reco_K_scos]->Fill( abs(iLPFO.cos) * mct.mc_quark[0].cos / abs(mct.mc_quark[0].cos) );
+      _hm.h1[_hm.reco_K_scos]->Fill( abs(iLPFO.cos) * sgn( -_mc.mc_quark_charge[0] ) * mct.mc_quark[0].cos / abs(mct.mc_quark[0].cos) );
+
+      // if ( iLPFO.pfo_charge < 0 ) {
+      //   _hm.h1[_hm.reco_K_scos]->Fill( abs(iLPFO.cos) * mct.mc_quark[0].cos / abs(mct.mc_quark[0].cos) );
+      // }else{
+      //   _hm.h1[_hm.reco_K_scos]->Fill( abs(iLPFO.cos) * -mct.mc_quark[1].cos / abs(mct.mc_quark[1].cos) );
+      // }
+
+      /*
+      if ( _mc.mc_quark_charge[0] < 0) {
+        cout << "NO" << endl;
+        if ( iLPFO.pfo_charge < 0 ) {
+          _hm.h1[_hm.reco_K_scos]->Fill( abs(iLPFO.cos) * mct.mc_quark[0].cos / abs(mct.mc_quark[0].cos) );
+        }else{
+          _hm.h1[_hm.reco_K_scos]->Fill( abs(iLPFO.cos) * -mct.mc_quark[1].cos / abs(mct.mc_quark[1].cos) );
+        }
       }else{
-        _hm.h1[_hm.reco_K_scos]->Fill( abs(iLPFO.cos) * -mct.mc_quark[1].cos / abs(mct.mc_quark[1].cos) );
+        cout << "YES " << iLPFO.pfo_charge << " " << abs(iLPFO.cos) * mct.mc_quark[0].cos / abs(mct.mc_quark[0].cos) << endl;
+        if ( iLPFO.pfo_charge > 0 ) {
+          _hm.h1[_hm.reco_K_scos]->Fill( abs(iLPFO.cos) * mct.mc_quark[0].cos / abs(mct.mc_quark[0].cos) );
+        }else{
+          _hm.h1[_hm.reco_K_scos]->Fill( abs(iLPFO.cos) * -mct.mc_quark[1].cos / abs(mct.mc_quark[1].cos) );
+        }
       }
+      */
     
     }
     

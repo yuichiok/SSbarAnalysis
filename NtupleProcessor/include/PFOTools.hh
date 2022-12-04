@@ -21,10 +21,10 @@ class PFOTools
   public:
     PFOTools();
     PFOTools( MC_QQbar *ptr, TString fnac );
-    PFOTools( PFO_QQbar *ptr, TString fnac );
+    PFOTools( MC_QQbar *ptr_mc, PFO_QQbar *ptr, TString fnac );
     virtual ~PFOTools() {};
     virtual void InitializeMCTools( MC_QQbar *ptr );
-    virtual void InitializePFOTools( PFO_QQbar *ptr );
+    virtual void InitializePFOTools( MC_QQbar *ptr_mc, PFO_QQbar *ptr );
 
     enum   ChargeConfig { kSame, kOpposite };
 
@@ -43,10 +43,11 @@ class PFOTools
   // LPFO checks
     virtual Bool_t           is_charge_config ( ChargeConfig cc );
 
-    virtual Bool_t           PFO_Quality_checks    ( PFO_Info iPFO );
+    virtual Bool_t           LPFO_Quality_checks    ( PFO_Info iPFO );
     virtual Bool_t           is_momentum           ( PFO_Info iPFO, Float_t MINP, Float_t MAXP );
     virtual Bool_t           is_tpc_hits           ( PFO_Info iPFO, Int_t MIN_TPC_HITS );
     virtual Bool_t           is_offset_small       ( PFO_Info iPFO, Int_t MAX_OFFSET );
+    virtual Bool_t           is_dEdxdist_bad       ( Float_t e_dist, Float_t mu_dist, Float_t pi_dist, Float_t k_dist, Float_t p_dist );
 
     AnalysisConfig _anCfg;
 

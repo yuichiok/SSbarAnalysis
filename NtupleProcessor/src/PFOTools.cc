@@ -31,11 +31,11 @@ PFOTools::PFOTools( MC_QQbar *ptr, TString fnac )
     InitializeMCTools( mc_data );
 }
 
-PFOTools::PFOTools( PFO_QQbar *ptr, TString fnac )
-: data(ptr)
+PFOTools::PFOTools( MC_QQbar *ptr_mc, PFO_QQbar *ptr, TString fnac )
+: mc_data(ptr_mc), data(ptr)
 {
     _anCfg.SetConfig(fnac);
-    InitializePFOTools( data );
+    InitializePFOTools( mc_data, data );
 }
 
 void PFOTools::InitializeMCTools( MC_QQbar *mc_data )
@@ -58,7 +58,7 @@ void PFOTools::InitializeMCTools( MC_QQbar *mc_data )
 }
 
 
-void PFOTools::InitializePFOTools( PFO_QQbar *data )
+void PFOTools::InitializePFOTools( MC_QQbar *mc_data, PFO_QQbar *data )
 {
 
   for (int ipfo=0; ipfo < data->pfo_n; ipfo++)
@@ -68,6 +68,13 @@ void PFOTools::InitializePFOTools( PFO_QQbar *data )
 
     // Make suer PFO has only one reconstructed track to avoid (lambda/sigma)
     if (data->pfo_ntracks[ipfo] != 1) continue;
+
+    // if dEdx dist is 0
+    if( is_dEdxdist_bad(data->pfo_piddedx_e_dedxdist[ipfo],
+                        data->pfo_piddedx_mu_dedxdist[ipfo],
+                        data->pfo_piddedx_pi_dedxdist[ipfo],
+                        data->pfo_piddedx_k_dedxdist[ipfo],
+                        data->pfo_piddedx_p_dedxdist[ipfo]) ) continue;
 
     VectorTools vt(data->pfo_px[ipfo], data->pfo_py[ipfo], data->pfo_pz[ipfo], data->pfo_E[ipfo]);
 
@@ -165,7 +172,13 @@ void PFOTools::InitializePFOTools( PFO_QQbar *data )
 
     PFO.dEdx_dist_pdg = Get_dEdx_dist_PID( PFO.pfo_piddedx_k_dedxdist, PFO.pfo_piddedx_pi_dedxdist, PFO.pfo_piddedx_p_dedxdist );
     PFO.cos           = std::cos(PFO.vt.v3().Theta());
-    PFO.qcos          = (PFO.pfo_charge < 0) ? PFO.cos : -PFO.cos;
+
+    PFO.qcos = (PFO.pfo_charge < 0) ? PFO.cos : -PFO.cos;
+    // if ( mc_data->mc_quark_charge[0] < 0 ){
+    //   PFO.qcos = (PFO.pfo_charge < 0) ? PFO.cos : -PFO.cos;
+    // }else{
+    //   PFO.qcos = (PFO.pfo_charge > 0) ? PFO.cos : -PFO.cos;
+    // }
 
     PFO_jet[ijet].push_back(PFO);
     
@@ -292,13 +305,13 @@ Bool_t PFOTools::is_charge_config( ChargeConfig cc )
 
 }
 
-Bool_t PFOTools::PFO_Quality_checks( PFO_Info iPFO )
+Bool_t PFOTools::LPFO_Quality_checks( PFO_Info iPFO )
 {
   vector<Bool_t> CutTrigger;
 
-  CutTrigger.push_back( is_momentum( iPFO, _anCfg.LPFO_p_min, _anCfg.LPFO_p_max ) );     // MIN/MAX momentum check
-  CutTrigger.push_back( is_tpc_hits( iPFO, _anCfg.PFO_TPCHits_max ) );            // Number of TPC hit check
-  CutTrigger.push_back( is_offset_small( iPFO, _anCfg.PFO_offset_max ) );        // Offset distance check
+  CutTrigger.push_back( is_momentum( iPFO, _anCfg.LPFO_p_min, _anCfg.LPFO_p_max ) );  // MIN/MAX momentum check
+  CutTrigger.push_back( is_tpc_hits( iPFO, _anCfg.PFO_TPCHits_max ) );                // Number of TPC hit check
+  CutTrigger.push_back( is_offset_small( iPFO, _anCfg.PFO_offset_max ) );             // Offset distance check
   
   for (auto trigger : CutTrigger ){
     if (!trigger) { return false; }
@@ -321,4 +334,14 @@ Bool_t PFOTools::is_tpc_hits( PFO_Info iPFO, Int_t MIN_TPC_HITS )
 Bool_t PFOTools::is_offset_small( PFO_Info iPFO, Int_t MAX_OFFSET )
 {
   return ( iPFO.pv < MAX_OFFSET );
+}
+
+Bool_t PFOTools::is_dEdxdist_bad( Float_t e_dist, Float_t mu_dist, Float_t pi_dist, Float_t k_dist, Float_t p_dist )
+{
+  if( !e_dist ) return 1;
+  if( !mu_dist ) return 1;
+  if( !pi_dist ) return 1;
+  if( !k_dist ) return 1;
+  if( !p_dist ) return 1;
+  return 0;
 }
