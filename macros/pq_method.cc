@@ -225,8 +225,8 @@ void main_pq()
 {
   gStyle->SetOptStat(0);
 
-  // TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.uu.LPFOp15_pNaN.tpc0.hists.all.root","READ");
-  TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ss.LPFOp15_pNaN.tpc0.hists.all.root","READ");
+  TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.uu.LPFOp15_pNaN.tpc0.hists.all.root","READ");
+  // TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ss.LPFOp15_pNaN.tpc0.hists.all.root","READ");
   // TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ss.LPFOp20_p60.tpc0.hists.all.root","READ");
 
   if (!file->IsOpen()) return;
@@ -288,7 +288,7 @@ void main_pq()
   Normalize(h_reco_K_pq_cos);
   Normalize(h_reco_K_qcos_eff_corr);
 
-  h_reco_K_pq_cos->GetYaxis()->SetRangeUser(0,0.17);
+  h_reco_K_pq_cos->GetYaxis()->SetRangeUser(0,0.2);
   h_reco_K_pq_cos->SetTitle(";K^{+}K^{-} cos#theta;a.u.");
   h_reco_K_pq_cos->Draw("h");
   h_reco_K_qcos_eff_corr->Draw("hsame");
@@ -297,8 +297,8 @@ void main_pq()
 
   TLegend *leg = new TLegend(0.2,0.76,0.7,0.85);
   leg->SetLineColor(0);
-  leg->AddEntry(h_gen_q_qcos,"Generated s-quark angle","l");
-  leg->AddEntry(h_reco_K_scos_eff_corr,"Reconstructed K^{+}K^{-} matched with s-quark angle","l");
+  leg->AddEntry(h_gen_q_qcos,"Generated u-quark angle","l");
+  leg->AddEntry(h_reco_K_scos_eff_corr,"Reconstructed K^{+}K^{-} matched with u-quark angle","l");
   leg->AddEntry(h_reco_K_qcos_eff_corr,"Reconstructed K^{+}K^{-}","l");
   leg->AddEntry(h_reco_K_pq_cos,"Reconstructed K^{+}K^{-} (corrected)","l");
   leg->Draw();
