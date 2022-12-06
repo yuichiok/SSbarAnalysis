@@ -23,11 +23,6 @@ EventAnalyzer.cpp
 using std::cout;   using std::endl;
 typedef unsigned int Index;
 
-// ClassImp(TEvent)
-// ClassImp(MC_QQbar)
-// ClassImp(TreeVariables)
-// ClassImp(LPFO_Info)
-
 template <typename T> int sgn(T val) {
     return (T(0) < val) - (val < T(0));
 }
@@ -337,7 +332,7 @@ Bool_t EventAnalyzer::Select(Selector sel)
 
     switch (sel){
       case kQQ:
-        CutTrigger.push_back( GenPairPicker( _mc.mc_quark_pdg[0], _anCfg.gen_quark ) );
+        CutTrigger.push_back( GenPairPicker( _mc.mc_quark_pdg[0], _anCfg.gen_quarks ) );
         break;
       case kMC:
         CutTrigger.push_back( Cut_ESum( mcvt ) );
@@ -364,27 +359,27 @@ Bool_t EventAnalyzer::Select(Selector sel)
 
 }
 
-Bool_t EventAnalyzer::GenPairPicker ( Float_t mc_particle, Int_t pair )
+Bool_t EventAnalyzer::GenPairPicker ( Float_t mc_particle, std::vector<int> input_gen )
 {
-    Float_t abs_mc_particle = fabs(mc_particle);
-
-    Bool_t isGoodPair = (abs_mc_particle == pair) ? true : false;
-
-    return isGoodPair;
+  for ( auto igen : input_gen ){
+    if( fabs(mc_particle) == igen ) return true;
+  }
+  
+  return false;
 }
 
 Bool_t EventAnalyzer::Cut_ESum ( VectorTools v[2] )
 {
   Float_t SumE = v[0].v4().E() + v[1].v4().E();
 
-  return (SumE > 220) ? true : false;
+  return (SumE > 220);
 }
 
 Bool_t EventAnalyzer::Cut_ACol ( VectorTools v[2] )
 {
   Float_t cosacol = std::cos( VectorTools::GetThetaBetween( v[0].v3(), v[1].v3() ) );
 
-  return (cosacol > 0.95) ? true : false;
+  return (cosacol > 0.95);
 }
 
 Bool_t EventAnalyzer::Cut_ISR ( VectorTools v[2] )
@@ -408,10 +403,7 @@ Bool_t EventAnalyzer::Cut_ISR ( VectorTools v[2] )
   //         K[0] = jet_vec[0].v3().R() * sinacol / sqrt(1 - abscos[1] * abscos[1]);
   //         K[1] = jet_vec[1].v3().R() * sinacol / sqrt(1 - abscos[0] * abscos[0]);
 
-  if (Kv < 35 && ssmass > 130)
-    return true;
-
-	return false;
+  return (Kv < 35 && ssmass > 130);
 
 }
 

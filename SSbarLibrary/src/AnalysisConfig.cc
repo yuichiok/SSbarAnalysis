@@ -11,7 +11,9 @@ void AnalysisConfig::SetConfig(TString fnc)
   boost::property_tree::ini_parser::read_ini(fnc.Data(), pt);
 
   // Gen cuts
-    gen_quark  = pt.get<int>("GENERATED.gen_quark");
+    // gen_quark  = pt.get<int>("GENERATED.gen_quark");
+    string input_gen_quarks  = pt.get<string>("GENERATED.gen_quark");
+    getListFromString(input_gen_quarks, gen_quarks);
 
   // PFO cuts
     PFO_TPCHits_max = pt.get<int>("PFO.PFO_TPCHits_max");
@@ -24,3 +26,4 @@ void AnalysisConfig::SetConfig(TString fnc)
     LPFO_p_max = pt.get<float>("LPFO.LPFO_p_max");
 
 }
+

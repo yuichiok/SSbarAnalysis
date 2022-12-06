@@ -45,7 +45,7 @@ class EventAnalyzer
     void             AnalyzeReco( Long64_t entry );
     
     Bool_t           Select( Selector s );          // Evaluates the class' list of event selection criteria
-    Bool_t           GenPairPicker( Float_t mc_particle, Int_t pair );
+    Bool_t           GenPairPicker( Float_t mc_particle, std::vector<int> input_gen );
 
     Bool_t           Cut_ESum( VectorTools v[2] );
     Bool_t           Cut_ACol( VectorTools v[2] );

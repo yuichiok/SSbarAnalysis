@@ -25,7 +25,8 @@ class AnalysisConfig
 
   // Config variables
   // Gen cuts
-    int gen_quark;
+    // int gen_quark;
+    std::vector<int> gen_quarks;
 
   // PFO cuts
     int   PFO_TPCHits_max;
@@ -36,6 +37,23 @@ class AnalysisConfig
   // LPFO cuts
     float LPFO_p_min;
     float LPFO_p_max;
+
+  protected:
+    template <typename T>
+    void getListFromString(std::string& str, std::vector<T>& list)
+    { // Simple function that extracts numbers from a string.
+      // Feeds string into a stringstream and, while there is still something to
+      //   read out, ouputs the entry from the stream into an variable and
+      //   pushes the variable into the output vector.
+        list.clear();
+        std::stringstream strm(str);
+        while(true) {
+            T n;
+            strm >> n;
+            if(!strm) break;
+            list.push_back(n);
+        }
+    }
 
 };
 
