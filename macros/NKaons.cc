@@ -37,13 +37,14 @@ void NKaons()
   gStyle->SetPadBorderSize(1);
 
   // TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ss.hists.p5.root","READ");
-  TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ss.LPFOp15_pNaN.tpc0.hists.all.root","READ");
+  TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.dd.LPFOp15_pNaN.tpc0.hists.all.root","READ");
 
   TTree *t_data = (TTree*) file->Get("data");
 
   Int_t bin  = 30;
   Float_t xmax = 30.0;
 
+/*
   TCanvas *c0 = new TCanvas("c0","c0",800,800);
   TH1F *h_N_K_Gen = new TH1F("h_N_K_Gen",";N_K_Gen;a.u.",bin,0,xmax);
   TH1F *h_N_K_PFO = new TH1F("h_N_K_PFO",";N_K_PFO;a.u.",bin,0,xmax);
@@ -87,7 +88,7 @@ void NKaons()
   gPad->SetGrid(1,1);
   gPad->SetLeftMargin(0.15);
   c0->Draw();
-
+*/
 
   // For differential cosθ
   TH1F *h_gen_N_K_cos  = (TH1F*) file->Get("h_gen_N_K_cos");
