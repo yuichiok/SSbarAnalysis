@@ -275,6 +275,8 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
         _hm.h2_dEdx[_hm.gen_p_dEdx_p]->Fill(ipfo.p_mag,ipfo.pfo_dedx);
         _hm.h2_dEdx[_hm.gen_p_KdEdx_dist_cos]->Fill(ipfo.cos,ipfo.pfo_piddedx_k_dedxdist);
         break;
+      default:
+        break;
     }
 
     if ( pfot.isKaon(ipfo) ) {
