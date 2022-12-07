@@ -245,22 +245,22 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
 
 
   // Fill PFO
+
+  // Initialize counters
+  Int_t n_reco_K  = 0, n_gen_K  = 0;
+  Int_t n_reco_pi = 0, n_gen_pi = 0;
+  Int_t n_reco_p  = 0, n_gen_p  = 0;
+
   std::vector<PFO_Info> PFO_Collection = pfot.Get_Valid_PFOs();
   _data.n_valid_pfo = PFO_Collection.size();
   for ( long unsigned int i=0; i < PFO_Collection.size(); i++ )
   {
     PFO_Info ipfo = PFO_Collection.at(i);
 
-    /*
-    _data.vpfo_E[i] = ipfo.pfo_E;
-    _data.vpfo_p[i] = ipfo.p_mag;
-    _data.vpfo_cos[i] = ipfo.cos;
-    _data.vpfo_dedx[i] = ipfo.pfo_dedx;
-    _data.vpfo_pdgcheat[i] = ipfo.pfo_pdgcheat;
-    _data.vpfo_piddedx_k_dedxdist[i]  = ipfo.pfo_piddedx_k_dedxdist;
-    _data.vpfo_piddedx_pi_dedxdist[i] = ipfo.pfo_piddedx_pi_dedxdist;
-    _data.vpfo_piddedx_p_dedxdist[i]  = ipfo.pfo_piddedx_p_dedxdist;
-    */
+    Count_Particle(ipfo,321,n_gen_K,n_reco_K);
+    Count_Particle(ipfo,211,n_gen_pi,n_reco_pi);
+    Count_Particle(ipfo,2212,n_gen_p,n_reco_p);
+
     // cheat
     switch ( abs(ipfo.pfo_pdgcheat) ) {
       case 321:
@@ -284,6 +284,10 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
 
   }
 
+  // Fill Event by Event hists
+  _hm.h2[_hm.nK_gen_reco]->Fill(n_reco_K,n_gen_K);
+  _hm.h2[_hm.npi_gen_reco]->Fill(n_reco_pi,n_gen_pi);
+  _hm.h2[_hm.np_gen_reco]->Fill(n_reco_p,n_gen_p);
 
   if(_eve.eve_valid_lpfo){
 
@@ -548,6 +552,25 @@ Float_t *EventAnalyzer::Get_Stable_Purity( Int_t *N_Ks )
 
   return SP_array;
 
+}
+
+void EventAnalyzer::Count_Particle( PFO_Info ipfo, Int_t pdg, Int_t &cnt_gen, Int_t &cnt_reco )
+{
+  if ( abs(ipfo.pfo_pdgcheat) == pdg ) cnt_gen++;
+
+  switch ( pdg ){
+    case 321:
+      if ( PFOTools::isKaon(ipfo) ) cnt_reco++;
+      break;
+    case 211:
+      if ( PFOTools::isPion(ipfo) ) cnt_reco++;
+      break;
+    case 2212:
+      if ( PFOTools::isProton(ipfo) ) cnt_reco++;
+      break;
+    default:
+      break;
+  }
 }
 
 void EventAnalyzer::PolarAngleGen(PFOTools mct)

@@ -63,6 +63,11 @@ void HistManager::InitializeHists()
   //////////////////
     h2[gen_K_p_cos]  = new TH2F("h2_gen_K_p_cos" ,";cos#theta;p (GeV)",cos_bin,-1,1,100,0,60);
     h2[reco_K_p_cos] = new TH2F("h2_reco_K_p_cos",";cos#theta;p (GeV)",cos_bin,-1,1,100,0,60);
+
+    h2[nK_gen_reco]  = new TH2F("h2_nK_gen_reco" ,";N Kaons (Reco);N Kaons (Gen)",20,0,20,0,20);
+    h2[npi_gen_reco] = new TH2F("h2_npi_gen_reco",";N Pions (Reco);N Pions (Gen)",20,0,20,0,20);
+    h2[np_gen_reco]  = new TH2F("h2_np_gen_reco",";N Protons (Reco);N Protons (Gen)",20,0,20,0,20);
+    
     h2[stable_cos]   = new TH2F("h2_stable_cos",";cos#theta;Stability",cos_bin,-1,1,50,0,1);
     h2[purity_cos]   = new TH2F("h2_purity_cos",";cos#theta;Purity",   cos_bin,-1,1,50,0,1);
 

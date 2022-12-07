@@ -68,6 +68,10 @@ class HistManager
       gen_K_p_cos,
       reco_K_p_cos,
 
+      nK_gen_reco,
+      npi_gen_reco,
+      np_gen_reco,
+
       stable_cos,
       purity_cos,
 
