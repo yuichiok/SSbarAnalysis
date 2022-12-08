@@ -31,64 +31,18 @@ void StyleHist(TH1F *h, Color_t col)
   h->SetFillColor(col);
 }
 
-void NKaons()
+void Stability_Purity()
 {
   gStyle->SetOptStat(0);
   gStyle->SetPadBorderSize(1);
 
-  // TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ss.hists.p5.root","READ");
-  TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.dd.LPFOp15_pNaN.tpc0.hists.all.root","READ");
+  TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.uu.LPFOp15_pNaN.tpc0.hists.all.root","READ");
+  // TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.dd.LPFOp15_pNaN.tpc0.hists.all.root","READ");
 
   TTree *t_data = (TTree*) file->Get("data");
 
   Int_t bin  = 30;
   Float_t xmax = 30.0;
-
-/*
-  TCanvas *c0 = new TCanvas("c0","c0",800,800);
-  TH1F *h_N_K_Gen = new TH1F("h_N_K_Gen",";N_K_Gen;a.u.",bin,0,xmax);
-  TH1F *h_N_K_PFO = new TH1F("h_N_K_PFO",";N_K_PFO;a.u.",bin,0,xmax);
-  TH1F *h_N_K_PFO_KK = new TH1F("h_N_K_PFO_KK",";N_K_PFO_KK;a.u.",bin,0,xmax);
-  h_N_K_Gen->Sumw2();
-  h_N_K_PFO->Sumw2();
-  h_N_K_PFO_KK->Sumw2();
-
-  t_data->Draw("N_K_Gen >> h_N_K_Gen");
-  t_data->Draw("N_K_PFO >> h_N_K_PFO");
-  t_data->Draw("N_K_PFO >> h_N_K_PFO_KK","dEdx_pdg_match == 1");
-
-  BinNormalize(h_N_K_Gen);
-  BinNormalize(h_N_K_PFO);
-  BinNormalize(h_N_K_PFO_KK);
-
-  Normalize(h_N_K_Gen);
-  Normalize(h_N_K_PFO);
-  Normalize(h_N_K_PFO_KK);
-  
-  StyleHist(h_N_K_Gen,kBlack);
-  StyleHist(h_N_K_PFO,kGreen+2);
-  StyleHist(h_N_K_PFO_KK,kGreen+2);
-  h_N_K_PFO_KK->SetLineStyle(2);
-
-  h_N_K_Gen->SetTitle(";N Kaons;a.u.");
-  h_N_K_Gen->GetXaxis()->SetRangeUser(0,25);
-  h_N_K_Gen->GetYaxis()->SetRangeUser(0,1);
-
-  h_N_K_Gen->Draw("h");
-  h_N_K_PFO->Draw("hsame");
-  // h_N_K_PFO_KK->Draw("hsame");
-
-  TLegend *leg0 = new TLegend(0.6,0.75,0.85,0.85);
-  leg0->SetLineColor(0);
-  leg0->AddEntry(h_N_K_Gen,"Generated","l");
-  leg0->AddEntry(h_N_K_PFO,"Reconstructed","l");
-  // leg0->AddEntry(h_N_K_PFO_KK,"KK Reconstructed Events","l");
-  leg0->Draw();
-
-  gPad->SetGrid(1,1);
-  gPad->SetLeftMargin(0.15);
-  c0->Draw();
-*/
 
   // For differential cosθ
   TH1F *h_gen_N_K_cos  = (TH1F*) file->Get("h_gen_N_K_cos");

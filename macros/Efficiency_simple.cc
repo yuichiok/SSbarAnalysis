@@ -13,7 +13,7 @@ void StyleHist(TH1F *h, Color_t col)
   h->SetFillColor(col);
 }
 
-void Efficiency()
+void Efficiency_simple()
 {
   gStyle->SetOptStat(0);
 
