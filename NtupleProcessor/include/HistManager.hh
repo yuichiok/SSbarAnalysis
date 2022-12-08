@@ -48,19 +48,41 @@ class HistManager
       reco_N_K_cos,
       N_K_corr_cos,
 
-      dummy1,
-      LastH1 = dummy1
+      dummy_h1,
+      Last_h1 = dummy_h1
     };
-    TH1F * h1[LastH1];
+    TH1F * h1[Last_h1];
 
     enum h1_pq_index {
       acc_KK,
       rej_KK,
 
-      dummy2,
-      LastH2 = dummy2
+      dummy_pq,
+      Last_h1_pq = dummy_pq
     };
-    TH1F * h1_pq[LastH2];
+    TH1F * h1_pq[Last_h1_pq];
+
+    enum h1_particle_ratio_index {
+      K_rate_gen,
+      pi_rate_gen,
+      p_rate_gen,
+
+      K_rate_reco,
+      pi_rate_reco,
+      p_rate_reco,
+
+      K_rate_gen_lowcos,
+      pi_rate_gen_lowcos,
+      p_rate_gen_lowcos,
+
+      K_rate_reco_lowcos,
+      pi_rate_reco_lowcos,
+      p_rate_reco_lowcos,
+
+      dummy_particle_ratio,
+      Last_h1_dummy_particle_ratio = dummy_particle_ratio
+    };
+    TH1F * h1_particle_ratio[Last_h1_dummy_particle_ratio];
 
   // h2 hist
     enum h2_index {
@@ -75,10 +97,10 @@ class HistManager
       stable_cos,
       purity_cos,
 
-      dummy3,
-      LastH3 = dummy3
+      dummy_h2,
+      Last_h2 = dummy_h2
     };
-    TH2F * h2[LastH3];
+    TH2F * h2[Last_h2];
 
     enum h2_dEdx_index {
 
@@ -92,16 +114,17 @@ class HistManager
 
       reco_K_KdEdx_dist_cos,
 
-      dummy4,
-      LastH4 = dummy4
+      dummy_dEdx,
+      Last_h2_dEdx = dummy_dEdx
     };
-    TH2F * h2_dEdx[LastH4];
+    TH2F * h2_dEdx[Last_h2_dEdx];
 
   private:
-    TList* hList1      = new TList();
-    TList* hList1_pq   = new TList();
-    TList* hList2      = new TList();
-    TList* hList2_dEdx = new TList();
+    TList* hList1                = new TList();
+    TList* hList1_pq             = new TList();
+    TList* hList1_particle_ratio = new TList();
+    TList* hList2                = new TList();
+    TList* hList2_dEdx           = new TList();
 
 };
 

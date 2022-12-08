@@ -58,6 +58,24 @@ void HistManager::InitializeHists()
     h1_pq[acc_KK]      = new TH1F("h_acc_KK_cos",";Accepted K^{+}K^{-} cos#theta;N_{acc}",nbins_cos,bins_cos_fine);
     h1_pq[rej_KK]      = new TH1F("h_rej_KK_cos",";Rejected K^{+}K^{-} cos#theta;N_{rej}",nbins_cos,bins_cos_fine);
 
+  // particle ratio
+    h1_particle_ratio[K_rate_gen]  = new TH1F("h_K_rate_gen",";Ratio of Kaons / Event (gen);Entries",50,0,1);
+    h1_particle_ratio[pi_rate_gen] = new TH1F("h_pi_rate_gen",";Ratio of Pions / Event (gen);Entries",50,0,1);
+    h1_particle_ratio[p_rate_gen]  = new TH1F("h_p_rate_gen",";Ratio of Protons / Event (gen);Entries",50,0,1);
+
+    h1_particle_ratio[K_rate_reco]  = new TH1F("h_K_rate_reco",";Ratio of Kaons / Event (reco);Entries",50,0,1);
+    h1_particle_ratio[pi_rate_reco] = new TH1F("h_pi_rate_reco",";Ratio of Pions / Event (reco);Entries",50,0,1);
+    h1_particle_ratio[p_rate_reco]  = new TH1F("h_p_rate_reco",";Ratio of Protons / Event (reco);Entries",50,0,1);
+
+    h1_particle_ratio[K_rate_gen_lowcos]  = new TH1F("h_K_rate_gen_lowcos",";Ratio of Kaons in low cos#theta / Event (gen);Entries",50,0,1);
+    h1_particle_ratio[pi_rate_gen_lowcos] = new TH1F("h_pi_rate_gen_lowcos",";Ratio of Pions in low cos#theta / Event (gen);Entries",50,0,1);
+    h1_particle_ratio[p_rate_gen_lowcos]  = new TH1F("h_p_rate_gen_lowcos",";Ratio of Protons in low cos#theta / Event (gen);Entries",50,0,1);
+
+    h1_particle_ratio[K_rate_reco_lowcos]  = new TH1F("h_K_rate_reco_lowcos",";Ratio of Kaons in low cos#theta / Event (reco);Entries",50,0,1);
+    h1_particle_ratio[pi_rate_reco_lowcos] = new TH1F("h_pi_rate_reco_lowcos",";Ratio of Pions in low cos#theta / Event (reco);Entries",50,0,1);
+    h1_particle_ratio[p_rate_reco_lowcos]  = new TH1F("h_p_rate_reco_lowcos",";Ratio of Protons in low cos#theta / Event (reco);Entries",50,0,1);
+
+
   //////////////////
   //     TH2F     //
   //////////////////
@@ -96,6 +114,10 @@ void HistManager::Hist2List()
     hList1_pq->Add(ih);
   }
 
+  for (auto ih : h1_particle_ratio) {
+    hList1_particle_ratio->Add(ih);
+  }
+
   for (auto ih : h2) {
     hList2->Add(ih);
   }
@@ -117,6 +139,11 @@ void HistManager::WriteLists( TFile * output)
   TDirectory * d_pq = output->mkdir("pq");
     d_pq->cd();
     hList1_pq->Write();
+    output->cd();
+
+  TDirectory * d_particle_ratio = output->mkdir("particle_ratio");
+    d_particle_ratio->cd();
+    hList1_particle_ratio->Write();
     output->cd();
 
   TDirectory * d_dEdx = output->mkdir("dEdx");
