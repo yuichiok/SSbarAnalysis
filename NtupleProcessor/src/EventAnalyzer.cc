@@ -250,9 +250,15 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
   Int_t n_reco_particles[3] = {0};
   Int_t n_gen_particles[3]  = {0};
 
-  Int_t n_reco_particles_lowcos[3] = {0};
-  Int_t n_gen_particles_lowcos[3]  = {0};
+  TH1F * h_n_reco_particles[3];
+  for (int i=0; i < 3; i++){
+    h_n_reco_particles[i] = new TH1F(TString::Format("h_n_reco_particles%d",i),TString::Format("h_n_reco_particles%d",i),40,-1,1);
+  }
 
+  TH1F * h_n_gen_particles[3];
+  for (int i=0; i < 3; i++){
+    h_n_gen_particles[i] = new TH1F(TString::Format("h_n_gen_particles%d",i),TString::Format("h_n_gen_particles%d",i),40,-1,1);
+  }
 
   std::vector<PFO_Info> PFO_Collection = pfot.Get_Valid_PFOs();
   _data.n_valid_pfo = PFO_Collection.size();
@@ -260,15 +266,9 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
   {
     PFO_Info ipfo = PFO_Collection.at(i);
 
-    Count_Particle(ipfo,321,n_reco_particles[0],n_gen_particles[0]);
-    Count_Particle(ipfo,211,n_reco_particles[1],n_gen_particles[1]);
-    Count_Particle(ipfo,2212,n_reco_particles[2],n_gen_particles[2]);
-
-    if ( ipfo.cos < -0.5 ) {
-      Count_Particle(ipfo,321,n_reco_particles_lowcos[0],n_gen_particles_lowcos[0]);
-      Count_Particle(ipfo,211,n_reco_particles_lowcos[1],n_gen_particles_lowcos[1]);
-      Count_Particle(ipfo,2212,n_reco_particles_lowcos[2],n_gen_particles_lowcos[2]);
-    }
+    Count_Particle(ipfo,321,h_n_reco_particles[0],h_n_gen_particles[0]);
+    Count_Particle(ipfo,211,h_n_reco_particles[1],h_n_gen_particles[1]);
+    Count_Particle(ipfo,2212,h_n_reco_particles[2],h_n_gen_particles[2]);
 
     // cheat
     switch ( abs(ipfo.pfo_pdgcheat) ) {
@@ -296,12 +296,8 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
   }
 
   // Fill Event by Event hists
-  Float_t * particle_ratios_reco = Particle_Ratios( n_reco_particles );
-  Float_t * particle_ratios_gen  = Particle_Ratios( n_gen_particles );
-
-  Float_t * particle_ratios_reco_lowcos = Particle_Ratios( n_reco_particles_lowcos );
-  Float_t * particle_ratios_gen_lowcos  = Particle_Ratios( n_gen_particles_lowcos );
-
+  Float_t * particle_ratios_reco = Particle_Ratios( h_n_reco_particles, 0 );
+  Float_t * particle_ratios_gen  = Particle_Ratios( h_n_gen_particles, 1 );
 
   _hm.h1_particle_ratio[_hm.K_rate_reco]->Fill(particle_ratios_reco[0]);
   _hm.h1_particle_ratio[_hm.pi_rate_reco]->Fill(particle_ratios_reco[1]);
@@ -311,13 +307,6 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
   _hm.h1_particle_ratio[_hm.pi_rate_gen]->Fill(particle_ratios_gen[1]);
   _hm.h1_particle_ratio[_hm.p_rate_gen]->Fill(particle_ratios_gen[2]);
 
-  _hm.h1_particle_ratio[_hm.K_rate_reco_lowcos]->Fill(particle_ratios_reco_lowcos[0]);
-  _hm.h1_particle_ratio[_hm.pi_rate_reco_lowcos]->Fill(particle_ratios_reco_lowcos[1]);
-  _hm.h1_particle_ratio[_hm.p_rate_reco_lowcos]->Fill(particle_ratios_reco_lowcos[2]);
-
-  _hm.h1_particle_ratio[_hm.K_rate_gen_lowcos]->Fill(particle_ratios_gen_lowcos[0]);
-  _hm.h1_particle_ratio[_hm.pi_rate_gen_lowcos]->Fill(particle_ratios_gen_lowcos[1]);
-  _hm.h1_particle_ratio[_hm.p_rate_gen_lowcos]->Fill(particle_ratios_gen_lowcos[2]);
 
 
   _hm.h2[_hm.nK_gen_reco]->Fill(n_reco_particles[0],n_gen_particles[0]);
@@ -338,6 +327,10 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
   _hTree->Fill();
 
   ClearStructs();
+  for (int i=0; i < 3; i++){
+    delete h_n_reco_particles[i];
+    delete h_n_gen_particles[i];
+  }
 
 }
 
@@ -589,34 +582,77 @@ Float_t *EventAnalyzer::Get_Stable_Purity( Int_t *N_Ks )
 
 }
 
-void EventAnalyzer::Count_Particle( PFO_Info ipfo, Int_t pdg, Int_t &cnt_reco, Int_t &cnt_gen )
+void EventAnalyzer::Count_Particle( PFO_Info ipfo, Int_t pdg, TH1F *h_n_reco, TH1F *h_n_gen )
 {
-  if ( abs(ipfo.pfo_pdgcheat) == pdg ) cnt_gen++;
+  if ( abs(ipfo.pfo_pdgcheat) == pdg ) h_n_gen->Fill(ipfo.qcos);
 
   switch ( pdg ){
     case 321:
-      if ( PFOTools::isKaon(ipfo) ) cnt_reco++;
+      if ( PFOTools::isKaon(ipfo) ) h_n_reco->Fill(ipfo.qcos);
       break;
     case 211:
-      if ( PFOTools::isPion(ipfo) ) cnt_reco++;
+      if ( PFOTools::isPion(ipfo) ) h_n_reco->Fill(ipfo.qcos);
       break;
     case 2212:
-      if ( PFOTools::isProton(ipfo) ) cnt_reco++;
+      if ( PFOTools::isProton(ipfo) ) h_n_reco->Fill(ipfo.qcos);
       break;
     default:
       break;
   }
 }
 
-Float_t *EventAnalyzer::Particle_Ratios( Int_t *N_Particles )
+Float_t *EventAnalyzer::Particle_Ratios( TH1F *h_n_particles[], Int_t mode )
 {
-  static Float_t ratio_arr[3] = {-1,-1,-1};
-  static Float_t ratio_arr0[3] = {-1,-1,-1};
-
+  Int_t N_Particles[3]  = {0};
   Int_t N_sum = 0;
-  for( int i=0; i<3; i++ ){
+  for ( int i=0; i < 3; i++){
+    N_Particles[i] = h_n_particles[i]->GetEntries();
     N_sum += N_Particles[i];
   }
+
+  TH1F *h_sum = (TH1F*) h_n_particles[0]->Clone();
+  h_sum->Add(h_n_particles[1]);
+  h_sum->Add(h_n_particles[2]);
+
+
+  // cos theta ratio
+  for ( int i=0; i < 3; i++){
+    TH1F *h_div = (TH1F*) h_n_particles[i]->Clone();
+    h_div->Divide(h_sum);
+
+    for ( int ibin=1; ibin <= h_div->GetNbinsX(); ibin++ ){
+      Float_t eff = h_div->GetBinContent(ibin);
+      Float_t cos = h_div->GetXaxis()->GetBinCenter(ibin);
+
+      switch (i) {
+        case 0:
+          if(mode==0) _hm.h2_particle_ratio_cos[_hm.K_rate_cos_reco]->Fill(cos,eff);
+          if(mode==1) _hm.h2_particle_ratio_cos[_hm.K_rate_cos_gen]->Fill(cos,eff);
+          break;
+        case 1:
+          if(mode==0) _hm.h2_particle_ratio_cos[_hm.pi_rate_cos_reco]->Fill(cos,eff);
+          if(mode==1) _hm.h2_particle_ratio_cos[_hm.pi_rate_cos_gen]->Fill(cos,eff);
+          break;
+        case 2:
+          if(mode==0) _hm.h2_particle_ratio_cos[_hm.p_rate_cos_reco]->Fill(cos,eff);
+          if(mode==1) _hm.h2_particle_ratio_cos[_hm.p_rate_cos_gen]->Fill(cos,eff);
+          break;
+
+        default:
+          break;
+      }
+
+    }
+
+    delete h_div;
+
+  }
+
+  delete h_sum;
+
+  // overall ratio
+  static Float_t ratio_arr[3]  = {-1,-1,-1};
+  static Float_t ratio_arr0[3] = {-1,-1,-1};
 
   if( N_sum == 0 ) return ratio_arr0;
   for( int i=0; i<3; i++ ){

@@ -59,21 +59,13 @@ void HistManager::InitializeHists()
     h1_pq[rej_KK]      = new TH1F("h_rej_KK_cos",";Rejected K^{+}K^{-} cos#theta;N_{rej}",nbins_cos,bins_cos_fine);
 
   // particle ratio
-    h1_particle_ratio[K_rate_gen]  = new TH1F("h_K_rate_gen",";Ratio of Kaons / Event (gen);Entries",50,0,1);
-    h1_particle_ratio[pi_rate_gen] = new TH1F("h_pi_rate_gen",";Ratio of Pions / Event (gen);Entries",50,0,1);
-    h1_particle_ratio[p_rate_gen]  = new TH1F("h_p_rate_gen",";Ratio of Protons / Event (gen);Entries",50,0,1);
+    h1_particle_ratio[K_rate_gen]  = new TH1F("h_K_rate_gen",";Ratio of Kaons / Event (gen);Entries",11,0,1.1);
+    h1_particle_ratio[pi_rate_gen] = new TH1F("h_pi_rate_gen",";Ratio of Pions / Event (gen);Entries",11,0,1.1);
+    h1_particle_ratio[p_rate_gen]  = new TH1F("h_p_rate_gen",";Ratio of Protons / Event (gen);Entries",11,0,1.1);
 
-    h1_particle_ratio[K_rate_reco]  = new TH1F("h_K_rate_reco",";Ratio of Kaons / Event (reco);Entries",50,0,1);
-    h1_particle_ratio[pi_rate_reco] = new TH1F("h_pi_rate_reco",";Ratio of Pions / Event (reco);Entries",50,0,1);
-    h1_particle_ratio[p_rate_reco]  = new TH1F("h_p_rate_reco",";Ratio of Protons / Event (reco);Entries",50,0,1);
-
-    h1_particle_ratio[K_rate_gen_lowcos]  = new TH1F("h_K_rate_gen_lowcos",";Ratio of Kaons in low cos#theta / Event (gen);Entries",50,0,1);
-    h1_particle_ratio[pi_rate_gen_lowcos] = new TH1F("h_pi_rate_gen_lowcos",";Ratio of Pions in low cos#theta / Event (gen);Entries",50,0,1);
-    h1_particle_ratio[p_rate_gen_lowcos]  = new TH1F("h_p_rate_gen_lowcos",";Ratio of Protons in low cos#theta / Event (gen);Entries",50,0,1);
-
-    h1_particle_ratio[K_rate_reco_lowcos]  = new TH1F("h_K_rate_reco_lowcos",";Ratio of Kaons in low cos#theta / Event (reco);Entries",50,0,1);
-    h1_particle_ratio[pi_rate_reco_lowcos] = new TH1F("h_pi_rate_reco_lowcos",";Ratio of Pions in low cos#theta / Event (reco);Entries",50,0,1);
-    h1_particle_ratio[p_rate_reco_lowcos]  = new TH1F("h_p_rate_reco_lowcos",";Ratio of Protons in low cos#theta / Event (reco);Entries",50,0,1);
+    h1_particle_ratio[K_rate_reco]  = new TH1F("h_K_rate_reco",";Ratio of Kaons / Event (reco);Entries",11,0,1.1);
+    h1_particle_ratio[pi_rate_reco] = new TH1F("h_pi_rate_reco",";Ratio of Pions / Event (reco);Entries",11,0,1.1);
+    h1_particle_ratio[p_rate_reco]  = new TH1F("h_p_rate_reco",";Ratio of Protons / Event (reco);Entries",11,0,1.1);
 
 
   //////////////////
@@ -88,6 +80,15 @@ void HistManager::InitializeHists()
     
     h2[stable_cos]   = new TH2F("h2_stable_cos",";cos#theta;Stability",cos_bin,-1,1,50,0,1);
     h2[purity_cos]   = new TH2F("h2_purity_cos",";cos#theta;Purity",   cos_bin,-1,1,50,0,1);
+
+  // particle ratio
+    h2_particle_ratio_cos[K_rate_cos_gen]   = new TH2F("h2_K_rate_cos_gen",";qcos#theta;Ratio of Kaons / Event (gen)",40,-1,1,11,0,1.1);
+    h2_particle_ratio_cos[pi_rate_cos_gen]  = new TH2F("h2_pi_rate_cos_gen",";qcos#theta;Ratio of Pions / Event (gen)",40,-1,1,11,0,1.1);
+    h2_particle_ratio_cos[p_rate_cos_gen]   = new TH2F("h2_p_rate_cos_gen",";qcos#theta;Ratio of Protons / Event (gen)",40,-1,1,11,0,1.1);
+
+    h2_particle_ratio_cos[K_rate_cos_reco]  = new TH2F("h2_K_rate_cos_reco",";qcos#theta;Ratio of Kaons / Event (reco)",40,-1,1,11,0,1.1);
+    h2_particle_ratio_cos[pi_rate_cos_reco] = new TH2F("h2_pi_rate_cos_reco",";qcos#theta;Ratio of Pions / Event (reco)",40,-1,1,11,0,1.1);
+    h2_particle_ratio_cos[p_rate_cos_reco]  = new TH2F("h2_p_rate_cos_reco",";qcos#theta;Ratio of Protons / Event (reco)",40,-1,1,11,0,1.1);
 
   // dEdx
     h2_dEdx[gen_K_dEdx_p]  = new TH2F("h2_gen_K_dEdx_p"  ,";p (GeV);#frac{dE}{dx}",nbins_p,bins_p,nbins_dEdx,bins_dEdx);
@@ -122,6 +123,10 @@ void HistManager::Hist2List()
     hList2->Add(ih);
   }
   
+  for (auto ih : h2_particle_ratio_cos) {
+    hList1_particle_ratio->Add(ih);
+  }
+
   for (auto ih : h2_dEdx) {
     hList2_dEdx->Add(ih);
   }

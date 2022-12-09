@@ -71,14 +71,6 @@ class HistManager
       pi_rate_reco,
       p_rate_reco,
 
-      K_rate_gen_lowcos,
-      pi_rate_gen_lowcos,
-      p_rate_gen_lowcos,
-
-      K_rate_reco_lowcos,
-      pi_rate_reco_lowcos,
-      p_rate_reco_lowcos,
-
       dummy_particle_ratio,
       Last_h1_dummy_particle_ratio = dummy_particle_ratio
     };
@@ -101,6 +93,20 @@ class HistManager
       Last_h2 = dummy_h2
     };
     TH2F * h2[Last_h2];
+
+    enum h2_particle_ratio_cos_index {
+      K_rate_cos_gen,
+      pi_rate_cos_gen,
+      p_rate_cos_gen,
+
+      K_rate_cos_reco,
+      pi_rate_cos_reco,
+      p_rate_cos_reco,
+
+      dummy_particle_ratio_cos,
+      Last_h2_dummy_particle_ratio_cos = dummy_particle_ratio_cos
+    };
+    TH2F * h2_particle_ratio_cos[Last_h2_dummy_particle_ratio_cos];
 
     enum h2_dEdx_index {
 
