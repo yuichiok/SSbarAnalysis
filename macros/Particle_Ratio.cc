@@ -104,7 +104,7 @@ void main_Particle_Ratio_cos_gen(TFile *file_uu, TFile *file_ss)
 
 
   // Draw 2D
-  TCanvas *c_2d_particle_ratio_cos = new TCanvas("c_2d_particle_ratio_cos","c_2d_particle_ratio_cos",2400,600);
+  TCanvas *c_2d_particle_ratio_cos = new TCanvas("c_2d_particle_ratio_cos","c_2d_particle_ratio_cos",1100,600);
   c_2d_particle_ratio_cos->Divide(n_particles,2);
 
   for ( int i=0; i<n_particles; i++ ){
@@ -140,13 +140,14 @@ void main_Particle_Ratio_cos_gen(TFile *file_uu, TFile *file_ss)
   for ( int i=0; i<n_particles; i++ ){
 
     c_particle_ratio_cos->cd(i+1);
-    StylePad(gPad,0.15,0.1,0,0.17);
+    StylePad(gPad,0.,0.1,0,0.17);
 
     TH1D * ss_proj = ss_h2_particle_ratio_cos_gen[i]->ProjectionX(TString::Format("ss_proj_%s",particle_types[i].Data()),11,11);
     TH1D * uu_proj = uu_h2_particle_ratio_cos_gen[i]->ProjectionX(TString::Format("uu_proj_%s",particle_types[i].Data()),11,11);
     StyleHist(ss_proj,kRed+1);
     StyleHist(uu_proj,kBlue+1);
     if(i==0) uu_proj->GetYaxis()->SetRangeUser(0,1E-3);
+    uu_proj->SetTitle(TString::Format("%s ratio over cos#theta",particle_types[i].Data()));
 
     uu_proj->Draw("h");
     ss_proj->Draw("hsame");
