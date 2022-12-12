@@ -134,35 +134,31 @@ void main_Particle_Ratio_cos_gen(TFile *file_uu, TFile *file_ss)
   }
 
   // Draw 1D Projection
+  TCanvas *c_particle_ratio_cos = new TCanvas("c_particle_ratio_cos","c_particle_ratio_cos",2400,600);
+  c_particle_ratio_cos->Divide(n_particles,1);
 
-
-/*
   for ( int i=0; i<n_particles; i++ ){
 
-    c_particle_ratio_lowcos->cd(i+1);
-    StylePad(gPad,0,0.15,0,0.17);
+    c_particle_ratio_cos->cd(i+1);
+    StylePad(gPad,0.15,0.1,0,0.17);
 
-    Normalize(uu_h1_particle_ratio_cos[i]);
-    Normalize(ss_h1_particle_ratio_cos[i]);
+    TH1D * ss_proj = ss_h2_particle_ratio_cos_gen[i]->ProjectionX(TString::Format("ss_proj_%s",particle_types[i].Data()),11,11);
+    TH1D * uu_proj = uu_h2_particle_ratio_cos_gen[i]->ProjectionX(TString::Format("uu_proj_%s",particle_types[i].Data()),11,11);
+    StyleHist(ss_proj,kRed+1);
+    StyleHist(uu_proj,kBlue+1);
+    if(i==0) uu_proj->GetYaxis()->SetRangeUser(0,1E-3);
 
-    uu_h1_particle_ratio_lowcos[i]->Draw("h");
-    ss_h1_particle_ratio_lowcos[i]->Draw("hsame");
-
-    if(i==0){
-      TLegend *leg = new TLegend(0.6,0.76,0.8,0.85);
-      leg->SetLineColor(0);
-      leg->AddEntry(uu_h1_particle_ratio_lowcos[i],"u#bar{u}","l");
-      leg->AddEntry(ss_h1_particle_ratio_lowcos[i],"s#bar{s}","l");
-      leg->Draw();
-    }
+    uu_proj->Draw("h");
+    ss_proj->Draw("hsame");
 
   }
-*/
 
 }
 
 void Particle_Ratio()
 {
+  TGaxis::SetMaxDigits(3);
+
   try{
     TFile *file_uu = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.uu.LPFOp15_pNaN.tpc0.hists.all.root","READ");
     TFile *file_ss = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ss.LPFOp15_pNaN.tpc0.hists.all.root","READ");
