@@ -23,14 +23,14 @@ void BinNormal(TH1F *h)
 
 }
 
-void Normalize(TH1F *h)
+void Normalize(TH1F *h, Float_t norm_top)
 {
   // h->Scale( 1.0 / h->GetEntries() );
   const Int_t nbins = h->GetNbinsX();
   Int_t nbins4 = nbins / 4;
   Int_t int_high = (nbins / 2) + nbins4;
   Int_t int_low  = (nbins / 2 + 1) - nbins4;
-  h->Scale( 1.0 / h->Integral(int_low,int_high) );
+  h->Scale( norm_top / h->Integral(int_low,int_high) );
 }
 
 void Normalize2Gen(TH1F *h, TH1F *h_gen)
@@ -229,9 +229,28 @@ void main_pq_BGFit( TFile *files[] )
   gStyle->SetOptStat(0);
 
   // gen polar
-  TH1F *h_gen_uu_qcos  = (TH1F*) files[kUU]->Get("h_gen_q_qcos");
-  TH1F *h_gen_ss_qcos  = (TH1F*) files[kSS]->Get("h_gen_q_qcos");
-  TH1F *h_gen_us_qcos  = (TH1F*) files[kUS]->Get("h_gen_q_qcos");
+  TH1F *h_gen_uu_qcos = (TH1F*) files[kUU]->Get("h_gen_q_qcos");
+  TH1F *h_gen_ss_qcos = (TH1F*) files[kSS]->Get("h_gen_q_qcos");
+  // TH1F *h_gen_us_qcos = (TH1F*) files[kUS]->Get("h_gen_q_qcos");
+  // BinNormal(h_gen_us_qcos);
+  // Normalize(h_gen_us_qcos,1.0);
+
+  Int_t n_uu = h_gen_uu_qcos->GetEntries();
+  Int_t n_ss = h_gen_ss_qcos->GetEntries();
+  Float_t us_ratio = 1.0 / (Float_t) (n_uu + n_ss);
+
+  BinNormal(h_gen_uu_qcos);
+  BinNormal(h_gen_ss_qcos);
+  Normalize(h_gen_uu_qcos, us_ratio * (Float_t) n_ss);
+  Normalize(h_gen_ss_qcos, us_ratio * (Float_t) n_uu);
+
+  TH1F *h_gen_us_qcos = (TH1F*) h_gen_uu_qcos->Clone();
+  h_gen_us_qcos->Add(h_gen_ss_qcos);
+
+  StyleHist(h_gen_us_qcos,kGreen+1);
+  h_gen_us_qcos->SetFillStyle(0);
+  h_gen_us_qcos->SetLineStyle(2);
+
 
   // reco polar
   TH1F *h_reco_K_scos = (TH1F*) files[kUS]->Get("h_reco_K_scos");
@@ -247,10 +266,6 @@ void main_pq_BGFit( TFile *files[] )
 
   TH1F *h_acc_KK_cos_eff_corr = Efficiency_Correction(h_acc_KK_cos,"acc_corr",files[kUS]);
   TH1F *h_rej_KK_cos_eff_corr = Efficiency_Correction(h_rej_KK_cos,"rej_corr",files[kUS]);
-
-  StyleHist(h_gen_us_qcos,kGreen+1);
-  h_gen_us_qcos->SetFillStyle(0);
-  h_gen_us_qcos->SetLineStyle(2);
 
   StyleHist(h_reco_K_scos_eff_corr,kBlack);
   h_reco_K_scos_eff_corr->SetFillStyle(0);
@@ -278,15 +293,13 @@ void main_pq_BGFit( TFile *files[] )
   TPad *pad0 = new TPad("pad0", "pad0",0,0,1,1);
   StylePad(pad0,0,0.12,0,0.15);
 
-  BinNormal(h_gen_us_qcos);
   BinNormal(h_reco_K_scos_eff_corr);
   BinNormal(h_reco_K_pq_cos);
   BinNormal(h_reco_K_qcos_eff_corr);
 
-  Normalize(h_gen_us_qcos);
-  Normalize(h_reco_K_scos_eff_corr);
-  Normalize(h_reco_K_pq_cos);
-  Normalize(h_reco_K_qcos_eff_corr);
+  Normalize(h_reco_K_scos_eff_corr,1.0);
+  Normalize(h_reco_K_pq_cos,1.0);
+  Normalize(h_reco_K_qcos_eff_corr,1.0);
 
   // h_reco_K_pq_cos->GetYaxis()->SetRangeUser(0,0.20);
   h_reco_K_pq_cos->SetTitle(";K^{+}K^{-} cos#theta;a.u.");
@@ -297,8 +310,8 @@ void main_pq_BGFit( TFile *files[] )
 
   TLegend *leg = new TLegend(0.2,0.76,0.7,0.85);
   leg->SetLineColor(0);
-  leg->AddEntry(h_gen_us_qcos,"Generated u-quark angle","l");
-  leg->AddEntry(h_reco_K_scos_eff_corr,"Reconstructed K^{+}K^{-} matched with u-quark angle","l");
+  leg->AddEntry(h_gen_us_qcos,"Generated #bar{u}/s-quark angle","l");
+  leg->AddEntry(h_reco_K_scos_eff_corr,"Reconstructed K^{+}K^{-} matched with #bar{u}/s-quark angle","l");
   leg->AddEntry(h_reco_K_qcos_eff_corr,"Reconstructed K^{+}K^{-}","l");
   leg->AddEntry(h_reco_K_pq_cos,"Reconstructed K^{+}K^{-} (corrected)","l");
   leg->Draw();
