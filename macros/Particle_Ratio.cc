@@ -166,7 +166,7 @@ void Particle_Ratio()
     main_Particle_Ratio(file_uu,file_ss);
     main_Particle_Ratio_cos_gen(file_uu,file_ss);
   }
-  catch (int error_code) {
+  catch ( int error_code ) {
     switch ( error_code ){
       default:
         break;
