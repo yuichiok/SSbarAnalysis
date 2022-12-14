@@ -354,7 +354,7 @@ void main_pq_BGFit( TFile *files[] )
   for ( int ibin=1; ibin < nbins_cos+1; ibin++ ){
 
     Float_t x = h_f_uu_full_subtracted->GetXaxis()->GetBinCenter(ibin);
-    if( split_pt < x ) break;
+    // if( split_pt < x ) break;
     Float_t bin_content_main  = h_f_uu_full_subtracted->GetBinContent(ibin);
     Float_t bin_content_sfunc = h_f_ss_full->GetBinContent(ibin);
     Float_t bin_content_subtracted = bin_content_main - bin_content_sfunc;
