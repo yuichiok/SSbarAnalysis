@@ -307,12 +307,27 @@ void main_pq_BGFit( TFile *files[] )
   Normalize(h_reco_K_pq_cos,1.0);
   Normalize(h_reco_us_K_qcos_eff_corr,1.0);
 
+  // Fitting
+  Float_t split_pt = -0.6;
+  TF1 * f_uu = new TF1("f_uu","[0]*(1+x*x)+[1]*x",-0.9,split_pt);
+  TF1 * f_ss = new TF1("f_ss","[0]*(1+x*x)+[1]*x",split_pt,0.9);
+
+  f_uu->SetParNames("S","A");
+  f_ss->SetParNames("S","A");
+
+  h_reco_K_pq_cos->Fit("f_uu","MNRS");
+  h_reco_K_pq_cos->Fit("f_ss","MNRS");
+
+
   // h_reco_K_pq_cos->GetYaxis()->SetRangeUser(0,0.20);
   h_reco_K_pq_cos->SetTitle(";K^{+}K^{-} cos#theta;a.u.");
   h_reco_K_pq_cos->Draw("h");
   h_reco_us_K_qcos_eff_corr->Draw("hsame");
   h_reco_us_K_scos_eff_corr->Draw("hsame");
   h_gen_us_qcos->Draw("hsame");
+
+  f_uu->Draw("same");
+  f_ss->Draw("same");
 
   TLegend *leg = new TLegend(0.2,0.76,0.7,0.85);
   leg->SetLineColor(0);
