@@ -225,6 +225,17 @@ TH1F * Efficiency_Correction( TH1F * h, TString name, TFile * file )
 
 }
 
+void Func2Hist( TH1F * h, double * par )
+{
+  for ( int ibin=1; ibin < nbins_cos+1; ibin++ ){
+
+    Float_t x = h->GetXaxis()->GetBinCenter(ibin);
+    Float_t binc_h = par[0]*(1+x*x)+par[1]*x;
+    h->SetBinContent(ibin,binc_h);
+
+  }
+}
+
 void main_pq_BGFit( TFile *files[] )
 {
   enum MixProcess {kUU,kSS,kUS};
@@ -308,15 +319,51 @@ void main_pq_BGFit( TFile *files[] )
   Normalize(h_reco_us_K_qcos_eff_corr,1.0);
 
   // Fitting
-  Float_t split_pt = -0.6;
-  TF1 * f_uu = new TF1("f_uu","[0]*(1+x*x)+[1]*x",-0.9,split_pt);
-  TF1 * f_ss = new TF1("f_ss","[0]*(1+x*x)+[1]*x",split_pt,0.9);
+  Float_t split_pt = -0.4;
+  TF1 * f_uu_back = new TF1("f_uu_back","[0]*(1+x*x)+[1]*x",-0.9,split_pt);
+  TF1 * f_uu_full = new TF1("f_uu_full","[0]*(1+x*x)+[1]*x",-1.0,1.0);
+  f_uu_back->SetParameters(4.62910e-02,-6.39851e-02);
+  f_uu_back->SetParNames("S","A");
 
-  f_uu->SetParNames("S","A");
-  f_ss->SetParNames("S","A");
+  TF1 * f_ss_front = new TF1("f_ss_front","[0]*(1+x*x)+[1]*x",split_pt,0.9);
+  TF1 * f_ss_full  = new TF1("f_ss_full","[0]*(1+x*x)+[1]*x",-1.0,1.0);
 
-  h_reco_K_pq_cos->Fit("f_uu","MNRS");
-  h_reco_K_pq_cos->Fit("f_ss","MNRS");
+  f_ss_front->SetParNames("S","A");
+  f_ss_full->SetParNames("S","A");
+
+  h_reco_K_pq_cos->Fit("f_uu_back","MNRS");
+  h_reco_K_pq_cos->Fit("f_ss_front","MNRS");
+
+  double uu_par[2],ss_par[2];
+  f_uu_back->GetParameters(uu_par);
+  f_uu_full->SetParameters(uu_par);
+
+  f_ss_front->GetParameters(ss_par);
+  f_ss_full->SetParameters(ss_par);
+
+
+  // function to histogram
+  TH1F * h_f_ss_full = new TH1F("h_f_ss_full", "h_f_ss_full", nbins_cos,bins_cos_fine);
+  Func2Hist(h_f_ss_full,ss_par);
+
+  TH1F * h_f_uu_full = new TH1F("h_f_uu_full", "h_f_uu_full", nbins_cos,bins_cos_fine);
+  Func2Hist(h_f_uu_full,uu_par);
+
+
+  TH1F* h_f_uu_full_subtracted = (TH1F*) h_f_uu_full->Clone();
+  for ( int ibin=1; ibin < nbins_cos+1; ibin++ ){
+
+    Float_t x = h_f_uu_full_subtracted->GetXaxis()->GetBinCenter(ibin);
+    if( split_pt < x ) break;
+    Float_t bin_content_main  = h_f_uu_full_subtracted->GetBinContent(ibin);
+    Float_t bin_content_sfunc = h_f_ss_full->GetBinContent(ibin);
+    Float_t bin_content_subtracted = bin_content_main - bin_content_sfunc;
+
+    h_f_uu_full_subtracted->SetBinContent(ibin,bin_content_subtracted);
+
+  }
+
+
 
 
   // h_reco_K_pq_cos->GetYaxis()->SetRangeUser(0,0.20);
@@ -326,8 +373,8 @@ void main_pq_BGFit( TFile *files[] )
   h_reco_us_K_scos_eff_corr->Draw("hsame");
   h_gen_us_qcos->Draw("hsame");
 
-  f_uu->Draw("same");
-  f_ss->Draw("same");
+  f_uu_full->Draw("same");
+  f_ss_full->Draw("same");
 
   TLegend *leg = new TLegend(0.2,0.76,0.7,0.85);
   leg->SetLineColor(0);
@@ -338,6 +385,18 @@ void main_pq_BGFit( TFile *files[] )
   leg->Draw();
 
 
+
+  TCanvas *c1 = new TCanvas("c1","c1",800,800);
+  TPad *pad1 = new TPad("pad1", "pad1",0,0,1,1);
+  StylePad(pad1,0,0.12,0,0.15);
+
+  h_f_uu_full_subtracted->Draw("h");
+  // h_f_uu_full->Draw("h");
+
+
+
+
+/*
   TCanvas *c1 = new TCanvas("c1","c1",800,800);
   TPad *pad1 = new TPad("pad1", "pad1",0,0,1,1);
   StylePad(pad1,0,0.12,0,0.15);
@@ -363,6 +422,7 @@ void main_pq_BGFit( TFile *files[] )
   leg2->AddEntry(h_acc_KK_cos_eff_corr,"N Accepted","l");
   leg2->AddEntry(h_rej_KK_cos_eff_corr,"N Rejected","l");
   leg2->Draw();
+*/
 
 }
 
