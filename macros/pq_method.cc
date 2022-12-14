@@ -290,12 +290,19 @@ void main_pq()
   Normalize(h_reco_K_pq_cos);
   Normalize(h_reco_K_qcos_eff_corr);
 
+  // Fitting
+  TF1 * f_reco = new TF1("f_reco","[0]*(1+x*x)+[1]*x",-0.9,0.2);
+  f_reco->SetParNames("S","A");
+  h_reco_K_pq_cos->Fit("f_reco","MNRS");
+
   h_reco_K_pq_cos->GetYaxis()->SetRangeUser(0,0.20);
   h_reco_K_pq_cos->SetTitle(";K^{+}K^{-} cos#theta;a.u.");
   h_reco_K_pq_cos->Draw("h");
   h_reco_K_qcos_eff_corr->Draw("hsame");
   h_reco_K_scos_eff_corr->Draw("hsame");
   h_gen_q_qcos->Draw("hsame");
+
+  f_reco->Draw("same");
 
   TLegend *leg = new TLegend(0.2,0.76,0.7,0.85);
   leg->SetLineColor(0);
