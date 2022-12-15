@@ -244,30 +244,47 @@ void main_pq_BGFit( TFile *files[] )
   // gen uu/ss polar
   TH1F *h_gen_uu_qcos = (TH1F*) files[kUU]->Get("h_gen_q_qcos");
   TH1F *h_gen_ss_qcos = (TH1F*) files[kSS]->Get("h_gen_q_qcos");
+  TH1F *h_gen_uu_qcos_scale = (TH1F*) h_gen_uu_qcos->Clone();
+  TH1F *h_gen_ss_qcos_scale = (TH1F*) h_gen_ss_qcos->Clone();
+
+  StyleHist(h_gen_ss_qcos,kBlack);
+  h_gen_ss_qcos->SetFillStyle(0);
+  h_gen_ss_qcos->SetLineStyle(2);
+  BinNormal(h_gen_ss_qcos);
+
+  Normalize(h_gen_uu_qcos,1.0);
+  Normalize(h_gen_ss_qcos,1.0);
 
   // reco uu/ss polar
   TH1F *h_reco_uu_K_qcos = (TH1F*) files[kUU]->Get("h_reco_K_qcos");
   TH1F *h_reco_ss_K_qcos = (TH1F*) files[kSS]->Get("h_reco_K_qcos");
 
-  Int_t n_uu_gen  = h_gen_uu_qcos->GetEntries();
-  Int_t n_ss_gen  = h_gen_ss_qcos->GetEntries();
+  Int_t n_uu_gen  = h_gen_uu_qcos_scale->GetEntries();
+  Int_t n_ss_gen  = h_gen_ss_qcos_scale->GetEntries();
   Int_t n_uu_reco = h_reco_uu_K_qcos->GetEntries();
   Int_t n_ss_reco = h_reco_ss_K_qcos->GetEntries();
 
   Float_t eff_uu = (Float_t) n_uu_reco / (Float_t) n_uu_gen;
   Float_t eff_ss = (Float_t) n_ss_reco / (Float_t) n_ss_gen;
 
-  h_gen_uu_qcos->Scale(eff_uu);
-  h_gen_ss_qcos->Scale(eff_ss);
+  h_gen_uu_qcos_scale->Scale(eff_uu);
+  h_gen_ss_qcos_scale->Scale(eff_ss);
 
-  TH1F *h_gen_us_qcos = (TH1F*) h_gen_uu_qcos->Clone();
-  h_gen_us_qcos->Add(h_gen_ss_qcos);
+  TH1F *h_gen_us_qcos = (TH1F*) h_gen_uu_qcos_scale->Clone();
+  h_gen_us_qcos->Add(h_gen_ss_qcos_scale);
 
   StyleHist(h_gen_us_qcos,kGreen+1);
   h_gen_us_qcos->SetFillStyle(0);
   h_gen_us_qcos->SetLineStyle(2);
   BinNormal(h_gen_us_qcos);
-  Normalize(h_gen_us_qcos, 1.0);
+
+
+  StyleHist(h_gen_ss_qcos_scale,kBlack);
+  h_gen_ss_qcos_scale->SetFillStyle(0);
+  h_gen_ss_qcos_scale->SetLineStyle(2);
+  BinNormal(h_gen_ss_qcos_scale);
+  Normalize(h_gen_ss_qcos_scale,1.0);
+
 
   // reco us polar
   TH1F *h_reco_us_K_scos = (TH1F*) files[kUS]->Get("h_reco_K_scos");
@@ -314,16 +331,14 @@ void main_pq_BGFit( TFile *files[] )
   BinNormal(h_reco_K_pq_cos);
   BinNormal(h_reco_us_K_qcos_eff_corr);
 
-  Normalize(h_reco_us_K_scos_eff_corr,1.0);
-  Normalize(h_reco_K_pq_cos,1.0);
-  Normalize(h_reco_us_K_qcos_eff_corr,1.0);
+
+
+
+
+
 
   // Fitting
   Float_t split_pt = -0.4;
-  TF1 * f_uu_back = new TF1("f_uu_back","[0]*(1+x*x)+[1]*x",-0.9,split_pt);
-  TF1 * f_uu_full = new TF1("f_uu_full","[0]*(1+x*x)+[1]*x",-1.0,1.0);
-  f_uu_back->SetParameters(4.62910e-02,-6.39851e-02);
-  f_uu_back->SetParNames("S","A");
 
   TF1 * f_ss_front = new TF1("f_ss_front","[0]*(1+x*x)+[1]*x",split_pt,0.9);
   TF1 * f_ss_full  = new TF1("f_ss_full","[0]*(1+x*x)+[1]*x",-1.0,1.0);
@@ -331,50 +346,91 @@ void main_pq_BGFit( TFile *files[] )
   f_ss_front->SetParNames("S","A");
   f_ss_full->SetParNames("S","A");
 
-  h_reco_K_pq_cos->Fit("f_uu_back","MNRS");
   h_reco_K_pq_cos->Fit("f_ss_front","MNRS");
 
-  double uu_par[2],ss_par[2];
-  f_uu_back->GetParameters(uu_par);
-  f_uu_full->SetParameters(uu_par);
+  double ss_par[2];
 
   f_ss_front->GetParameters(ss_par);
   f_ss_full->SetParameters(ss_par);
-
 
   // function to histogram
   TH1F * h_f_ss_full = new TH1F("h_f_ss_full", "h_f_ss_full", nbins_cos,bins_cos_fine);
   Func2Hist(h_f_ss_full,ss_par);
 
-  TH1F * h_f_uu_full = new TH1F("h_f_uu_full", "h_f_uu_full", nbins_cos,bins_cos_fine);
-  Func2Hist(h_f_uu_full,uu_par);
-
-
-  TH1F* h_f_uu_full_subtracted = (TH1F*) h_f_uu_full->Clone();
+  TH1F* h_reco_K_pq_cos_diff_back = (TH1F*) h_reco_K_pq_cos->Clone();
   for ( int ibin=1; ibin < nbins_cos+1; ibin++ ){
 
-    Float_t x = h_f_uu_full_subtracted->GetXaxis()->GetBinCenter(ibin);
-    // if( split_pt < x ) break;
-    Float_t bin_content_main  = h_f_uu_full_subtracted->GetBinContent(ibin);
+    Float_t x = h_reco_K_pq_cos_diff_back->GetXaxis()->GetBinCenter(ibin);
+    if( split_pt < x ) {
+      h_reco_K_pq_cos_diff_back->SetBinContent(ibin,0);
+      continue;
+    }
+    Float_t bin_content_main  = h_reco_K_pq_cos_diff_back->GetBinContent(ibin);
     Float_t bin_content_sfunc = h_f_ss_full->GetBinContent(ibin);
     Float_t bin_content_subtracted = bin_content_main - bin_content_sfunc;
 
-    h_f_uu_full_subtracted->SetBinContent(ibin,bin_content_subtracted);
+    h_reco_K_pq_cos_diff_back->SetBinContent(ibin,bin_content_subtracted);
 
   }
 
+  TH1F* h_reco_K_pq_cos_remain_back = (TH1F*) h_reco_K_pq_cos->Clone();
+  h_reco_K_pq_cos_remain_back->Add(h_reco_K_pq_cos_diff_back,-1);      // subtracted cos < -0.4 region
+
+
+  TF1 * f_uu_back = new TF1("f_uu_back","[0]*(1+x*x)+[1]*x",-0.9,split_pt);
+  TF1 * f_uu_full = new TF1("f_uu_full","[0]*(1+x*x)+[1]*x",-1.0,1.0);
+
+  f_uu_back->SetParNames("S","A");
+
+  h_reco_K_pq_cos->Fit("f_uu_back","MNR");
+
+  double uu_par[2];
+  f_uu_back->GetParameters(uu_par);
+  f_uu_full->SetParameters(uu_par);
+
+  TH1F * h_f_uu_full = new TH1F("h_f_uu_full", "h_f_uu_full", nbins_cos,bins_cos_fine);
+  Func2Hist(h_f_uu_full,uu_par);
+
+  TH1F* h_reco_K_pq_cos_diff_front = (TH1F*) h_reco_K_pq_cos->Clone();
+  for ( int ibin=1; ibin < nbins_cos+1; ibin++ ){
+
+    Float_t x = h_reco_K_pq_cos_diff_front->GetXaxis()->GetBinCenter(ibin);
+    if( x < split_pt ) {
+      h_reco_K_pq_cos_diff_front->SetBinContent(ibin,0);
+      continue;
+    }
+    Float_t bin_content_main  = h_reco_K_pq_cos_diff_front->GetBinContent(ibin);
+    Float_t bin_content_sfunc = h_f_ss_full->GetBinContent(ibin);
+    Float_t bin_content_subtracted = bin_content_main - bin_content_sfunc;
+
+    h_reco_K_pq_cos_diff_front->SetBinContent(ibin,bin_content_subtracted);
+
+  }
+
+  TH1F* h_reco_K_pq_cos_remain_front = (TH1F*) h_reco_K_pq_cos_remain_back->Clone();
+  h_reco_K_pq_cos_remain_front->Add(h_reco_K_pq_cos_diff_front,-1);      // subtracted -0.4 < cos region
+  StyleHist(h_reco_K_pq_cos_remain_front,kViolet);
 
 
 
-  // h_reco_K_pq_cos->GetYaxis()->SetRangeUser(0,0.20);
+  Normalize(h_gen_us_qcos, 1.0);
+  Normalize(h_reco_us_K_scos_eff_corr,1.0);
+  Normalize(h_reco_K_pq_cos,1.0);
+  Normalize(h_reco_us_K_qcos_eff_corr,1.0);
+  Normalize(h_reco_K_pq_cos_remain_front,1.0);
+
+  h_reco_K_pq_cos->GetYaxis()->SetRangeUser(0,0.20);
   h_reco_K_pq_cos->SetTitle(";K^{+}K^{-} cos#theta;a.u.");
   h_reco_K_pq_cos->Draw("h");
   h_reco_us_K_qcos_eff_corr->Draw("hsame");
   h_reco_us_K_scos_eff_corr->Draw("hsame");
   h_gen_us_qcos->Draw("hsame");
 
-  f_uu_full->Draw("same");
-  f_ss_full->Draw("same");
+  // f_uu_full->Draw("same");
+  // f_ss_full->Draw("same");
+
+  h_reco_K_pq_cos_remain_front->Draw("hsame");
+  h_gen_ss_qcos_scale->Draw("hsame");
 
   TLegend *leg = new TLegend(0.2,0.76,0.7,0.85);
   leg->SetLineColor(0);
@@ -385,13 +441,6 @@ void main_pq_BGFit( TFile *files[] )
   leg->Draw();
 
 
-
-  TCanvas *c1 = new TCanvas("c1","c1",800,800);
-  TPad *pad1 = new TPad("pad1", "pad1",0,0,1,1);
-  StylePad(pad1,0,0.12,0,0.15);
-
-  h_f_uu_full_subtracted->Draw("h");
-  // h_f_uu_full->Draw("h");
 
 
 
