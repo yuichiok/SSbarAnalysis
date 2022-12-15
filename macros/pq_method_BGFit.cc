@@ -28,10 +28,10 @@ void Normalize(TH1F *h, Float_t norm_top)
   // h->Scale( 1.0 / h->GetEntries() );
   const Int_t nbins = h->GetNbinsX();
   Int_t nbins4 = nbins / 4;
-  Int_t int_high = (nbins / 2) + nbins4;
-  Int_t int_low  = (nbins / 2 + 1) - nbins4;
-  // Int_t int_high = nbins-4;
-  // Int_t int_low  = (nbins / 2);
+  // Int_t int_high = (nbins / 2) + nbins4;
+  // Int_t int_low  = (nbins / 2 + 1) - nbins4;
+  Int_t int_high = nbins-4;
+  Int_t int_low  = (nbins / 2);
   h->Scale( norm_top / h->Integral(int_low,int_high) );
 }
 
@@ -337,7 +337,8 @@ void main_pq_BGFit( TFile *files[] )
 
 
 
-  // Fitting
+  // Fitting 1st Round
+  // cos < -0.4
   Float_t split_pt = -0.4;
 
   TF1 * f_ss_front = new TF1("f_ss_front","[0]*(1+x*x)+[1]*x",split_pt,0.9);
@@ -376,7 +377,7 @@ void main_pq_BGFit( TFile *files[] )
   TH1F* h_reco_K_pq_cos_remain_back = (TH1F*) h_reco_K_pq_cos->Clone();
   h_reco_K_pq_cos_remain_back->Add(h_reco_K_pq_cos_diff_back,-1);      // subtracted cos < -0.4 region
 
-
+  // -0.4 < cos
   TF1 * f_uu_back = new TF1("f_uu_back","[0]*(1+x*x)+[1]*x",-0.9,split_pt);
   TF1 * f_uu_full = new TF1("f_uu_full","[0]*(1+x*x)+[1]*x",-1.0,1.0);
 
@@ -419,25 +420,26 @@ void main_pq_BGFit( TFile *files[] )
   Normalize(h_reco_us_K_qcos_eff_corr,1.0);
   Normalize(h_reco_K_pq_cos_remain_front,1.0);
 
-  h_reco_K_pq_cos->GetYaxis()->SetRangeUser(0,0.20);
+
+  h_reco_K_pq_cos->GetYaxis()->SetRangeUser(0,0.095);
   h_reco_K_pq_cos->SetTitle(";K^{+}K^{-} cos#theta;a.u.");
   h_reco_K_pq_cos->Draw("h");
   h_reco_us_K_qcos_eff_corr->Draw("hsame");
   h_reco_us_K_scos_eff_corr->Draw("hsame");
   h_gen_us_qcos->Draw("hsame");
 
-  // f_uu_full->Draw("same");
-  // f_ss_full->Draw("same");
-
   h_reco_K_pq_cos_remain_front->Draw("hsame");
   h_gen_ss_qcos_scale->Draw("hsame");
 
-  TLegend *leg = new TLegend(0.2,0.76,0.7,0.85);
+
+  TLegend *leg = new TLegend(0.2,0.70,0.7,0.85);
   leg->SetLineColor(0);
-  leg->AddEntry(h_gen_us_qcos,"Generated #bar{u}/s-quark angle","l");
-  leg->AddEntry(h_reco_us_K_scos_eff_corr,"Reconstructed K^{+}K^{-} matched with #bar{u}/s-quark angle","l");
-  leg->AddEntry(h_reco_us_K_qcos_eff_corr,"Reconstructed K^{+}K^{-}","l");
-  leg->AddEntry(h_reco_K_pq_cos,"Reconstructed K^{+}K^{-} (corrected)","l");
+  leg->AddEntry(h_gen_us_qcos,"Gen #bar{u}/s-quark angle","l");
+  leg->AddEntry(h_gen_ss_qcos_scale,"Gen s-quark angle","l");
+  leg->AddEntry(h_reco_us_K_scos_eff_corr,"Reco K^{+}K^{-} matched with #bar{u}/s-quark angle","l");
+  leg->AddEntry(h_reco_us_K_qcos_eff_corr,"Reco K^{+}K^{-}","l");
+  leg->AddEntry(h_reco_K_pq_cos,"Reco K^{+}K^{-} (pq correction)","l");
+  leg->AddEntry(h_reco_K_pq_cos_remain_front,"Reco K^{+}K^{-} (pq + FB-Fitting correction @ cos#theta=-0.4)","l");
   leg->Draw();
 
 

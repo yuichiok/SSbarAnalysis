@@ -291,7 +291,7 @@ void main_pq()
   Normalize(h_reco_K_qcos_eff_corr);
 
   // Fitting
-  TF1 * f_reco = new TF1("f_reco","[0]*(1+x*x)+[1]*x",-0.9,0.9);
+  TF1 * f_reco = new TF1("f_reco","[0]*(1+x*x)+[1]*x",-0.8,0.8);
   f_reco->SetParNames("S","A");
   h_reco_K_pq_cos->Fit("f_reco","MNRS");
 
