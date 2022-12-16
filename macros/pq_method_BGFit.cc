@@ -354,9 +354,6 @@ void main_pq_BGFit( TFile *files[] )
   TH1F *h_reco_K_pq_cos = CorrectHist(h_reco_us_K_qcos_eff_corr, p_vec);
   StyleHist(h_reco_K_pq_cos,kBlue);
 
-  TCanvas *c0 = new TCanvas("c0","c0",800,800);
-  TPad *pad0 = new TPad("pad0", "pad0",0,0,1,1);
-  StylePad(pad0,0,0.12,0,0.15);
 
   BinNormal(h_reco_us_K_scos_eff_corr);
   BinNormal(h_reco_K_pq_cos);
@@ -376,7 +373,7 @@ void main_pq_BGFit( TFile *files[] )
   // cos < -0.4
   Float_t split_pt = -0.4;
 
-  TF1 * f_ss_front = new TF1("f_ss_front","[0]*(1+x*x)+[1]*x",split_pt,0.9);
+  TF1 * f_ss_front = new TF1("f_ss_front","[0]*(1+x*x)+[1]*x",0.651,0.9);
   TF1 * f_ss_full  = new TF1("f_ss_full","[0]*(1+x*x)+[1]*x",-1.0,1.0);
 
   f_ss_front->SetParNames("S","A");
@@ -393,58 +390,76 @@ void main_pq_BGFit( TFile *files[] )
   TH1F * h_f_ss_full = new TH1F("h_f_ss_full", "h_f_ss_full", nbins_cos,bins_cos_fine);
   Func2Hist(h_f_ss_full,ss_par);
 
-  TH1F* h_reco_K_pq_cos_diff_back = (TH1F*) h_reco_K_pq_cos->Clone();
+  TH1F* h_reco_K_pq_cos_subtracted_back = (TH1F*) h_reco_K_pq_cos->Clone();
   for ( int ibin=1; ibin < nbins_cos+1; ibin++ ){
 
-    Float_t x = h_reco_K_pq_cos_diff_back->GetXaxis()->GetBinCenter(ibin);
-    if( split_pt < x ) {
-      h_reco_K_pq_cos_diff_back->SetBinContent(ibin,0);
-      continue;
-    }
-    Float_t bin_content_main  = h_reco_K_pq_cos_diff_back->GetBinContent(ibin);
+    Float_t x = h_reco_K_pq_cos_subtracted_back->GetXaxis()->GetBinCenter(ibin);
+    // if( split_pt < x ) {
+    //   h_reco_K_pq_cos_remain_back->SetBinContent(ibin,0);
+    //   continue;
+    // }
+    Float_t bin_content_main  = h_reco_K_pq_cos_subtracted_back->GetBinContent(ibin);
     Float_t bin_content_sfunc = h_f_ss_full->GetBinContent(ibin);
     Float_t bin_content_subtracted = bin_content_main - bin_content_sfunc;
 
-    h_reco_K_pq_cos_diff_back->SetBinContent(ibin,bin_content_subtracted);
+    h_reco_K_pq_cos_subtracted_back->SetBinContent(ibin,bin_content_subtracted);
 
   }
 
   TH1F* h_reco_K_pq_cos_remain_back = (TH1F*) h_reco_K_pq_cos->Clone();
-  h_reco_K_pq_cos_remain_back->Add(h_reco_K_pq_cos_diff_back,-1);      // subtracted cos < -0.4 region
+  // subtracted cos < -0.4 region
+  for ( int ibin=1; ibin < nbins_cos+1; ibin++ ){
+
+    Float_t x = h_reco_K_pq_cos_remain_back->GetXaxis()->GetBinCenter(ibin);
+    if( split_pt < x ) continue;
+    Float_t bin_content_main  = h_reco_K_pq_cos_remain_back->GetBinContent(ibin);
+    Float_t bin_content_sfunc = h_reco_K_pq_cos_subtracted_back->GetBinContent(ibin);
+    Float_t bin_content_subtracted = bin_content_main - bin_content_sfunc;
+
+    h_reco_K_pq_cos_remain_back->SetBinContent(ibin,bin_content_subtracted);
+
+  }
+
+  TCanvas *c1 = new TCanvas("c1","c1",800,800);
+  TPad *pad1 = new TPad("pad1", "pad1",0,0,1,1);
+  StylePad(pad1,0,0.12,0,0.15);
+
+  h_reco_K_pq_cos_subtracted_back->Draw("h");
 
   // -0.4 < cos
-  TF1 * f_uu_back = new TF1("f_uu_back","[0]*(1+x*x)+[1]*x",-0.9,split_pt);
+  TF1 * f_uu_back = new TF1("f_uu_back","[0]*(1+x*x)+[1]*x",-0.6,-0.1);
   TF1 * f_uu_full = new TF1("f_uu_full","[0]*(1+x*x)+[1]*x",-1.0,1.0);
 
   f_uu_back->SetParNames("S","A");
 
-  h_reco_K_pq_cos->Fit("f_uu_back","MNR");
+  h_reco_K_pq_cos_subtracted_back->Fit("f_uu_back","MNR");
 
   double uu_par[2];
   f_uu_back->GetParameters(uu_par);
   f_uu_full->SetParameters(uu_par);
 
+  f_uu_full->Draw("same");
+
+
   TH1F * h_f_uu_full = new TH1F("h_f_uu_full", "h_f_uu_full", nbins_cos,bins_cos_fine);
   Func2Hist(h_f_uu_full,uu_par);
 
-  TH1F* h_reco_K_pq_cos_diff_front = (TH1F*) h_reco_K_pq_cos->Clone();
+
+  TH1F* h_reco_K_pq_cos_remain_front = (TH1F*) h_reco_K_pq_cos_remain_back->Clone();
   for ( int ibin=1; ibin < nbins_cos+1; ibin++ ){
 
-    Float_t x = h_reco_K_pq_cos_diff_front->GetXaxis()->GetBinCenter(ibin);
-    if( x < split_pt ) {
-      h_reco_K_pq_cos_diff_front->SetBinContent(ibin,0);
-      continue;
-    }
-    Float_t bin_content_main  = h_reco_K_pq_cos_diff_front->GetBinContent(ibin);
-    Float_t bin_content_sfunc = h_f_ss_full->GetBinContent(ibin);
+    Float_t x = h_reco_K_pq_cos_remain_front->GetXaxis()->GetBinCenter(ibin);
+    if( x < split_pt ) continue;
+    Float_t bin_content_main  = h_reco_K_pq_cos_remain_front->GetBinContent(ibin);
+    Float_t bin_content_sfunc = h_f_uu_full->GetBinContent(ibin);
     Float_t bin_content_subtracted = bin_content_main - bin_content_sfunc;
 
-    h_reco_K_pq_cos_diff_front->SetBinContent(ibin,bin_content_subtracted);
+    h_reco_K_pq_cos_remain_front->SetBinContent(ibin,bin_content_subtracted);
 
   }
 
-  TH1F* h_reco_K_pq_cos_remain_front = (TH1F*) h_reco_K_pq_cos_remain_back->Clone();
-  h_reco_K_pq_cos_remain_front->Add(h_reco_K_pq_cos_diff_front,-1);      // subtracted -0.4 < cos region
+  // TH1F* h_reco_K_pq_cos_remain_front = (TH1F*) h_reco_K_pq_cos_remain_back->Clone();
+  // h_reco_K_pq_cos_remain_front->Add(h_reco_K_pq_cos_diff_front,-1);      // subtracted -0.4 < cos region
   StyleHist(h_reco_K_pq_cos_remain_front,kViolet);
 
 
@@ -455,6 +470,10 @@ void main_pq_BGFit( TFile *files[] )
   // h_gen_uu_qcos_scale->Scale( 1.8 / (Float_t) scale_sum );
 
 
+
+  TCanvas *c0 = new TCanvas("c0","c0",800,800);
+  TPad *pad0 = new TPad("pad0", "pad0",0,0,1,1);
+  StylePad(pad0,0,0.12,0,0.15);
 
   h_reco_K_pq_cos->GetYaxis()->SetRangeUser(0,0.11);
   h_reco_K_pq_cos->SetTitle(";K^{+}K^{-} cos#theta;a.u.");
@@ -467,8 +486,8 @@ void main_pq_BGFit( TFile *files[] )
   h_gen_ss_qcos_scale->Draw("hsame");
   h_gen_uu_qcos_scale->Draw("hsame");
 
-  f_ss_front->Draw("same");
-  f_uu_back->Draw("same");
+  f_ss_full->Draw("same");
+  f_uu_full->Draw("same");
   
 
   TLegend *leg = new TLegend(0.2,0.70,0.7,0.85);
@@ -481,6 +500,7 @@ void main_pq_BGFit( TFile *files[] )
   leg->AddEntry(h_reco_K_pq_cos,"Reco K^{+}K^{-} (pq correction)","l");
   leg->AddEntry(h_reco_K_pq_cos_remain_front,"Reco K^{+}K^{-} (pq + FB-Fitting correction @ cos#theta = -0.4)","l");
   leg->Draw();
+
 
 
 /*
