@@ -30,8 +30,10 @@ void Normalize(TH1F *h, Float_t norm_top)
   Int_t nbins4 = nbins / 4;
   // Int_t int_high = (nbins / 2) + nbins4;
   // Int_t int_low  = (nbins / 2 + 1) - nbins4;
+  // Int_t int_high = nbins-4;
+  // Int_t int_low  = (nbins / 2);
   Int_t int_high = nbins-4;
-  Int_t int_low  = (nbins / 2);
+  Int_t int_low  = (nbins / 2) + 4;
   h->Scale( norm_top / h->Integral(int_low,int_high) );
 }
 
@@ -306,6 +308,7 @@ void main_pq_BGFit( TFile *files[] )
   h_gen_uu_qcos_scale->SetLineStyle(2);
   BinNormal(h_gen_uu_qcos_scale);
   // Normalize(h_gen_uu_qcos_scale,1.0);
+  h_gen_uu_qcos_scale->Scale(1.0 / (Float_t) (h_gen_uu_qcos_scale->Integral()) );
 
   StyleHist(h_gen_ss_qcos_scale,kBlack);
   h_gen_ss_qcos_scale->SetFillStyle(0);
@@ -448,12 +451,12 @@ void main_pq_BGFit( TFile *files[] )
   Normalize(h_reco_us_K_qcos_eff_corr,1.0);
   Normalize(h_reco_K_pq_cos_remain_front,1.0);
 
-  Int_t scale_sum = h_gen_uu_qcos_scale->GetEntries();
-  h_gen_uu_qcos_scale->Scale( 1.8 / (Float_t) scale_sum );
+  // Int_t scale_sum = h_gen_uu_qcos_scale->GetEntries();
+  // h_gen_uu_qcos_scale->Scale( 1.8 / (Float_t) scale_sum );
 
 
 
-  h_reco_K_pq_cos->GetYaxis()->SetRangeUser(0,0.095);
+  h_reco_K_pq_cos->GetYaxis()->SetRangeUser(0,0.11);
   h_reco_K_pq_cos->SetTitle(";K^{+}K^{-} cos#theta;a.u.");
   h_reco_K_pq_cos->Draw("h");
   h_reco_us_K_qcos_eff_corr->Draw("hsame");
