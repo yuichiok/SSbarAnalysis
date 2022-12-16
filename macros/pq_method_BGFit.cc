@@ -362,6 +362,10 @@ void main_pq_BGFit( TFile *files[] )
   BinNormal(h_reco_K_pq_cos);
   BinNormal(h_reco_us_K_qcos_eff_corr);
 
+  Normalize(h_gen_us_qcos, 1.0);
+  Normalize(h_reco_us_K_scos_eff_corr,1.0);
+  Normalize(h_reco_K_pq_cos,1.0);
+  Normalize(h_reco_us_K_qcos_eff_corr,1.0);
 
 
 
@@ -445,10 +449,6 @@ void main_pq_BGFit( TFile *files[] )
 
 
 
-  Normalize(h_gen_us_qcos, 1.0);
-  Normalize(h_reco_us_K_scos_eff_corr,1.0);
-  Normalize(h_reco_K_pq_cos,1.0);
-  Normalize(h_reco_us_K_qcos_eff_corr,1.0);
   Normalize(h_reco_K_pq_cos_remain_front,1.0);
 
   // Int_t scale_sum = h_gen_uu_qcos_scale->GetEntries();
@@ -466,6 +466,9 @@ void main_pq_BGFit( TFile *files[] )
   h_gen_us_qcos->Draw("hsame");
   h_gen_ss_qcos_scale->Draw("hsame");
   h_gen_uu_qcos_scale->Draw("hsame");
+
+  f_ss_front->Draw("same");
+  f_uu_back->Draw("same");
   
 
   TLegend *leg = new TLegend(0.2,0.70,0.7,0.85);
