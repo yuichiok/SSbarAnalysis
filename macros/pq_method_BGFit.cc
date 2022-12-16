@@ -35,6 +35,25 @@ void Normalize(TH1F *h, Float_t norm_top)
   h->Scale( norm_top / h->Integral(int_low,int_high) );
 }
 
+void NormalizeUU(TH1F *h, Float_t norm_top)
+{
+  const Int_t nbins = h->GetNbinsX();
+  Int_t nbins4 = nbins / 4;
+  Int_t int_high = nbins;
+  Int_t int_low  = 1;
+
+  cout << "uu integral = " << h->Integral(int_low,int_high) << endl;
+  cout << "uu entries  = " << h->GetEntries() << endl;
+
+  h->Scale( norm_top / h->Integral(int_low,int_high) );
+
+}
+
+void NormalizeGen(TH1F *h, Float_t norm_top)
+{
+  h->Scale( norm_top / h->GetEntries() );
+}
+
 void Normalize2Gen(TH1F *h, TH1F *h_gen)
 {
 	double intCosReco = h->Integral(20,80);
@@ -267,6 +286,9 @@ void main_pq_BGFit( TFile *files[] )
   Float_t eff_uu = (Float_t) n_uu_reco / (Float_t) n_uu_gen;
   Float_t eff_ss = (Float_t) n_ss_reco / (Float_t) n_ss_gen;
 
+  cout << "uu = eff : reco : gen = " <<  eff_uu << " : " << n_uu_reco << " : " << n_uu_gen << "\n";
+  cout << "ss = eff : reco : gen = " <<  eff_ss << " : " << n_ss_reco << " : " << n_ss_gen << "\n";
+
   h_gen_uu_qcos_scale->Scale(eff_uu);
   h_gen_ss_qcos_scale->Scale(eff_ss);
 
@@ -278,6 +300,12 @@ void main_pq_BGFit( TFile *files[] )
   h_gen_us_qcos->SetLineStyle(2);
   BinNormal(h_gen_us_qcos);
 
+
+  StyleHist(h_gen_uu_qcos_scale,kOrange+7);
+  h_gen_uu_qcos_scale->SetFillStyle(0);
+  h_gen_uu_qcos_scale->SetLineStyle(2);
+  BinNormal(h_gen_uu_qcos_scale);
+  // Normalize(h_gen_uu_qcos_scale,1.0);
 
   StyleHist(h_gen_ss_qcos_scale,kBlack);
   h_gen_ss_qcos_scale->SetFillStyle(0);
@@ -420,31 +448,33 @@ void main_pq_BGFit( TFile *files[] )
   Normalize(h_reco_us_K_qcos_eff_corr,1.0);
   Normalize(h_reco_K_pq_cos_remain_front,1.0);
 
+  Int_t scale_sum = h_gen_uu_qcos_scale->GetEntries();
+  h_gen_uu_qcos_scale->Scale( 1.8 / (Float_t) scale_sum );
+
+
 
   h_reco_K_pq_cos->GetYaxis()->SetRangeUser(0,0.095);
   h_reco_K_pq_cos->SetTitle(";K^{+}K^{-} cos#theta;a.u.");
   h_reco_K_pq_cos->Draw("h");
   h_reco_us_K_qcos_eff_corr->Draw("hsame");
   h_reco_us_K_scos_eff_corr->Draw("hsame");
-  h_gen_us_qcos->Draw("hsame");
 
   h_reco_K_pq_cos_remain_front->Draw("hsame");
+  h_gen_us_qcos->Draw("hsame");
   h_gen_ss_qcos_scale->Draw("hsame");
-
+  h_gen_uu_qcos_scale->Draw("hsame");
+  
 
   TLegend *leg = new TLegend(0.2,0.70,0.7,0.85);
   leg->SetLineColor(0);
   leg->AddEntry(h_gen_us_qcos,"Gen #bar{u}/s-quark angle","l");
+  leg->AddEntry(h_gen_uu_qcos_scale,"Gen #bar{u}-quark angle","l");
   leg->AddEntry(h_gen_ss_qcos_scale,"Gen s-quark angle","l");
   leg->AddEntry(h_reco_us_K_scos_eff_corr,"Reco K^{+}K^{-} matched with #bar{u}/s-quark angle","l");
   leg->AddEntry(h_reco_us_K_qcos_eff_corr,"Reco K^{+}K^{-}","l");
   leg->AddEntry(h_reco_K_pq_cos,"Reco K^{+}K^{-} (pq correction)","l");
-  leg->AddEntry(h_reco_K_pq_cos_remain_front,"Reco K^{+}K^{-} (pq + FB-Fitting correction @ cos#theta=-0.4)","l");
+  leg->AddEntry(h_reco_K_pq_cos_remain_front,"Reco K^{+}K^{-} (pq + FB-Fitting correction @ cos#theta = -0.4)","l");
   leg->Draw();
-
-
-
-
 
 
 /*
