@@ -48,6 +48,10 @@ class HistManager
       reco_N_K_cos,
       N_K_corr_cos,
 
+      gen_N_K_cos2,
+      reco_N_K_cos2,
+      N_K_corr_cos2,
+
       dummy_h1,
       Last_h1 = dummy_h1
     };

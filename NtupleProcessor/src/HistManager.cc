@@ -54,6 +54,10 @@ void HistManager::InitializeHists()
     h1[reco_N_K_cos]    = new TH1F("h_reco_N_K_cos",";cos#theta;Reconstructed N Kaons", nbins_cos,bins_cos_fine);
     h1[N_K_corr_cos]    = new TH1F("h_N_K_corr_cos",";cos#theta;Correctly Reconstructed N Kaons", nbins_cos,bins_cos_fine);
 
+    h1[gen_N_K_cos2]    = new TH1F("h_gen_N_K_cos2",";cos#theta;Generated N Kaons", 100,-1,1);
+    h1[reco_N_K_cos2]   = new TH1F("h_reco_N_K_cos2",";cos#theta;Reconstructed N Kaons", 100,-1,1);
+    h1[N_K_corr_cos2]   = new TH1F("h_N_K_corr_cos2",";cos#theta;Correctly Reconstructed N Kaons", 100,-1,1);
+
   // pq method
     h1_pq[acc_KK]      = new TH1F("h_acc_KK_cos",";Accepted K^{+}K^{-} cos#theta;N_{acc}",nbins_cos,bins_cos_fine);
     h1_pq[rej_KK]      = new TH1F("h_rej_KK_cos",";Rejected K^{+}K^{-} cos#theta;N_{rej}",nbins_cos,bins_cos_fine);
