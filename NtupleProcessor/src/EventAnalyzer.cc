@@ -238,6 +238,20 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
 
     }
 
+    Int_t nbins_cos2 = _hm.h1[_hm.gen_N_K_cos2]->GetNbinsX();
+    TAxis *xaxis2    = _hm.h1[_hm.gen_N_K_cos2]->GetXaxis();
+    for ( int ibin=1; ibin<=nbins_cos2; ibin++ ){
+      Float_t bin_center = xaxis->GetBinCenter(ibin);
+      Float_t bin_width  = xaxis->GetBinWidth(ibin);
+      Float_t cos_min    = xaxis->GetBinLowEdge(ibin);
+      Float_t cos_max    = cos_min + bin_width;
+      Int_t   *dN_Ks     = Gen_Reco_Stats_Stable( mct, pfot, cos_min, cos_max );
+      Float_t *dSPs      = Get_Stable_Purity(dN_Ks);
+      _hm.h1[_hm.gen_N_K_cos2]->Fill( bin_center ,dN_Ks[0]);
+      _hm.h1[_hm.reco_N_K_cos2]->Fill( bin_center ,dN_Ks[1]);
+      _hm.h1[_hm.N_K_corr_cos2]->Fill( bin_center ,dN_Ks[2]);
+    }
+
   // Fill Hists can make another class called histogram extractor?
   Bool_t all_K_K = all_checks && (dEdx_pdg_match == K_K);
   PolarAngle(pfot,mct,all_K_K);
