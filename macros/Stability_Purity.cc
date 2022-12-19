@@ -36,7 +36,8 @@ void Stability_Purity()
   gStyle->SetOptStat(0);
   gStyle->SetPadBorderSize(1);
 
-  TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.uu.LPFOp15_pNaN.tpc0.hists.all.root","READ");
+  // TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.uu.LPFOp15_pNaN.tpc0.hists.all.root","READ");
+  TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ss.LPFOp15_pNaN.tpc0.hists.all.root","READ");
   // TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.dd.LPFOp15_pNaN.tpc0.hists.all.root","READ");
 
   TTree *t_data = (TTree*) file->Get("data");
@@ -45,9 +46,9 @@ void Stability_Purity()
   Float_t xmax = 30.0;
 
   // For differential cosθ
-  TH1F *h_gen_N_K_cos  = (TH1F*) file->Get("h_gen_N_K_cos");
-  TH1F *h_reco_N_K_cos = (TH1F*) file->Get("h_reco_N_K_cos");
-  TH1F *h_N_K_corr_cos = (TH1F*) file->Get("h_N_K_corr_cos");
+  TH1F *h_gen_N_K_cos  = (TH1F*) file->Get("h_gen_N_K_cos2");
+  TH1F *h_reco_N_K_cos = (TH1F*) file->Get("h_reco_N_K_cos2");
+  TH1F *h_N_K_corr_cos = (TH1F*) file->Get("h_N_K_corr_cos2");
   StyleHist(h_gen_N_K_cos,kBlack);
   StyleHist(h_reco_N_K_cos,kRed+2);
   StyleHist(h_N_K_corr_cos,kBlue+2);

@@ -424,7 +424,8 @@ void main_pq_BGFit( TFile *files[] )
   TPad *pad1 = new TPad("pad1", "pad1",0,0,1,1);
   StylePad(pad1,0,0.12,0,0.15);
 
-  h_reco_K_pq_cos_subtracted_back->Draw("h");
+  h_gen_uu_qcos_scale->Draw("h");
+  h_reco_K_pq_cos_subtracted_back->Draw("hsame");
 
   // -0.4 < cos
   TF1 * f_uu_back = new TF1("f_uu_back","[0]*(1+x*x)+[1]*x",-0.6,-0.1);
