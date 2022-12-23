@@ -482,13 +482,13 @@ void main_pq_BGFit( TFile *files[] )
   h_reco_us_K_qcos_eff_corr->Draw("hsame");
   h_reco_us_K_scos_eff_corr->Draw("hsame");
 
-  h_reco_K_pq_cos_remain_front->Draw("hsame");
+  // h_reco_K_pq_cos_remain_front->Draw("hsame");
   h_gen_us_qcos->Draw("hsame");
   h_gen_ss_qcos_scale->Draw("hsame");
   h_gen_uu_qcos_scale->Draw("hsame");
 
-  f_ss_full->Draw("same");
-  f_uu_full->Draw("same");
+  // f_ss_full->Draw("same");
+  // f_uu_full->Draw("same");
   
 
   TLegend *leg = new TLegend(0.2,0.70,0.7,0.85);
@@ -499,7 +499,7 @@ void main_pq_BGFit( TFile *files[] )
   leg->AddEntry(h_reco_us_K_scos_eff_corr,"Reco K^{+}K^{-} matched with #bar{u}/s-quark angle","l");
   leg->AddEntry(h_reco_us_K_qcos_eff_corr,"Reco K^{+}K^{-}","l");
   leg->AddEntry(h_reco_K_pq_cos,"Reco K^{+}K^{-} (pq correction)","l");
-  leg->AddEntry(h_reco_K_pq_cos_remain_front,"Reco K^{+}K^{-} (pq + FB-Fitting correction @ cos#theta = -0.4)","l");
+  // leg->AddEntry(h_reco_K_pq_cos_remain_front,"Reco K^{+}K^{-} (pq + FB-Fitting correction @ cos#theta = -0.4)","l");
   leg->Draw();
 
 
