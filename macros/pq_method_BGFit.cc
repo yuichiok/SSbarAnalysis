@@ -6,7 +6,8 @@ using std::vector;
 
 Float_t bins_cos_fine[] = {-1.0,-0.98,-0.96,-0.94,-0.92,-0.90,-0.88,-0.86,-0.84,-0.82,-0.80,-0.75,-0.70,-0.60,-0.50,-0.40,-0.30,-0.20,-0.10,
                             0.0,0.10,0.20,0.30,0.40,0.50,0.60,0.70,0.75,0.80,0.82,0.84,0.86,0.88,0.90,0.92,0.94,0.96,0.98,1.0};
-Int_t   nbins_cos = sizeof(bins_cos_fine) / sizeof(Float_t) - 1;
+// Int_t   nbins_cos = sizeof(bins_cos_fine) / sizeof(Float_t) - 1;
+Int_t   nbins_cos = 100;
 
 Float_t bins_cos_fine_half[] = {0.0,0.10,0.20,0.30,0.40,0.50,0.60,0.70,0.75,0.80,0.82,0.84,0.86,0.88,0.90,0.92,0.94,0.96,0.98,1.0};
 Int_t   nbins_cos_half = sizeof(bins_cos_fine_half) / sizeof(Float_t) - 1;
@@ -166,7 +167,7 @@ TH1F * CorrectHist( TH1F * h_reco, vector<Float_t> p_vec)
 {
   const Int_t nbins = h_reco->GetNbinsX();
 
-  TH1F *corrected = new TH1F("corrected", "corrected", nbins_cos,bins_cos_fine);
+  TH1F *corrected = new TH1F("corrected", "corrected", 100,-1,1);
   corrected->Sumw2();
   for (int i = 1; i < nbins / 2 + 1; i++)
   {
@@ -231,7 +232,7 @@ TH1F * Efficiency_Correction( TH1F * h, TString name, TFile * file )
   if( h->GetNbinsX() != h_stable_cos->GetNbinsX() ) throw std::logic_error("Error");
 
   Int_t nbins = h_stable_cos->GetNbinsX();
-  TH1F *corrected = new TH1F(name.Data(), "corrected", nbins_cos,bins_cos_fine);
+  TH1F *corrected = new TH1F(name.Data(), "corrected", 100,-1,1);
   corrected->Sumw2();
   for (int ibin = 1; ibin < nbins + 1; ibin++){
 
@@ -340,7 +341,7 @@ void main_pq_BGFit( TFile *files[] )
 
   const Int_t nbins = h_reco_us_K_scos_eff_corr->GetNbinsX();
 
-  TH1F *p_KK = new TH1F("p_KK", "p_KK", nbins_cos_half,bins_cos_fine_half);
+  TH1F *p_KK = new TH1F("p_KK", "p_KK", 50,0,1);
   p_KK->Sumw2();
 
   vector<Float_t> p_vec = GetP(h_acc_KK_cos_eff_corr, h_rej_KK_cos_eff_corr);
@@ -387,7 +388,7 @@ void main_pq_BGFit( TFile *files[] )
   f_ss_full->SetParameters(ss_par);
 
   // function to histogram
-  TH1F * h_f_ss_full = new TH1F("h_f_ss_full", "h_f_ss_full", nbins_cos,bins_cos_fine);
+  TH1F * h_f_ss_full = new TH1F("h_f_ss_full", "h_f_ss_full", 100,-1,1);
   Func2Hist(h_f_ss_full,ss_par);
 
   TH1F* h_reco_K_pq_cos_subtracted_back = (TH1F*) h_reco_K_pq_cos->Clone();
@@ -442,7 +443,7 @@ void main_pq_BGFit( TFile *files[] )
   f_uu_full->Draw("same");
 
 
-  TH1F * h_f_uu_full = new TH1F("h_f_uu_full", "h_f_uu_full", nbins_cos,bins_cos_fine);
+  TH1F * h_f_uu_full = new TH1F("h_f_uu_full", "h_f_uu_full", 100,-1,1);
   Func2Hist(h_f_uu_full,uu_par);
 
 
