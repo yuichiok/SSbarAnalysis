@@ -29,18 +29,18 @@ void HistManager::InitializeHists()
   //////////////////
   //     TH1F     //
   //////////////////
-    h1[gen_q_cos]       = new TH1F("h_gen_q_cos","; Generated q#bar{q} cos#theta; Entries",nbins_cos,bins_cos_fine);
-    h1[gen_q_qcos]      = new TH1F("h_gen_q_qcos","; Generated q#bar{q} qcos#theta; Entries",nbins_cos,bins_cos_fine);
+    h1[gen_q_cos]       = new TH1F("h_gen_q_cos","; Generated q#bar{q} cos#theta; Entries",cos_bin,-1,1);
+    h1[gen_q_qcos]      = new TH1F("h_gen_q_qcos","; Generated q#bar{q} qcos#theta; Entries",cos_bin,-1,1);
 
-    h1[gen_K_cos]       = new TH1F("h_gen_K_cos","; Generated Kaon cos#theta; Entries",nbins_cos,bins_cos_fine);
-    h1[gen_K_qcos]      = new TH1F("h_gen_K_qcos","; Generated Kaon qcos#theta; Entries",nbins_cos,bins_cos_fine);
+    h1[gen_K_cos]       = new TH1F("h_gen_K_cos","; Generated Kaon cos#theta; Entries",cos_bin,-1,1);
+    h1[gen_K_qcos]      = new TH1F("h_gen_K_qcos","; Generated Kaon qcos#theta; Entries",cos_bin,-1,1);
     
-    h1[reco_K_cos]      = new TH1F("h_reco_K_cos",";LPFO Kaon cos#theta; Entries",nbins_cos,bins_cos_fine);
-    h1[reco_K_qcos]     = new TH1F("h_reco_K_qcos",";LPFO Kaon cos#theta; Entries",nbins_cos,bins_cos_fine);
+    h1[reco_K_cos]      = new TH1F("h_reco_K_cos",";LPFO Kaon cos#theta; Entries",cos_bin,-1,1);
+    h1[reco_K_qcos]     = new TH1F("h_reco_K_qcos",";LPFO Kaon cos#theta; Entries",cos_bin,-1,1);
     
-    h1[reco_K_scos]     = new TH1F("h_reco_K_scos",";LPFO Kaon cos#theta; Entries",nbins_cos,bins_cos_fine);
+    h1[reco_K_scos]     = new TH1F("h_reco_K_scos",";LPFO Kaon cos#theta; Entries",cos_bin,-1,1);
 
-    h1[gen_reco_K_sep_cos] = new TH1F("h_gen_reco_K_sep_cos",";Kaon cos#theta_{gen-reco}; Entries",nbins_cos,bins_cos_fine);
+    h1[gen_reco_K_sep_cos] = new TH1F("h_gen_reco_K_sep_cos",";Kaon cos#theta_{gen-reco}; Entries",cos_bin,-1,1);
 
   // ISR parameters
     h1[reco_sum_jetE]   = new TH1F("h_reco_sum_jetE", ";Visible Energy (GeV);", 100, 0, 300);
@@ -50,17 +50,17 @@ void HistManager::InitializeHists()
     h1[lpfo_reco_K_mom] = new TH1F("h_lpfo_reco_K_mom","; Leading Reco Kaon momentum (GeV); Entries",100,0,100);
 
   // Number of Gen Reco Kaons
-    h1[gen_N_K_cos]     = new TH1F("h_gen_N_K_cos",";cos#theta;Generated N Kaons", nbins_cos,bins_cos_fine);
-    h1[reco_N_K_cos]    = new TH1F("h_reco_N_K_cos",";cos#theta;Reconstructed N Kaons", nbins_cos,bins_cos_fine);
-    h1[N_K_corr_cos]    = new TH1F("h_N_K_corr_cos",";cos#theta;Correctly Reconstructed N Kaons", nbins_cos,bins_cos_fine);
+    h1[gen_N_K_cos]     = new TH1F("h_gen_N_K_cos",";cos#theta;Generated N Kaons", cos_bin,-1,1);
+    h1[reco_N_K_cos]    = new TH1F("h_reco_N_K_cos",";cos#theta;Reconstructed N Kaons", cos_bin,-1,1);
+    h1[N_K_corr_cos]    = new TH1F("h_N_K_corr_cos",";cos#theta;Correctly Reconstructed N Kaons", cos_bin,-1,1);
 
     h1[gen_N_K_cos2]    = new TH1F("h_gen_N_K_cos2",";cos#theta;Generated N Kaons", 100,-1,1);
     h1[reco_N_K_cos2]   = new TH1F("h_reco_N_K_cos2",";cos#theta;Reconstructed N Kaons", 100,-1,1);
     h1[N_K_corr_cos2]   = new TH1F("h_N_K_corr_cos2",";cos#theta;Correctly Reconstructed N Kaons", 100,-1,1);
 
   // pq method
-    h1_pq[acc_KK]      = new TH1F("h_acc_KK_cos",";Accepted K^{+}K^{-} cos#theta;N_{acc}",nbins_cos,bins_cos_fine);
-    h1_pq[rej_KK]      = new TH1F("h_rej_KK_cos",";Rejected K^{+}K^{-} cos#theta;N_{rej}",nbins_cos,bins_cos_fine);
+    h1_pq[acc_KK]      = new TH1F("h_acc_KK_cos",";Accepted K^{+}K^{-} cos#theta;N_{acc}",cos_bin,-1,1);
+    h1_pq[rej_KK]      = new TH1F("h_rej_KK_cos",";Rejected K^{+}K^{-} cos#theta;N_{rej}",cos_bin,-1,1);
 
   // particle ratio
     h1_particle_ratio[K_rate_gen]  = new TH1F("h_K_rate_gen",";Ratio of Kaons / Event (gen);Entries",11,0,1.1);
