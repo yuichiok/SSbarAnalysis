@@ -41,13 +41,27 @@ void p_visual()
   gPad->SetGrid(1,1);
   StylePad(gPad,0,0,0.17,0.1);
 
-  auto f   = new TF2("f",func,4000,21000,4000,21000);
-  auto lin = new TF2("f",line,4000,21000,4000,21000);
+  Float_t alow  = 4E3;
+  Float_t ahigh = 35E3;
+
+  auto f   = new TF2("f",func,alow,ahigh,alow,ahigh);
+  auto f2 = new TF2("f2",func,alow,ahigh,alow,ahigh);
   f->SetTitle(";Rejected;Accepted;p value");
   f->GetZaxis()->SetTitleOffset(1.5);
   f->Draw("colz");
-  // f->Draw("surf2");
-  // lin->Draw("surf2");
+  
+  // f2->GetZaxis()->SetRangeUser(0.5,0.6);
+  f2->SetContour(10);
+  f2->Draw("CONT2 same");
+
+  Float_t accepted = 20E3;
+  Float_t rejected = 21.5E3;
+  Double_t a = 1;
+  Double_t b = -1;
+  Double_t c = rejected / (2 * (accepted + rejected));
+  Double_t p = (0.5 / a) * (-b + sqrt(b * b - 4 * a * c));
+  cout << p << endl;
+
 
 
 }

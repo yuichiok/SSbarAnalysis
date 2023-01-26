@@ -429,7 +429,7 @@ void main_pq_BGFit( TFile *files[] )
   h_reco_K_pq_cos_subtracted_back->Draw("hsame");
 
   // -0.4 < cos
-  TF1 * f_uu_back = new TF1("f_uu_back","[0]*(1+x*x)+[1]*x",-0.6,-0.1);
+  TF1 * f_uu_back = new TF1("f_uu_back","[0]*(1+x*x)+[1]*x",-0.4,-0.1);
   TF1 * f_uu_full = new TF1("f_uu_full","[0]*(1+x*x)+[1]*x",-1.0,1.0);
 
   f_uu_back->SetParNames("S","A");

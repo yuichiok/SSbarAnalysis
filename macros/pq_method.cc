@@ -68,6 +68,9 @@ vector<Float_t> GetP( TH1F * h_accepted, TH1F * h_rejected )
 
   for (int i = 1; i < nbins / 2 + 1; i++)
   {
+
+    cout << "=== " << i << " (" << nbins + 1 - i << ") ===" << endl;
+
     std::vector<float> result_j;
     for (int i1 = -1; i1 < 2; i1 += 2)
     {
@@ -84,6 +87,11 @@ vector<Float_t> GetP( TH1F * h_accepted, TH1F * h_rejected )
           float c = rejected / (2 * (accepted + rejected));
           float p = (0.5 / a) * (-b + sqrt(b * b - 4 * a * c));
           float p2 = (0.5 / a) * (-b - sqrt(b * b - 4 * a * c));
+
+          cout << "i1=" << i1 << ",i2=" << i2 << ",i3=" << i3 << endl;
+          cout << "acc binc: " << h_accepted->GetBinContent(nbins + 1 - i) << ", rej binc: " << h_rejected->GetBinContent(nbins + 1 - i) << endl;
+          cout << "acc: " << accepted << ", rej: " << rejected << ", p = " << p << ", p2 = " << p2 << endl;
+
           if (p > 0.99)
             p = 0;
           if (p2 > 0.99)
@@ -143,11 +151,12 @@ TH1F * CorrectHist( TH1F * h_reco, vector<Float_t> p_vec)
 {
   const Int_t nbins = h_reco->GetNbinsX();
 
-  TH1F *corrected = new TH1F("corrected", "corrected", nbins_cos,bins_cos_fine);
+  TH1F *corrected = new TH1F("corrected", "corrected", 100,-1,1);
   corrected->Sumw2();
   for (int i = 1; i < nbins / 2 + 1; i++)
   {
     float p = p_vec.at(i - 1);
+    // float p = 0.65;
     float q = 1 - p;
     float weight = (p * p + q * q) / (q * q * q * q - p * p * p * p);
 
@@ -170,6 +179,7 @@ TH1F * CorrectHist( TH1F * h_reco, vector<Float_t> p_vec)
     av_41i /= n;
     corrected->SetBinContent(i, av_i);
     corrected->SetBinContent(nbins + 1 - i, av_41i);
+    // cout << "val: " << av_41i << ", p: " << p << endl;
 
     // calculate error
     float error_i = 0;
@@ -208,7 +218,7 @@ TH1F * Efficiency_Correction( TH1F * h, TString name, TFile * file )
   if( h->GetNbinsX() != h_stable_cos->GetNbinsX() ) throw std::logic_error("Error");
 
   Int_t nbins = h_stable_cos->GetNbinsX();
-  TH1F *corrected = new TH1F(name.Data(), "corrected", nbins_cos,bins_cos_fine);
+  TH1F *corrected = new TH1F(name.Data(), "corrected", 100,-1,1);
   corrected->Sumw2();
   for (int ibin = 1; ibin < nbins + 1; ibin++){
 
@@ -227,8 +237,8 @@ void main_pq()
 {
   gStyle->SetOptStat(0);
 
-  // TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.uu.LPFOp15_pNaN.tpc0.hists.all.root","READ");
-  TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ss.LPFOp15_pNaN.tpc0.hists.all.root","READ");
+  TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.uu.LPFOp15_pNaN.tpc0.hists.all.root","READ");
+  // TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ss.LPFOp15_pNaN.tpc0.hists.all.root","READ");
   // TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ss.LPFOp20_p60.tpc0.hists.all.root","READ");
 
   if (!file->IsOpen()) return;
@@ -262,7 +272,7 @@ void main_pq()
 
   const Int_t nbins = h_reco_K_scos_eff_corr->GetNbinsX();
 
-  TH1F *p_KK = new TH1F("p_KK", "p_KK", nbins_cos_half,bins_cos_fine_half);
+  TH1F *p_KK = new TH1F("p_KK", "p_KK", 50,0,1);
   p_KK->Sumw2();
 
   vector<Float_t> p_vec = GetP(h_acc_KK_cos_eff_corr, h_rej_KK_cos_eff_corr);
@@ -280,22 +290,22 @@ void main_pq()
   TPad *pad0 = new TPad("pad0", "pad0",0,0,1,1);
   StylePad(pad0,0,0.12,0,0.15);
 
-  BinNormal(h_gen_q_qcos);
-  BinNormal(h_reco_K_scos_eff_corr);
-  BinNormal(h_reco_K_pq_cos);
-  BinNormal(h_reco_K_qcos_eff_corr);
+  // BinNormal(h_gen_q_qcos);
+  // BinNormal(h_reco_K_scos_eff_corr);
+  // BinNormal(h_reco_K_pq_cos);
+  // BinNormal(h_reco_K_qcos_eff_corr);
 
-  Normalize(h_gen_q_qcos);
-  Normalize(h_reco_K_scos_eff_corr);
-  Normalize(h_reco_K_pq_cos);
-  Normalize(h_reco_K_qcos_eff_corr);
+  Normalize2Gen(h_gen_q_qcos,h_reco_K_scos_eff_corr);
+  // Normalize(h_reco_K_scos_eff_corr);
+  // Normalize(h_reco_K_pq_cos);
+  // Normalize(h_reco_K_qcos_eff_corr);
 
   // Fitting
   TF1 * f_reco = new TF1("f_reco","[0]*(1+x*x)+[1]*x",-0.8,0.8);
   f_reco->SetParNames("S","A");
   h_reco_K_pq_cos->Fit("f_reco","MNRS");
 
-  h_reco_K_pq_cos->GetYaxis()->SetRangeUser(0,0.20);
+  h_reco_K_pq_cos->GetYaxis()->SetRangeUser(0,73E3);
   h_reco_K_pq_cos->SetTitle(";K^{+}K^{-} cos#theta;a.u.");
   h_reco_K_pq_cos->Draw("h");
   h_reco_K_qcos_eff_corr->Draw("hsame");
@@ -306,8 +316,8 @@ void main_pq()
 
   TLegend *leg = new TLegend(0.2,0.76,0.7,0.85);
   leg->SetLineColor(0);
-  leg->AddEntry(h_gen_q_qcos,"Generated u-quark angle","l");
-  leg->AddEntry(h_reco_K_scos_eff_corr,"Reconstructed K^{+}K^{-} matched with u-quark angle","l");
+  leg->AddEntry(h_gen_q_qcos,"Generated s-quark angle","l");
+  leg->AddEntry(h_reco_K_scos_eff_corr,"Reconstructed K^{+}K^{-} matched with s-quark angle","l");
   leg->AddEntry(h_reco_K_qcos_eff_corr,"Reconstructed K^{+}K^{-}","l");
   leg->AddEntry(h_reco_K_pq_cos,"Reconstructed K^{+}K^{-} (corrected)","l");
   leg->Draw();
@@ -326,17 +336,32 @@ void main_pq()
   gPad->SetGrid(1,1);
   h_acc_KK_cos_eff_corr->SetTitle(";K^{+}K^{-} cos#theta;Entries");
 
-  BinNormal(h_acc_KK_cos_eff_corr);
-  BinNormal(h_rej_KK_cos_eff_corr);
-
+  h_acc_KK_cos_eff_corr->GetYaxis()->SetRangeUser(0,40E3);
   h_acc_KK_cos_eff_corr->Draw("h");
   h_rej_KK_cos_eff_corr->Draw("hsame");
+
+  TH1F * acc_full = (TH1F*) h_acc_KK_cos_eff_corr->Clone();
+  TH1F * acc_add  = new TH1F("acc_add","acc_add",nbins,-1,1);
+
+  for (int i = 1; i < nbins / 2 + 1; i++)
+  {
+    float accepted = acc_full->GetBinContent(nbins + 1 - i);
+    accepted += acc_full->GetBinContent(i);
+    acc_add->SetBinContent(i,accepted);
+    acc_add->SetBinContent(nbins+1-i,accepted);
+  }
+  StyleHist(acc_add,kRed);
+  acc_add->Draw("hsame");
 
   TLegend *leg2 = new TLegend(0.15,0.75,0.45,0.85);
   leg2->SetLineColor(0);
   leg2->AddEntry(h_acc_KK_cos_eff_corr,"N Accepted","l");
   leg2->AddEntry(h_rej_KK_cos_eff_corr,"N Rejected","l");
+  leg2->AddEntry(acc_add,"N Accepted + opp. bin","l");
   leg2->Draw();
+
+
+
 
 }
 
