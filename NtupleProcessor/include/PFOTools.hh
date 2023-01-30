@@ -41,7 +41,7 @@ class PFOTools
     static  Bool_t            isProton          ( PFO_Info iPFO );
 
   // LPFO checks
-    virtual Bool_t           is_charge_config ( ChargeConfig cc );
+    virtual Bool_t           is_charge_config ( ChargeConfig cc, Int_t charge0, Int_t charge1 );
 
     virtual Bool_t           LPFO_Quality_checks    ( PFO_Info iPFO );
     virtual Bool_t           is_momentum           ( PFO_Info iPFO, Float_t MINP, Float_t MAXP );

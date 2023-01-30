@@ -281,10 +281,11 @@ Bool_t PFOTools::isProton( PFO_Info iPFO )
     return iPFO.dEdx_dist_pdg == 2212;
 }
 
-Bool_t PFOTools::is_charge_config( ChargeConfig cc )
+Bool_t PFOTools::is_charge_config( ChargeConfig cc, Int_t charge0 , Int_t charge1 )
 {
 
-  Int_t charge_config = LPFO[0].pfo_charge * LPFO[1].pfo_charge;
+  // Int_t charge_config = LPFO[0].pfo_charge * LPFO[1].pfo_charge;
+  Int_t charge_config = charge0 * charge1;
 
   switch (cc)
   {
