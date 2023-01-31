@@ -180,10 +180,11 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
     switch ( dEdx_pdg_match )
     {
       case K_K:
-        charge_check = pfot.is_charge_config(pfot.kOpposite);
+        charge_check = pfot.is_charge_config(pfot.kOpposite,pfot.KLPFO[0].pfo_charge,pfot.KLPFO[1].pfo_charge);
         break;
-      case K_Pi:
-        charge_check = pfot.is_charge_config(pfot.kSame);
+      // case K_Pi:
+      //   charge_check = pfot.is_charge_config(pfot.kSame);
+      //   break;
 
     default:
       break;
@@ -253,9 +254,13 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
     }
 
   // Fill Hists can make another class called histogram extractor?
+  // CutTrigger = [ Valid_LPFO, Quality, Not_Gluon_K, charge_check ]
+  //                          * Quality = {momentum, tpc hits, offset}
+
+  // cout << "after match = " << dEdx_pdg_match << endl;
   Bool_t all_K_K = all_checks && (dEdx_pdg_match == K_K);
-  PolarAngle(pfot,mct,all_K_K);
-  PolarAngle_acc_rej(pfot,CutTrigger,(dEdx_pdg_match == K_K));
+  PolarAngle(pfot,mct,CutTrigger,dEdx_pdg_match);
+  // PolarAngle_acc_rej(pfot,CutTrigger,(dEdx_pdg_match == K_K));
 
 
   // Fill PFO
@@ -723,41 +728,40 @@ void EventAnalyzer::Mom_Polar_Gen(PFOTools mct, PFOTools pfot)
 
 }
 
-void EventAnalyzer::PolarAngle(PFOTools pfot, PFOTools mct, Bool_t s_reco)
+void EventAnalyzer::PolarAngle(PFOTools pfot, PFOTools mct, vector<Bool_t> cuts, Int_t double_tag)
 {
+  Bool_t LPFO_checks = true;
+  for (int i=0; i<3; i++){
+
+    if (!cuts.at(i)){
+      LPFO_checks = false;
+      break;
+    }
+
+  }
+
+  Bool_t sign_check = cuts.at(3);
+
   // Reco K_K
-  if(s_reco){
+  if(LPFO_checks && (double_tag == 1)){
 
-    for ( auto iLPFO : pfot.KLPFO ){
-      _hm.h1[_hm.reco_K_cos]->Fill( iLPFO.cos );
-      _hm.h1[_hm.reco_K_qcos]->Fill( iLPFO.qcos );
-      // _hm.h1[_hm.reco_K_scos]->Fill( abs(iLPFO.cos) * sgn( iLPFO.pfo_charge * _mc.mc_quark_charge[0] ) * mct.mc_quark[0].cos / abs(mct.mc_quark[0].cos) );
-      _hm.h1[_hm.reco_K_scos]->Fill( abs(iLPFO.cos) * sgn( -_mc.mc_quark_charge[0] ) * mct.mc_quark[0].cos / abs(mct.mc_quark[0].cos) );
+    Int_t ineg = -1;
+      
+    if( pfot.KLPFO[0].pfo_charge < 0 ){
+      ineg = 0;
+    }else{
+      ineg = 1;
+    }
 
-      // if ( iLPFO.pfo_charge < 0 ) {
-      //   _hm.h1[_hm.reco_K_scos]->Fill( abs(iLPFO.cos) * mct.mc_quark[0].cos / abs(mct.mc_quark[0].cos) );
-      // }else{
-      //   _hm.h1[_hm.reco_K_scos]->Fill( abs(iLPFO.cos) * -mct.mc_quark[1].cos / abs(mct.mc_quark[1].cos) );
-      // }
+    if(sign_check){
+      _hm.h1[_hm.reco_K_cos]->Fill( pfot.KLPFO[ineg].cos );
+      _hm.h1[_hm.reco_K_qcos]->Fill( pfot.KLPFO[ineg].qcos );
+      _hm.h1[_hm.reco_K_scos]->Fill( abs(pfot.KLPFO[ineg].cos) * sgn( -_mc.mc_quark_charge[0] ) * mct.mc_quark[0].cos / abs(mct.mc_quark[0].cos) );
 
-      /*
-      if ( _mc.mc_quark_charge[0] < 0) {
-        cout << "NO" << endl;
-        if ( iLPFO.pfo_charge < 0 ) {
-          _hm.h1[_hm.reco_K_scos]->Fill( abs(iLPFO.cos) * mct.mc_quark[0].cos / abs(mct.mc_quark[0].cos) );
-        }else{
-          _hm.h1[_hm.reco_K_scos]->Fill( abs(iLPFO.cos) * -mct.mc_quark[1].cos / abs(mct.mc_quark[1].cos) );
-        }
-      }else{
-        cout << "YES " << iLPFO.pfo_charge << " " << abs(iLPFO.cos) * mct.mc_quark[0].cos / abs(mct.mc_quark[0].cos) << endl;
-        if ( iLPFO.pfo_charge > 0 ) {
-          _hm.h1[_hm.reco_K_scos]->Fill( abs(iLPFO.cos) * mct.mc_quark[0].cos / abs(mct.mc_quark[0].cos) );
-        }else{
-          _hm.h1[_hm.reco_K_scos]->Fill( abs(iLPFO.cos) * -mct.mc_quark[1].cos / abs(mct.mc_quark[1].cos) );
-        }
-      }
-      */
-    
+      _hm.h1_pq[_hm.acc_KK]->Fill( pfot.KLPFO[ineg].qcos );
+    }else{
+      _hm.h1_pq[_hm.rej_KK]->Fill( pfot.KLPFO[ineg].cos );
+      _hm.h1_pq[_hm.rej_KK]->Fill( -pfot.KLPFO[1-ineg].cos );
     }
     
   }
