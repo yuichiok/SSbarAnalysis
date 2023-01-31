@@ -305,7 +305,7 @@ void main_pq()
   f_reco->SetParNames("S","A");
   h_reco_K_pq_cos->Fit("f_reco","MNRS");
 
-  h_reco_K_pq_cos->GetYaxis()->SetRangeUser(0,73E3);
+  h_reco_K_pq_cos->GetYaxis()->SetRangeUser(0,30E3);
   h_reco_K_pq_cos->SetTitle(";K^{+}K^{-} cos#theta;a.u.");
   h_reco_K_pq_cos->Draw("h");
   h_reco_K_qcos_eff_corr->Draw("hsame");
@@ -336,7 +336,7 @@ void main_pq()
   gPad->SetGrid(1,1);
   h_acc_KK_cos_eff_corr->SetTitle(";K^{+}K^{-} cos#theta;Entries");
 
-  h_acc_KK_cos_eff_corr->GetYaxis()->SetRangeUser(0,40E3);
+  h_acc_KK_cos_eff_corr->GetYaxis()->SetRangeUser(0,30E3);
   h_acc_KK_cos_eff_corr->Draw("h");
   h_rej_KK_cos_eff_corr->Draw("hsame");
 
