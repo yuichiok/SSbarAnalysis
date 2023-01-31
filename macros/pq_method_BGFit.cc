@@ -305,7 +305,7 @@ void main_pq_BGFit( TFile *files[] )
   h_gen_uu_qcos_scale->SetFillStyle(0);
   h_gen_uu_qcos_scale->SetLineStyle(2);
   // Normalize(h_gen_uu_qcos_scale,1.0);
-  h_gen_uu_qcos_scale->Scale(1.0 / (Float_t) (h_gen_uu_qcos_scale->Integral()) );
+  // h_gen_uu_qcos_scale->Scale(1.0 / (Float_t) (h_gen_uu_qcos_scale->Integral()) );
 
   StyleHist(h_gen_ss_qcos_scale,kBlack);
   h_gen_ss_qcos_scale->SetFillStyle(0);
@@ -350,21 +350,12 @@ void main_pq_BGFit( TFile *files[] )
   TH1F *h_reco_K_pq_cos = CorrectHist(h_reco_us_K_qcos_eff_corr, p_vec);
   StyleHist(h_reco_K_pq_cos,kBlue);
 
-  // Normalize(h_gen_us_qcos, 1.0);
-  // Normalize(h_reco_us_K_scos_eff_corr,1.0);
-  // Normalize(h_reco_K_pq_cos,1.0);
-  // Normalize(h_reco_us_K_qcos_eff_corr,1.0);
-
-
-
-
-
 
   // Fitting 1st Round
   // cos < -0.4
-  Float_t split_pt = -0.4;
+  Float_t split_pt = -0.19;
 
-  TF1 * f_ss_front = new TF1("f_ss_front","[0]*(1+x*x)+[1]*x",0.0,0.8);
+  TF1 * f_ss_front = new TF1("f_ss_front","[0]*(1+x*x)+[1]*x",0.4,0.8);
   TF1 * f_ss_full  = new TF1("f_ss_full","[0]*(1+x*x)+[1]*x",-1.0,1.0);
 
   f_ss_front->SetParNames("S","A");
@@ -419,7 +410,7 @@ void main_pq_BGFit( TFile *files[] )
   h_reco_K_pq_cos_subtracted_back->Draw("hsame");
 
   // -0.4 < cos
-  TF1 * f_uu_back = new TF1("f_uu_back","[0]*(1+x*x)+[1]*x",-0.7,-0.3);
+  TF1 * f_uu_back = new TF1("f_uu_back","[0]*(1+x*x)+[1]*x",-0.98,-0.8);
   TF1 * f_uu_full = new TF1("f_uu_full","[0]*(1+x*x)+[1]*x",-1.0,1.0);
 
   f_uu_back->SetParNames("S","A");
@@ -462,13 +453,17 @@ void main_pq_BGFit( TFile *files[] )
   // h_gen_uu_qcos_scale->Scale( 1.8 / (Float_t) scale_sum );
 
   // Normalize2Reco(h_gen_us_qcos,h_gen_ss_qcos_scale);
-  double intgen  = h_gen_us_qcos->Integral(50,90);
-  double intreco = h_reco_us_K_scos_eff_corr->Integral(50,90);
+  double intgen  = h_gen_us_qcos->Integral(70,80);
+  double intreco = h_reco_K_pq_cos->Integral(70,80);
   h_gen_us_qcos->Scale(intreco/intgen);
 
   double intgen2  = h_gen_ss_qcos_scale->Integral(90,95);
   double intreco2 = h_gen_us_qcos->Integral(90,95);
   h_gen_ss_qcos_scale->Scale(intreco2/intgen2);
+
+  double intgen3  = h_gen_uu_qcos_scale->Integral(5,10);
+  double intreco3 = h_gen_us_qcos->Integral(5,10);
+  h_gen_uu_qcos_scale->Scale(intreco3/intgen3);
 
 
   TCanvas *c0 = new TCanvas("c0","c0",800,800);
