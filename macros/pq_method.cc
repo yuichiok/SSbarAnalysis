@@ -69,8 +69,6 @@ vector<Float_t> GetP( TH1F * h_accepted, TH1F * h_rejected )
   for (int i = 1; i < nbins / 2 + 1; i++)
   {
 
-    cout << "=== " << i << " (" << nbins + 1 - i << ") ===" << endl;
-
     std::vector<float> result_j;
     for (int i1 = -1; i1 < 2; i1 += 2)
     {
@@ -87,10 +85,6 @@ vector<Float_t> GetP( TH1F * h_accepted, TH1F * h_rejected )
           float c = rejected / (2 * (accepted + rejected));
           float p = (0.5 / a) * (-b + sqrt(b * b - 4 * a * c));
           float p2 = (0.5 / a) * (-b - sqrt(b * b - 4 * a * c));
-
-          cout << "i1=" << i1 << ",i2=" << i2 << ",i3=" << i3 << endl;
-          cout << "acc binc: " << h_accepted->GetBinContent(nbins + 1 - i) << ", rej binc: " << h_rejected->GetBinContent(nbins + 1 - i) << endl;
-          cout << "acc: " << accepted << ", rej: " << rejected << ", p = " << p << ", p2 = " << p2 << endl;
 
           if (p > 0.99)
             p = 0;

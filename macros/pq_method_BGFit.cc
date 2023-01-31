@@ -410,7 +410,7 @@ void main_pq_BGFit( TFile *files[] )
   h_reco_K_pq_cos_subtracted_back->Draw("hsame");
 
   // -0.4 < cos
-  TF1 * f_uu_back = new TF1("f_uu_back","[0]*(1+x*x)+[1]*x",-0.98,-0.8);
+  TF1 * f_uu_back = new TF1("f_uu_back","[0]*(1+x*x)+[1]*x",-0.4,-0.2);
   TF1 * f_uu_full = new TF1("f_uu_full","[0]*(1+x*x)+[1]*x",-1.0,1.0);
 
   f_uu_back->SetParNames("S","A");
@@ -452,7 +452,6 @@ void main_pq_BGFit( TFile *files[] )
   // Int_t scale_sum = h_gen_uu_qcos_scale->GetEntries();
   // h_gen_uu_qcos_scale->Scale( 1.8 / (Float_t) scale_sum );
 
-  // Normalize2Reco(h_gen_us_qcos,h_gen_ss_qcos_scale);
   double intgen  = h_gen_us_qcos->Integral(70,80);
   double intreco = h_reco_K_pq_cos->Integral(70,80);
   h_gen_us_qcos->Scale(intreco/intgen);
@@ -476,7 +475,7 @@ void main_pq_BGFit( TFile *files[] )
   h_reco_us_K_qcos_eff_corr->Draw("hsame");
   h_reco_us_K_scos_eff_corr->Draw("hsame");
 
-  // h_reco_K_pq_cos_remain_front->Draw("hsame");
+  h_reco_K_pq_cos_remain_front->Draw("hsame");
   h_gen_us_qcos->Draw("hsame");
   h_gen_ss_qcos_scale->Draw("hsame");
   h_gen_uu_qcos_scale->Draw("hsame");
