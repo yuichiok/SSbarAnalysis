@@ -115,9 +115,9 @@ void dEdx_dist_cos_proj(TH2F *hK,TH2F *hpi,TH2F *hp)
     hpi_proj[islice] = (TH1F*) hpi->ProjectionY(TString::Format("hpi_proj_%d",islice).Data(),binL,binH);
     hp_proj[islice]  = (TH1F*) hp->ProjectionY(TString::Format("hp_proj_%d",islice).Data(),binL,binH);
 
-    Normalize(hK_proj[islice]);
-    Normalize(hpi_proj[islice]);
-    Normalize(hp_proj[islice]);
+    // Normalize(hK_proj[islice]);
+    // Normalize(hpi_proj[islice]);
+    // Normalize(hp_proj[islice]);
 
     StyleHist1D(hK_proj[islice],kRed);
     StyleHist1D(hpi_proj[islice],kBlue);
@@ -127,10 +127,20 @@ void dEdx_dist_cos_proj(TH2F *hK,TH2F *hpi,TH2F *hp)
     Float_t binH_high = hK->GetXaxis()->GetBinLowEdge(binH+1);
 
     hpi_proj[islice]->SetTitle(TString::Format("Slice %.2f < cos#theta < %.2f;dE/dx distance [MeV];a.u.",binL_low,binH_high).Data());
-    hpi_proj[islice]->GetYaxis()->SetRangeUser(0,0.5);
+    hpi_proj[islice]->GetYaxis()->SetRangeUser(0,1500E3);
+    hpi_proj[islice]->GetXaxis()->SetRangeUser(-5,5);
     hpi_proj[islice]->Draw("h");
     hK_proj[islice]->Draw("hsame");
     hp_proj[islice]->Draw("hsame");
+
+    if ( islice == 0 ){
+      TLegend *leg = new TLegend(0.25,0.7,0.45,0.85);
+      leg->SetLineColor(0);
+      leg->AddEntry(hK_proj[islice],"K^{#pm}","l");
+      leg->AddEntry(hpi_proj[islice],"#pi^{#pm}","l");
+      leg->AddEntry(hp_proj[islice],"p","l");
+      leg->Draw();
+    }
 
   }
 
@@ -175,7 +185,9 @@ void dEdx()
 {
   gStyle->SetOptStat(0);
 
-  TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.us.LPFOp15_pNaN.tpc0.hists.all.root","READ");
+  // TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.uu.LPFOp15_pNaN.tpc0.hists.all.root","READ");
+  TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ss.LPFOp15_pNaN.tpc0.hists.all.root","READ");
+  // TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.us.LPFOp15_pNaN.tpc0.hists.all.root","READ");
 
   dEdx_p(file);
   dEdx_dist_cos(file);
