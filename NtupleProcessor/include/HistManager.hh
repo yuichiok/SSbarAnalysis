@@ -118,11 +118,18 @@ class HistManager
       gen_pi_dEdx_p,
       gen_p_dEdx_p,
 
+      gen_K_reco_K_dEdx_p,
+      gen_pi_reco_K_dEdx_p,
+      gen_p_reco_K_dEdx_p,
+
       gen_K_KdEdx_dist_cos,
       gen_pi_KdEdx_dist_cos,
       gen_p_KdEdx_dist_cos,
 
       reco_K_KdEdx_dist_cos,
+      gen_K_reco_K_KdEdx_dist_cos,
+      gen_pi_reco_K_KdEdx_dist_cos,
+      gen_p_reco_K_KdEdx_dist_cos,
 
       dummy_dEdx,
       Last_h2_dEdx = dummy_dEdx

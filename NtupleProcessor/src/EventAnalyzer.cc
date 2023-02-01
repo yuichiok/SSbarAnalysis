@@ -758,6 +758,25 @@ void EventAnalyzer::PolarAngle(PFOTools pfot, PFOTools mct, vector<Bool_t> cuts,
       _hm.h1[_hm.reco_K_qcos]->Fill( pfot.KLPFO[ineg].qcos );
       _hm.h1[_hm.reco_K_scos]->Fill( abs(pfot.KLPFO[ineg].cos) * sgn( -_mc.mc_quark_charge[0] ) * mct.mc_quark[0].cos / abs(mct.mc_quark[0].cos) );
 
+      // cheat
+      switch ( abs(pfot.KLPFO[ineg].pfo_pdgcheat) ) {
+        case 321:
+          _hm.h2_dEdx[_hm.gen_K_reco_K_dEdx_p]->Fill(pfot.KLPFO[ineg].p_mag,pfot.KLPFO[ineg].pfo_dedx);
+          _hm.h2_dEdx[_hm.gen_K_reco_K_KdEdx_dist_cos]->Fill(pfot.KLPFO[ineg].cos,pfot.KLPFO[ineg].pfo_piddedx_k_dedxdist);
+          break;
+        case 211:
+          _hm.h2_dEdx[_hm.gen_pi_reco_K_dEdx_p]->Fill(pfot.KLPFO[ineg].p_mag,pfot.KLPFO[ineg].pfo_dedx);
+          _hm.h2_dEdx[_hm.gen_pi_reco_K_KdEdx_dist_cos]->Fill(pfot.KLPFO[ineg].cos,pfot.KLPFO[ineg].pfo_piddedx_k_dedxdist);
+          break;
+        case 2212:
+          _hm.h2_dEdx[_hm.gen_p_reco_K_dEdx_p]->Fill(pfot.KLPFO[ineg].p_mag,pfot.KLPFO[ineg].pfo_dedx);
+          _hm.h2_dEdx[_hm.gen_p_reco_K_KdEdx_dist_cos]->Fill(pfot.KLPFO[ineg].cos,pfot.KLPFO[ineg].pfo_piddedx_k_dedxdist);
+          break;
+        default:
+          break;
+      }
+
+
       _hm.h1_pq[_hm.acc_KK]->Fill( pfot.KLPFO[ineg].qcos );
     }else{
       _hm.h1_pq[_hm.rej_KK]->Fill( pfot.KLPFO[ineg].cos );
