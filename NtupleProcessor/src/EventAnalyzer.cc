@@ -281,6 +281,9 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
 
   std::vector<PFO_Info> PFO_Collection = pfot.Get_Valid_PFOs();
   _data.n_valid_pfo = PFO_Collection.size();
+
+  std::vector<PFO_Info> Cheat_K_PFO_Collection[2];
+
   for ( long unsigned int i=0; i < PFO_Collection.size(); i++ )
   {
     PFO_Info ipfo = PFO_Collection.at(i);
@@ -292,6 +295,7 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
     // cheat
     switch ( abs(ipfo.pfo_pdgcheat) ) {
       case 321:
+        Cheat_K_PFO_Collection[ipfo.pfo_match].push_back(ipfo);
         _hm.h2_dEdx[_hm.gen_K_dEdx_p]->Fill(ipfo.p_mag,ipfo.pfo_dedx);
         _hm.h2_dEdx[_hm.gen_K_KdEdx_dist_cos]->Fill(ipfo.cos,ipfo.pfo_piddedx_k_dedxdist);
         break;
@@ -310,6 +314,29 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
     if ( pfot.isKaon(ipfo) ) {
       _hm.h1[_hm.reco_K_cos]->Fill(ipfo.cos);
       _hm.h2_dEdx[_hm.reco_K_KdEdx_dist_cos]->Fill(ipfo.cos,ipfo.pfo_piddedx_k_dedxdist);
+    }
+
+  }
+
+
+  if ( Cheat_K_PFO_Collection[0].size()!=0 && Cheat_K_PFO_Collection[1].size()!=0 ){
+
+    PFO_Info cheat_KLPFO[2];
+    for ( int i=0; i<2; i++ ){
+      cheat_KLPFO[i] = pfot.SortJet(Cheat_K_PFO_Collection[i]).at(0);
+    }
+
+    Bool_t cheat_double_quality = ( pfot.LPFO_Quality_checks(cheat_KLPFO[0]) && pfot.LPFO_Quality_checks(cheat_KLPFO[1]) );
+    Bool_t cheat_charge_check   = pfot.is_charge_config(pfot.kOpposite,cheat_KLPFO[0].pfo_charge,cheat_KLPFO[1].pfo_charge);
+
+    if ( cheat_double_quality && cheat_charge_check ){
+      if( cheat_KLPFO[0].pfo_charge < 0 ){
+        _hm.h1[_hm.cheat_K_cos]->Fill(cheat_KLPFO[0].cos);
+        _hm.h1[_hm.cheat_K_qcos]->Fill(cheat_KLPFO[0].qcos);
+      }else{
+        _hm.h1[_hm.cheat_K_cos]->Fill(cheat_KLPFO[1].cos);
+        _hm.h1[_hm.cheat_K_qcos]->Fill(cheat_KLPFO[1].qcos);
+      }
     }
 
   }
