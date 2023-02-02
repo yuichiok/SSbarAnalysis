@@ -52,9 +52,14 @@ void dEdx_p(TFile *file)
   TPad *pad0 = new TPad("pad0", "pad0",0,0,1,1);
   StylePad(pad0,0,0.15,0,0.17);
 
-  TH2F *h2_gen_K_dEdx_p  = (TH2F*) file->Get("dEdx/h2_gen_K_dEdx_p");
-  TH2F *h2_gen_pi_dEdx_p = (TH2F*) file->Get("dEdx/h2_gen_pi_dEdx_p");
-  TH2F *h2_gen_p_dEdx_p  = (TH2F*) file->Get("dEdx/h2_gen_p_dEdx_p");
+  // TH2F *h2_gen_K_dEdx_p  = (TH2F*) file->Get("dEdx/h2_gen_K_dEdx_p");
+  // TH2F *h2_gen_pi_dEdx_p = (TH2F*) file->Get("dEdx/h2_gen_pi_dEdx_p");
+  // TH2F *h2_gen_p_dEdx_p  = (TH2F*) file->Get("dEdx/h2_gen_p_dEdx_p");
+
+  TH2F *h2_gen_K_dEdx_p  = (TH2F*) file->Get("dEdx/h2_gen_K_reco_K_dEdx_p");
+  TH2F *h2_gen_pi_dEdx_p = (TH2F*) file->Get("dEdx/h2_gen_pi_reco_K_dEdx_p");
+  TH2F *h2_gen_p_dEdx_p  = (TH2F*) file->Get("dEdx/h2_gen_p_reco_K_dEdx_p");
+
 
   StyleHist2D(h2_gen_K_dEdx_p,kRed);
   StyleHist2D(h2_gen_pi_dEdx_p,kBlue);
@@ -63,6 +68,8 @@ void dEdx_p(TFile *file)
   pad0->SetLogx();
   h2_gen_K_dEdx_p->SetTitle(";Track momentum [GeV];#frac{dE}{dx}[MeV]");
   h2_gen_K_dEdx_p->GetXaxis()->SetTitleOffset(1.5);
+  h2_gen_K_dEdx_p->GetXaxis()->SetRangeUser(10,100);
+  h2_gen_K_dEdx_p->GetYaxis()->SetRangeUser(0.12,0.2);
   h2_gen_K_dEdx_p->Draw("box");
   h2_gen_pi_dEdx_p->Draw("box same");
   h2_gen_p_dEdx_p->Draw("box same");
@@ -106,18 +113,13 @@ void dEdx_dist_cos_proj(TH2F *hK,TH2F *hpi,TH2F *hp)
 
     c2->cd(islice+1);
     StylePad(gPad,0,0.15,0,0.17);
-    // gPad->SetLogy();
 
-    Int_t binL = islice * 25 + 1;
+    Int_t binL = 93 - islice * 25 + 1;
     Int_t binH = binL + 1;
 
     hK_proj[islice]  = (TH1F*) hK->ProjectionY(TString::Format("hK_proj_%d",islice).Data(),binL,binH);
     hpi_proj[islice] = (TH1F*) hpi->ProjectionY(TString::Format("hpi_proj_%d",islice).Data(),binL,binH);
     hp_proj[islice]  = (TH1F*) hp->ProjectionY(TString::Format("hp_proj_%d",islice).Data(),binL,binH);
-
-    // Normalize(hK_proj[islice]);
-    // Normalize(hpi_proj[islice]);
-    // Normalize(hp_proj[islice]);
 
     StyleHist1D(hK_proj[islice],kRed);
     StyleHist1D(hpi_proj[islice],kBlue);
@@ -127,7 +129,7 @@ void dEdx_dist_cos_proj(TH2F *hK,TH2F *hpi,TH2F *hp)
     Float_t binH_high = hK->GetXaxis()->GetBinLowEdge(binH+1);
 
     hpi_proj[islice]->SetTitle(TString::Format("Slice %.2f < cos#theta < %.2f;dE/dx distance [MeV];a.u.",binL_low,binH_high).Data());
-    hpi_proj[islice]->GetYaxis()->SetRangeUser(0,1500E3);
+    hpi_proj[islice]->GetYaxis()->SetRangeUser(0,1.2E4);
     hpi_proj[islice]->GetXaxis()->SetRangeUser(-5,5);
     hpi_proj[islice]->Draw("h");
     hK_proj[islice]->Draw("hsame");
@@ -155,9 +157,13 @@ void dEdx_dist_cos(TFile *file)
   TPad *pad1 = new TPad("pad1", "pad1",0,0,1,1);
   StylePad(pad1,0,0.15,0,0.17);
 
-  TH2F *h2_gen_K_KdEdx_dist_cos  = (TH2F*) file->Get("dEdx/h2_gen_K_KdEdx_dist_cos");
-  TH2F *h2_gen_pi_KdEdx_dist_cos = (TH2F*) file->Get("dEdx/h2_gen_pi_KdEdx_dist_cos");
-  TH2F *h2_gen_p_KdEdx_dist_cos  = (TH2F*) file->Get("dEdx/h2_gen_p_KdEdx_dist_cos");
+  // TH2F *h2_gen_K_KdEdx_dist_cos  = (TH2F*) file->Get("dEdx/h2_gen_K_KdEdx_dist_cos");
+  // TH2F *h2_gen_pi_KdEdx_dist_cos = (TH2F*) file->Get("dEdx/h2_gen_pi_KdEdx_dist_cos");
+  // TH2F *h2_gen_p_KdEdx_dist_cos  = (TH2F*) file->Get("dEdx/h2_gen_p_KdEdx_dist_cos");
+
+  TH2F *h2_gen_K_KdEdx_dist_cos  = (TH2F*) file->Get("dEdx/h2_gen_K_reco_K_KdEdx_dist_cos");
+  TH2F *h2_gen_pi_KdEdx_dist_cos = (TH2F*) file->Get("dEdx/h2_gen_pi_reco_K_KdEdx_dist_cos");
+  TH2F *h2_gen_p_KdEdx_dist_cos  = (TH2F*) file->Get("dEdx/h2_gen_p_reco_K_KdEdx_dist_cos");
 
   StyleHist2D(h2_gen_K_KdEdx_dist_cos,kRed);
   StyleHist2D(h2_gen_pi_KdEdx_dist_cos,kBlue);
@@ -165,9 +171,10 @@ void dEdx_dist_cos(TFile *file)
 
   h2_gen_pi_KdEdx_dist_cos->SetTitle(";cos#theta;dE/dx distance");
   h2_gen_pi_KdEdx_dist_cos->GetXaxis()->SetTitleOffset(1.5);
-  h2_gen_pi_KdEdx_dist_cos->Draw("");
-  h2_gen_p_KdEdx_dist_cos->Draw("same");
-  h2_gen_K_KdEdx_dist_cos->Draw("same");
+  h2_gen_pi_KdEdx_dist_cos->GetYaxis()->SetRangeUser(-5,5);
+  h2_gen_pi_KdEdx_dist_cos->Draw("box");
+  h2_gen_p_KdEdx_dist_cos->Draw("box same");
+  h2_gen_K_KdEdx_dist_cos->Draw("box same");
 
   TLegend *leg = new TLegend(0.5,0.76,0.75,0.85);
   leg->SetLineColor(0);
@@ -185,8 +192,8 @@ void dEdx()
 {
   gStyle->SetOptStat(0);
 
-  // TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.uu.LPFOp15_pNaN.tpc0.hists.all.root","READ");
-  TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ss.LPFOp15_pNaN.tpc0.hists.all.root","READ");
+  TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.uu.PFOp15.LPFOp15_pNaN.tpc0.hists.all.root","READ");
+  // TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ss.PFOp15.LPFOp15_pNaN.tpc0.hists.all.root","READ");
   // TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.us.LPFOp15_pNaN.tpc0.hists.all.root","READ");
 
   dEdx_p(file);
