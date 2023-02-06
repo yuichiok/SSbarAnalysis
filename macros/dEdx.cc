@@ -114,7 +114,8 @@ void dEdx_dist_cos_proj(TH2F *hK,TH2F *hpi,TH2F *hp)
     c2->cd(islice+1);
     StylePad(gPad,0,0.15,0,0.17);
 
-    Int_t binL = 93 - islice * 25 + 1;
+    // Int_t binL = 93 - islice * 25 + 1;
+    Int_t binL = 3 + islice * 25 + 1;
     Int_t binH = binL + 1;
 
     hK_proj[islice]  = (TH1F*) hK->ProjectionY(TString::Format("hK_proj_%d",islice).Data(),binL,binH);
@@ -123,13 +124,17 @@ void dEdx_dist_cos_proj(TH2F *hK,TH2F *hpi,TH2F *hp)
 
     StyleHist1D(hK_proj[islice],kRed);
     StyleHist1D(hpi_proj[islice],kBlue);
-    StyleHist1D(hp_proj[islice],kGreen);
+    StyleHist1D(hp_proj[islice],kGreen+1);
 
     Float_t binL_low  = hK->GetXaxis()->GetBinLowEdge(binL);
     Float_t binH_high = hK->GetXaxis()->GetBinLowEdge(binH+1);
 
     hpi_proj[islice]->SetTitle(TString::Format("Slice %.2f < cos#theta < %.2f;dE/dx distance [MeV];a.u.",binL_low,binH_high).Data());
-    hpi_proj[islice]->GetYaxis()->SetRangeUser(0,1.2E4);
+    if(islice==0) {
+      hpi_proj[islice]->GetYaxis()->SetRangeUser(0,1.2E4);
+    }else{
+      hpi_proj[islice]->GetYaxis()->SetRangeUser(0,0.3E4);
+    }
     hpi_proj[islice]->GetXaxis()->SetRangeUser(-5,5);
     hpi_proj[islice]->Draw("h");
     hK_proj[islice]->Draw("hsame");

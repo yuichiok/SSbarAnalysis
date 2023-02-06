@@ -17,7 +17,7 @@ void Efficiency_simple()
 {
   gStyle->SetOptStat(0);
 
-  TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ss.hists.root","READ");
+  TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ss.PFOp15.LPFOp15_pNaN.tpc0.hists.all.root","READ");
 
   TH1F *h_gen_K_cos       = (TH1F*) file->Get("h_gen_K_cos");
   TH1F *h_reco_K_cos = (TH1F*) file->Get("h_reco_K_cos");
