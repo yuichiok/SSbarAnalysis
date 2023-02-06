@@ -244,8 +244,10 @@ void main_pq()
   TH1F *h_reco_K_qcos = (TH1F*) file->Get("h_reco_K_qcos");
 
   // efficiency correction
-  TH1F *h_reco_K_scos_eff_corr = Efficiency_Correction(h_reco_K_scos,"scos_corr",file);
-  TH1F *h_reco_K_qcos_eff_corr = Efficiency_Correction(h_reco_K_qcos,"qcos_corr",file);
+  // TH1F *h_reco_K_scos_eff_corr = Efficiency_Correction(h_reco_K_scos,"scos_corr",file);
+  // TH1F *h_reco_K_qcos_eff_corr = Efficiency_Correction(h_reco_K_qcos,"qcos_corr",file);
+  TH1F *h_reco_K_scos_eff_corr = (TH1F*) h_reco_K_scos->Clone();
+  TH1F *h_reco_K_qcos_eff_corr = (TH1F*) h_reco_K_qcos->Clone();
 
   // used for pq correction
   TH1F *h_acc_KK_cos  = (TH1F*) file->Get("pq/h_acc_KK_cos");
