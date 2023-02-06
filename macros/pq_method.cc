@@ -232,9 +232,9 @@ void main_pq()
 {
   gStyle->SetOptStat(0);
 
-  TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.uu.LPFOp15_pNaN.tpc0.hists.all.root","READ");
-  // TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ss.LPFOp15_pNaN.tpc0.hists.all.root","READ");
-  // TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.us.LPFOp15_pNaN.tpc0.hists.all.root","READ");
+  TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.uu.PFOp15.LPFOp15_pNaN.tpc0.hists.all.root","READ");
+  // TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ss.PFOp15.LPFOp15_pNaN.tpc0.hists.all.root","READ");
+  // TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.us.PFOp15.LPFOp15_pNaN.tpc0.hists.all.root","READ");
 
   if (!file->IsOpen()) return;
 
@@ -242,6 +242,7 @@ void main_pq()
   TH1F *h_gen_q_qcos  = (TH1F*) file->Get("h_gen_q_qcos");
   TH1F *h_reco_K_scos = (TH1F*) file->Get("h_reco_K_scos");
   TH1F *h_reco_K_qcos = (TH1F*) file->Get("h_reco_K_qcos");
+  TH1F *h_cheat_K_qcos = (TH1F*) file->Get("h_cheat_K_qcos");
 
   // efficiency correction
   // TH1F *h_reco_K_scos_eff_corr = Efficiency_Correction(h_reco_K_scos,"scos_corr",file);
@@ -262,6 +263,10 @@ void main_pq()
   StyleHist(h_gen_q_qcos,kGreen+1);
   h_gen_q_qcos->SetFillStyle(0);
   h_gen_q_qcos->SetLineStyle(2);
+
+  StyleHist(h_cheat_K_qcos,kOrange+1);
+  h_cheat_K_qcos->SetFillStyle(0);
+  h_cheat_K_qcos->SetLineStyle(2);
 
   StyleHist(h_reco_K_scos_eff_corr,kBlack);
   h_reco_K_scos_eff_corr->SetFillStyle(0);
@@ -290,6 +295,7 @@ void main_pq()
   StylePad(pad0,0,0.12,0,0.15);
 
   Normalize2Gen(h_gen_q_qcos,h_reco_K_scos_eff_corr);
+  Normalize2Gen(h_cheat_K_qcos,h_reco_K_scos_eff_corr);
   // Normalize(h_reco_K_scos_eff_corr);
   // Normalize(h_reco_K_pq_cos);
   // Normalize(h_reco_K_qcos_eff_corr);
@@ -305,13 +311,15 @@ void main_pq()
   h_reco_K_qcos_eff_corr->Draw("hsame");
   h_reco_K_scos_eff_corr->Draw("hsame");
   h_gen_q_qcos->Draw("hsame");
+  h_cheat_K_qcos->Draw("hsame");
 
   f_reco->Draw("same");
 
   TLegend *leg = new TLegend(0.2,0.76,0.7,0.85);
   leg->SetLineColor(0);
-  leg->AddEntry(h_gen_q_qcos,"Generated s-quark angle","l");
-  leg->AddEntry(h_reco_K_scos_eff_corr,"Reconstructed K^{+}K^{-} matched with s-quark angle","l");
+  leg->AddEntry(h_gen_q_qcos,"Generated quark angle","l");
+  leg->AddEntry(h_reco_K_scos_eff_corr,"Reconstructed K^{-} matched with quark angle","l");
+  leg->AddEntry(h_cheat_K_qcos,"Cheated K^{-} PFO","l");
   leg->AddEntry(h_reco_K_qcos_eff_corr,"Reconstructed K^{+}K^{-}","l");
   leg->AddEntry(h_reco_K_pq_cos,"Reconstructed K^{+}K^{-} (corrected)","l");
   leg->Draw();
