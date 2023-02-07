@@ -259,7 +259,7 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
 
   // cout << "after match = " << dEdx_pdg_match << endl;
   Bool_t all_K_K = all_checks && (dEdx_pdg_match == K_K);
-  PolarAngle(pfot,mct,CutTrigger,dEdx_pdg_match);
+  ProcessDoubleTag(pfot,mct,CutTrigger,dEdx_pdg_match);
   // PolarAngle_acc_rej(pfot,CutTrigger,(dEdx_pdg_match == K_K));
 
 
@@ -755,7 +755,7 @@ void EventAnalyzer::Mom_Polar_Gen(PFOTools mct, PFOTools pfot)
 
 }
 
-void EventAnalyzer::PolarAngle(PFOTools pfot, PFOTools mct, vector<Bool_t> cuts, Int_t double_tag)
+void EventAnalyzer::ProcessDoubleTag(PFOTools pfot, PFOTools mct, vector<Bool_t> cuts, Int_t double_tag)
 {
   Bool_t LPFO_checks = true;
   for (int i=0; i<3; i++){
