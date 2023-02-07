@@ -282,8 +282,6 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
   std::vector<PFO_Info> PFO_Collection = pfot.Get_Valid_PFOs();
   _data.n_valid_pfo = PFO_Collection.size();
 
-  std::vector<PFO_Info> Cheat_K_PFO_Collection[2];
-
   for ( long unsigned int i=0; i < PFO_Collection.size(); i++ )
   {
     PFO_Info ipfo = PFO_Collection.at(i);
@@ -295,7 +293,6 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
     // cheat
     switch ( abs(ipfo.pfo_pdgcheat) ) {
       case 321:
-        Cheat_K_PFO_Collection[ipfo.pfo_match].push_back(ipfo);
         _hm.h2_dEdx[_hm.gen_K_dEdx_p]->Fill(ipfo.p_mag,ipfo.pfo_dedx);
         _hm.h2_dEdx[_hm.gen_K_KdEdx_dist_cos]->Fill(ipfo.cos,ipfo.pfo_piddedx_k_dedxdist);
         break;
@@ -319,24 +316,59 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
   }
 
 
-  if ( Cheat_K_PFO_Collection[0].size()!=0 && Cheat_K_PFO_Collection[1].size()!=0 ){
+  // Access cheated Kaon information
+  if( !pfot.PFO_cheat_Ks[0].size() && !pfot.PFO_cheat_Ks[1].size() ){
 
-    PFO_Info cheat_KLPFO[2];
-    for ( int i=0; i<2; i++ ){
-      cheat_KLPFO[i] = pfot.SortJet(Cheat_K_PFO_Collection[i]).at(0);
+    vector<Bool_t> Cheat_K_CutTrigger;
+    // quality check
+    Bool_t cheat_K_double_quality    = true;
+    for ( auto iLPFO : pfot.cheat_KLPFO ){
+      if( !pfot.LPFO_Quality_checks(iLPFO) ){
+        cheat_K_double_quality = false;
+        break;
+      }
+    }
+    Cheat_K_CutTrigger.push_back(cheat_K_double_quality);
+
+    // SPFO opposite check
+    Bool_t is_cheat_gluon_K[2] = {0};
+    Bool_t is_there_a_cheat_gluon_K = false;
+    for ( int ijet=0; ijet<2; ijet++){
+      if( pfot.SPFOs_cheat_K[ijet].size() ){
+        for ( auto iSPFO_K : pfot.SPFOs_cheat_K[ijet] ){
+          Bool_t charge_opposite = iSPFO_K.pfo_pdgcheat * pfot.cheat_KLPFO[ijet].pfo_pdgcheat < 0;
+          Bool_t momentum_above  = iSPFO_K.p_mag > 10;
+          if( charge_opposite && momentum_above ) is_cheat_gluon_K[ijet] = true;
+        }
+      }
+    }
+    for ( auto ibool : is_cheat_gluon_K ){
+      if( ibool ) is_there_a_cheat_gluon_K = true;
+    }
+    Cheat_K_CutTrigger.push_back(!is_there_a_cheat_gluon_K);
+
+    // charge check
+    Bool_t cheat_K_charge_check = pfot.is_charge_config(pfot.kOpposite,pfot.cheat_KLPFO[0].pfo_pdgcheat,pfot.cheat_KLPFO[1].pfo_pdgcheat);
+    Cheat_K_CutTrigger.push_back(cheat_K_charge_check);
+
+    Bool_t cheat_K_all_checks = true;
+    for (auto ibool : Cheat_K_CutTrigger){
+      if (!ibool) {
+        cheat_K_all_checks = false;
+        break;
+      }
     }
 
-    Bool_t cheat_double_quality = ( pfot.LPFO_Quality_checks(cheat_KLPFO[0]) && pfot.LPFO_Quality_checks(cheat_KLPFO[1]) );
-    Bool_t cheat_charge_check   = pfot.is_charge_config(pfot.kOpposite,cheat_KLPFO[0].pfo_charge,cheat_KLPFO[1].pfo_charge);
+    if ( cheat_K_all_checks ){
 
-    if ( cheat_double_quality && cheat_charge_check ){
-      if( cheat_KLPFO[0].pfo_charge < 0 ){
-        _hm.h1[_hm.cheat_K_cos]->Fill(cheat_KLPFO[0].cos);
-        _hm.h1[_hm.cheat_K_qcos]->Fill(cheat_KLPFO[0].qcos);
+      if( pfot.cheat_KLPFO[0].pfo_pdgcheat < 0 ){
+        _hm.h1[_hm.cheat_K_cos]->Fill(pfot.cheat_KLPFO[0].cos);
+        _hm.h1[_hm.cheat_K_qcos]->Fill(pfot.cheat_KLPFO[0].qcos);
       }else{
-        _hm.h1[_hm.cheat_K_cos]->Fill(cheat_KLPFO[1].cos);
-        _hm.h1[_hm.cheat_K_qcos]->Fill(cheat_KLPFO[1].qcos);
+        _hm.h1[_hm.cheat_K_cos]->Fill(pfot.cheat_KLPFO[1].cos);
+        _hm.h1[_hm.cheat_K_qcos]->Fill(pfot.cheat_KLPFO[1].qcos);
       }
+
     }
 
   }
