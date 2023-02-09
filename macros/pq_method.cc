@@ -245,19 +245,19 @@ void main_pq()
   TH1F *h_cheat_K_qcos = (TH1F*) file->Get("h_cheat_K_qcos");
 
   // efficiency correction
-  TH1F *h_reco_K_scos_eff_corr = Efficiency_Correction(h_reco_K_scos,"scos_corr",file);
-  TH1F *h_reco_K_qcos_eff_corr = Efficiency_Correction(h_reco_K_qcos,"qcos_corr",file);
-  // TH1F *h_reco_K_scos_eff_corr = (TH1F*) h_reco_K_scos->Clone();
-  // TH1F *h_reco_K_qcos_eff_corr = (TH1F*) h_reco_K_qcos->Clone();
+  // TH1F *h_reco_K_scos_eff_corr = Efficiency_Correction(h_reco_K_scos,"scos_corr",file);
+  // TH1F *h_reco_K_qcos_eff_corr = Efficiency_Correction(h_reco_K_qcos,"qcos_corr",file);
+  TH1F *h_reco_K_scos_eff_corr = (TH1F*) h_reco_K_scos->Clone();
+  TH1F *h_reco_K_qcos_eff_corr = (TH1F*) h_reco_K_qcos->Clone();
 
   // used for pq correction
   TH1F *h_acc_KK_cos  = (TH1F*) file->Get("pq/h_acc_KK_cos");
   TH1F *h_rej_KK_cos  = (TH1F*) file->Get("pq/h_rej_KK_cos");
 
-  TH1F *h_acc_KK_cos_eff_corr = Efficiency_Correction(h_acc_KK_cos,"acc_corr",file);
-  TH1F *h_rej_KK_cos_eff_corr = Efficiency_Correction(h_rej_KK_cos,"rej_corr",file);
-  // TH1F *h_acc_KK_cos_eff_corr = (TH1F*) h_acc_KK_cos->Clone();
-  // TH1F *h_rej_KK_cos_eff_corr = (TH1F*) h_rej_KK_cos->Clone();
+  // TH1F *h_acc_KK_cos_eff_corr = Efficiency_Correction(h_acc_KK_cos,"acc_corr",file);
+  // TH1F *h_rej_KK_cos_eff_corr = Efficiency_Correction(h_rej_KK_cos,"rej_corr",file);
+  TH1F *h_acc_KK_cos_eff_corr = (TH1F*) h_acc_KK_cos->Clone();
+  TH1F *h_rej_KK_cos_eff_corr = (TH1F*) h_rej_KK_cos->Clone();
 
 
   StyleHist(h_gen_q_qcos,kGreen+1);
@@ -318,8 +318,8 @@ void main_pq()
   TLegend *leg = new TLegend(0.2,0.76,0.7,0.85);
   leg->SetLineColor(0);
   leg->AddEntry(h_gen_q_qcos,"Generated quark angle","l");
-  leg->AddEntry(h_reco_K_scos_eff_corr,"Reconstructed K^{-} matched with quark angle","l");
   leg->AddEntry(h_cheat_K_qcos,"Cheated K^{-} PFO","l");
+  leg->AddEntry(h_reco_K_scos_eff_corr,"Reconstructed K^{-} matched with quark angle","l");
   leg->AddEntry(h_reco_K_qcos_eff_corr,"Reconstructed K^{+}K^{-}","l");
   leg->AddEntry(h_reco_K_pq_cos,"Reconstructed K^{+}K^{-} (corrected)","l");
   leg->Draw();
