@@ -98,6 +98,40 @@ void dEdx_p(TFile *file)
 
 }
 
+void dEdx_dist_cos(TFile *file)
+{
+  TCanvas *c1 = new TCanvas("c1","c1",800,800);
+  TPad *pad1 = new TPad("pad1", "pad1",0,0,1,1);
+  StylePad(pad1,0,0.15,0,0.17);
+
+  // TH2F *h2_gen_K_KdEdx_dist_cos  = (TH2F*) file->Get("dEdx/h2_gen_K_KdEdx_dist_cos");
+  // TH2F *h2_gen_pi_KdEdx_dist_cos = (TH2F*) file->Get("dEdx/h2_gen_pi_KdEdx_dist_cos");
+  // TH2F *h2_gen_p_KdEdx_dist_cos  = (TH2F*) file->Get("dEdx/h2_gen_p_KdEdx_dist_cos");
+
+  TH2F *h2_gen_K_KdEdx_dist_cos  = (TH2F*) file->Get("dEdx/h2_gen_K_reco_K_KdEdx_dist_cos");
+  TH2F *h2_gen_pi_KdEdx_dist_cos = (TH2F*) file->Get("dEdx/h2_gen_pi_reco_K_KdEdx_dist_cos");
+  TH2F *h2_gen_p_KdEdx_dist_cos  = (TH2F*) file->Get("dEdx/h2_gen_p_reco_K_KdEdx_dist_cos");
+
+  StyleHist2D(h2_gen_K_KdEdx_dist_cos,kRed);
+  StyleHist2D(h2_gen_pi_KdEdx_dist_cos,kBlue);
+  StyleHist2D(h2_gen_p_KdEdx_dist_cos,kGreen);
+
+  h2_gen_pi_KdEdx_dist_cos->SetTitle(";cos#theta;dE/dx distance");
+  h2_gen_pi_KdEdx_dist_cos->GetXaxis()->SetTitleOffset(1.5);
+  h2_gen_pi_KdEdx_dist_cos->GetYaxis()->SetRangeUser(-5,5);
+  h2_gen_pi_KdEdx_dist_cos->Draw("box");
+  h2_gen_p_KdEdx_dist_cos->Draw("box same");
+  h2_gen_K_KdEdx_dist_cos->Draw("box same");
+
+  TLegend *leg = new TLegend(0.5,0.76,0.75,0.85);
+  leg->SetLineColor(0);
+  leg->AddEntry(h2_gen_K_KdEdx_dist_cos,"K^{#pm}","l");
+  leg->AddEntry(h2_gen_pi_KdEdx_dist_cos,"#pi^{#pm}","l");
+  leg->AddEntry(h2_gen_p_KdEdx_dist_cos,"p","l");
+  leg->Draw();
+
+}
+
 void dEdx_dist_cos_proj(TFile *file)
 {
 
@@ -115,9 +149,6 @@ void dEdx_dist_cos_proj(TFile *file)
   TH1F * hpi_proj[nslices];
   TH1F * hp_proj[nslices]; 
   
-  Float_t x_slice[nslices];
-  Float_t purity[nslices];
-
   for ( int islice=0; islice < nslices; islice++ ){
 
     c2->cd(islice+1);
@@ -162,51 +193,53 @@ void dEdx_dist_cos_proj(TFile *file)
 
 }
 
-void dEdx_dist_cos(TFile *file)
+void dEdx_dist_cos_eff(TFile *file)
 {
-  TCanvas *c1 = new TCanvas("c1","c1",800,800);
-  TPad *pad1 = new TPad("pad1", "pad1",0,0,1,1);
-  StylePad(pad1,0,0.15,0,0.17);
+  TH2F *hK  = (TH2F*) file->Get("dEdx/h2_gen_K_reco_K_KdEdx_dist_cos");
+  TH2F *hpi = (TH2F*) file->Get("dEdx/h2_gen_pi_reco_K_KdEdx_dist_cos");
+  TH2F *hp  = (TH2F*) file->Get("dEdx/h2_gen_p_reco_K_KdEdx_dist_cos");
 
-  // TH2F *h2_gen_K_KdEdx_dist_cos  = (TH2F*) file->Get("dEdx/h2_gen_K_KdEdx_dist_cos");
-  // TH2F *h2_gen_pi_KdEdx_dist_cos = (TH2F*) file->Get("dEdx/h2_gen_pi_KdEdx_dist_cos");
-  // TH2F *h2_gen_p_KdEdx_dist_cos  = (TH2F*) file->Get("dEdx/h2_gen_p_KdEdx_dist_cos");
+  Int_t NbinsX = hK->GetNbinsX();
+  Int_t NbinsY = hK->GetNbinsY();
 
-  TH2F *h2_gen_K_KdEdx_dist_cos  = (TH2F*) file->Get("dEdx/h2_gen_K_reco_K_KdEdx_dist_cos");
-  TH2F *h2_gen_pi_KdEdx_dist_cos = (TH2F*) file->Get("dEdx/h2_gen_pi_reco_K_KdEdx_dist_cos");
-  TH2F *h2_gen_p_KdEdx_dist_cos  = (TH2F*) file->Get("dEdx/h2_gen_p_reco_K_KdEdx_dist_cos");
+  Float_t x[NbinsX], pur[NbinsX];
 
-  StyleHist2D(h2_gen_K_KdEdx_dist_cos,kRed);
-  StyleHist2D(h2_gen_pi_KdEdx_dist_cos,kBlue);
-  StyleHist2D(h2_gen_p_KdEdx_dist_cos,kGreen);
+  for ( int ibin=1; ibin <= NbinsX; ibin++ ){
 
-  h2_gen_pi_KdEdx_dist_cos->SetTitle(";cos#theta;dE/dx distance");
-  h2_gen_pi_KdEdx_dist_cos->GetXaxis()->SetTitleOffset(1.5);
-  h2_gen_pi_KdEdx_dist_cos->GetYaxis()->SetRangeUser(-5,5);
-  h2_gen_pi_KdEdx_dist_cos->Draw("box");
-  h2_gen_p_KdEdx_dist_cos->Draw("box same");
-  h2_gen_K_KdEdx_dist_cos->Draw("box same");
+    Int_t iarr = ibin - 1;
 
-  TLegend *leg = new TLegend(0.5,0.76,0.75,0.85);
-  leg->SetLineColor(0);
-  leg->AddEntry(h2_gen_K_KdEdx_dist_cos,"K^{#pm}","l");
-  leg->AddEntry(h2_gen_pi_KdEdx_dist_cos,"#pi^{#pm}","l");
-  leg->AddEntry(h2_gen_p_KdEdx_dist_cos,"p","l");
-  leg->Draw();
+    x[iarr] = hK->GetXaxis()->GetBinCenter(ibin);
+
+    Float_t nkaons   = hK->Integral(ibin,ibin,1,NbinsY);
+    Float_t npions   = hpi->Integral(ibin,ibin,1,NbinsY);
+    Float_t nprotons = hp->Integral(ibin,ibin,1,NbinsY);
+
+    pur[iarr] = nkaons / (nkaons + npions + nprotons) ;
+
+  }
+
+  TCanvas *c3 = new TCanvas("c3","c3",800,800);
+  TPad *pad3 = new TPad("pad3", "pad3",0,0,1,1);
+  StylePad(pad3,0,0.15,0,0.17);
+
+  TGraph *gr_purity = new TGraph(NbinsX, x, pur);
+  gr_purity->GetXaxis()->SetRangeUser(-1,1);
+  gr_purity->GetYaxis()->SetRangeUser(0,1);
+  gr_purity->Draw("alp");
 
 }
-
 
 void dEdx()
 {
   gStyle->SetOptStat(0);
 
-  TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.uu.PFOp15.LPFOp15_pNaN.tpc0.hists.all.root","READ");
-  // TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ss.PFOp15.LPFOp15_pNaN.tpc0.hists.all.root","READ");
+  // TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.uu.PFOp15.LPFOp15_pNaN.tpc0.hists.all.root","READ");
+  TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ss.PFOp15.LPFOp15_pNaN.tpc0.hists.all.root","READ");
   // TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.us.LPFOp15_pNaN.tpc0.hists.all.root","READ");
 
   dEdx_p(file);
   dEdx_dist_cos(file);
   dEdx_dist_cos_proj(file);
+  dEdx_dist_cos_eff(file);
 
 }
