@@ -108,14 +108,17 @@ void dEdx_dist_cos_proj(TH2F *hK,TH2F *hpi,TH2F *hp)
   TH1F * hK_proj[nslices]; 
   TH1F * hpi_proj[nslices];
   TH1F * hp_proj[nslices]; 
+  
+  Float_t x_slice[nslices];
+  Float_t purity[nslices];
 
   for ( int islice=0; islice < nslices; islice++ ){
 
     c2->cd(islice+1);
     StylePad(gPad,0,0.15,0,0.17);
 
-    // Int_t binL = 93 - islice * 25 + 1;
-    Int_t binL = 3 + islice * 25 + 1;
+    Int_t binL = 93 - islice * 25 + 1;
+    // Int_t binL = 3 + islice * 25 + 1;
     Int_t binH = binL + 1;
 
     hK_proj[islice]  = (TH1F*) hK->ProjectionY(TString::Format("hK_proj_%d",islice).Data(),binL,binH);
@@ -128,6 +131,7 @@ void dEdx_dist_cos_proj(TH2F *hK,TH2F *hpi,TH2F *hp)
 
     Float_t binL_low  = hK->GetXaxis()->GetBinLowEdge(binL);
     Float_t binH_high = hK->GetXaxis()->GetBinLowEdge(binH+1);
+    x_slice[islice] = (binL_low + binH_high) / 2.0;
 
     hpi_proj[islice]->SetTitle(TString::Format("Slice %.2f < cos#theta < %.2f;dE/dx distance [MeV];a.u.",binL_low,binH_high).Data());
     if(islice==0) {
@@ -149,10 +153,20 @@ void dEdx_dist_cos_proj(TH2F *hK,TH2F *hpi,TH2F *hp)
       leg->Draw();
     }
 
+    // Purity calculation
+    Float_t nkaon   = hK_proj[islice]->Integral();
+    Float_t npion   = hpi_proj[islice]->Integral();
+    Float_t nproton = hp_proj[islice]->Integral();
+    purity[islice] = nkaon / (nkaon + npion + nproton);
+
   }
 
+  TCanvas *c3 = new TCanvas("c3","c3",800,800);
+  TPad *pad3 = new TPad("pad3", "pad3",0,0,1,1);
+  StylePad(pad3,0,0.15,0,0.17);
 
-
+  TGraph * gr_purity = new TGraph(nslices, x_slice, purity);
+  gr_purity->Draw("");
 
 }
 

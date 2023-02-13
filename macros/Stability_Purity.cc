@@ -37,9 +37,9 @@ void Stability_Purity()
   gStyle->SetPadBorderSize(1);
 
   // TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.uu.LPFOp15_pNaN.tpc0.hists.all.root","READ");
-  TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.uu.PFOp15.LPFOp15_pNaN.tpc0.hists.all.root","READ");
+  // TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.uu.PFOp15.LPFOp15_pNaN.tpc0.hists.all.root","READ");
   // TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ss.LPFOp15_pNaN.tpc0.hists.all.root","READ");
-  // TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ss.PFOp15.LPFOp15_pNaN.tpc0.hists.all.root","READ");
+  TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ss.PFOp15.LPFOp15_pNaN.tpc0.hists.all.root","READ");
   // TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.dd.LPFOp15_pNaN.tpc0.hists.all.root","READ");
 
   TTree *t_data = (TTree*) file->Get("data");
@@ -86,9 +86,9 @@ void Stability_Purity()
 
   TCanvas *c2 = new TCanvas("c2","c2",800,800);
 
-  BinNormalize(h_gen_N_K_cos);
-  BinNormalize(h_reco_N_K_cos);
-  BinNormalize(h_N_K_corr_cos);
+  // BinNormalize(h_gen_N_K_cos);
+  // BinNormalize(h_reco_N_K_cos);
+  // BinNormalize(h_N_K_corr_cos);
 
   h_reco_N_K_cos->SetTitle(";cos#theta;N Kaons (a.u.)");
   // h_gen_N_K_cos->GetYaxis()->SetRangeUser(1E3,2E5);
@@ -107,5 +107,19 @@ void Stability_Purity()
   gPad->SetLeftMargin(0.15);
   c2->SetLogy();
   c2->Draw();
+
+  TCanvas *c3 = new TCanvas("c3","c3",800,800);
+
+  TH1F * st_pr = (TH1F*) h_reco_N_K_cos->Clone();
+  st_pr->Divide(h_gen_N_K_cos);
+
+  st_pr->GetYaxis()->SetRangeUser(0,3);
+  st_pr->Draw("h");
+
+  gPad->SetGrid(1,1);
+  gPad->SetLeftMargin(0.15);
+  c3->Draw();
+
+
 
 }

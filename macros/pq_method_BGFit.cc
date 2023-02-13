@@ -318,15 +318,19 @@ void main_pq_BGFit( TFile *files[] )
   TH1F *h_reco_us_K_qcos = (TH1F*) files[kUS]->Get("h_reco_K_qcos");
 
   // efficiency correction
-  TH1F *h_reco_us_K_scos_eff_corr = Efficiency_Correction(h_reco_us_K_scos,"scos_corr",files[kUS]);
-  TH1F *h_reco_us_K_qcos_eff_corr = Efficiency_Correction(h_reco_us_K_qcos,"qcos_corr",files[kUS]);
+  // TH1F *h_reco_us_K_scos_eff_corr = Efficiency_Correction(h_reco_us_K_scos,"scos_corr",files[kUS]);
+  // TH1F *h_reco_us_K_qcos_eff_corr = Efficiency_Correction(h_reco_us_K_qcos,"qcos_corr",files[kUS]);
+  TH1F *h_reco_us_K_scos_eff_corr = (TH1F*) h_reco_us_K_scos->Clone();
+  TH1F *h_reco_us_K_qcos_eff_corr = (TH1F*) h_reco_us_K_qcos->Clone();
 
   // used for pq correction
   TH1F *h_acc_KK_cos  = (TH1F*) files[kUS]->Get("pq/h_acc_KK_cos");
   TH1F *h_rej_KK_cos  = (TH1F*) files[kUS]->Get("pq/h_rej_KK_cos");
 
-  TH1F *h_acc_KK_cos_eff_corr = Efficiency_Correction(h_acc_KK_cos,"acc_corr",files[kUS]);
-  TH1F *h_rej_KK_cos_eff_corr = Efficiency_Correction(h_rej_KK_cos,"rej_corr",files[kUS]);
+  // TH1F *h_acc_KK_cos_eff_corr = Efficiency_Correction(h_acc_KK_cos,"acc_corr",files[kUS]);
+  // TH1F *h_rej_KK_cos_eff_corr = Efficiency_Correction(h_rej_KK_cos,"rej_corr",files[kUS]);
+  TH1F *h_acc_KK_cos_eff_corr = (TH1F*) h_acc_KK_cos->Clone();
+  TH1F *h_rej_KK_cos_eff_corr = (TH1F*) h_rej_KK_cos->Clone();
 
   StyleHist(h_reco_us_K_scos_eff_corr,kBlack);
   h_reco_us_K_scos_eff_corr->SetFillStyle(0);
@@ -353,7 +357,8 @@ void main_pq_BGFit( TFile *files[] )
 
   // Fitting 1st Round
   // cos < -0.4
-  Float_t split_pt = -0.19;
+  // Float_t split_pt = -0.19;
+  Float_t split_pt = -0.3;
 
   TF1 * f_ss_front = new TF1("f_ss_front","[0]*(1+x*x)+[1]*x",0.4,0.8);
   TF1 * f_ss_full  = new TF1("f_ss_full","[0]*(1+x*x)+[1]*x",-1.0,1.0);
@@ -406,11 +411,17 @@ void main_pq_BGFit( TFile *files[] )
   TPad *pad1 = new TPad("pad1", "pad1",0,0,1,1);
   StylePad(pad1,0,0.12,0,0.15);
 
-  h_gen_uu_qcos_scale->Draw("h");
-  h_reco_K_pq_cos_subtracted_back->Draw("hsame");
+  TH1F * h_gen_uu_qcos_sample = (TH1F*) h_gen_uu_qcos_scale->Clone();
+  h_gen_uu_qcos_sample->Scale( h_reco_K_pq_cos_subtracted_back->Integral(11,30) / h_gen_uu_qcos_sample->Integral(11,30) );
+
+  h_reco_K_pq_cos_subtracted_back->GetXaxis()->SetRangeUser(-1,0);
+  h_reco_K_pq_cos_subtracted_back->GetYaxis()->SetRangeUser(0,13E3);
+  h_reco_K_pq_cos_subtracted_back->SetTitle(";cos#theta;Entries");
+  h_reco_K_pq_cos_subtracted_back->Draw("h");
+  h_gen_uu_qcos_sample->Draw("hsame");
 
   // -0.4 < cos
-  TF1 * f_uu_back = new TF1("f_uu_back","[0]*(1+x*x)+[1]*x",-0.4,-0.2);
+  TF1 * f_uu_back = new TF1("f_uu_back","[0]*(1+x*x)+[1]*x",-0.8,-0.3);
   TF1 * f_uu_full = new TF1("f_uu_full","[0]*(1+x*x)+[1]*x",-1.0,1.0);
 
   f_uu_back->SetParNames("S","A");
@@ -454,23 +465,23 @@ void main_pq_BGFit( TFile *files[] )
 
   double intgen  = h_gen_us_qcos->Integral(70,80);
   double intreco = h_reco_K_pq_cos->Integral(70,80);
-  h_gen_us_qcos->Scale(intreco/intgen);
+  // h_gen_us_qcos->Scale(intreco/intgen);
 
   double intgen2  = h_gen_ss_qcos_scale->Integral(90,95);
   double intreco2 = h_gen_us_qcos->Integral(90,95);
-  h_gen_ss_qcos_scale->Scale(intreco2/intgen2);
+  // h_gen_ss_qcos_scale->Scale(intreco2/intgen2);
 
   double intgen3  = h_gen_uu_qcos_scale->Integral(5,10);
   double intreco3 = h_gen_us_qcos->Integral(5,10);
-  h_gen_uu_qcos_scale->Scale(intreco3/intgen3);
+  // h_gen_uu_qcos_scale->Scale(intreco3/intgen3);
 
 
   TCanvas *c0 = new TCanvas("c0","c0",800,800);
   TPad *pad0 = new TPad("pad0", "pad0",0,0,1,1);
   StylePad(pad0,0,0.12,0,0.15);
 
-  h_reco_K_pq_cos->GetYaxis()->SetRangeUser(0,50E3);
-  h_reco_K_pq_cos->SetTitle(";K^{+}K^{-} cos#theta;a.u.");
+  h_reco_K_pq_cos->GetYaxis()->SetRangeUser(0,40E3);
+  h_reco_K_pq_cos->SetTitle(";K^{+}K^{-} cos#theta;Entries");
   h_reco_K_pq_cos->Draw("h");
   h_reco_us_K_qcos_eff_corr->Draw("hsame");
   h_reco_us_K_scos_eff_corr->Draw("hsame");
@@ -480,8 +491,8 @@ void main_pq_BGFit( TFile *files[] )
   h_gen_ss_qcos_scale->Draw("hsame");
   h_gen_uu_qcos_scale->Draw("hsame");
 
-  // f_ss_full->Draw("same");
-  // f_uu_full->Draw("same");
+  f_ss_full->Draw("same");
+  f_uu_full->Draw("same");
   
 
   TLegend *leg = new TLegend(0.2,0.70,0.7,0.85);
