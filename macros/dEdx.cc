@@ -31,6 +31,17 @@ void StyleHist2D(T2 *h, Color_t c)
   h->SetFillColor(c);
 }
 
+template <class T3>
+void StyleGraph(T3 *gr, Color_t c)
+{
+  gr->SetLineWidth(3);
+  gr->SetMarkerSize(1);
+  gr->SetMarkerStyle(2);
+  gr->SetMarkerColor(c);
+  gr->SetLineColor(c);
+  gr->SetFillColor(c);
+}
+
 void Normalize(TH1F *h)
 {
 	double integral = h->Integral(1,h->GetNbinsX());
@@ -193,7 +204,7 @@ void dEdx_dist_cos_proj(TFile *file)
 
 }
 
-void dEdx_dist_cos_eff(TFile *file)
+TGraph* dEdx_dist_cos_eff(TFile *file)
 {
   TH2F *hK  = (TH2F*) file->Get("dEdx/h2_gen_K_reco_K_KdEdx_dist_cos");
   TH2F *hpi = (TH2F*) file->Get("dEdx/h2_gen_pi_reco_K_KdEdx_dist_cos");
@@ -218,14 +229,32 @@ void dEdx_dist_cos_eff(TFile *file)
 
   }
 
+  TGraph *gr_purity = new TGraph(NbinsX, x, pur);
+  return gr_purity;
+
+/*
+*/
+
+}
+
+void uu_ss_dEdx_dist_cos_eff(TFile* uu_file, TFile* ss_file)
+{
+  TGraph * uu_pur = dEdx_dist_cos_pur(uu_file);
+  TGraph * ss_pur = dEdx_dist_cos_pur(ss_file);
+
+  StyleGraph(uu_pur,kBlue);
+  StyleGraph(ss_pur,kRed);
+
   TCanvas *c3 = new TCanvas("c3","c3",800,800);
   TPad *pad3 = new TPad("pad3", "pad3",0,0,1,1);
   StylePad(pad3,0,0.15,0,0.17);
 
-  TGraph *gr_purity = new TGraph(NbinsX, x, pur);
-  gr_purity->GetXaxis()->SetRangeUser(-1,1);
-  gr_purity->GetYaxis()->SetRangeUser(0,1);
-  gr_purity->Draw("alp");
+  ss_pur->SetTitle(";cos#theta_{K^{-}};Purity");
+  ss_pur->GetXaxis()->SetRangeUser(-1,1);
+  ss_pur->GetYaxis()->SetRangeUser(0,1);
+  ss_pur->Draw("acp");
+  uu_pur->Draw("cp same");
+
 
 }
 
@@ -233,13 +262,13 @@ void dEdx()
 {
   gStyle->SetOptStat(0);
 
-  // TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.uu.PFOp15.LPFOp15_pNaN.tpc0.hists.all.root","READ");
-  TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ss.PFOp15.LPFOp15_pNaN.tpc0.hists.all.root","READ");
+  TFile *uu_file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.uu.PFOp15.LPFOp15_pNaN.tpc0.hists.all.root","READ");
+  TFile *ss_file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ss.PFOp15.LPFOp15_pNaN.tpc0.hists.all.root","READ");
   // TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.us.LPFOp15_pNaN.tpc0.hists.all.root","READ");
 
-  dEdx_p(file);
-  dEdx_dist_cos(file);
-  dEdx_dist_cos_proj(file);
-  dEdx_dist_cos_eff(file);
+  dEdx_p(uu_file);
+  dEdx_dist_cos(uu_file);
+  dEdx_dist_cos_proj(uu_file);
+  uu_ss_dEdx_dist_cos_eff(uu_file,ss_file);
 
 }
