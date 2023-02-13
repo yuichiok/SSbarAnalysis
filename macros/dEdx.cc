@@ -95,10 +95,16 @@ void dEdx_p(TFile *file)
   leg->AddEntry(h2_gen_p_dEdx_p,"p","l");
   leg->AddEntry(func,"K Bethe-Bloch formula","l");
   leg->Draw();
+
 }
 
-void dEdx_dist_cos_proj(TH2F *hK,TH2F *hpi,TH2F *hp)
+void dEdx_dist_cos_proj(TFile *file)
 {
+
+  TH2F *hK  = (TH2F*) file->Get("dEdx/h2_gen_K_reco_K_KdEdx_dist_cos");
+  TH2F *hpi = (TH2F*) file->Get("dEdx/h2_gen_pi_reco_K_KdEdx_dist_cos");
+  TH2F *hp  = (TH2F*) file->Get("dEdx/h2_gen_p_reco_K_KdEdx_dist_cos");
+
   Int_t nslices = 3;
 
   TCanvas *c2 = new TCanvas("c2","c2",2400,600);
@@ -131,7 +137,6 @@ void dEdx_dist_cos_proj(TH2F *hK,TH2F *hpi,TH2F *hp)
 
     Float_t binL_low  = hK->GetXaxis()->GetBinLowEdge(binL);
     Float_t binH_high = hK->GetXaxis()->GetBinLowEdge(binH+1);
-    x_slice[islice] = (binL_low + binH_high) / 2.0;
 
     hpi_proj[islice]->SetTitle(TString::Format("Slice %.2f < cos#theta < %.2f;dE/dx distance [MeV];a.u.",binL_low,binH_high).Data());
     if(islice==0) {
@@ -153,20 +158,7 @@ void dEdx_dist_cos_proj(TH2F *hK,TH2F *hpi,TH2F *hp)
       leg->Draw();
     }
 
-    // Purity calculation
-    Float_t nkaon   = hK_proj[islice]->Integral();
-    Float_t npion   = hpi_proj[islice]->Integral();
-    Float_t nproton = hp_proj[islice]->Integral();
-    purity[islice] = nkaon / (nkaon + npion + nproton);
-
   }
-
-  TCanvas *c3 = new TCanvas("c3","c3",800,800);
-  TPad *pad3 = new TPad("pad3", "pad3",0,0,1,1);
-  StylePad(pad3,0,0.15,0,0.17);
-
-  TGraph * gr_purity = new TGraph(nslices, x_slice, purity);
-  gr_purity->Draw("");
 
 }
 
@@ -202,8 +194,6 @@ void dEdx_dist_cos(TFile *file)
   leg->AddEntry(h2_gen_p_KdEdx_dist_cos,"p","l");
   leg->Draw();
 
-  dEdx_dist_cos_proj(h2_gen_K_KdEdx_dist_cos,h2_gen_pi_KdEdx_dist_cos,h2_gen_p_KdEdx_dist_cos);
-
 }
 
 
@@ -217,5 +207,6 @@ void dEdx()
 
   dEdx_p(file);
   dEdx_dist_cos(file);
+  dEdx_dist_cos_proj(file);
 
 }
