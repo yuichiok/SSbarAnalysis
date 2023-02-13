@@ -204,57 +204,94 @@ void dEdx_dist_cos_proj(TFile *file)
 
 }
 
-TGraph* dEdx_dist_cos_eff(TFile *file)
+vector<TGraph*> dEdx_dist_cos_eff_pur(TFile *file)
 {
-  TH2F *hK  = (TH2F*) file->Get("dEdx/h2_gen_K_reco_K_KdEdx_dist_cos");
-  TH2F *hpi = (TH2F*) file->Get("dEdx/h2_gen_pi_reco_K_KdEdx_dist_cos");
-  TH2F *hp  = (TH2F*) file->Get("dEdx/h2_gen_p_reco_K_KdEdx_dist_cos");
+  vector<TGraph*> graphs;
 
-  Int_t NbinsX = hK->GetNbinsX();
-  Int_t NbinsY = hK->GetNbinsY();
+  TH2F *hK_gen  = (TH2F*) file->Get("dEdx/h2_gen_K_KdEdx_dist_cos");
+  TH2F *hpi_gen = (TH2F*) file->Get("dEdx/h2_gen_pi_KdEdx_dist_cos");
+  TH2F *hp_gen  = (TH2F*) file->Get("dEdx/h2_gen_p_KdEdx_dist_cos");
 
-  Float_t x[NbinsX], pur[NbinsX];
+  TH2F *hK_sel  = (TH2F*) file->Get("dEdx/h2_gen_K_reco_K_KdEdx_dist_cos");
+  TH2F *hpi_sel = (TH2F*) file->Get("dEdx/h2_gen_pi_reco_K_KdEdx_dist_cos");
+  TH2F *hp_sel  = (TH2F*) file->Get("dEdx/h2_gen_p_reco_K_KdEdx_dist_cos");
+
+  Int_t NbinsX = hK_sel->GetNbinsX();
+  Int_t NbinsY = hK_sel->GetNbinsY();
+
+  Float_t x[NbinsX], eff[NbinsX], pur[NbinsX];
 
   for ( int ibin=1; ibin <= NbinsX; ibin++ ){
 
     Int_t iarr = ibin - 1;
 
-    x[iarr] = hK->GetXaxis()->GetBinCenter(ibin);
+    x[iarr] = hK_sel->GetXaxis()->GetBinCenter(ibin);
 
-    Float_t nkaons   = hK->Integral(ibin,ibin,1,NbinsY);
-    Float_t npions   = hpi->Integral(ibin,ibin,1,NbinsY);
-    Float_t nprotons = hp->Integral(ibin,ibin,1,NbinsY);
+    Float_t nkaons_all = hK_gen->Integral(ibin,ibin,1,NbinsY);
 
+    Float_t nkaons   = hK_sel->Integral(ibin,ibin,1,NbinsY);
+    Float_t npions   = hpi_sel->Integral(ibin,ibin,1,NbinsY);
+    Float_t nprotons = hp_sel->Integral(ibin,ibin,1,NbinsY);
+
+    eff[iarr] = nkaons / nkaons_all;
     pur[iarr] = nkaons / (nkaons + npions + nprotons) ;
 
   }
 
-  TGraph *gr_purity = new TGraph(NbinsX, x, pur);
-  return gr_purity;
+  TGraph *gr_eff = new TGraph(NbinsX, x, eff);
+  TGraph *gr_pur = new TGraph(NbinsX, x, pur);
+  TGraph *gr_eff_pur = new TGraph(NbinsX, eff, pur);
 
-/*
-*/
+  graphs.push_back(gr_eff);
+  graphs.push_back(gr_pur);
+  graphs.push_back(gr_eff_pur);
+  return graphs;
 
 }
 
-void uu_ss_dEdx_dist_cos_eff(TFile* uu_file, TFile* ss_file)
+void uu_ss_dEdx_dist_cos_eff_pur(TFile* uu_file, TFile* ss_file)
 {
-  TGraph * uu_pur = dEdx_dist_cos_pur(uu_file);
-  TGraph * ss_pur = dEdx_dist_cos_pur(ss_file);
+  vector<TGraph*> gr_uu_vec = dEdx_dist_cos_eff_pur(uu_file);
+  vector<TGraph*> gr_ss_vec = dEdx_dist_cos_eff_pur(ss_file);
 
-  StyleGraph(uu_pur,kBlue);
-  StyleGraph(ss_pur,kRed);
+  TString strs[3] = {"Efficiency", "Purity", "Eff_Pur"};
+  TCanvas *cs[3];
+  TPad *pads[3];
 
-  TCanvas *c3 = new TCanvas("c3","c3",800,800);
-  TPad *pad3 = new TPad("pad3", "pad3",0,0,1,1);
-  StylePad(pad3,0,0.15,0,0.17);
+  for (int i=0; i<3; i++){
+
+    StyleGraph(gr_uu_vec.at(i),kBlue);
+    StyleGraph(gr_ss_vec.at(i),kRed);
+
+    cs[i]   = new TCanvas(TString::Format("c_%s",strs[i].Data()),TString::Format("c_%s",strs[i].Data()),800,800);
+    pads[i] = new TPad(TString::Format("pad_%s",strs[i].Data()),TString::Format("pad_%s",strs[i].Data()),0,0,1,1);
+    StylePad(pads[i],0,0.15,0,0.17);
+
+    gr_ss_vec.at(i)->SetTitle(TString::Format(";cos#theta_{K^{-}};%s",strs[i].Data()));
+    gr_ss_vec.at(i)->GetXaxis()->SetRangeUser(-1,1);
+    gr_ss_vec.at(i)->GetYaxis()->SetRangeUser(0,1);
+
+    if (i==2){
+      gr_ss_vec.at(i)->GetXaxis()->SetRangeUser(0,1);
+      gr_ss_vec.at(i)->SetTitle(";Efficiency;Purity");
+    }
+
+    gr_ss_vec.at(i)->Draw("acp");
+    gr_uu_vec.at(i)->Draw("cp same");
+
+  }
+
+/*
+  TCanvas *c_pur = new TCanvas("c_pur","c_pur",800,800);
+  TPad *pad_pur = new TPad("pad_pur", "pad_pur",0,0,1,1);
+  StylePad(pad_pur,0,0.15,0,0.17);
 
   ss_pur->SetTitle(";cos#theta_{K^{-}};Purity");
   ss_pur->GetXaxis()->SetRangeUser(-1,1);
   ss_pur->GetYaxis()->SetRangeUser(0,1);
   ss_pur->Draw("acp");
   uu_pur->Draw("cp same");
-
+*/
 
 }
 
@@ -269,6 +306,6 @@ void dEdx()
   dEdx_p(uu_file);
   dEdx_dist_cos(uu_file);
   dEdx_dist_cos_proj(uu_file);
-  uu_ss_dEdx_dist_cos_eff(uu_file,ss_file);
+  uu_ss_dEdx_dist_cos_eff_pur(uu_file,ss_file);
 
 }
