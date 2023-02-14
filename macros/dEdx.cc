@@ -279,6 +279,11 @@ void uu_ss_dEdx_dist_cos_eff_pur(TFile* uu_file, TFile* ss_file)
     gr_ss_vec.at(i)->Draw("acp");
     gr_uu_vec.at(i)->Draw("cp same");
 
+    TLegend *leg = new TLegend(0.25,0.7,0.45,0.85);
+    leg->SetLineColor(0);
+    leg->AddEntry(gr_ss_vec.at(i),"s#bar{s}","pl");
+    leg->AddEntry(gr_uu_vec.at(i),"u#bar{u}","pl");
+    leg->Draw();
   }
 
 /*
