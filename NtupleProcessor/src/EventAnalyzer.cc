@@ -805,7 +805,8 @@ void EventAnalyzer::Mom_Polar_Gen(PFOTools mct, PFOTools pfot)
 void EventAnalyzer::ProcessDoubleTag(PFOTools pfot, PFOTools mct, vector<Bool_t> cuts, Int_t double_tag)
 {
   Bool_t LPFO_checks = true;
-  for (int i=0; i<3; i++){
+  Int_t vec_size = cuts.size();
+  for (int i=0; i<vec_size-1; i++){
 
     if (!cuts.at(i)){
       LPFO_checks = false;
@@ -814,7 +815,7 @@ void EventAnalyzer::ProcessDoubleTag(PFOTools pfot, PFOTools mct, vector<Bool_t>
 
   }
 
-  Bool_t sign_check = cuts.at(3);
+  Bool_t sign_check = cuts.back();
 
   // Reco K_K
   if(LPFO_checks && (double_tag == 1)){
