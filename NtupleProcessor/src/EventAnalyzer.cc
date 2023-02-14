@@ -361,6 +361,7 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
 
     if ( cheat_K_all_checks ){
 
+    /*
       cout << "--------------------------------" << endl;
       cout << "Gen:  " << mct.mc_quark[0].cos << " | " << mct.mc_quark[1].cos << ", px: " << _mc.mc_quark_px[0] << " | " << _mc.mc_quark_px[1] << endl;
       cout << "Reco: " << pfot.cheat_KLPFO[0].cos << " | " << pfot.cheat_KLPFO[1].cos << ", p_mag: " << pfot.cheat_KLPFO[0].p_mag << " | " << pfot.cheat_KLPFO[1].p_mag << endl;
@@ -369,6 +370,7 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
       cout << "Reco: " << pfot.cheat_KLPFO[0].pfo_pdgcheat << " | " << pfot.cheat_KLPFO[1].pfo_pdgcheat << endl;
       cout << "entry = " << entry << endl;
       cout << "--------------------------------" << endl;
+    */
 
       Float_t cheat_gen_angle = abs(pfot.cheat_KLPFO[0].cos) * sgn( -_mc.mc_quark_charge[0] ) * mct.mc_quark[0].cos / abs(mct.mc_quark[0].cos);
       _hm.h1[_hm.cheat_K_cos]->Fill(pfot.cheat_KLPFO[0].cos);
