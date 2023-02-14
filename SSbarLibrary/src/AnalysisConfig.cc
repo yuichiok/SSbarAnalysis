@@ -24,6 +24,7 @@ void AnalysisConfig::SetConfig(TString fnc)
   // LPFO cuts
     LPFO_p_min = pt.get<float>("LPFO.LPFO_p_min");
     LPFO_p_max = pt.get<float>("LPFO.LPFO_p_max");
+    LPFO_kdedx_dist_max = pt.get<float>("LPFO.LPFO_kdedx_dist_max");
 
 }
 

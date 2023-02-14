@@ -37,6 +37,7 @@ class AnalysisConfig
   // LPFO cuts
     float LPFO_p_min;
     float LPFO_p_max;
+    float LPFO_kdedx_dist_max;
 
   protected:
     template <typename T>

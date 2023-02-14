@@ -44,6 +44,7 @@ class PFOTools
     virtual Bool_t           is_charge_config ( ChargeConfig cc, Int_t charge0, Int_t charge1 );
 
     virtual Bool_t           LPFO_Quality_checks    ( PFO_Info iPFO );
+    virtual Bool_t           Max_dedx_dist_checks   ( PFO_Info iPFO );
     virtual Bool_t           is_momentum           ( PFO_Info iPFO, Float_t MINP, Float_t MAXP );
     virtual Bool_t           is_tpc_hits           ( PFO_Info iPFO, Int_t MIN_TPC_HITS );
     virtual Bool_t           is_offset_small       ( PFO_Info iPFO, Int_t MAX_OFFSET );

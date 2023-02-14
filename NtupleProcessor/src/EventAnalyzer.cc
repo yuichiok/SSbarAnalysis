@@ -165,6 +165,17 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
     }
     CutTrigger.push_back(!is_there_a_gluon_K);
 
+  // upper dEdx distance value check
+    Bool_t LPFO_max_kdedx_dist_check    = true;
+    for ( auto iLPFO : pfot.KLPFO ){
+      if( !pfot.Max_dedx_dist_checks(iLPFO) ){
+        LPFO_max_kdedx_dist_check = false;
+        break;
+      }
+    }
+    CutTrigger.push_back(LPFO_max_kdedx_dist_check);
+
+
   // dEdx dist PDG check
     enum PDGConfig { noKPi, K_K, K_Pi, Pi_Pi };
     Int_t dEdx_pdg_match = -1;
@@ -687,7 +698,6 @@ Float_t *EventAnalyzer::Particle_Ratios( TH1F *h_n_particles[], Int_t mode )
   TH1F *h_sum = (TH1F*) h_n_particles[0]->Clone();
   h_sum->Add(h_n_particles[1]);
   h_sum->Add(h_n_particles[2]);
-
 
   // cos theta ratio
   for ( int i=0; i < 3; i++){

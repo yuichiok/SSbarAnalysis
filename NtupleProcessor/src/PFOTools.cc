@@ -329,6 +329,11 @@ Bool_t PFOTools::LPFO_Quality_checks( PFO_Info iPFO )
 
 }
 
+Bool_t PFOTools::Max_dedx_dist_checks( PFO_Info iPFO )
+{
+  return ( iPFO.pfo_piddedx_k_dedxdist < _anCfg.LPFO_kdedx_dist_max );
+}
+
 Bool_t PFOTools::is_momentum( PFO_Info iPFO, Float_t MINP_CUT, Float_t MAXP_CUT )
 {
   return ( MINP_CUT < iPFO.p_mag && iPFO.p_mag < MAXP_CUT);
