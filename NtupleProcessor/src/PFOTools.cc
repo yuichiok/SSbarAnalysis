@@ -172,22 +172,19 @@ void PFOTools::InitializePFOTools( MC_QQbar *mc_data, PFO_QQbar *data )
 
     PFO.dEdx_dist_pdg = Get_dEdx_dist_PID( PFO.pfo_piddedx_k_dedxdist, PFO.pfo_piddedx_pi_dedxdist, PFO.pfo_piddedx_p_dedxdist );
     PFO.cos           = std::cos(PFO.vt.v3().Theta());
-
-    PFO.qcos = (PFO.pfo_charge < 0) ? PFO.cos : -PFO.cos;
-    // if ( mc_data->mc_quark_charge[0] < 0 ){
-    //   PFO.qcos = (PFO.pfo_charge < 0) ? PFO.cos : -PFO.cos;
-    // }else{
-    //   PFO.qcos = (PFO.pfo_charge > 0) ? PFO.cos : -PFO.cos;
-    // }
+    PFO.qcos          = (PFO.pfo_charge < 0) ? PFO.cos : -PFO.cos;
 
     PFO_jet[ijet].push_back(PFO);
+    if( abs(PFO.pfo_pdgcheat) == 321 ) PFO_cheat_Ks[ijet].push_back(PFO);
     
   }
 
   if( ValidPFO() ){
     for (int ijet=0; ijet < 2; ijet++){
-      LPFO[ijet]  = GetSortedJet(ijet).at(0);
-      KLPFO[ijet] = Get_KLPFO(ijet);
+      LPFO[ijet]        = GetSortedJet(ijet).at(0);
+      KLPFO[ijet]       = Get_KLPFO(ijet);
+
+      // Reconstructed PFO
       if( PFO_jet[ijet].size() > 1 ){
         SPFOs[ijet] = GetSortedJet(ijet);
         // SPFOs[ijet].erase(SPFOs[ijet].begin());
@@ -202,6 +199,16 @@ void PFOTools::InitializePFOTools( MC_QQbar *mc_data, PFO_QQbar *data )
         });
 
       }
+
+      // Cheated PFO
+      if( PFO_cheat_Ks[0].size() && PFO_cheat_Ks[1].size() ){
+        cheat_KLPFO[ijet] = SortJet(PFO_cheat_Ks[ijet]).at(0);
+        if( PFO_cheat_Ks[ijet].size() > 1 ){
+          SPFOs_cheat_K[ijet] = PFO_cheat_Ks[ijet];
+          pop_front(SPFOs_cheat_K[ijet]);
+        }
+      }
+
     }
   }
 

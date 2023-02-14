@@ -64,7 +64,7 @@ class EventAnalyzer
   // Histogram extractor
     void             PolarAngleGen(PFOTools mct);
     void             Mom_Polar_Gen(PFOTools mct,PFOTools pfot);
-    void             PolarAngle(PFOTools pfot, PFOTools mct, vector<Bool_t> cuts, Int_t double_tag);
+    void             ProcessDoubleTag(PFOTools pfot, PFOTools mct, vector<Bool_t> cuts, Int_t double_tag);
     void             PolarAngle_acc_rej(PFOTools pfot, vector<Bool_t> cuts, Bool_t ss_config);
 
     void             Jet_sum_n_acol();
