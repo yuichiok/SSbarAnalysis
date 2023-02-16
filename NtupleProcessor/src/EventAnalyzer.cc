@@ -320,7 +320,7 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
     }
 
     if ( pfot.isKaon(ipfo) ) {
-      _hm.h1[_hm.reco_K_cos]->Fill(ipfo.cos);
+      // _hm.h1[_hm.reco_K_cos]->Fill(ipfo.cos);
       _hm.h2_dEdx[_hm.reco_K_KdEdx_dist_cos]->Fill(ipfo.cos,ipfo.pfo_piddedx_k_dedxdist);
     }
 
