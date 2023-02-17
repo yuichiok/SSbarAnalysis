@@ -245,16 +245,6 @@ TH1F * Efficiency_Correction2( TH1F * h, TString name, TFile * file )
   TH1F *h_weight = (TH1F*) h_purity_cos->Clone();
   h_weight->Divide(h_stable_cos);
 
-  TCanvas *c3 = new TCanvas("c3","c3",800,800);
-  TPad *pad3 = new TPad("pad3", "pad3",0,0,1,1);
-  StylePad(pad3,0,0.12,0,0.15);
-  h_weight->SetTitle(";cos#theta;P/S ratio");
-  h_weight->GetYaxis()->SetRangeUser(0,1.5);
-  StyleHist(h_weight,kGreen+2);
-
-  h_weight->Draw("h");
-
-
   Int_t nbins = h_stable_cos->GetNbinsX();
   TH1F *corrected = new TH1F(name.Data(), "corrected", 100,-1,1);
   corrected->Sumw2();
