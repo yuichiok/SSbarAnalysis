@@ -247,6 +247,39 @@ TH1F * Efficiency_Correction( TH1F * h, TString name, TFile * file )
 
 }
 
+TH1F * Efficiency_Correction2( TH1F * h, TString name, TFile * file )
+{
+  TH1F *h_gen_N_K_cos  = (TH1F*) file->Get("h_gen_N_K_cos");
+  TH1F *h_reco_N_K_cos = (TH1F*) file->Get("h_reco_N_K_cos");
+  TH1F *h_N_K_corr_cos = (TH1F*) file->Get("h_N_K_corr_cos");
+
+  TH1F *h_stable_cos = (TH1F*) h_N_K_corr_cos->Clone();
+  TH1F *h_purity_cos = (TH1F*) h_N_K_corr_cos->Clone();
+  h_stable_cos->Divide(h_gen_N_K_cos);
+  h_purity_cos->Divide(h_reco_N_K_cos);
+
+  if( h->GetNbinsX() != h_stable_cos->GetNbinsX() ) throw std::logic_error("Error");
+  if( h->GetNbinsX() != h_purity_cos->GetNbinsX() ) throw std::logic_error("Error");
+
+  TH1F *h_weight = (TH1F*) h_purity_cos->Clone();
+  h_weight->Divide(h_stable_cos);
+
+  Int_t nbins = h_stable_cos->GetNbinsX();
+  TH1F *corrected = new TH1F(name.Data(), "corrected", 100,-1,1);
+  corrected->Sumw2();
+  for (int ibin = 1; ibin < nbins + 1; ibin++){
+
+    Float_t binc_h   = h->GetBinContent(ibin);
+    Float_t binc_eff = h_weight->GetBinContent(ibin);
+
+    corrected->SetBinContent(ibin,binc_h * binc_eff);
+
+  }
+
+  return corrected;
+
+}
+
 void Func2Hist( TH1F * h, double * par )
 {
   for ( int ibin=1; ibin < nbins_cos+1; ibin++ ){
@@ -318,8 +351,8 @@ void main_pq_BGFit( TFile *files[] )
   TH1F *h_reco_us_K_qcos = (TH1F*) files[kUS]->Get("h_reco_K_qcos");
 
   // efficiency correction
-  // TH1F *h_reco_us_K_scos_eff_corr = Efficiency_Correction(h_reco_us_K_scos,"scos_corr",files[kUS]);
-  // TH1F *h_reco_us_K_qcos_eff_corr = Efficiency_Correction(h_reco_us_K_qcos,"qcos_corr",files[kUS]);
+  // TH1F *h_reco_us_K_scos_eff_corr = Efficiency_Correction2(h_reco_us_K_scos,"scos_corr",files[kUS]);
+  // TH1F *h_reco_us_K_qcos_eff_corr = Efficiency_Correction2(h_reco_us_K_qcos,"qcos_corr",files[kUS]);
   TH1F *h_reco_us_K_scos_eff_corr = (TH1F*) h_reco_us_K_scos->Clone();
   TH1F *h_reco_us_K_qcos_eff_corr = (TH1F*) h_reco_us_K_qcos->Clone();
 
@@ -327,8 +360,8 @@ void main_pq_BGFit( TFile *files[] )
   TH1F *h_acc_KK_cos  = (TH1F*) files[kUS]->Get("pq/h_acc_KK_cos");
   TH1F *h_rej_KK_cos  = (TH1F*) files[kUS]->Get("pq/h_rej_KK_cos");
 
-  // TH1F *h_acc_KK_cos_eff_corr = Efficiency_Correction(h_acc_KK_cos,"acc_corr",files[kUS]);
-  // TH1F *h_rej_KK_cos_eff_corr = Efficiency_Correction(h_rej_KK_cos,"rej_corr",files[kUS]);
+  // TH1F *h_acc_KK_cos_eff_corr = Efficiency_Correction2(h_acc_KK_cos,"acc_corr",files[kUS]);
+  // TH1F *h_rej_KK_cos_eff_corr = Efficiency_Correction2(h_rej_KK_cos,"rej_corr",files[kUS]);
   TH1F *h_acc_KK_cos_eff_corr = (TH1F*) h_acc_KK_cos->Clone();
   TH1F *h_rej_KK_cos_eff_corr = (TH1F*) h_rej_KK_cos->Clone();
 
