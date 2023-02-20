@@ -68,9 +68,6 @@ class EventAnalyzer
     void             PolarAngle_acc_rej(PFOTools pfot, vector<Bool_t> cuts, Bool_t ss_config);
 
     void             Jet_sum_n_acol();
-    void             Detector_Acceptance();
-
-
 
   // Running Variables
     TString  options;  // Options input with TreeIterator.

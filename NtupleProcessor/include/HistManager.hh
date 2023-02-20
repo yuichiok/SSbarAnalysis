@@ -101,18 +101,15 @@ class HistManager
     };
     TH2F * h2[Last_h2];
 
-    enum h2_det_acc_index {
+    enum h2_jet_index {
 
-      reco_jet_thrust_cos,
-      reco_jet_mult_cos,
+      jet_mult_cos,
+      jet_mult_cos_noISR,
 
-      reco_jet_thrust_cos_noISR,
-      reco_jet_mult_cos_noISR,
-
-      dummy_h2_det_acc,
-      Last_dummy_h2_det_acc = dummy_h2_det_acc
+      dummy_h2_jet,
+      Last_dummy_h2_jet = dummy_h2_jet
     };
-    TH2F * h2_det_acc[Last_dummy_h2_det_acc];
+    TH2F * h2_jet[Last_dummy_h2_jet];
 
     enum h2_particle_ratio_cos_index {
       K_rate_cos_gen,
@@ -157,6 +154,7 @@ class HistManager
     TList* hList1_pq             = new TList();
     TList* hList1_particle_ratio = new TList();
     TList* hList2                = new TList();
+    TList* hList2_jet            = new TList();
     TList* hList2_dEdx           = new TList();
 
 };

@@ -88,11 +88,9 @@ void HistManager::InitializeHists()
     h2[stable_cos]   = new TH2F("h2_stable_cos",";cos#theta;Stability",cos_bin,-1,1,50,0,1);
     h2[purity_cos]   = new TH2F("h2_purity_cos",";cos#theta;Purity",   cos_bin,-1,1,50,0,1);
 
-  // detector acceptance
-    h2_det_acc[reco_jet_thrust_cos]       = new TH2F("h2_reco_jet_thrust_cos" ,";cos#theta;Thrust",cos_bin,-1,1,50,0,1);
-    h2_det_acc[reco_jet_mult_cos]         = new TH2F("h2_reco_jet_mult_cos" ,";cos#theta;NPFOs/jet",cos_bin,-1,1,100,0,100);
-    h2_det_acc[reco_jet_thrust_cos_noISR] = new TH2F("h2_reco_jet_thrust_cos_noISR" ,";cos#theta;Thrust",cos_bin,-1,1,50,0,1);
-    h2_det_acc[reco_jet_mult_cos_noISR]   = new TH2F("h2_reco_jet_mult_cos_noISR" ,";cos#theta;NPFOs/jet",cos_bin,-1,1,100,0,100);
+  // jet
+    h2_jet[jet_mult_cos]         = new TH2F("h2_jet_mult_cos" ,";cos#theta;NPFOs/jet",cos_bin,-1,1,100,0,100);
+    h2_jet[jet_mult_cos_noISR]   = new TH2F("h2_jet_mult_cos_noISR" ,";cos#theta;NPFOs/jet",cos_bin,-1,1,100,0,100);
 
   // particle ratio
     h2_particle_ratio_cos[K_rate_cos_gen]   = new TH2F("h2_K_rate_cos_gen",";qcos#theta;Ratio of Kaons / Event (gen)",40,-1,1,11,0,1.1);
@@ -144,6 +142,10 @@ void HistManager::Hist2List()
     hList2->Add(ih);
   }
   
+  for (auto ih : h2_jet) {
+    hList2_jet->Add(ih);
+  }
+  
   for (auto ih : h2_particle_ratio_cos) {
     hList1_particle_ratio->Add(ih);
   }
@@ -170,6 +172,11 @@ void HistManager::WriteLists( TFile * output)
   TDirectory * d_particle_ratio = output->mkdir("particle_ratio");
     d_particle_ratio->cd();
     hList1_particle_ratio->Write();
+    output->cd();
+
+  TDirectory * d_jet = output->mkdir("jet");
+    d_jet->cd();
+    hList2_jet->Write();
     output->cd();
 
   TDirectory * d_dEdx = output->mkdir("dEdx");

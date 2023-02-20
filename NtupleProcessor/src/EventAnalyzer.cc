@@ -873,11 +873,15 @@ void EventAnalyzer::Jet_sum_n_acol()
     jetvt[i].SetCoordinates(_jet.jet_px[i],_jet.jet_py[i],_jet.jet_pz[i],_jet.jet_E[i]);
   }
   Float_t cosacol = std::cos( VectorTools::GetThetaBetween( jetvt[0].v3(), jetvt[1].v3() ) );
+  Float_t jet_cos[2]  = { std::cos( jetvt[0].v3().theta() ), std::cos( jetvt[1].v3().theta() ) };
 
   _data.sum_jet_E = _jet.jet_E[0] + _jet.jet_E[1];
   _data.jet_acol  = cosacol;
 
   _hm.h1[_hm.reco_sum_jetE]->Fill( _data.sum_jet_E );
   _hm.h1[_hm.reco_jet_sep]->Fill( _data.jet_acol );
+
+  _hm.h2_jet[_hm.jet_mult_cos]->Fill( jet_cos[0], _pfo.pfo_n_j1 );
+  _hm.h2_jet[_hm.jet_mult_cos]->Fill( jet_cos[1], _pfo.pfo_n_j2 );
 
 }
