@@ -101,6 +101,19 @@ class HistManager
     };
     TH2F * h2[Last_h2];
 
+    enum h2_det_acc_index {
+
+      reco_jet_thrust_cos,
+      reco_jet_mult_cos,
+
+      reco_jet_thrust_cos_noISR,
+      reco_jet_mult_cos_noISR,
+
+      dummy_h2_det_acc,
+      Last_dummy_h2_det_acc = dummy_h2_det_acc
+    };
+    TH2F * h2_det_acc[Last_dummy_h2_det_acc];
+
     enum h2_particle_ratio_cos_index {
       K_rate_cos_gen,
       pi_rate_cos_gen,
