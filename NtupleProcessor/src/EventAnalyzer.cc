@@ -144,35 +144,47 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
   // Selections //
   ////////////////
 
-    vector<Bool_t> CutTrigger;
+    enum SelectID { kKaon, kPion, kProton };
+    vector<Bool_t> CutTrigger[3];
 
   // Valid LPFO
-    CutTrigger.push_back(_eve.eve_valid_lpfo);
+    CutTrigger[kKaon].push_back(_eve.eve_valid_lpfo);
+    CutTrigger[kPion].push_back(_eve.eve_valid_lpfo);
 
   // Base Selection (mom, tpc_hit, offset)
-    Bool_t LPFO_double_quality    = true;
-    for ( auto iLPFO : pfot.KLPFO ){
-      if( !pfot.LPFO_Quality_checks(iLPFO) ){
-        LPFO_double_quality = false;
-        break;
-      }
+    Bool_t LPFO_double_quality[3]    = {true,true,true};
+    for ( int i=0; i<2; i++ ){
+      if( !pfot.LPFO_Quality_checks(pfot.KLPFO[i]) )  LPFO_double_quality[kKaon] = false;
+      if( !pfot.LPFO_Quality_checks(pfot.PiLPFO[i]) ) LPFO_double_quality[kPion] = false;
     }
-    CutTrigger.push_back(LPFO_double_quality);
+    CutTrigger[kKaon].push_back(LPFO_double_quality[kKaon]);
+    CutTrigger[kPion].push_back(LPFO_double_quality[kPion]);
 
   // SPFO opposite check
-    Bool_t is_gluon_K[2] = {0};
-    Bool_t is_there_a_gluon_K = false;
+    Bool_t is_gluon[3][2] = {0};
+    Bool_t is_there_a_gluon[3] = {false};
     for ( int ijet=0; ijet<2; ijet++){
+
       for ( auto iSPFO_K : pfot.SPFOs_K[ijet] ){
         Bool_t charge_opposite = iSPFO_K.pfo_charge * pfot.KLPFO[ijet].pfo_charge < 0;
         Bool_t momentum_above  = iSPFO_K.p_mag > 10;
-        if( charge_opposite && momentum_above ) is_gluon_K[ijet] = true;
+        if( charge_opposite && momentum_above ) is_gluon[kKaon][ijet] = true;
       }
+
+      for ( auto iSPFO_Pi : pfot.SPFOs_Pi[ijet] ){
+        Bool_t charge_opposite = iSPFO_Pi.pfo_charge * pfot.PiLPFO[ijet].pfo_charge < 0;
+        Bool_t momentum_above  = iSPFO_Pi.p_mag > 10;
+        if( charge_opposite && momentum_above ) is_gluon[kPion][ijet] = true;
+      }
+
     }
-    for ( auto ibool : is_gluon_K ){
-      if( ibool ) is_there_a_gluon_K = true;
+
+    for ( int i=0; i<3; i++ ){
+      if( is_gluon[kKaon][i] ) = true;
+      if( is_gluon[kPion][i] ) = true;
     }
-    CutTrigger.push_back(!is_there_a_gluon_K);
+    CutTrigger[kKaon].push_back( !is_there_a_gluon[kKaon] );
+    CutTrigger[kPion].push_back( !is_there_a_gluon[kPion] );
 
   // dEdx dist PDG check
     enum PDGConfig { noKPi, K_K, K_Pi, Pi_Pi };
@@ -185,20 +197,20 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
     else{ dEdx_pdg_match = noKPi; }
 
   // charge config check
-    Bool_t charge_check = false;
+    Bool_t charge_check[3] = {false};
     switch ( dEdx_pdg_match )
     {
       case K_K:
-        charge_check = pfot.is_charge_config(pfot.kOpposite,pfot.KLPFO[0].pfo_charge,pfot.KLPFO[1].pfo_charge);
+        charge_check[kKaon] = pfot.is_charge_config(pfot.kOpposite,pfot.KLPFO[0].pfo_charge,pfot.KLPFO[1].pfo_charge);
         break;
-      // case K_Pi:
-      //   charge_check = pfot.is_charge_config(pfot.kSame);
-      //   break;
-
+      case Pi_Pi:
+        charge_check[kPion] = pfot.is_charge_config(pfot.kOpposite,pfot.PiLPFO[0].pfo_charge,pfot.PiLPFO[1].pfo_charge);
+        break;
     default:
       break;
     }
-    CutTrigger.push_back(charge_check);
+    CutTrigger[kKaon].push_back(charge_check[kKaon]);
+    CutTrigger[kPion].push_back(charge_check[kPion]);
 
   // Check all bools
   // Check all does double tagging
@@ -315,11 +327,6 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
         break;
       default:
         break;
-    }
-
-    if ( pfot.isKaon(ipfo) ) {
-      _hm.h1[_hm.reco_K_cos]->Fill(ipfo.cos);
-      _hm.h2_dEdx[_hm.reco_K_KdEdx_dist_cos]->Fill(ipfo.cos,ipfo.pfo_piddedx_k_dedxdist);
     }
 
   }
