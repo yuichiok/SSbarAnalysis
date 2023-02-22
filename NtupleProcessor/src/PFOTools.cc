@@ -182,7 +182,8 @@ void PFOTools::InitializePFOTools( MC_QQbar *mc_data, PFO_QQbar *data )
   if( ValidPFO() ){
     for (int ijet=0; ijet < 2; ijet++){
       LPFO[ijet]        = GetSortedJet(ijet).at(0);
-      KLPFO[ijet]       = Get_KLPFO(ijet);
+      KLPFO[ijet]       = Get_Particle_LPFO(ijet,kKaon);
+      PiLPFO[ijet]      = Get_Particle_LPFO(ijet,kPion);
 
       // Reconstructed PFO
       if( PFO_jet[ijet].size() > 1 ){
@@ -250,11 +251,27 @@ vector<PFO_Info> PFOTools::GetSortedJet( int ijet )
     return sorted_jet;
 }
 
-PFO_Info PFOTools::Get_KLPFO( int ijet )
+PFO_Info PFOTools::Get_Particle_LPFO( int ijet, ParticleID pdg )
 {
     vector<PFO_Info> sorted_jet = GetSortedJet(ijet);
     for ( auto iPFO : sorted_jet ) {
-      if ( isKaon(iPFO) ) return iPFO;
+
+      switch ( pdg )
+      {
+        case kKaon:
+          if ( isKaon(iPFO) ) return iPFO;
+          break;
+        case kPion:
+          if ( isPion(iPFO) ) return iPFO;
+          break;
+        case kProton:
+          if ( isProton(iPFO) ) return iPFO;
+          break;
+        
+        default:
+          break;
+      }
+
     }
 
     return sorted_jet.at(0);
