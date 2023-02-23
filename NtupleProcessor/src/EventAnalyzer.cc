@@ -180,8 +180,8 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
     }
 
     for ( int i=0; i<3; i++ ){
-      if( is_gluon[kKaon][i] ) = true;
-      if( is_gluon[kPion][i] ) = true;
+      if( is_gluon[kKaon][i] ) is_there_a_gluon[kKaon] = true;
+      if( is_gluon[kPion][i] ) is_there_a_gluon[kPion] = true;
     }
     CutTrigger[kKaon].push_back( !is_there_a_gluon[kKaon] );
     CutTrigger[kPion].push_back( !is_there_a_gluon[kPion] );
@@ -211,25 +211,6 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
     }
     CutTrigger[kKaon].push_back(charge_check[kKaon]);
     CutTrigger[kPion].push_back(charge_check[kPion]);
-
-  // Check all bools
-  // Check all does double tagging
-  // CutTrigger = [ Valid_LPFO, Quality, Not_Gluon_K, charge_check ]
-  //                          * Quality = {momentum, tpc hits, offset}
-    Bool_t all_checks = true;
-    for (auto ibool : CutTrigger){
-      if (!ibool) {
-        all_checks = false;
-        break;
-      }
-    }
-
-  
-  if (all_checks){
-
-    _data.dEdx_pdg_match   = dEdx_pdg_match;
-
-  }
 
   // Try Stability and Purity Calculation here.
     Int_t   *N_Ks  = Gen_Reco_Stats_Stable( mct, pfot, -1, 1 );
@@ -278,9 +259,7 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
   // CutTrigger = [ Valid_LPFO, Quality, Not_Gluon_K, charge_check ]
   //                          * Quality = {momentum, tpc hits, offset}
 
-  // cout << "after match = " << dEdx_pdg_match << endl;
-  Bool_t all_K_K = all_checks && (dEdx_pdg_match == K_K);
-  ProcessDoubleTag(pfot,mct,CutTrigger,dEdx_pdg_match);
+  ProcessDoubleTag(pfot,mct,CutTrigger[kPion],dEdx_pdg_match);
   // PolarAngle_acc_rej(pfot,CutTrigger,(dEdx_pdg_match == K_K));
 
 
