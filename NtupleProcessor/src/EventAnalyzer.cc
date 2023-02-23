@@ -187,14 +187,17 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
     CutTrigger[kPion].push_back( !is_there_a_gluon[kPion] );
 
   // dEdx dist PDG check
-    enum PDGConfig { noKPi, K_K, K_Pi, Pi_Pi };
-    Int_t dEdx_pdg_match = -1;
+    PDGConfig dEdx_pdg_match;
     
+    if ( pfot.isPion(pfot.PiLPFO[0]) && pfot.isPion(pfot.PiLPFO[1]) ) { dEdx_pdg_match = Pi_Pi; }
+    else{ dEdx_pdg_match = noKPi; }
+    /*
     if     (   pfot.isKaon(pfot.KLPFO[0]) && pfot.isKaon(pfot.KLPFO[1]) )  {  dEdx_pdg_match = K_K;    }
     else if(   pfot.isPion(pfot.KLPFO[0]) && pfot.isPion(pfot.KLPFO[1]) )  {  dEdx_pdg_match = Pi_Pi;  }
     else if( ( pfot.isKaon(pfot.KLPFO[0]) && pfot.isPion(pfot.KLPFO[1]) ) ||
              ( pfot.isKaon(pfot.KLPFO[1]) && pfot.isPion(pfot.KLPFO[0]) ) ){  dEdx_pdg_match = K_Pi;   }
     else{ dEdx_pdg_match = noKPi; }
+    */
 
   // charge config check
     Bool_t charge_check[3] = {false};
@@ -260,8 +263,6 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
   //                          * Quality = {momentum, tpc hits, offset}
 
   ProcessDoubleTag(pfot,mct,CutTrigger[kPion],dEdx_pdg_match);
-  // PolarAngle_acc_rej(pfot,CutTrigger,(dEdx_pdg_match == K_K));
-
 
   // Fill PFO
 
@@ -778,7 +779,7 @@ void EventAnalyzer::Mom_Polar_Gen(PFOTools mct, PFOTools pfot)
 
 }
 
-void EventAnalyzer::ProcessDoubleTag(PFOTools pfot, PFOTools mct, vector<Bool_t> cuts, Int_t double_tag)
+void EventAnalyzer::ProcessDoubleTag(PFOTools pfot, PFOTools mct, vector<Bool_t> cuts, PDGConfig double_tag)
 {
   Bool_t LPFO_checks = true;
   Int_t vec_size = cuts.size();
