@@ -865,15 +865,15 @@ void EventAnalyzer::ProcessDoubleTag(PFOTools pfot, PFOTools mct, vector<Bool_t>
           switch ( abs(pfot.PiLPFO[ineg].pfo_pdgcheat) ) {
             case 321:
               _hm.h2_dEdx[_hm.gen_K_reco_Pi_dEdx_p]->Fill(pfot.PiLPFO[ineg].p_mag,pfot.PiLPFO[ineg].pfo_dedx);
-              _hm.h2_dEdx[_hm.gen_K_reco_Pi_PidEdx_dist_cos]->Fill(pfot.PiLPFO[ineg].cos,pfot.PiLPFO[ineg].pfo_piddedx_k_dedxdist);
+              _hm.h2_dEdx[_hm.gen_K_reco_Pi_PidEdx_dist_cos]->Fill(pfot.PiLPFO[ineg].cos,pfot.PiLPFO[ineg].pfo_piddedx_pi_dedxdist);
               break;
             case 211:
               _hm.h2_dEdx[_hm.gen_pi_reco_Pi_dEdx_p]->Fill(pfot.PiLPFO[ineg].p_mag,pfot.PiLPFO[ineg].pfo_dedx);
-              _hm.h2_dEdx[_hm.gen_pi_reco_Pi_PidEdx_dist_cos]->Fill(pfot.PiLPFO[ineg].cos,pfot.PiLPFO[ineg].pfo_piddedx_k_dedxdist);
+              _hm.h2_dEdx[_hm.gen_pi_reco_Pi_PidEdx_dist_cos]->Fill(pfot.PiLPFO[ineg].cos,pfot.PiLPFO[ineg].pfo_piddedx_pi_dedxdist);
               break;
             case 2212:
               _hm.h2_dEdx[_hm.gen_p_reco_Pi_dEdx_p]->Fill(pfot.PiLPFO[ineg].p_mag,pfot.PiLPFO[ineg].pfo_dedx);
-              _hm.h2_dEdx[_hm.gen_p_reco_Pi_PidEdx_dist_cos]->Fill(pfot.PiLPFO[ineg].cos,pfot.PiLPFO[ineg].pfo_piddedx_k_dedxdist);
+              _hm.h2_dEdx[_hm.gen_p_reco_Pi_PidEdx_dist_cos]->Fill(pfot.PiLPFO[ineg].cos,pfot.PiLPFO[ineg].pfo_piddedx_pi_dedxdist);
               break;
             default:
               break;
