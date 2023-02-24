@@ -174,9 +174,9 @@ void dEdx_dist_cos_proj(TFile *file)
 
     hpi_proj[islice]->SetTitle(TString::Format("Slice %.2f < cos#theta < %.2f;dE/dx distance [MeV];a.u.",binL_low,binH_high).Data());
     if(islice==0) {
-      hpi_proj[islice]->GetYaxis()->SetRangeUser(0,1.2E4);
+      hpi_proj[islice]->GetYaxis()->SetRangeUser(0,1.7E4);
     }else{
-      hpi_proj[islice]->GetYaxis()->SetRangeUser(0,0.3E4);
+      hpi_proj[islice]->GetYaxis()->SetRangeUser(0,0.7E4);
     }
     hpi_proj[islice]->GetXaxis()->SetRangeUser(-5,5);
     hpi_proj[islice]->Draw("h");
