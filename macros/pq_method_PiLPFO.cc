@@ -150,7 +150,7 @@ TH1F * CorrectHist( TH1F * h_reco, vector<Float_t> p_vec)
   for (int i = 1; i < nbins / 2 + 1; i++)
   {
     float p = p_vec.at(i - 1);
-    // float p = 0.65;
+    // float p = 0.7;
     float q = 1 - p;
     float weight = (p * p + q * q) / (q * q * q * q - p * p * p * p);
 
@@ -265,8 +265,8 @@ void main_pq()
 {
   gStyle->SetOptStat(0);
 
-  // TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.uu.PiLPFO.PFOp15.LPFOp15_pNaN.tpc0.hists.all.root","READ");
-  TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ss.PiLPFO.PFOp15.LPFOp15_pNaN.tpc0.hists.all.root","READ");
+  TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.uu.PiLPFO.PFOp15.LPFOp15_pNaN.tpc0.hists.all.root","READ");
+  // TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ss.PiLPFO.PFOp15.LPFOp15_pNaN.tpc0.hists.all.root","READ");
 
   if (!file->IsOpen()) return;
 
@@ -337,7 +337,7 @@ void main_pq()
   f_reco->SetParNames("S","A");
   h_reco_K_pq_cos->Fit("f_reco","MNRS");
 
-  // h_reco_K_pq_cos->GetYaxis()->SetRangeUser(0,30E3);
+  h_reco_K_pq_cos->GetYaxis()->SetRangeUser(0,45E3);
   h_reco_K_pq_cos->SetTitle(";K^{+}K^{-} cos#theta;a.u.");
   h_reco_K_pq_cos->Draw("h");
   h_reco_K_qcos_eff_corr->Draw("hsame");
@@ -370,7 +370,7 @@ void main_pq()
   gPad->SetGrid(1,1);
   h_acc_KK_cos_eff_corr->SetTitle(";K^{+}K^{-} cos#theta;Entries");
 
-  // h_acc_KK_cos_eff_corr->GetYaxis()->SetRangeUser(0,30E3);
+  h_acc_KK_cos_eff_corr->GetYaxis()->SetRangeUser(0,45E3);
   h_acc_KK_cos_eff_corr->Draw("h");
   h_rej_KK_cos_eff_corr->Draw("hsame");
 
