@@ -68,7 +68,7 @@ class HistManager
       acc_KK,
       rej_KK,
 
-      // KID
+      // PiID
       acc_PiPi,
       rej_PiPi,
 
