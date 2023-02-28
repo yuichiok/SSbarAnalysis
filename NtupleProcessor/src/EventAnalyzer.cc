@@ -179,7 +179,7 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
 
     }
 
-    for ( int i=0; i<3; i++ ){
+    for ( int i=0; i<2; i++ ){
       if( is_gluon[kKaon][i] ) is_there_a_gluon[kKaon] = true;
       if( is_gluon[kPion][i] ) is_there_a_gluon[kPion] = true;
     }
@@ -191,6 +191,10 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
     
     if ( pfot.isPion(pfot.PiLPFO[0]) && pfot.isPion(pfot.PiLPFO[1]) ) { dEdx_pdg_match = Pi_Pi; }
     else{ dEdx_pdg_match = noKPi; }
+
+    // if ( pfot.isKaon(pfot.KLPFO[0]) && pfot.isKaon(pfot.KLPFO[1]) ) { dEdx_pdg_match = K_K; }
+    // else{ dEdx_pdg_match = noKPi; }
+
     /*
     if     (   pfot.isKaon(pfot.KLPFO[0]) && pfot.isKaon(pfot.KLPFO[1]) )  {  dEdx_pdg_match = K_K;    }
     else if(   pfot.isPion(pfot.KLPFO[0]) && pfot.isPion(pfot.KLPFO[1]) )  {  dEdx_pdg_match = Pi_Pi;  }
@@ -212,6 +216,7 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
     default:
       break;
     }
+
     CutTrigger[kKaon].push_back(charge_check[kKaon]);
     CutTrigger[kPion].push_back(charge_check[kPion]);
 
@@ -263,6 +268,7 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
   //                          * Quality = {momentum, tpc hits, offset}
 
   ProcessDoubleTag(pfot,mct,CutTrigger[kPion],dEdx_pdg_match);
+  // ProcessDoubleTag(pfot,mct,CutTrigger[kKaon],dEdx_pdg_match);
 
   // Fill PFO
 
@@ -859,7 +865,7 @@ void EventAnalyzer::ProcessDoubleTag(PFOTools pfot, PFOTools mct, vector<Bool_t>
 
           _hm.h1[_hm.reco_Pi_cos]->Fill( pfot.PiLPFO[ineg].cos );
           _hm.h1[_hm.reco_Pi_qcos]->Fill( pfot.PiLPFO[ineg].qcos );
-          _hm.h1[_hm.reco_Pi_scos]->Fill( abs(pfot.PiLPFO[ineg].cos) * sgn( -_mc.mc_quark_charge[0] ) * mct.mc_quark[0].cos / abs(mct.mc_quark[0].cos) );
+          _hm.h1[_hm.reco_Pi_scos]->Fill( abs(pfot.PiLPFO[ineg].cos) * sgn( -_mc.mc_quark_charge[1] ) * mct.mc_quark[1].cos / abs(mct.mc_quark[1].cos) );
 
           // cheat
           switch ( abs(pfot.PiLPFO[ineg].pfo_pdgcheat) ) {
