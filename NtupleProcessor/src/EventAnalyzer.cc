@@ -812,13 +812,13 @@ void EventAnalyzer::ProcessDoubleTag(PFOTools pfot, PFOTools mct, vector<Bool_t>
       
       case K_K:
 
-        if(sign_check){
+        if( pfot.KLPFO[0].pfo_charge < 0 ){
+          ineg = 0;
+        }else{
+          ineg = 1;
+        }
 
-          if( pfot.KLPFO[0].pfo_charge < 0 ){
-            ineg = 0;
-          }else{
-            ineg = 1;
-          }
+        if(sign_check){
 
           _hm.h1[_hm.reco_K_cos]->Fill( pfot.KLPFO[ineg].cos );
           _hm.h1[_hm.reco_K_qcos]->Fill( pfot.KLPFO[ineg].qcos );
@@ -855,13 +855,13 @@ void EventAnalyzer::ProcessDoubleTag(PFOTools pfot, PFOTools mct, vector<Bool_t>
 
       case Pi_Pi:
 
-        if(sign_check){
+        if( pfot.PiLPFO[0].pfo_charge < 0 ){
+          ineg = 0;
+        }else{
+          ineg = 1;
+        }
 
-          if( pfot.PiLPFO[0].pfo_charge < 0 ){
-            ineg = 0;
-          }else{
-            ineg = 1;
-          }
+        if(sign_check){
 
           _hm.h1[_hm.reco_Pi_cos]->Fill( pfot.PiLPFO[ineg].cos );
           _hm.h1[_hm.reco_Pi_qcos]->Fill( pfot.PiLPFO[ineg].qcos );
