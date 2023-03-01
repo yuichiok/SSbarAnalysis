@@ -176,6 +176,7 @@ void PFOTools::InitializePFOTools( MC_QQbar *mc_data, PFO_QQbar *data )
 
     PFO_jet[ijet].push_back(PFO);
     if( abs(PFO.pfo_pdgcheat) == 321 ) PFO_cheat_Ks[ijet].push_back(PFO);
+    if( abs(PFO.pfo_pdgcheat) == 211 ) PFO_cheat_Pis[ijet].push_back(PFO);
     
   }
 
@@ -207,6 +208,14 @@ void PFOTools::InitializePFOTools( MC_QQbar *mc_data, PFO_QQbar *data )
         if( PFO_cheat_Ks[ijet].size() > 1 ){
           SPFOs_cheat_K[ijet] = PFO_cheat_Ks[ijet];
           pop_front(SPFOs_cheat_K[ijet]);
+        }
+      }
+
+      if( PFO_cheat_Pis[0].size() && PFO_cheat_Pis[1].size() ){
+        cheat_PiLPFO[ijet] = SortJet(PFO_cheat_Pis[ijet]).at(0);
+        if( PFO_cheat_Pis[ijet].size() > 1 ){
+          SPFOs_cheat_Pi[ijet] = PFO_cheat_Pis[ijet];
+          pop_front(SPFOs_cheat_Pi[ijet]);
         }
       }
 

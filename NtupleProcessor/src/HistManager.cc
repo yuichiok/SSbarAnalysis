@@ -38,6 +38,9 @@ void HistManager::InitializeHists()
     h1[cheat_K_cos]     = new TH1F("h_cheat_K_cos",";LPFO Kaon cos#theta; Entries",cos_bin,-1,1);
     h1[cheat_K_qcos]    = new TH1F("h_cheat_K_qcos",";LPFO Kaon cos#theta; Entries",cos_bin,-1,1);
 
+    h1[cheat_Pi_cos]     = new TH1F("h_cheat_Pi_cos",";LPFO Pion cos#theta; Entries",cos_bin,-1,1);
+    h1[cheat_Pi_qcos]    = new TH1F("h_cheat_Pi_qcos",";LPFO Pion cos#theta; Entries",cos_bin,-1,1);
+
     h1[reco_K_cos]      = new TH1F("h_reco_K_cos",";LPFO Kaon cos#theta; Entries",cos_bin,-1,1);
     h1[reco_K_qcos]     = new TH1F("h_reco_K_qcos",";LPFO Kaon cos#theta; Entries",cos_bin,-1,1);
     h1[reco_K_scos]     = new TH1F("h_reco_K_scos",";LPFO Kaon cos#theta; Entries",cos_bin,-1,1);

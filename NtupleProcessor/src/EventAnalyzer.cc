@@ -366,13 +366,83 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
 
     if ( cheat_K_all_checks ){
 
-      Float_t cheat_gen_angle = abs(pfot.cheat_KLPFO[0].cos) * sgn( -_mc.mc_quark_charge[0] ) * mct.mc_quark[0].cos / abs(mct.mc_quark[0].cos);
-      _hm.h1[_hm.cheat_K_cos]->Fill(pfot.cheat_KLPFO[0].cos);
+      Int_t ineg = -1;
+
+      if( pfot.cheat_KLPFO[0].pfo_pdgcheat < 0 ){
+        ineg = 0;
+      }else{
+        ineg = 1;
+      }
+
+      Float_t cheat_gen_angle = abs(pfot.cheat_KLPFO[ineg].cos) * sgn( -_mc.mc_quark_charge[0] ) * mct.mc_quark[0].cos / abs(mct.mc_quark[0].cos);
+      _hm.h1[_hm.cheat_K_cos]->Fill(pfot.cheat_KLPFO[ineg].cos);
       _hm.h1[_hm.cheat_K_qcos]->Fill(cheat_gen_angle);
 
     }
 
   }
+
+  // Access cheated Pion information
+  if( pfot.PFO_cheat_Pis[0].size() && pfot.PFO_cheat_Pis[1].size() ){
+
+    vector<Bool_t> Cheat_Pi_CutTrigger;
+    // quality check
+    Bool_t cheat_Pi_double_quality    = true;
+    for ( auto iLPFO : pfot.cheat_PiLPFO ){
+      if( !pfot.LPFO_Quality_checks(iLPFO) ){
+        cheat_Pi_double_quality = false;
+        break;
+      }
+    }
+    Cheat_Pi_CutTrigger.push_back(cheat_Pi_double_quality);
+
+    // SPFO opposite check
+    Bool_t is_cheat_gluon_Pi[2] = {0};
+    Bool_t is_there_a_cheat_gluon_Pi = false;
+    for ( int ijet=0; ijet<2; ijet++){
+      if( pfot.SPFOs_cheat_Pi[ijet].size() ){
+        for ( auto iSPFO_Pi : pfot.SPFOs_cheat_Pi[ijet] ){
+          Bool_t charge_opposite = iSPFO_Pi.pfo_pdgcheat * pfot.cheat_PiLPFO[ijet].pfo_pdgcheat < 0;
+          Bool_t momentum_above  = iSPFO_Pi.p_mag > 10;
+          if( charge_opposite && momentum_above ) is_cheat_gluon_Pi[ijet] = true;
+        }
+      }
+    }
+    for ( auto ibool : is_cheat_gluon_Pi ){
+      if( ibool ) is_there_a_cheat_gluon_Pi = true;
+    }
+    Cheat_Pi_CutTrigger.push_back(!is_there_a_cheat_gluon_Pi);
+
+    // charge check
+    Bool_t cheat_Pi_charge_check = pfot.is_charge_config(pfot.kOpposite,pfot.cheat_PiLPFO[0].pfo_pdgcheat,pfot.cheat_PiLPFO[1].pfo_pdgcheat);
+    Cheat_Pi_CutTrigger.push_back(cheat_Pi_charge_check);
+
+    Bool_t cheat_Pi_all_checks = true;
+    for (auto ibool : Cheat_Pi_CutTrigger){
+      if (!ibool) {
+        cheat_Pi_all_checks = false;
+        break;
+      }
+    }
+
+    if ( cheat_Pi_all_checks ){
+
+      Int_t ineg = -1;
+
+      if( pfot.cheat_PiLPFO[0].pfo_pdgcheat < 0 ){
+        ineg = 0;
+      }else{
+        ineg = 1;
+      }
+
+      Float_t cheat_gen_angle = abs(pfot.cheat_PiLPFO[ineg].cos) * sgn( -_mc.mc_quark_charge[1] ) * mct.mc_quark[1].cos / abs(mct.mc_quark[1].cos);
+      _hm.h1[_hm.cheat_Pi_cos]->Fill(pfot.cheat_PiLPFO[ineg].cos);
+      _hm.h1[_hm.cheat_Pi_qcos]->Fill(cheat_gen_angle);
+
+    }
+
+  }
+
 
   // Fill Event by Event hists
   Float_t * particle_ratios_reco = Particle_Ratios( h_n_reco_particles, 0 );

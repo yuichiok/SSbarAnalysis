@@ -59,16 +59,19 @@ class PFOTools
   // List of PFOs in jets
     vector<PFO_Info> PFO_jet[2];
     vector<PFO_Info> PFO_cheat_Ks[2];
+    vector<PFO_Info> PFO_cheat_Pis[2];
 
   // Leading/Sub-Leading PFOs
     PFO_Info LPFO[2];
     PFO_Info KLPFO[2];
     PFO_Info PiLPFO[2];
     PFO_Info cheat_KLPFO[2];
+    PFO_Info cheat_PiLPFO[2];
     std::vector<PFO_Info> SPFOs[2];
     std::vector<PFO_Info> SPFOs_K[2];
     std::vector<PFO_Info> SPFOs_cheat_K[2];
     std::vector<PFO_Info> SPFOs_Pi[2];
+    std::vector<PFO_Info> SPFOs_cheat_Pi[2];
 
 
   private:

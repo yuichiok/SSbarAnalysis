@@ -34,6 +34,9 @@ class HistManager
       cheat_K_cos,
       cheat_K_qcos,
 
+      cheat_Pi_cos,
+      cheat_Pi_qcos,
+
       reco_K_cos,
       reco_K_qcos,
       reco_K_scos,
