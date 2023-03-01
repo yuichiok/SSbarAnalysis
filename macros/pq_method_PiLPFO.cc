@@ -337,23 +337,23 @@ void main_pq()
   f_reco->SetParNames("S","A");
   h_reco_K_pq_cos->Fit("f_reco","MNRS");
 
-  h_reco_K_pq_cos->GetYaxis()->SetRangeUser(0,45E3);
-  h_reco_K_pq_cos->SetTitle(";K^{+}K^{-} cos#theta;a.u.");
+  h_reco_K_pq_cos->GetYaxis()->SetRangeUser(0,50E3);
+  h_reco_K_pq_cos->SetTitle(";cos#theta_{#pi^{-}};a.u.");
   h_reco_K_pq_cos->Draw("h");
   h_reco_K_qcos_eff_corr->Draw("hsame");
   h_reco_K_scos_eff_corr->Draw("hsame");
   h_gen_q_qcos->Draw("hsame");
-  h_cheat_K_qcos->Draw("hsame");
+  // h_cheat_K_qcos->Draw("hsame");
 
   f_reco->Draw("same");
 
   TLegend *leg = new TLegend(0.2,0.76,0.7,0.85);
   leg->SetLineColor(0);
   leg->AddEntry(h_gen_q_qcos,"Generated quark angle","l");
-  leg->AddEntry(h_cheat_K_qcos,"Cheated K^{-} PFO","l");
-  leg->AddEntry(h_reco_K_scos_eff_corr,"Reconstructed K^{-} matched with quark angle","l");
-  leg->AddEntry(h_reco_K_qcos_eff_corr,"Reconstructed K^{+}K^{-}","l");
-  leg->AddEntry(h_reco_K_pq_cos,"Reconstructed K^{+}K^{-} (corrected)","l");
+  leg->AddEntry(h_cheat_K_qcos,"Cheated #pi^{-} PFO","l");
+  leg->AddEntry(h_reco_K_scos_eff_corr,"Reconstructed #pi^{-} matched with quark angle","l");
+  leg->AddEntry(h_reco_K_qcos_eff_corr,"Reconstructed #pi^{-}","l");
+  leg->AddEntry(h_reco_K_pq_cos,"Reconstructed #pi^{-} (corrected)","l");
   leg->Draw();
 
   TCanvas *c1 = new TCanvas("c1","c1",800,800);
@@ -361,16 +361,16 @@ void main_pq()
   StylePad(pad1,0,0.12,0,0.15);
   
   StyleHist(p_KK,kGreen+2);
-  p_KK->SetTitle(";cos#theta_{K^{#pm}};p value");
+  p_KK->SetTitle(";cos#theta_{#pi^{-}};p value");
   p_KK->GetYaxis()->SetRangeUser(0,1);
   p_KK->Draw("h");
 
   TCanvas *c2 = new TCanvas("c2","c2",800,800);
   TGaxis::SetMaxDigits(3);
   gPad->SetGrid(1,1);
-  h_acc_KK_cos_eff_corr->SetTitle(";K^{+}K^{-} cos#theta;Entries");
+  h_acc_KK_cos_eff_corr->SetTitle(";cos#theta_{#pi^{-}};Entries");
 
-  h_acc_KK_cos_eff_corr->GetYaxis()->SetRangeUser(0,45E3);
+  h_acc_KK_cos_eff_corr->GetYaxis()->SetRangeUser(0,50E3);
   h_acc_KK_cos_eff_corr->Draw("h");
   h_rej_KK_cos_eff_corr->Draw("hsame");
 
@@ -393,9 +393,6 @@ void main_pq()
   leg2->AddEntry(h_rej_KK_cos_eff_corr,"N Rejected","l");
   leg2->AddEntry(acc_add,"N Accepted + opp. bin","l");
   leg2->Draw();
-
-
-
 
 }
 
