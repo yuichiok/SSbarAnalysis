@@ -151,7 +151,7 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
 
   // Base Selection (mom, tpc_hit, offset)
     Bool_t LPFO_double_quality    = true;
-    for ( auto iLPFO : pfot.KLPFO ){
+    for ( auto iLPFO : pfot.PiLPFO ){
       if( !pfot.LPFO_Quality_checks(iLPFO) ){
         LPFO_double_quality = false;
         break;
@@ -160,29 +160,34 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
     CutTrigger.push_back(LPFO_double_quality);
 
   // SPFO opposite check
-    Bool_t is_gluon_K[2] = {0};
-    Bool_t is_there_a_gluon_K = false;
+    Bool_t is_gluon_Pi[2] = {0};
+    Bool_t is_there_a_gluon_Pi = false;
     for ( int ijet=0; ijet<2; ijet++){
-      for ( auto iSPFO_K : pfot.SPFOs_K[ijet] ){
-        Bool_t charge_opposite = iSPFO_K.pfo_charge * pfot.KLPFO[ijet].pfo_charge < 0;
-        Bool_t momentum_above  = iSPFO_K.p_mag > 10;
-        if( charge_opposite && momentum_above ) is_gluon_K[ijet] = true;
+      for ( auto iSPFO_Pi : pfot.SPFOs_Pi[ijet] ){
+        Bool_t charge_opposite = iSPFO_Pi.pfo_charge * pfot.PiLPFO[ijet].pfo_charge < 0;
+        Bool_t momentum_above  = iSPFO_Pi.p_mag > 10;
+        if( charge_opposite && momentum_above ) is_gluon_Pi[ijet] = true;
       }
     }
-    for ( auto ibool : is_gluon_K ){
-      if( ibool ) is_there_a_gluon_K = true;
+    for ( auto ibool : is_gluon_Pi ){
+      if( ibool ) is_there_a_gluon_Pi = true;
     }
-    CutTrigger.push_back(!is_there_a_gluon_K);
+    CutTrigger.push_back(!is_there_a_gluon_Pi);
 
   // dEdx dist PDG check
     enum PDGConfig { noKPi, K_K, K_Pi, Pi_Pi };
     Int_t dEdx_pdg_match = -1;
     
-    if     (   pfot.isKaon(pfot.KLPFO[0]) && pfot.isKaon(pfot.KLPFO[1]) )  {  dEdx_pdg_match = K_K;    }
-    else if(   pfot.isPion(pfot.KLPFO[0]) && pfot.isPion(pfot.KLPFO[1]) )  {  dEdx_pdg_match = Pi_Pi;  }
-    else if( ( pfot.isKaon(pfot.KLPFO[0]) && pfot.isPion(pfot.KLPFO[1]) ) ||
-             ( pfot.isKaon(pfot.KLPFO[1]) && pfot.isPion(pfot.KLPFO[0]) ) ){  dEdx_pdg_match = K_Pi;   }
+    if ( pfot.isPion(pfot.PiLPFO[0]) && pfot.isPion(pfot.PiLPFO[1]) )  { dEdx_pdg_match = Pi_Pi; }
     else{ dEdx_pdg_match = noKPi; }
+
+    /*
+    if     (   pfot.isKaon(pfot.PiLPFO[0]) && pfot.isKaon(pfot.PiLPFO[1]) )  {  dEdx_pdg_match = K_K;    }
+    else if(   pfot.isPion(pfot.PiLPFO[0]) && pfot.isPion(pfot.PiLPFO[1]) )  {  dEdx_pdg_match = Pi_Pi;  }
+    else if( ( pfot.isKaon(pfot.PiLPFO[0]) && pfot.isPion(pfot.PiLPFO[1]) ) ||
+             ( pfot.isKaon(pfot.PiLPFO[1]) && pfot.isPion(pfot.PiLPFO[0]) ) ){  dEdx_pdg_match = K_Pi;   }
+    else{ dEdx_pdg_match = noKPi; }
+    */
 
   // charge config check
     Bool_t charge_check = false;
@@ -190,6 +195,9 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
     {
       case K_K:
         charge_check = pfot.is_charge_config(pfot.kOpposite,pfot.KLPFO[0].pfo_charge,pfot.KLPFO[1].pfo_charge);
+        break;
+      case Pi_Pi:
+        charge_check = pfot.is_charge_config(pfot.kOpposite,pfot.PiLPFO[0].pfo_charge,pfot.PiLPFO[1].pfo_charge);
         break;
       // case K_Pi:
       //   charge_check = pfot.is_charge_config(pfot.kSame);
@@ -199,6 +207,13 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
       break;
     }
     CutTrigger.push_back(charge_check);
+
+    // cout << "======================" << endl;
+    // cout << "PiLPFO: ";
+    // for ( auto ibool : CutTrigger ){
+    //   cout << ibool << " ";
+    // }
+    // cout << endl;
 
   // Check all bools
   // Check all does double tagging
@@ -808,11 +823,13 @@ void EventAnalyzer::ProcessDoubleTag(PFOTools pfot, PFOTools mct, vector<Bool_t>
   Bool_t sign_check = cuts.back();
 
   // Reco K_K
-  if(LPFO_checks && (double_tag == 1)){
+  if(LPFO_checks && (double_tag == 3)){
+
+    cout << "piLPFO " << pfot.PiLPFO[0].pfo_charge << " " << pfot.PiLPFO[1].pfo_charge << endl;
 
     Int_t ineg = -1;
       
-    if( pfot.KLPFO[0].pfo_charge < 0 ){
+    if( pfot.PiLPFO[0].pfo_charge < 0 ){
       ineg = 0;
     }else{
       ineg = 1;
@@ -820,33 +837,32 @@ void EventAnalyzer::ProcessDoubleTag(PFOTools pfot, PFOTools mct, vector<Bool_t>
 
     if(sign_check){
 
-      _hm.h1[_hm.reco_K_cos]->Fill( pfot.KLPFO[ineg].cos );
-      _hm.h1[_hm.reco_K_qcos]->Fill( pfot.KLPFO[ineg].qcos );
-      _hm.h1[_hm.reco_K_scos]->Fill( abs(pfot.KLPFO[ineg].cos) * sgn( -_mc.mc_quark_charge[0] ) * mct.mc_quark[0].cos / abs(mct.mc_quark[0].cos) );
+      _hm.h1[_hm.reco_K_cos]->Fill( pfot.PiLPFO[ineg].cos );
+      _hm.h1[_hm.reco_K_qcos]->Fill( pfot.PiLPFO[ineg].qcos );
+      _hm.h1[_hm.reco_K_scos]->Fill( abs(pfot.PiLPFO[ineg].cos) * sgn( -_mc.mc_quark_charge[0] ) * mct.mc_quark[0].cos / abs(mct.mc_quark[0].cos) );
 
       // cheat
-      switch ( abs(pfot.KLPFO[ineg].pfo_pdgcheat) ) {
+      switch ( abs(pfot.PiLPFO[ineg].pfo_pdgcheat) ) {
         case 321:
-          _hm.h2_dEdx[_hm.gen_K_reco_K_dEdx_p]->Fill(pfot.KLPFO[ineg].p_mag,pfot.KLPFO[ineg].pfo_dedx);
-          _hm.h2_dEdx[_hm.gen_K_reco_K_KdEdx_dist_cos]->Fill(pfot.KLPFO[ineg].cos,pfot.KLPFO[ineg].pfo_piddedx_k_dedxdist);
+          _hm.h2_dEdx[_hm.gen_K_reco_K_dEdx_p]->Fill(pfot.PiLPFO[ineg].p_mag,pfot.PiLPFO[ineg].pfo_dedx);
+          _hm.h2_dEdx[_hm.gen_K_reco_K_KdEdx_dist_cos]->Fill(pfot.PiLPFO[ineg].cos,pfot.PiLPFO[ineg].pfo_piddedx_k_dedxdist);
           break;
         case 211:
-          _hm.h2_dEdx[_hm.gen_pi_reco_K_dEdx_p]->Fill(pfot.KLPFO[ineg].p_mag,pfot.KLPFO[ineg].pfo_dedx);
-          _hm.h2_dEdx[_hm.gen_pi_reco_K_KdEdx_dist_cos]->Fill(pfot.KLPFO[ineg].cos,pfot.KLPFO[ineg].pfo_piddedx_k_dedxdist);
+          _hm.h2_dEdx[_hm.gen_pi_reco_K_dEdx_p]->Fill(pfot.PiLPFO[ineg].p_mag,pfot.PiLPFO[ineg].pfo_dedx);
+          _hm.h2_dEdx[_hm.gen_pi_reco_K_KdEdx_dist_cos]->Fill(pfot.PiLPFO[ineg].cos,pfot.PiLPFO[ineg].pfo_piddedx_k_dedxdist);
           break;
         case 2212:
-          _hm.h2_dEdx[_hm.gen_p_reco_K_dEdx_p]->Fill(pfot.KLPFO[ineg].p_mag,pfot.KLPFO[ineg].pfo_dedx);
-          _hm.h2_dEdx[_hm.gen_p_reco_K_KdEdx_dist_cos]->Fill(pfot.KLPFO[ineg].cos,pfot.KLPFO[ineg].pfo_piddedx_k_dedxdist);
+          _hm.h2_dEdx[_hm.gen_p_reco_K_dEdx_p]->Fill(pfot.PiLPFO[ineg].p_mag,pfot.PiLPFO[ineg].pfo_dedx);
+          _hm.h2_dEdx[_hm.gen_p_reco_K_KdEdx_dist_cos]->Fill(pfot.PiLPFO[ineg].cos,pfot.PiLPFO[ineg].pfo_piddedx_k_dedxdist);
           break;
         default:
           break;
       }
 
-
-      _hm.h1_pq[_hm.acc_KK]->Fill( pfot.KLPFO[ineg].qcos );
+      _hm.h1_pq[_hm.acc_KK]->Fill( pfot.PiLPFO[ineg].qcos );
     }else{
-      _hm.h1_pq[_hm.rej_KK]->Fill( pfot.KLPFO[ineg].cos );
-      _hm.h1_pq[_hm.rej_KK]->Fill( -pfot.KLPFO[1-ineg].cos );
+      _hm.h1_pq[_hm.rej_KK]->Fill( pfot.PiLPFO[ineg].cos );
+      _hm.h1_pq[_hm.rej_KK]->Fill( -pfot.PiLPFO[1-ineg].cos );
     }
     
   }
