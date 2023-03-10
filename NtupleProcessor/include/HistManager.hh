@@ -34,10 +34,16 @@ class HistManager
       cheat_K_cos,
       cheat_K_qcos,
 
+      cheat_Pi_cos,
+      cheat_Pi_qcos,
+
       reco_K_cos,
       reco_K_qcos,
-
       reco_K_scos,
+
+      reco_Pi_cos,
+      reco_Pi_qcos,
+      reco_Pi_scos,
 
       gen_reco_K_sep_cos,
 
@@ -61,8 +67,13 @@ class HistManager
     TH1F * h1[Last_h1];
 
     enum h1_pq_index {
+      // KID
       acc_KK,
       rej_KK,
+
+      // PiID
+      acc_PiPi,
+      rej_PiPi,
 
       dummy_pq,
       Last_h1_pq = dummy_pq
@@ -131,6 +142,7 @@ class HistManager
       gen_pi_dEdx_p,
       gen_p_dEdx_p,
 
+      // KID
       gen_K_reco_K_dEdx_p,
       gen_pi_reco_K_dEdx_p,
       gen_p_reco_K_dEdx_p,
@@ -139,10 +151,23 @@ class HistManager
       gen_pi_KdEdx_dist_cos,
       gen_p_KdEdx_dist_cos,
 
-      reco_K_KdEdx_dist_cos,
       gen_K_reco_K_KdEdx_dist_cos,
       gen_pi_reco_K_KdEdx_dist_cos,
       gen_p_reco_K_KdEdx_dist_cos,
+
+      // PiID
+      gen_K_reco_Pi_dEdx_p,
+      gen_pi_reco_Pi_dEdx_p,
+      gen_p_reco_Pi_dEdx_p,
+
+      gen_K_PidEdx_dist_cos,
+      gen_pi_PidEdx_dist_cos,
+      gen_p_PidEdx_dist_cos,
+
+      gen_K_reco_Pi_PidEdx_dist_cos,
+      gen_pi_reco_Pi_PidEdx_dist_cos,
+      gen_p_reco_Pi_PidEdx_dist_cos,
+
 
       dummy_dEdx,
       Last_h2_dEdx = dummy_dEdx

@@ -176,13 +176,15 @@ void PFOTools::InitializePFOTools( MC_QQbar *mc_data, PFO_QQbar *data )
 
     PFO_jet[ijet].push_back(PFO);
     if( abs(PFO.pfo_pdgcheat) == 321 ) PFO_cheat_Ks[ijet].push_back(PFO);
+    if( abs(PFO.pfo_pdgcheat) == 211 ) PFO_cheat_Pis[ijet].push_back(PFO);
     
   }
 
   if( ValidPFO() ){
     for (int ijet=0; ijet < 2; ijet++){
       LPFO[ijet]        = GetSortedJet(ijet).at(0);
-      KLPFO[ijet]       = Get_KLPFO(ijet);
+      KLPFO[ijet]       = Get_Particle_LPFO(ijet,kKaon);
+      PiLPFO[ijet]      = Get_Particle_LPFO(ijet,kPion);
 
       // Reconstructed PFO
       if( PFO_jet[ijet].size() > 1 ){
@@ -206,6 +208,14 @@ void PFOTools::InitializePFOTools( MC_QQbar *mc_data, PFO_QQbar *data )
         if( PFO_cheat_Ks[ijet].size() > 1 ){
           SPFOs_cheat_K[ijet] = PFO_cheat_Ks[ijet];
           pop_front(SPFOs_cheat_K[ijet]);
+        }
+      }
+
+      if( PFO_cheat_Pis[0].size() && PFO_cheat_Pis[1].size() ){
+        cheat_PiLPFO[ijet] = SortJet(PFO_cheat_Pis[ijet]).at(0);
+        if( PFO_cheat_Pis[ijet].size() > 1 ){
+          SPFOs_cheat_Pi[ijet] = PFO_cheat_Pis[ijet];
+          pop_front(SPFOs_cheat_Pi[ijet]);
         }
       }
 
@@ -250,11 +260,27 @@ vector<PFO_Info> PFOTools::GetSortedJet( int ijet )
     return sorted_jet;
 }
 
-PFO_Info PFOTools::Get_KLPFO( int ijet )
+PFO_Info PFOTools::Get_Particle_LPFO( int ijet, ParticleID pdg )
 {
     vector<PFO_Info> sorted_jet = GetSortedJet(ijet);
     for ( auto iPFO : sorted_jet ) {
-      if ( isKaon(iPFO) ) return iPFO;
+
+      switch ( pdg )
+      {
+        case kKaon:
+          if ( isKaon(iPFO) ) return iPFO;
+          break;
+        case kPion:
+          if ( isPion(iPFO) ) return iPFO;
+          break;
+        case kProton:
+          if ( isProton(iPFO) ) return iPFO;
+          break;
+        
+        default:
+          break;
+      }
+
     }
 
     return sorted_jet.at(0);

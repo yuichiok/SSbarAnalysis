@@ -38,10 +38,16 @@ void HistManager::InitializeHists()
     h1[cheat_K_cos]     = new TH1F("h_cheat_K_cos",";LPFO Kaon cos#theta; Entries",cos_bin,-1,1);
     h1[cheat_K_qcos]    = new TH1F("h_cheat_K_qcos",";LPFO Kaon cos#theta; Entries",cos_bin,-1,1);
 
+    h1[cheat_Pi_cos]     = new TH1F("h_cheat_Pi_cos",";LPFO Pion cos#theta; Entries",cos_bin,-1,1);
+    h1[cheat_Pi_qcos]    = new TH1F("h_cheat_Pi_qcos",";LPFO Pion cos#theta; Entries",cos_bin,-1,1);
+
     h1[reco_K_cos]      = new TH1F("h_reco_K_cos",";LPFO Kaon cos#theta; Entries",cos_bin,-1,1);
     h1[reco_K_qcos]     = new TH1F("h_reco_K_qcos",";LPFO Kaon cos#theta; Entries",cos_bin,-1,1);
-    
     h1[reco_K_scos]     = new TH1F("h_reco_K_scos",";LPFO Kaon cos#theta; Entries",cos_bin,-1,1);
+
+    h1[reco_Pi_cos]      = new TH1F("h_reco_Pi_cos",";LPFO Pion cos#theta; Entries",cos_bin,-1,1);
+    h1[reco_Pi_qcos]     = new TH1F("h_reco_Pi_qcos",";LPFO Pion cos#theta; Entries",cos_bin,-1,1);
+    h1[reco_Pi_scos]     = new TH1F("h_reco_Pi_scos",";LPFO Pion cos#theta; Entries",cos_bin,-1,1);
 
     h1[gen_reco_K_sep_cos] = new TH1F("h_gen_reco_K_sep_cos",";Kaon cos#theta_{gen-reco}; Entries",cos_bin,-1,1);
 
@@ -62,8 +68,13 @@ void HistManager::InitializeHists()
     h1[N_K_corr_cos2]   = new TH1F("h_N_K_corr_cos2",";cos#theta;Correctly Reconstructed N Kaons", 100,-1,1);
 
   // pq method
+    //KID
     h1_pq[acc_KK]      = new TH1F("h_acc_KK_cos",";Accepted K^{+}K^{-} cos#theta;N_{acc}",cos_bin,-1,1);
     h1_pq[rej_KK]      = new TH1F("h_rej_KK_cos",";Rejected K^{+}K^{-} cos#theta;N_{rej}",cos_bin,-1,1);
+    
+    //PiID
+    h1_pq[acc_PiPi]      = new TH1F("h_acc_PiPi_cos",";Accepted Pi^{+}Pi^{-} cos#theta;N_{acc}",cos_bin,-1,1);
+    h1_pq[rej_PiPi]      = new TH1F("h_rej_PiPi_cos",";Rejected Pi^{+}Pi^{-} cos#theta;N_{rej}",cos_bin,-1,1);
 
   // particle ratio
     h1_particle_ratio[K_rate_gen]  = new TH1F("h_K_rate_gen",";Ratio of Kaons / Event (gen);Entries",11,0,1.1);
@@ -106,19 +117,33 @@ void HistManager::InitializeHists()
     h2_dEdx[gen_pi_dEdx_p] = new TH2F("h2_gen_pi_dEdx_p" ,";p (GeV);#frac{dE}{dx}",nbins_p,bins_p,nbins_dEdx,bins_dEdx);
     h2_dEdx[gen_p_dEdx_p]  = new TH2F("h2_gen_p_dEdx_p"  ,";p (GeV);#frac{dE}{dx}",nbins_p,bins_p,nbins_dEdx,bins_dEdx);
 
+    // KID
+
     h2_dEdx[gen_K_reco_K_dEdx_p]  = new TH2F("h2_gen_K_reco_K_dEdx_p"  ,";p (GeV);#frac{dE}{dx}",nbins_p,bins_p,nbins_dEdx,bins_dEdx);
     h2_dEdx[gen_pi_reco_K_dEdx_p] = new TH2F("h2_gen_pi_reco_K_dEdx_p" ,";p (GeV);#frac{dE}{dx}",nbins_p,bins_p,nbins_dEdx,bins_dEdx);
     h2_dEdx[gen_p_reco_K_dEdx_p]  = new TH2F("h2_gen_p_reco_K_dEdx_p"  ,";p (GeV);#frac{dE}{dx}",nbins_p,bins_p,nbins_dEdx,bins_dEdx);
-
 
     h2_dEdx[gen_K_KdEdx_dist_cos]  = new TH2F("h2_gen_K_KdEdx_dist_cos"  ,";cos#theta;K #frac{dE}{dx} dist", 100, -1, 1, 100, -20, 20);
     h2_dEdx[gen_pi_KdEdx_dist_cos] = new TH2F("h2_gen_pi_KdEdx_dist_cos" ,";cos#theta;K #frac{dE}{dx} dist", 100, -1, 1, 100, -20, 20);
     h2_dEdx[gen_p_KdEdx_dist_cos]  = new TH2F("h2_gen_p_KdEdx_dist_cos"  ,";cos#theta;K #frac{dE}{dx} dist", 100, -1, 1, 100, -20, 20);
 
-    h2_dEdx[reco_K_KdEdx_dist_cos]        = new TH2F("h2_reco_K_KdEdx_dist_cos" ,";cos#theta;K #frac{dE}{dx} dist", 100, -1, 1, 100, -20, 20);
     h2_dEdx[gen_K_reco_K_KdEdx_dist_cos]  = new TH2F("h2_gen_K_reco_K_KdEdx_dist_cos"  ,";cos#theta;K #frac{dE}{dx} dist", 100, -1, 1, 100, -20, 20);
     h2_dEdx[gen_pi_reco_K_KdEdx_dist_cos] = new TH2F("h2_gen_pi_reco_K_KdEdx_dist_cos" ,";cos#theta;K #frac{dE}{dx} dist", 100, -1, 1, 100, -20, 20);
     h2_dEdx[gen_p_reco_K_KdEdx_dist_cos]  = new TH2F("h2_gen_p_reco_K_KdEdx_dist_cos"  ,";cos#theta;K #frac{dE}{dx} dist", 100, -1, 1, 100, -20, 20);
+
+    // PiID
+    h2_dEdx[gen_K_reco_Pi_dEdx_p]  = new TH2F("h2_gen_K_reco_Pi_dEdx_p"  ,";p (GeV);#frac{dE}{dx}",nbins_p,bins_p,nbins_dEdx,bins_dEdx);
+    h2_dEdx[gen_pi_reco_Pi_dEdx_p] = new TH2F("h2_gen_pi_reco_Pi_dEdx_p" ,";p (GeV);#frac{dE}{dx}",nbins_p,bins_p,nbins_dEdx,bins_dEdx);
+    h2_dEdx[gen_p_reco_Pi_dEdx_p]  = new TH2F("h2_gen_p_reco_Pi_dEdx_p"  ,";p (GeV);#frac{dE}{dx}",nbins_p,bins_p,nbins_dEdx,bins_dEdx);
+
+    h2_dEdx[gen_K_PidEdx_dist_cos]  = new TH2F("h2_gen_K_PidEdx_dist_cos"  ,";cos#theta;K #frac{dE}{dx} dist", 100, -1, 1, 100, -20, 20);
+    h2_dEdx[gen_pi_PidEdx_dist_cos] = new TH2F("h2_gen_pi_PidEdx_dist_cos" ,";cos#theta;K #frac{dE}{dx} dist", 100, -1, 1, 100, -20, 20);
+    h2_dEdx[gen_p_PidEdx_dist_cos]  = new TH2F("h2_gen_p_PidEdx_dist_cos"  ,";cos#theta;K #frac{dE}{dx} dist", 100, -1, 1, 100, -20, 20);
+
+    h2_dEdx[gen_K_reco_Pi_PidEdx_dist_cos]  = new TH2F("h2_gen_K_reco_Pi_PidEdx_dist_cos"  ,";cos#theta;K #frac{dE}{dx} dist", 100, -1, 1, 100, -20, 20);
+    h2_dEdx[gen_pi_reco_Pi_PidEdx_dist_cos] = new TH2F("h2_gen_pi_reco_Pi_PidEdx_dist_cos" ,";cos#theta;K #frac{dE}{dx} dist", 100, -1, 1, 100, -20, 20);
+    h2_dEdx[gen_p_reco_Pi_PidEdx_dist_cos]  = new TH2F("h2_gen_p_reco_Pi_PidEdx_dist_cos"  ,";cos#theta;K #frac{dE}{dx} dist", 100, -1, 1, 100, -20, 20);
+
 
     Hist2List();
 

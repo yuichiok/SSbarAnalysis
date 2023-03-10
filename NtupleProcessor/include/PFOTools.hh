@@ -27,6 +27,7 @@ class PFOTools
     virtual void InitializePFOTools( MC_QQbar *ptr_mc, PFO_QQbar *ptr );
 
     enum   ChargeConfig { kSame, kOpposite };
+    enum   ParticleID   { kKaon, kPion, kProton };
 
     virtual vector<PFO_Info>  SortJet  ( vector<PFO_Info> jet );
     virtual Bool_t            ValidPFO ();
@@ -34,7 +35,7 @@ class PFOTools
     virtual vector<PFO_Info>  Get_Valid_PFOs    ();
     virtual vector<PFO_Info>  GetJet            ( int ijet );
     virtual vector<PFO_Info>  GetSortedJet      ( int ijet );
-    virtual PFO_Info          Get_KLPFO         ( int ijet );
+    virtual PFO_Info          Get_Particle_LPFO ( int ijet, ParticleID pdg );
     virtual Int_t             Get_dEdx_dist_PID ( Float_t kdEdx_dist, Float_t pidEdx_dist, Float_t pdEdx_dist );
     static  Bool_t            isKaon            ( PFO_Info iPFO );
     static  Bool_t            isPion            ( PFO_Info iPFO );
@@ -58,15 +59,19 @@ class PFOTools
   // List of PFOs in jets
     vector<PFO_Info> PFO_jet[2];
     vector<PFO_Info> PFO_cheat_Ks[2];
+    vector<PFO_Info> PFO_cheat_Pis[2];
 
   // Leading/Sub-Leading PFOs
     PFO_Info LPFO[2];
     PFO_Info KLPFO[2];
+    PFO_Info PiLPFO[2];
     PFO_Info cheat_KLPFO[2];
+    PFO_Info cheat_PiLPFO[2];
     std::vector<PFO_Info> SPFOs[2];
     std::vector<PFO_Info> SPFOs_K[2];
     std::vector<PFO_Info> SPFOs_cheat_K[2];
     std::vector<PFO_Info> SPFOs_Pi[2];
+    std::vector<PFO_Info> SPFOs_cheat_Pi[2];
 
 
   private:
