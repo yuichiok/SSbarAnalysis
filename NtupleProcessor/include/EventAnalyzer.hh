@@ -31,6 +31,7 @@ class EventAnalyzer
 
     enum Selector       { kQQ, kMC, kReco };
     enum MCParticlePair { FIRST_ENTRY, kDD, kUU, kSS, kCC, kBB, kTT };
+    enum SelectID       { kKaon, kPion, kProton };
     enum PDGConfig      { noKPi, K_K, K_Pi, Pi_Pi };
 
   // methods
@@ -65,7 +66,7 @@ class EventAnalyzer
   // Histogram extractor
     void             PolarAngleGen(PFOTools mct);
     void             Mom_Polar_Gen(PFOTools mct,PFOTools pfot);
-    void             ProcessDoubleTag(PFOTools pfot, PFOTools mct, vector<Bool_t> cuts, PDGConfig double_tag);
+    void             ProcessDoubleTag(PFOTools pfot, PFOTools mct, vector<Bool_t> cuts[3], PDGConfig double_tag[3]);
     void             PolarAngle_acc_rej(PFOTools pfot, vector<Bool_t> cuts, Bool_t ss_config);
 
     void             Jet_sum_n_acol();
