@@ -115,7 +115,6 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
     if ( !pfot.ValidPFO() ) {
       _eve.eve_valid_lpfo = 0;
     }else{ _eve.eve_valid_lpfo = 1; }
-    
 
   // Fill raw LPFO info
     writer.WriteLPFO_Info(pfot,&_pfo,&_stats_lpfo);
@@ -906,7 +905,7 @@ void EventAnalyzer::ProcessDoubleTag(PFOTools pfot, PFOTools mct, vector<Bool_t>
       
     //   case K_K:
 
-    if ( LPFO_checks[kKaon] && double_tag[kKaon] == K_K ){
+    if ( LPFO_checks[kKaon] && pfot.is_ss() && double_tag[kKaon] == K_K ){
 
         Int_t ineg = -1;
 
@@ -952,7 +951,7 @@ void EventAnalyzer::ProcessDoubleTag(PFOTools pfot, PFOTools mct, vector<Bool_t>
     }
 
     // case Pi_Pi:
-    if ( LPFO_checks[kPion] && double_tag[kPion] == Pi_Pi ){
+    if ( LPFO_checks[kPion] && pfot.is_uu_dd() && double_tag[kPion] == Pi_Pi ){
 
       Int_t ineg = -1;
 
