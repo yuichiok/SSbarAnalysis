@@ -4,6 +4,49 @@
 using std::cout; using std::endl;
 using std::vector;
 
+enum LPFO { kKaon, kPion };
+TString LPFOName[2] = { "KK", "PiPi" };
+
+class SampleMode
+{
+  public:
+    SampleMode(){}
+    ~SampleMode(){}
+
+    TString getFileName(){
+      return fileName;
+    }
+
+    TString getSampleName(){
+
+      toa = fileName.Tokenize(".");
+      for ( int i = 0; i < toa->GetEntries(); i++ ){
+        TString token = ((TObjString*)toa->At(i))->GetString();
+        if ( token.EqualTo("uu") || token.EqualTo("dd") || token.EqualTo("ss") ){
+          sampleName = token;
+        }
+      }
+
+      return sampleName;
+    }
+
+    void setFileName(TString fn){
+      fileName = fn;
+    }
+
+    TFile *getFile(){
+      file = new TFile(fileName.Data(),"READ");
+      return file;
+    }
+
+  private:
+    TString   fileName;
+    TString   sampleName;
+    TFile     *file;
+    TObjArray *toa;
+
+};
+
 void BinNormal(TH1F *h)
 {
   const Int_t nbins = h->GetNbinsX();
@@ -252,11 +295,6 @@ TH1F * Efficiency_Correction2( TH1F * h, TString name, TFile * file )
 
   return corrected;
 
-}
-
-void pq_polar_plot( TFile * file )
-{
-  
 }
 
 void main_pq()
