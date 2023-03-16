@@ -171,7 +171,8 @@ TH1F * CorrectHist( TH1F * h_reco, vector<Float_t> p_vec)
   corrected->Sumw2();
   for (int i = 1; i < nbins / 2 + 1; i++)
   {
-    float p = p_vec.at(i - 1);
+    // float p = p_vec.at(i - 1);
+    float p = 0.825;
     float q = 1 - p;
     float weight = (p * p + q * q) / (q * q * q * q - p * p * p * p);
 
@@ -577,10 +578,10 @@ void pq_method_BGFit()
 
   try
   {
-    TString process[3] = {"uu","ss","us"};
+    TString process[3] = {"uu","ss","uds"};
     TFile* files[3];
     for ( int i=0; i<3; i++ ){
-      files[i] = new TFile(TString::Format("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.%s.LPFOp15_pNaN.tpc0.hists.all.root",process[i].Data()),"READ");
+      files[i] = new TFile(TString::Format("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.%s.KPiLPFO.PFOp15.LPFOp15_pNaN.tpc0.hists.all.root",process[i].Data()),"READ");
       if ( !files[i]->IsOpen() ) throw 0;
     }
 
