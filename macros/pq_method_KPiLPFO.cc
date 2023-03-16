@@ -313,8 +313,8 @@ void pq_polar( TFile *file, modeLPFO mlpfo )
   TH1F *h_cheat_LPFO_qcos = (TH1F*) file->Get("h_cheat_" + LPFO + "_qcos");
 
   // efficiency correction
-  // TH1F *h_reco_LPFO_scos_eff_corr = Efficiency_Correction2(h_reco_Pi_scos,"scos_corr",file);
-  // TH1F *h_reco_LPFO_qcos_eff_corr = Efficiency_Correction2(h_reco_Pi_qcos,"qcos_corr",file);
+  // TH1F *h_reco_LPFO_scos_eff_corr = Efficiency_Correction2(h_reco_LPFO_scos,"scos_corr",file);
+  // TH1F *h_reco_LPFO_qcos_eff_corr = Efficiency_Correction2(h_reco_LPFO_qcos,"qcos_corr",file);
   TH1F *h_reco_LPFO_scos_eff_corr = (TH1F*) h_reco_LPFO_scos->Clone();
   TH1F *h_reco_LPFO_qcos_eff_corr = (TH1F*) h_reco_LPFO_qcos->Clone();
 
@@ -322,8 +322,8 @@ void pq_polar( TFile *file, modeLPFO mlpfo )
   TH1F *h_acc_LPFO_cos  = (TH1F*) file->Get("pq/h_acc_" + LPFO + LPFO + "_cos");
   TH1F *h_rej_LPFO_cos  = (TH1F*) file->Get("pq/h_rej_" + LPFO + LPFO + "_cos");
 
-  // TH1F *h_acc_LPFO_cos_eff_corr = Efficiency_Correction2(h_acc_KK_cos,"acc_corr",file);
-  // TH1F *h_rej_LPFO_cos_eff_corr = Efficiency_Correction2(h_rej_KK_cos,"rej_corr",file);
+  // TH1F *h_acc_LPFO_cos_eff_corr = Efficiency_Correction2(h_acc_LPFO_cos,"acc_corr",file);
+  // TH1F *h_rej_LPFO_cos_eff_corr = Efficiency_Correction2(h_rej_LPFO_cos,"rej_corr",file);
   TH1F *h_acc_LPFO_cos_eff_corr = (TH1F*) h_acc_LPFO_cos->Clone();
   TH1F *h_rej_LPFO_cos_eff_corr = (TH1F*) h_rej_LPFO_cos->Clone();
 
@@ -357,19 +357,18 @@ void pq_polar( TFile *file, modeLPFO mlpfo )
   TH1F *h_reco_LPFO_pq_cos = CorrectHist("corrected_" + LPFO, h_reco_LPFO_qcos_eff_corr, p_vec);
   StyleHist(h_reco_LPFO_pq_cos,kBlue);
 
-  TH1F *h_gen_q_qcos_norm      = Normalize2Gen("h_gen_q_qcos_" + LPFO + "_norm",h_gen_q_qcos,h_reco_LPFO_scos_eff_corr);
-  TH1F *h_cheat_LPFO_qcos_norm = Normalize2Gen("h_cheat_" + LPFO + "_norm",h_cheat_LPFO_qcos,h_reco_LPFO_scos_eff_corr);
-
-
-  TCanvas *c0 = new TCanvas("c_" + LPFO ,"c_" + LPFO ,800,800);
-  TPad *pad0 = new TPad("pad_" + LPFO , "pad_" + LPFO ,0,0,1,1);
-  StylePad(pad0,0,0.12,0,0.15);
-
-
   // Fitting
   TF1 * f_reco = new TF1("f_reco_" + LPFO,"[0]*(1+x*x)+[1]*x",-0.8,0.8);
   f_reco->SetParNames("S","A");
   h_reco_LPFO_pq_cos->Fit("f_reco_" + LPFO,"MNRS");
+
+  TH1F *h_gen_q_qcos_norm      = Normalize2Gen("h_gen_q_qcos_" + LPFO + "_norm",h_gen_q_qcos,h_reco_LPFO_scos_eff_corr);
+  TH1F *h_cheat_LPFO_qcos_norm = Normalize2Gen("h_cheat_" + LPFO + "_norm",h_cheat_LPFO_qcos,h_reco_LPFO_scos_eff_corr);
+
+
+  TCanvas *c0 = new TCanvas("c0_" + LPFO,"c0_" + LPFO,800,800);
+  TPad  *pad0 = new TPad("pad0_" + LPFO, "pad0_" + LPFO,0,0,1,1);
+  StylePad(pad0,0,0.12,0,0.15);
 
   // h_reco_LPFO_pq_cos->GetYaxis()->SetRangeUser(0,50E3);
   h_reco_LPFO_pq_cos->SetTitle(";cos#theta_{#pi^{-}};a.u.");
@@ -391,51 +390,27 @@ void pq_polar( TFile *file, modeLPFO mlpfo )
   leg->Draw();
 
 
-}
-
-void main_pq()
-{
-  gStyle->SetOptStat(0);
-
-  // TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.uu.KPiLPFO.PFOp15.LPFOp15_pNaN.tpc0.hists.all.root","READ");
-
-  // TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.dd.KPiLPFO.PFOp15.LPFOp15_pNaN.tpc0.hists.all.root","READ");
-  
-  TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ss.KPiLPFO.PFOp15.LPFOp15_pNaN.tpc0.hists.all.root","READ");
-
-  // TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ud.KPiLPFO.PFOp15.LPFOp15_pNaN.tpc0.hists.all.root","READ");
-
-  if (!file->IsOpen()) return;
-
-  pq_polar(file, kKaon);
-  pq_polar(file, kPion);
-
-
-
-
-
-
-/*
-  TCanvas *c1 = new TCanvas("c1","c1",800,800);
-  TPad *pad1 = new TPad("pad1", "pad1",0,0,1,1);
+  TCanvas *c1 = new TCanvas("c1_" + LPFO,"c1_" + LPFO,800,800);
+  TPad  *pad1 = new TPad("pad0_" + LPFO, "pad0_" + LPFO,0,0,1,1);
   StylePad(pad1,0,0.12,0,0.15);
   
   StyleHist(p_LL,kGreen+2);
-  p_LL->SetTitle(";cos#theta_{#pi^{-}};p value");
+  p_LL->SetTitle(";cos#theta_{" + LPFOLabel[mlpfo] + "^{-}};p value");
   p_LL->GetYaxis()->SetRangeUser(0,1);
   p_LL->Draw("h");
 
-  TCanvas *c2 = new TCanvas("c2","c2",800,800);
+  TCanvas *c2 = new TCanvas("c2_" + LPFO ,"c2_" + LPFO,800,800);
   TGaxis::SetMaxDigits(3);
   gPad->SetGrid(1,1);
-  h_acc_LPFO_cos_eff_corr->SetTitle(";cos#theta_{#pi^{-}};Entries");
+  h_acc_LPFO_cos_eff_corr->SetTitle(";cos#theta_{" + LPFOLabel[mlpfo] + "^{-}};Entries");
 
   // h_acc_LPFO_cos_eff_corr->GetYaxis()->SetRangeUser(0,50E3);
   h_acc_LPFO_cos_eff_corr->Draw("h");
   h_rej_LPFO_cos_eff_corr->Draw("hsame");
 
   TH1F * acc_full = (TH1F*) h_acc_LPFO_cos_eff_corr->Clone();
-  TH1F * acc_add  = new TH1F("acc_add","acc_add",nbins,-1,1);
+  acc_full->SetName("acc_full_" + LPFO);
+  TH1F * acc_add  = new TH1F("acc_add_" + LPFO,"acc_add_" + LPFO,nbins,-1,1);
 
   for (int i = 1; i < nbins / 2 + 1; i++)
   {
@@ -453,6 +428,35 @@ void main_pq()
   leg2->AddEntry(h_rej_LPFO_cos_eff_corr,"N Rejected","l");
   leg2->AddEntry(acc_add,"N Accepted + opp. bin","l");
   leg2->Draw();
+
+}
+
+void main_pq()
+{
+  gStyle->SetOptStat(0);
+
+  // TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.uu.KPiLPFO.PFOp15.LPFOp15_pNaN.tpc0.hists.all.root","READ");
+
+  // TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.dd.KPiLPFO.PFOp15.LPFOp15_pNaN.tpc0.hists.all.root","READ");
+  
+  // TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ss.KPiLPFO.PFOp15.LPFOp15_pNaN.tpc0.hists.all.root","READ");
+
+  // mix
+  // TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ud.KPiLPFO.PFOp15.LPFOp15_pNaN.tpc0.hists.all.root","READ");
+  TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.uds.KPiLPFO.PFOp15.LPFOp15_pNaN.tpc0.hists.all.root","READ");
+
+  if (!file->IsOpen()) return;
+
+  pq_polar(file, kKaon);
+  pq_polar(file, kPion);
+
+
+
+
+
+
+/*
+
 */
 
 }
