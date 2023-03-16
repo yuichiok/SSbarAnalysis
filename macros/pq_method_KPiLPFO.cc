@@ -4,9 +4,10 @@
 using std::cout; using std::endl;
 using std::vector;
 
-enum LPFO { kKaon, kPion };
+enum modeLPFO { kKaon, kPion };
 TString LPFOName[2] = { "KK", "PiPi" };
 
+/*
 class SampleMode
 {
   public:
@@ -46,6 +47,7 @@ class SampleMode
     TObjArray *toa;
 
 };
+*/
 
 void BinNormal(TH1F *h)
 {
@@ -295,6 +297,11 @@ TH1F * Efficiency_Correction2( TH1F * h, TString name, TFile * file )
 
   return corrected;
 
+}
+
+void pq_polar( TFile *file, modeLPFO mlpfo )
+{
+  
 }
 
 void main_pq()
