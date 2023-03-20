@@ -379,3 +379,23 @@ Bool_t PFOTools::is_dEdxdist_bad( Float_t e_dist, Float_t mu_dist, Float_t pi_di
   if( !p_dist ) return 1;
   return 0;
 }
+
+Bool_t PFOTools::is_ss()
+{
+  if ( KLPFO[0].p_mag > PiLPFO[0].p_mag &&
+       KLPFO[1].p_mag > PiLPFO[1].p_mag ){
+        return true;
+  }else{
+    return false;
+  }
+}
+
+Bool_t PFOTools::is_uu_dd()
+{
+  if ( PiLPFO[0].p_mag > KLPFO[0].p_mag &&
+       PiLPFO[1].p_mag > KLPFO[1].p_mag ){
+        return true;
+  }else{
+    return false;
+  }
+}
