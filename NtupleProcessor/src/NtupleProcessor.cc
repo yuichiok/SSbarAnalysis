@@ -27,7 +27,6 @@ NtupleProcessor::NtupleProcessor(TString input, TString fnac, TString o, int me)
   // TString dummy_label = "rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.n002.d_dstm_15162_000";
   // TString filename = "data/" + dummy_label + ".root";
 
-
   ntupleFile = TFile::Open(input_file);
   if(!ntupleFile) cout << "NtupleProcessor: ERROR: Unable to open file " << input_file << endl;
   TTree *ntuple   = (TTree*) ntupleFile->Get("Stats");

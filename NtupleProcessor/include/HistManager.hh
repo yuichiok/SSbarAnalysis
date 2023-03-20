@@ -34,16 +34,10 @@ class HistManager
       cheat_K_cos,
       cheat_K_qcos,
 
-      cheat_Pi_cos,
-      cheat_Pi_qcos,
-
       reco_K_cos,
       reco_K_qcos,
-      reco_K_scos,
 
-      reco_Pi_cos,
-      reco_Pi_qcos,
-      reco_Pi_scos,
+      reco_K_scos,
 
       gen_reco_K_sep_cos,
 
@@ -67,13 +61,8 @@ class HistManager
     TH1F * h1[Last_h1];
 
     enum h1_pq_index {
-      // KID
       acc_KK,
       rej_KK,
-
-      // PiID
-      acc_PiPi,
-      rej_PiPi,
 
       dummy_pq,
       Last_h1_pq = dummy_pq
@@ -112,16 +101,6 @@ class HistManager
     };
     TH2F * h2[Last_h2];
 
-    enum h2_jet_index {
-
-      jet_mult_cos,
-      jet_mult_cos_noISR,
-
-      dummy_h2_jet,
-      Last_dummy_h2_jet = dummy_h2_jet
-    };
-    TH2F * h2_jet[Last_dummy_h2_jet];
-
     enum h2_particle_ratio_cos_index {
       K_rate_cos_gen,
       pi_rate_cos_gen,
@@ -142,7 +121,6 @@ class HistManager
       gen_pi_dEdx_p,
       gen_p_dEdx_p,
 
-      // KID
       gen_K_reco_K_dEdx_p,
       gen_pi_reco_K_dEdx_p,
       gen_p_reco_K_dEdx_p,
@@ -151,37 +129,100 @@ class HistManager
       gen_pi_KdEdx_dist_cos,
       gen_p_KdEdx_dist_cos,
 
+      reco_K_KdEdx_dist_cos,
       gen_K_reco_K_KdEdx_dist_cos,
       gen_pi_reco_K_KdEdx_dist_cos,
       gen_p_reco_K_KdEdx_dist_cos,
-
-      // PiID
-      gen_K_reco_Pi_dEdx_p,
-      gen_pi_reco_Pi_dEdx_p,
-      gen_p_reco_Pi_dEdx_p,
-
-      gen_K_PidEdx_dist_cos,
-      gen_pi_PidEdx_dist_cos,
-      gen_p_PidEdx_dist_cos,
-
-      gen_K_reco_Pi_PidEdx_dist_cos,
-      gen_pi_reco_Pi_PidEdx_dist_cos,
-      gen_p_reco_Pi_PidEdx_dist_cos,
-
 
       dummy_dEdx,
       Last_h2_dEdx = dummy_dEdx
     };
     TH2F * h2_dEdx[Last_h2_dEdx];
 
+    enum h1_K_cheat{
+      d0_K_cheat_primary,
+      d0_sigma_K_cheat_primary,
+      d0_sigma_d0_K_cheat_primary,
+
+      z0_K_cheat_primary,
+      z0_sigma_K_cheat_primary,
+      z0_sigma_z0_K_cheat_primary,
+
+      d0_K_cheat_secondary,
+      d0_sigma_K_cheat_secondary,
+      d0_sigma_d0_K_cheat_secondary,
+
+      z0_K_cheat_secondary,
+      z0_sigma_K_cheat_secondary,
+      z0_sigma_z0_K_cheat_secondary,
+
+      pmag_K_cheat,
+      cos_theta_K_cheat,
+
+      dummy_K_cheat,
+      Last_h1_K_cheat = dummy_K_cheat
+    };
+    TH1F * h1_K_cheat[Last_h1_K_cheat];
+
+    enum h1_K_reco{
+      d0_K_reco_primary,
+      d0_sigma_K_reco_primary,
+      d0_sigma_d0_K_reco_primary,
+
+      z0_K_reco_primary,
+      z0_sigma_K_reco_primary,
+      z0_sigma_z0_K_reco_primary,
+
+      d0_K_reco_secondary,
+      d0_sigma_K_reco_secondary,
+      d0_sigma_d0_K_reco_secondary,
+
+      z0_K_reco_secondary,
+      z0_sigma_K_reco_secondary,
+      z0_sigma_z0_K_reco_secondary,
+
+      pmag_K_reco,
+      cos_theta_K_reco,
+
+      dummy_K_reco,
+      Last_h1_K_reco = dummy_K_reco
+    };
+    TH1F * h1_K_reco[Last_h1_K_reco];
+
+    enum h_PS{
+    d0_P_single,
+    d0_S_single,
+    d0_P_mult,
+    d0_S_mult,
+    z0_P_single,
+    z0_S_single,
+    z0_P_mult,
+    z0_S_mult,
+    dummy_h_PS,
+    Last_h_PS = dummy_h_PS
+    };
+    TH1* h_PS[Last_h_PS]; 
+
+    enum h_general {
+      // nvtx_ctag,
+      n_K_ecal,
+
+      dummy_general,
+      Last_h_general = dummy_general
+    };
+    TH1F * h_general[Last_h_general];
+
   private:
     TList* hList1                = new TList();
     TList* hList1_pq             = new TList();
     TList* hList1_particle_ratio = new TList();
     TList* hList2                = new TList();
-    TList* hList2_jet            = new TList();
     TList* hList2_dEdx           = new TList();
 
+    TList* hList_K_cheat         = new TList();
+    TList* hList_K_reco          = new TList();
+    TList* hList_general         = new TList();
+    TList* hList_PS              = new TList();
 };
 
 #endif

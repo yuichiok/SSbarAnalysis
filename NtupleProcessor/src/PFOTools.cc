@@ -172,21 +172,22 @@ void PFOTools::InitializePFOTools( MC_QQbar *mc_data, PFO_QQbar *data )
 
     PFO.dEdx_dist_pdg = Get_dEdx_dist_PID( PFO.pfo_piddedx_k_dedxdist, PFO.pfo_piddedx_pi_dedxdist, PFO.pfo_piddedx_p_dedxdist );
     PFO.cos           = std::cos(PFO.vt.v3().Theta());
-    PFO.qcos          = (PFO.pfo_charge < 0) ? PFO.cos : -PFO.cos;
+
+    PFO.qcos = (PFO.pfo_charge < 0) ? PFO.cos : -PFO.cos;
+    // if ( mc_data->mc_quark_charge[0] < 0 ){
+    //   PFO.qcos = (PFO.pfo_charge < 0) ? PFO.cos : -PFO.cos;
+    // }else{
+    //   PFO.qcos = (PFO.pfo_charge > 0) ? PFO.cos : -PFO.cos;
+    // }
 
     PFO_jet[ijet].push_back(PFO);
-    if( abs(PFO.pfo_pdgcheat) == 321 ) PFO_cheat_Ks[ijet].push_back(PFO);
-    if( abs(PFO.pfo_pdgcheat) == 211 ) PFO_cheat_Pis[ijet].push_back(PFO);
     
   }
 
   if( ValidPFO() ){
     for (int ijet=0; ijet < 2; ijet++){
-      LPFO[ijet]        = GetSortedJet(ijet).at(0);
-      KLPFO[ijet]       = Get_Particle_LPFO(ijet,kKaon);
-      PiLPFO[ijet]      = Get_Particle_LPFO(ijet,kPion);
-
-      // Reconstructed PFO
+      LPFO[ijet]  = GetSortedJet(ijet).at(0);
+      KLPFO[ijet] = Get_KLPFO(ijet);
       if( PFO_jet[ijet].size() > 1 ){
         SPFOs[ijet] = GetSortedJet(ijet);
         // SPFOs[ijet].erase(SPFOs[ijet].begin());
@@ -201,24 +202,6 @@ void PFOTools::InitializePFOTools( MC_QQbar *mc_data, PFO_QQbar *data )
         });
 
       }
-
-      // Cheated PFO
-      if( PFO_cheat_Ks[0].size() && PFO_cheat_Ks[1].size() ){
-        cheat_KLPFO[ijet] = SortJet(PFO_cheat_Ks[ijet]).at(0);
-        if( PFO_cheat_Ks[ijet].size() > 1 ){
-          SPFOs_cheat_K[ijet] = PFO_cheat_Ks[ijet];
-          pop_front(SPFOs_cheat_K[ijet]);
-        }
-      }
-
-      if( PFO_cheat_Pis[0].size() && PFO_cheat_Pis[1].size() ){
-        cheat_PiLPFO[ijet] = SortJet(PFO_cheat_Pis[ijet]).at(0);
-        if( PFO_cheat_Pis[ijet].size() > 1 ){
-          SPFOs_cheat_Pi[ijet] = PFO_cheat_Pis[ijet];
-          pop_front(SPFOs_cheat_Pi[ijet]);
-        }
-      }
-
     }
   }
 
@@ -260,27 +243,11 @@ vector<PFO_Info> PFOTools::GetSortedJet( int ijet )
     return sorted_jet;
 }
 
-PFO_Info PFOTools::Get_Particle_LPFO( int ijet, ParticleID pdg )
+PFO_Info PFOTools::Get_KLPFO( int ijet )
 {
     vector<PFO_Info> sorted_jet = GetSortedJet(ijet);
     for ( auto iPFO : sorted_jet ) {
-
-      switch ( pdg )
-      {
-        case kKaon:
-          if ( isKaon(iPFO) ) return iPFO;
-          break;
-        case kPion:
-          if ( isPion(iPFO) ) return iPFO;
-          break;
-        case kProton:
-          if ( isProton(iPFO) ) return iPFO;
-          break;
-        
-        default:
-          break;
-      }
-
+      if ( isKaon(iPFO) ) return iPFO;
     }
 
     return sorted_jet.at(0);
@@ -378,24 +345,4 @@ Bool_t PFOTools::is_dEdxdist_bad( Float_t e_dist, Float_t mu_dist, Float_t pi_di
   if( !k_dist ) return 1;
   if( !p_dist ) return 1;
   return 0;
-}
-
-Bool_t PFOTools::is_ss()
-{
-  if ( KLPFO[0].p_mag > PiLPFO[0].p_mag &&
-       KLPFO[1].p_mag > PiLPFO[1].p_mag ){
-        return true;
-  }else{
-    return false;
-  }
-}
-
-Bool_t PFOTools::is_uu_dd()
-{
-  if ( PiLPFO[0].p_mag > KLPFO[0].p_mag &&
-       PiLPFO[1].p_mag > KLPFO[1].p_mag ){
-        return true;
-  }else{
-    return false;
-  }
 }
