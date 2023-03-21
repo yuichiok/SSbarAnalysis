@@ -109,7 +109,7 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
     PFOTools mct( &_mc, _config );
     PFOTools pfot( &_mc, &_pfo, _config );
 
-    cout << entry + 1 << " ";
+    // cout << "===== " << entry + 1 << " =====" << endl;
     AnalyzeGenReco(mct,pfot);
 
     if ( !pfot.ValidPFO() ) {
@@ -284,6 +284,9 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
 
   std::vector<PFO_Info> Cheat_K_PFO_Collection[2];
 
+  CCbarAnalysis(pfot);
+
+
   for ( long unsigned int i=0; i < PFO_Collection.size(); i++ )
   {
     PFO_Info ipfo = PFO_Collection.at(i);
@@ -310,107 +313,6 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
     // std::cout<<ipfo.pfo_endpt[0]<<"  "<<ipfo.pfo_endpt[1]<<" "<<ipfo.pfo_endpt[2]<<std::endl;
 
     // }
-    //---------------Own-----------------//
-    if(ipfo.p_mag>5)
-    {
-      //general
-      // _hm.h_general[_hm.nvtx_ctag]->Fill(_jet.jet_ctag[ipfo.pfo_match],ipfo.pfo_vtx);
-
-      if(_pfo.pfo_n_j2==1 or _pfo.pfo_n_j1==1)
-      {
-        if(abs(ipfo.pfo_pdgcheat)==321 and ipfo.pfo_vtx==1 and ipfo.pfo_ntracks==1)
-        {
-          _hm.h_PS[_hm.d0_P_single]->Fill(TMath::Abs(ipfo.pfo_d0));
-          _hm.h_PS[_hm.z0_P_single]->Fill(TMath::Abs(ipfo.pfo_z0));
-        }
-        if(abs(ipfo.pfo_pdgcheat)==321 and ipfo.pfo_vtx>=2 and ipfo.pfo_ntracks==1)
-        {
-          _hm.h_PS[_hm.d0_S_single]->Fill(TMath::Abs(ipfo.pfo_d0));
-          _hm.h_PS[_hm.z0_S_single]->Fill(TMath::Abs(ipfo.pfo_z0));
-        }
-      }
-      else
-      {
-        if(abs(ipfo.pfo_pdgcheat)==321 and ipfo.pfo_vtx==1 and ipfo.pfo_ntracks==1)
-        {
-          _hm.h_PS[_hm.d0_P_mult]->Fill(TMath::Abs(ipfo.pfo_d0));
-          _hm.h_PS[_hm.z0_P_mult]->Fill(TMath::Abs(ipfo.pfo_z0));
-        }
-        if(abs(ipfo.pfo_pdgcheat)==321 and ipfo.pfo_vtx>=2 and ipfo.pfo_ntracks==1)
-        {
-          _hm.h_PS[_hm.d0_S_mult]->Fill(TMath::Abs(ipfo.pfo_d0));
-          _hm.h_PS[_hm.z0_S_mult]->Fill(TMath::Abs(ipfo.pfo_z0));
-        }
-      }
-      
-
-      if(abs(ipfo.pfo_pdgcheat)==321 and ipfo.pfo_vtx==1)
-      {
-        _hm.h_general[_hm.n_K_ecal]->Fill(ipfo.pfo_charge);
-      }
-      // cheat
-      if(abs(ipfo.pfo_pdgcheat)==321 and ipfo.pfo_vtx==1 and ipfo.pfo_ntracks==1)
-      {
-        _hm.h1_K_cheat[_hm.d0_K_cheat_primary]->Fill(TMath::Abs(ipfo.pfo_d0));
-        _hm.h1_K_cheat[_hm.d0_sigma_K_cheat_primary]->Fill(TMath::Sqrt(ipfo.pfo_d0error));
-        _hm.h1_K_cheat[_hm.d0_sigma_d0_K_cheat_primary]->Fill(TMath::Abs(ipfo.pfo_d0)/TMath::Sqrt(ipfo.pfo_d0error));
-        
-        _hm.h1_K_cheat[_hm.z0_K_cheat_primary]->Fill(TMath::Abs(ipfo.pfo_z0));
-        _hm.h1_K_cheat[_hm.z0_sigma_K_cheat_primary]->Fill(TMath::Sqrt(ipfo.pfo_z0error));
-        _hm.h1_K_cheat[_hm.z0_sigma_z0_K_cheat_primary]->Fill(TMath::Abs(ipfo.pfo_z0)/TMath::Sqrt(ipfo.pfo_z0error));
-      }
-
-      if(abs(ipfo.pfo_pdgcheat)==321 and ipfo.pfo_vtx>=2 and ipfo.pfo_ntracks==1)
-      {
-    // std::cout<<"---------------------->\n";
-    
-   
-        _hm.h1_K_cheat[_hm.d0_K_cheat_secondary]->Fill(TMath::Abs(ipfo.pfo_d0));
-        _hm.h1_K_cheat[_hm.d0_sigma_K_cheat_secondary]->Fill(TMath::Sqrt(ipfo.pfo_d0error));
-        _hm.h1_K_cheat[_hm.d0_sigma_d0_K_cheat_secondary]->Fill(TMath::Abs(ipfo.pfo_d0)/TMath::Sqrt(ipfo.pfo_d0error));
-        
-        _hm.h1_K_cheat[_hm.z0_K_cheat_secondary]->Fill(TMath::Abs(ipfo.pfo_z0));
-        _hm.h1_K_cheat[_hm.z0_sigma_K_cheat_secondary]->Fill(TMath::Sqrt(ipfo.pfo_z0error));
-        _hm.h1_K_cheat[_hm.z0_sigma_z0_K_cheat_secondary]->Fill(TMath::Abs(ipfo.pfo_z0)/TMath::Sqrt(ipfo.pfo_z0error));
-      }
-
-      if(abs(ipfo.pfo_pdgcheat)==321 and ipfo.pfo_ntracks==1)
-      {
-        _hm.h1_K_cheat[_hm.pmag_K_cheat]->Fill(ipfo.p_mag);
-        _hm.h1_K_cheat[_hm.cos_theta_K_cheat]->Fill(ipfo.qcos);
-      }
-      // reco
-      if(PFOTools::isKaon(ipfo) and ipfo.pfo_vtx==1 and ipfo.pfo_ntracks==1)
-      {
-        _hm.h1_K_reco[_hm.d0_K_reco_primary]->Fill(TMath::Abs(ipfo.pfo_d0));
-        _hm.h1_K_reco[_hm.d0_sigma_K_reco_primary]->Fill(TMath::Sqrt(ipfo.pfo_d0error));
-        _hm.h1_K_reco[_hm.d0_sigma_d0_K_reco_primary]->Fill(TMath::Abs(ipfo.pfo_d0)/TMath::Sqrt(ipfo.pfo_d0error));
-        
-        _hm.h1_K_reco[_hm.z0_K_reco_primary]->Fill(TMath::Abs(ipfo.pfo_z0));
-        _hm.h1_K_reco[_hm.z0_sigma_K_reco_primary]->Fill(TMath::Sqrt(ipfo.pfo_z0error));
-        _hm.h1_K_reco[_hm.z0_sigma_z0_K_reco_primary]->Fill(TMath::Abs(ipfo.pfo_z0)/TMath::Sqrt(ipfo.pfo_z0error));
-      }
-
-      if(PFOTools::isKaon(ipfo) and ipfo.pfo_vtx>=2 and ipfo.pfo_ntracks==1)
-      {
-        _hm.h1_K_reco[_hm.d0_K_reco_secondary]->Fill(TMath::Abs(ipfo.pfo_d0));
-        _hm.h1_K_reco[_hm.d0_sigma_K_reco_secondary]->Fill(TMath::Sqrt(ipfo.pfo_d0error));
-        _hm.h1_K_reco[_hm.d0_sigma_d0_K_reco_secondary]->Fill(TMath::Abs(ipfo.pfo_d0)/TMath::Sqrt(ipfo.pfo_d0error));
-        
-        _hm.h1_K_reco[_hm.z0_K_reco_secondary]->Fill(TMath::Abs(ipfo.pfo_z0));
-        _hm.h1_K_reco[_hm.z0_sigma_K_reco_secondary]->Fill(TMath::Sqrt(ipfo.pfo_z0error));
-        _hm.h1_K_reco[_hm.z0_sigma_z0_K_reco_secondary]->Fill(TMath::Abs(ipfo.pfo_z0)/TMath::Sqrt(ipfo.pfo_z0error));
-      }
-
-      if(PFOTools::isKaon(ipfo) and ipfo.pfo_ntracks==1)
-      {
-        _hm.h1_K_reco[_hm.pmag_K_reco]->Fill(ipfo.p_mag);
-        _hm.h1_K_reco[_hm.cos_theta_K_reco]->Fill(ipfo.qcos);
-      }
-    }
-    
-    
-
 
     //-----------------------------------//
     Count_Particle(ipfo,321,h_n_reco_particles[0],h_n_gen_particles[0]);
@@ -973,4 +875,159 @@ void EventAnalyzer::Jet_sum_n_acol()
   _hm.h1[_hm.reco_sum_jetE]->Fill( _data.sum_jet_E );
   _hm.h1[_hm.reco_jet_sep]->Fill( _data.jet_acol );
 
+}
+
+void EventAnalyzer::CCbarAnalysis(PFOTools pfot)
+{
+  std::vector<PFO_Info> PFO_Collection = pfot.Get_Valid_PFOs();
+
+  Int_t nprong[2][2] = {{0,0},{0,0}};
+
+  for ( long unsigned int i=0; i < PFO_Collection.size(); i++ )
+  {
+    PFO_Info ipfo = PFO_Collection.at(i);
+
+    Int_t imatch = ipfo.pfo_match;
+    if(ipfo.pfo_vtx==1){
+      nprong[imatch][0]++;
+    }else if(ipfo.pfo_vtx==2){
+      nprong[imatch][1]++;
+    }
+
+  }
+
+  for ( long unsigned int i=0; i < PFO_Collection.size(); i++ )
+  {
+    PFO_Info ipfo = PFO_Collection.at(i);
+    Int_t  imatch = ipfo.pfo_match;
+
+    //---------------Own-----------------//
+    if(ipfo.p_mag>5)
+    {
+      Bool_t base_bool = ( abs(ipfo.pfo_pdgcheat)==321 and ipfo.pfo_ntracks==1 );
+
+      if( nprong[imatch][0]==1 && ipfo.pfo_vtx==1 ){
+        _hm.h_PS[_hm.d0_P_single]->Fill(TMath::Abs(ipfo.pfo_d0));
+        _hm.h_PS[_hm.z0_P_single]->Fill(TMath::Abs(ipfo.pfo_z0));
+      }else if( nprong[imatch][1]==1 && ipfo.pfo_vtx==2 ){
+        _hm.h_PS[_hm.d0_S_single]->Fill(TMath::Abs(ipfo.pfo_d0));
+        _hm.h_PS[_hm.z0_S_single]->Fill(TMath::Abs(ipfo.pfo_z0));
+      }else if ( nprong[imatch][0]>1 && ipfo.pfo_vtx==1 ){
+        _hm.h_PS[_hm.d0_P_mult]->Fill(TMath::Abs(ipfo.pfo_d0));
+        _hm.h_PS[_hm.z0_P_mult]->Fill(TMath::Abs(ipfo.pfo_z0));
+      }else if ( nprong[imatch][1]>1 && ipfo.pfo_vtx==2 ){
+        _hm.h_PS[_hm.d0_S_mult]->Fill(TMath::Abs(ipfo.pfo_d0));
+        _hm.h_PS[_hm.z0_S_mult]->Fill(TMath::Abs(ipfo.pfo_z0));
+      }
+
+
+/*
+      if( base_bool and _pfo.pfo_n_j1==1 and ipfo.pfo_match==0 )
+      {
+        if( ipfo.pfo_vtx==1 )
+        {
+          _hm.h_PS[_hm.d0_P_single]->Fill(TMath::Abs(ipfo.pfo_d0));
+          _hm.h_PS[_hm.z0_P_single]->Fill(TMath::Abs(ipfo.pfo_z0));
+        }
+        else if( ipfo.pfo_vtx>=2 )
+        {
+          _hm.h_PS[_hm.d0_S_single]->Fill(TMath::Abs(ipfo.pfo_d0));
+          _hm.h_PS[_hm.z0_S_single]->Fill(TMath::Abs(ipfo.pfo_z0));
+        }
+      }
+      else if( base_bool and _pfo.pfo_n_j2==1 and ipfo.pfo_match==1 )
+      {
+        if( ipfo.pfo_vtx==1 )
+        {
+          _hm.h_PS[_hm.d0_P_single]->Fill(TMath::Abs(ipfo.pfo_d0));
+          _hm.h_PS[_hm.z0_P_single]->Fill(TMath::Abs(ipfo.pfo_z0));
+        }
+        else if( ipfo.pfo_vtx>=2 )
+        {
+          _hm.h_PS[_hm.d0_S_single]->Fill(TMath::Abs(ipfo.pfo_d0));
+          _hm.h_PS[_hm.z0_S_single]->Fill(TMath::Abs(ipfo.pfo_z0));
+        }
+      }
+      else
+      {
+        if( ipfo.pfo_vtx==1 )
+        {
+          _hm.h_PS[_hm.d0_P_mult]->Fill(TMath::Abs(ipfo.pfo_d0));
+          _hm.h_PS[_hm.z0_P_mult]->Fill(TMath::Abs(ipfo.pfo_z0));
+        }
+        else if( ipfo.pfo_vtx>=2 )
+        {
+          _hm.h_PS[_hm.d0_S_mult]->Fill(TMath::Abs(ipfo.pfo_d0));
+          _hm.h_PS[_hm.z0_S_mult]->Fill(TMath::Abs(ipfo.pfo_z0));
+        }
+      }
+*/
+      
+    /*
+      if(abs(ipfo.pfo_pdgcheat)==321 and ipfo.pfo_vtx==1)
+      {
+        _hm.h_general[_hm.n_K_ecal]->Fill(ipfo.pfo_charge);
+      }
+      // cheat
+      if(abs(ipfo.pfo_pdgcheat)==321 and ipfo.pfo_vtx==1 and ipfo.pfo_ntracks==1)
+      {
+        _hm.h1_K_cheat[_hm.d0_K_cheat_primary]->Fill(TMath::Abs(ipfo.pfo_d0));
+        _hm.h1_K_cheat[_hm.d0_sigma_K_cheat_primary]->Fill(TMath::Sqrt(ipfo.pfo_d0error));
+        _hm.h1_K_cheat[_hm.d0_sigma_d0_K_cheat_primary]->Fill(TMath::Abs(ipfo.pfo_d0)/TMath::Sqrt(ipfo.pfo_d0error));
+        
+        _hm.h1_K_cheat[_hm.z0_K_cheat_primary]->Fill(TMath::Abs(ipfo.pfo_z0));
+        _hm.h1_K_cheat[_hm.z0_sigma_K_cheat_primary]->Fill(TMath::Sqrt(ipfo.pfo_z0error));
+        _hm.h1_K_cheat[_hm.z0_sigma_z0_K_cheat_primary]->Fill(TMath::Abs(ipfo.pfo_z0)/TMath::Sqrt(ipfo.pfo_z0error));
+      }
+
+      if(abs(ipfo.pfo_pdgcheat)==321 and ipfo.pfo_vtx>=2 and ipfo.pfo_ntracks==1)
+      {
+        _hm.h1_K_cheat[_hm.d0_K_cheat_secondary]->Fill(TMath::Abs(ipfo.pfo_d0));
+        _hm.h1_K_cheat[_hm.d0_sigma_K_cheat_secondary]->Fill(TMath::Sqrt(ipfo.pfo_d0error));
+        _hm.h1_K_cheat[_hm.d0_sigma_d0_K_cheat_secondary]->Fill(TMath::Abs(ipfo.pfo_d0)/TMath::Sqrt(ipfo.pfo_d0error));
+        
+        _hm.h1_K_cheat[_hm.z0_K_cheat_secondary]->Fill(TMath::Abs(ipfo.pfo_z0));
+        _hm.h1_K_cheat[_hm.z0_sigma_K_cheat_secondary]->Fill(TMath::Sqrt(ipfo.pfo_z0error));
+        _hm.h1_K_cheat[_hm.z0_sigma_z0_K_cheat_secondary]->Fill(TMath::Abs(ipfo.pfo_z0)/TMath::Sqrt(ipfo.pfo_z0error));
+      }
+
+      if(abs(ipfo.pfo_pdgcheat)==321 and ipfo.pfo_ntracks==1)
+      {
+        _hm.h1_K_cheat[_hm.pmag_K_cheat]->Fill(ipfo.p_mag);
+        _hm.h1_K_cheat[_hm.cos_theta_K_cheat]->Fill(ipfo.qcos);
+      }
+      // reco
+      if(PFOTools::isKaon(ipfo) and ipfo.pfo_vtx==1 and ipfo.pfo_ntracks==1)
+      {
+        _hm.h1_K_reco[_hm.d0_K_reco_primary]->Fill(TMath::Abs(ipfo.pfo_d0));
+        _hm.h1_K_reco[_hm.d0_sigma_K_reco_primary]->Fill(TMath::Sqrt(ipfo.pfo_d0error));
+        _hm.h1_K_reco[_hm.d0_sigma_d0_K_reco_primary]->Fill(TMath::Abs(ipfo.pfo_d0)/TMath::Sqrt(ipfo.pfo_d0error));
+        
+        _hm.h1_K_reco[_hm.z0_K_reco_primary]->Fill(TMath::Abs(ipfo.pfo_z0));
+        _hm.h1_K_reco[_hm.z0_sigma_K_reco_primary]->Fill(TMath::Sqrt(ipfo.pfo_z0error));
+        _hm.h1_K_reco[_hm.z0_sigma_z0_K_reco_primary]->Fill(TMath::Abs(ipfo.pfo_z0)/TMath::Sqrt(ipfo.pfo_z0error));
+      }
+
+      if(PFOTools::isKaon(ipfo) and ipfo.pfo_vtx>=2 and ipfo.pfo_ntracks==1)
+      {
+        _hm.h1_K_reco[_hm.d0_K_reco_secondary]->Fill(TMath::Abs(ipfo.pfo_d0));
+        _hm.h1_K_reco[_hm.d0_sigma_K_reco_secondary]->Fill(TMath::Sqrt(ipfo.pfo_d0error));
+        _hm.h1_K_reco[_hm.d0_sigma_d0_K_reco_secondary]->Fill(TMath::Abs(ipfo.pfo_d0)/TMath::Sqrt(ipfo.pfo_d0error));
+        
+        _hm.h1_K_reco[_hm.z0_K_reco_secondary]->Fill(TMath::Abs(ipfo.pfo_z0));
+        _hm.h1_K_reco[_hm.z0_sigma_K_reco_secondary]->Fill(TMath::Sqrt(ipfo.pfo_z0error));
+        _hm.h1_K_reco[_hm.z0_sigma_z0_K_reco_secondary]->Fill(TMath::Abs(ipfo.pfo_z0)/TMath::Sqrt(ipfo.pfo_z0error));
+      }
+
+      if(PFOTools::isKaon(ipfo) and ipfo.pfo_ntracks==1)
+      {
+        _hm.h1_K_reco[_hm.pmag_K_reco]->Fill(ipfo.p_mag);
+        _hm.h1_K_reco[_hm.cos_theta_K_reco]->Fill(ipfo.qcos);
+      }
+      */
+
+    }
+
+  }
+    
 }

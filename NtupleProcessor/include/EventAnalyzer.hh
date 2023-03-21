@@ -69,6 +69,8 @@ class EventAnalyzer
 
     void             Jet_sum_n_acol();
 
+    void             CCbarAnalysis(PFOTools pfot);
+
 
 
   // Running Variables
