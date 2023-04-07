@@ -306,7 +306,7 @@ Bool_t PFOTools::isKaon( PFO_Info iPFO )
 
 Bool_t PFOTools::isPion( PFO_Info iPFO )
 {
-    return iPFO.dEdx_dist_pdg == 211;
+    return (iPFO.dEdx_dist_pdg == 211) && (0 < iPFO.pfo_piddedx_pi_dedxdist);
 }
 
 Bool_t PFOTools::isProton( PFO_Info iPFO )
