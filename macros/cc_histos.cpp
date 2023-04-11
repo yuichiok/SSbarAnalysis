@@ -14,7 +14,7 @@ void cc_histos(char dz, string mode) {
     TVirtualPad *pad1 = canvas->cd(1);
     pad1->SetGrid(1,1);
 
-    TFile* file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.bb.PFOp5.yevhenii.all.root");
+    TFile* file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.cc.PFOp5.yevhenii.all.root");
     TH1F* h1 = (TH1F*)file->Get(Form("/Own/PS/%c0_P_%s",dz,mode.c_str()));
     TH1F* h2 = (TH1F*)file->Get(Form("/Own/PS/%c0_S_%s",dz,mode.c_str()));
         
