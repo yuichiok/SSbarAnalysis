@@ -109,7 +109,7 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
     PFOTools mct( &_mc, _config );
     PFOTools pfot( &_mc, &_pfo, _config );
 
-    // cout << "evt: " << entry << endl;
+    cout << "evt: " << entry << endl;
     AnalyzeGenReco(mct,pfot);
 
     if ( !pfot.ValidPFO() ) {
@@ -920,6 +920,13 @@ void EventAnalyzer::ProcessDoubleTag(PFOTools pfot, PFOTools mct, vector<Bool_t>
           _hm.h1[_hm.reco_K_cos]->Fill( pfot.KLPFO[ineg].cos );
           _hm.h1[_hm.reco_K_qcos]->Fill( pfot.KLPFO[ineg].qcos );
           _hm.h1[_hm.reco_K_scos]->Fill( abs(pfot.KLPFO[ineg].cos) * sgn( -_mc.mc_quark_charge[0] ) * mct.mc_quark[0].cos / abs(mct.mc_quark[0].cos) );
+
+          cout << "===== parents =====" << endl;
+          for(int ip=0; ip < pfot.KLPFO[ineg].pfo_nparents; ip++ ){
+            cout << pfot.KLPFO[ineg].pfo_pdgcheat_parent[ip] << " ";
+          }
+          cout << endl;
+          cout << "===== parents =====" << endl;
 
           // cheat
           switch ( abs(pfot.KLPFO[ineg].pfo_pdgcheat) ) {

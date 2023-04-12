@@ -45,6 +45,9 @@ class HistManager
       reco_Pi_qcos,
       reco_Pi_scos,
 
+      reco_K_parents_pdg,
+      reco_K_pair_mass,
+
       gen_reco_K_sep_cos,
 
       reco_sum_jetE,
