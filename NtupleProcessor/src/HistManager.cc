@@ -168,6 +168,13 @@ void HistManager::InitializeHists()
     h_PS[z0_P_mult] = new TH1F("z0_P_mult"  ,"Primary vertex mult prong;z_0, [um];",2000,0,2);
     h_PS[z0_S_mult] = new TH1F("z0_S_mult"  ,"Secondary vertex mult prong;z_0, [mm];",2000,0,2);
 
+    h_tagging[p_ctag] = new TH1F("p_ctag","ctag for primary vertex",100,0,1.);
+    h_tagging[s_ctag] = new TH1F("s_ctag","ctag for secondary vertex",100,0,1.);
+    h_tagging[t_ctag] = new TH1F("t_ctag","ctag for no vertex",100,0,1.);
+    
+    h_tagging[p_btag] = new TH1F("p_btag","btag for primary vertex",100,0,1.);
+    h_tagging[s_btag] = new TH1F("s_btag","btag for secondary vertex",100,0,1.);
+    h_tagging[t_btag] = new TH1F("t_btag`","btag for no vertex",100,0,1.);
 
 
 
@@ -220,6 +227,10 @@ void HistManager::Hist2List()
     hList_PS->Add(ih);
   }
 
+  for (auto ih : h_tagging) {
+    hList_tagging->Add(ih);
+  }
+
 }
 
 void HistManager::WriteLists( TFile * output)
@@ -239,6 +250,10 @@ void HistManager::WriteLists( TFile * output)
   TDirectory * d_PS = d_own->mkdir("PS");
     d_PS->cd();
     hList_PS->Write();
+
+  TDirectory * d_tagging = d_own->mkdir("tagging");
+    d_tagging->cd();
+    hList_tagging->Write();
   
 
   // Focus to this file

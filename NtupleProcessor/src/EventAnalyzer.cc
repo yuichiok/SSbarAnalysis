@@ -286,6 +286,33 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
 
   CCbarAnalysis(pfot);
 
+  if (_pfo.jet_nvtx_j1 == 2) {
+    _hm.h_tagging[_hm.s_ctag]->Fill(_jet.jet_ctag[0]);
+    _hm.h_tagging[_hm.s_btag]->Fill(_jet.jet_btag[0]);
+  }
+  else if (_pfo.jet_nvtx_j2 == 2) {
+    _hm.h_tagging[_hm.s_ctag]->Fill(_jet.jet_ctag[1]);
+    _hm.h_tagging[_hm.s_btag]->Fill(_jet.jet_btag[1]);
+  }
+
+  else if (_pfo.jet_nvtx_j1 == 1) {
+    _hm.h_tagging[_hm.s_ctag]->Fill(_jet.jet_ctag[0]);
+    _hm.h_tagging[_hm.s_btag]->Fill(_jet.jet_btag[0]);
+  }
+  else if (_pfo.jet_nvtx_j2 == 1) {
+    _hm.h_tagging[_hm.p_ctag]->Fill(_jet.jet_ctag[1]);
+    _hm.h_tagging[_hm.p_btag]->Fill(_jet.jet_btag[1]);
+  }
+
+  else if (_pfo.jet_nvtx_j1 == 1) {
+    _hm.h_tagging[_hm.t_ctag]->Fill(_jet.jet_ctag[0]);
+    _hm.h_tagging[_hm.t_btag]->Fill(_jet.jet_btag[0]);
+  }
+  else if (_pfo.jet_nvtx_j2 == 1) {
+    _hm.h_tagging[_hm.t_ctag]->Fill(_jet.jet_ctag[1]);
+    _hm.h_tagging[_hm.t_btag]->Fill(_jet.jet_btag[1]);
+  }
+
 
   for ( long unsigned int i=0; i < PFO_Collection.size(); i++ )
   {
