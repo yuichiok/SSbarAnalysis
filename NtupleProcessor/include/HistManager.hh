@@ -40,13 +40,14 @@ class HistManager
       reco_K_cos,
       reco_K_qcos,
       reco_K_scos,
+      reco_K_mom,
+      reco_K_pdgcheat,
 
       reco_Pi_cos,
       reco_Pi_qcos,
       reco_Pi_scos,
-
-      reco_K_parents_pdg,
-      reco_K_pair_mass,
+      reco_Pi_mom,
+      reco_Pi_pdgcheat,
 
       gen_reco_K_sep_cos,
 

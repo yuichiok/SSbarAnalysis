@@ -907,15 +907,6 @@ void EventAnalyzer::ProcessDoubleTag(PFOTools pfot, PFOTools mct, vector<Bool_t>
 
     if ( LPFO_checks[kKaon] && pfot.is_ss() && double_tag[kKaon] == K_K ){
 
-
-      cout << "===== test out =====" << endl;
-      cout << "MCRelation ID0: " << pfot.KLPFO[0].pfo_pdgcheat_id << endl;
-      cout << "Momentum   px0: " << pfot.KLPFO[0].pfo_px << endl;
-      cout << "MCRelation ID1: " << pfot.KLPFO[1].pfo_pdgcheat_id << endl;
-      cout << "Momentum   px1: " << pfot.KLPFO[1].pfo_px << endl;
-      cout << "===== test out =====" << endl;
-
-
         Int_t ineg = -1;
 
         if( pfot.KLPFO[0].pfo_charge < 0 ){
@@ -926,18 +917,20 @@ void EventAnalyzer::ProcessDoubleTag(PFOTools pfot, PFOTools mct, vector<Bool_t>
 
         if(sign_check[kKaon]){
 
+          cout << "===== test out =====" << endl;
+          cout << "MCRelation ID0:  " << pfot.KLPFO[0].pfo_pdgcheat << endl;
+          cout << "Charge     px0:  " << pfot.KLPFO[0].pfo_charge << endl;
+          cout << "Momentum   px0:  " << pfot.KLPFO[0].pfo_px << endl;
+          cout << "Momentum   pmag: " << pfot.KLPFO[0].p_mag << endl;
+          cout << "MCRelation ID1:  " << pfot.KLPFO[1].pfo_pdgcheat << endl;
+          cout << "Charge     px1:  " << pfot.KLPFO[1].pfo_charge << endl;
+          cout << "Momentum   px1:  " << pfot.KLPFO[1].pfo_px << endl;
+          cout << "Momentum   pmag: " << pfot.KLPFO[1].p_mag << endl;
+          cout << "===== test out =====" << endl;
+
           _hm.h1[_hm.reco_K_cos]->Fill( pfot.KLPFO[ineg].cos );
           _hm.h1[_hm.reco_K_qcos]->Fill( pfot.KLPFO[ineg].qcos );
           _hm.h1[_hm.reco_K_scos]->Fill( abs(pfot.KLPFO[ineg].cos) * sgn( -_mc.mc_quark_charge[0] ) * mct.mc_quark[0].cos / abs(mct.mc_quark[0].cos) );
-
-          // cout << "===== test out =====" << endl;
-          // cout << "MCRelation ID: " << pfot.KLPFO[ineg].pfo_pdgcheat_id << endl;
-          // cout << "Momentum   px: " << pfot.KLPFO[ineg].pfo_px << endl;
-          // // for(int ip=0; ip < pfot.KLPFO[ineg].pfo_nparents; ip++ ){
-          // //   cout << pfot.KLPFO[ineg].pfo_pdgcheat_parent[ip] << " ";
-          // // }
-          // // cout << endl;
-          // cout << "===== test out =====" << endl;
 
           // cheat
           switch ( abs(pfot.KLPFO[ineg].pfo_pdgcheat) ) {
