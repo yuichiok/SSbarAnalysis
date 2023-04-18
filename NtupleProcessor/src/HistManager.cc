@@ -168,8 +168,22 @@ void HistManager::InitializeHists()
     h_PS[z0_P_mult] = new TH1F("z0_P_mult"  ,"Primary vertex mult prong;z_0, [um];",2000,0,2);
     h_PS[z0_S_mult] = new TH1F("z0_S_mult"  ,"Secondary vertex mult prong;z_0, [mm];",2000,0,2);
 
+    h_tagging[p_ctag] = new TH1F("p_ctag","ctag for primary vertex",100,0,1.);
+    h_tagging[s_ctag] = new TH1F("s_ctag","ctag for secondary vertex",100,0,1.);
+    h_tagging[t_ctag] = new TH1F("t_ctag","ctag for no vertex",100,0,1.);
+    
+    h_tagging[p_btag] = new TH1F("p_btag","btag for primary vertex",100,0,1.);
+    h_tagging[s_btag] = new TH1F("s_btag","btag for secondary vertex",100,0,1.);
+    h_tagging[t_btag] = new TH1F("t_btag","btag for no vertex",100,0,1.);
 
-
+    h_tagging[jets_info] = new TH1F("jets_info","Info", 10,0,10);
+    h_tagging[jets_info]->GetXaxis()->SetBinLabel(1,"Events");
+    h_tagging[jets_info]->GetXaxis()->SetBinLabel(2,"Jet 1");
+    h_tagging[jets_info]->GetXaxis()->SetBinLabel(3,"Jet 2");
+    h_tagging[jets_info]->GetXaxis()->SetBinLabel(4,"not Jet 1/2");
+    h_tagging[jets_info]->GetXaxis()->SetBinLabel(5,"Jets with S");
+    h_tagging[jets_info]->GetXaxis()->SetBinLabel(6,"Jets w/out S");
+    h_tagging[jets_info]->GetXaxis()->SetBinLabel(7,"Events with both jets");
 
     h_general[n_K_ecal] = new TH1F("n_K_ecal","number of charged Kaons which reached calorimeter",5,-2,2);
     // h_general[nvtx_ctag] = new TH2F("nvtx_ctag",";ctag;nvtx",100,0,1,5,0,5);
@@ -220,6 +234,10 @@ void HistManager::Hist2List()
     hList_PS->Add(ih);
   }
 
+  for (auto ih : h_tagging) {
+    hList_tagging->Add(ih);
+  }
+
 }
 
 void HistManager::WriteLists( TFile * output)
@@ -239,6 +257,10 @@ void HistManager::WriteLists( TFile * output)
   TDirectory * d_PS = d_own->mkdir("PS");
     d_PS->cd();
     hList_PS->Write();
+
+  TDirectory * d_tagging = d_own->mkdir("tagging");
+    d_tagging->cd();
+    hList_tagging->Write();
   
 
   // Focus to this file

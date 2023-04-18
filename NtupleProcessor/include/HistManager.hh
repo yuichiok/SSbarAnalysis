@@ -201,7 +201,22 @@ class HistManager
     dummy_h_PS,
     Last_h_PS = dummy_h_PS
     };
-    TH1* h_PS[Last_h_PS]; 
+    TH1* h_PS[Last_h_PS];
+
+    enum h_tagging {
+      p_ctag,
+      s_ctag,
+      p_btag,
+      s_btag,
+      t_ctag,
+      t_btag,
+      jets_info,
+
+      dummy_tagging,
+      Last_h_tagging = dummy_tagging
+    };
+    TH1F * h_tagging[Last_h_tagging];
+
 
     enum h_general {
       // nvtx_ctag,
@@ -222,6 +237,7 @@ class HistManager
     TList* hList_K_cheat         = new TList();
     TList* hList_K_reco          = new TList();
     TList* hList_general         = new TList();
+    TList* hList_tagging         = new TList();
     TList* hList_PS              = new TList();
 };
 

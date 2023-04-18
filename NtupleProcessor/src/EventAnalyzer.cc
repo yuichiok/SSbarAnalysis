@@ -287,33 +287,55 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
   CCbarAnalysis(pfot);
 
 
+  _hm.h_tagging[_hm.jets_info]->Fill(0);
+
+  if(_pfo.pfo_n_j1 != 0 and _pfo.pfo_n_j2 != 0) {
+    _hm.h_tagging[_hm.jets_info]->Fill(6);
+  }
+
+  if (_pfo.jet_nvtx_j1 == 2) {
+    _hm.h_tagging[_hm.s_ctag]->Fill(_jet.jet_ctag[0]);
+    _hm.h_tagging[_hm.s_btag]->Fill(_jet.jet_btag[0]);
+    _hm.h_tagging[_hm.jets_info]->Fill(1);
+    _hm.h_tagging[_hm.jets_info]->Fill(4);
+  }
+  else if (_pfo.jet_nvtx_j2 == 2) {
+    _hm.h_tagging[_hm.s_ctag]->Fill(_jet.jet_ctag[1]);
+    _hm.h_tagging[_hm.s_btag]->Fill(_jet.jet_btag[1]);
+    _hm.h_tagging[_hm.jets_info]->Fill(2);
+    _hm.h_tagging[_hm.jets_info]->Fill(4);
+  }
+  else if (_pfo.jet_nvtx_j1 == 1) {
+    _hm.h_tagging[_hm.s_ctag]->Fill(_jet.jet_ctag[0]);
+    _hm.h_tagging[_hm.s_btag]->Fill(_jet.jet_btag[0]);
+    _hm.h_tagging[_hm.jets_info]->Fill(1);
+    _hm.h_tagging[_hm.jets_info]->Fill(5);
+  }
+  else if (_pfo.jet_nvtx_j2 == 1) {
+    _hm.h_tagging[_hm.p_ctag]->Fill(_jet.jet_ctag[1]);
+    _hm.h_tagging[_hm.p_btag]->Fill(_jet.jet_btag[1]);
+    _hm.h_tagging[_hm.jets_info]->Fill(2);
+    _hm.h_tagging[_hm.jets_info]->Fill(5);
+  }
+
+  else if (_pfo.jet_nvtx_j1 != 1 or _pfo.jet_nvtx_j1 != 2) {
+    _hm.h_tagging[_hm.t_ctag]->Fill(_jet.jet_ctag[0]);
+    _hm.h_tagging[_hm.t_btag]->Fill(_jet.jet_btag[0]);
+    _hm.h_tagging[_hm.jets_info]->Fill(5);
+    _hm.h_tagging[_hm.jets_info]->Fill(3);
+  }
+  else if (_pfo.jet_nvtx_j2 != 1 or _pfo.jet_nvtx_j2 != 2) {
+    _hm.h_tagging[_hm.t_ctag]->Fill(_jet.jet_ctag[1]);
+    _hm.h_tagging[_hm.t_btag]->Fill(_jet.jet_btag[1]);
+    _hm.h_tagging[_hm.jets_info]->Fill(5);
+    _hm.h_tagging[_hm.jets_info]->Fill(3);
+  }
+
+
   for ( long unsigned int i=0; i < PFO_Collection.size(); i++ )
   {
     PFO_Info ipfo = PFO_Collection.at(i);
     
-    // std::cout<<ipfo.pfo_vtxpt[0]<<"  "<<ipfo.pfo_vtxpt[1]<<" "<<ipfo.pfo_vtxpt[2]<<std::endl;
-
-    // if(_pfo.pfo_n_j2==1){
-    // std::cout<<"------------------------------------------------>"<<std::endl;
-    // std::cout<<"number1 "<<_pfo.pfo_n_j1<<std::endl;
-    // std::cout<<"number2 "<<_pfo.pfo_n_j2<<std::endl;
-    // std::cout<<"d0 "<<ipfo.pfo_d0<<std::endl;
-    // std::cout<<"z0 "<<ipfo.pfo_z0<<std::endl;
-    // std::cout<<ipfo.pfo_vtxpt[0]<<"  "<<ipfo.pfo_vtxpt[1]<<" "<<ipfo.pfo_vtxpt[2]<<std::endl;
-    // std::cout<<ipfo.pfo_endpt[0]<<"  "<<ipfo.pfo_endpt[1]<<" "<<ipfo.pfo_endpt[2]<<std::endl;
-    // }
-    // else
-    // {
-    // std::cout<<"-------->"<<std::endl;
-    // std::cout<<"number1 "<<_pfo.pfo_n_j1<<std::endl;
-    // std::cout<<"number2 "<<_pfo.pfo_n_j2<<std::endl;
-    // std::cout<<"d0 "<<ipfo.pfo_d0<<std::endl;
-    // std::cout<<"z0 "<<ipfo.pfo_z0<<std::endl;
-    //  std::cout<<ipfo.pfo_vtxpt[0]<<"  "<<ipfo.pfo_vtxpt[1]<<" "<<ipfo.pfo_vtxpt[2]<<std::endl;
-    // std::cout<<ipfo.pfo_endpt[0]<<"  "<<ipfo.pfo_endpt[1]<<" "<<ipfo.pfo_endpt[2]<<std::endl;
-
-    // }
-
     //-----------------------------------//
     Count_Particle(ipfo,321,h_n_reco_particles[0],h_n_gen_particles[0]);
     Count_Particle(ipfo,211,h_n_reco_particles[1],h_n_gen_particles[1]);
