@@ -57,4 +57,25 @@ void KPiID()
   c0->Draw();
   leg->Draw();
 
+
+  TCanvas *c1 = new TCanvas("c1","c1",800,800);
+  gPad->SetGrid(1,1);
+
+  TLegend *leg1 = new TLegend(0.15,0.75,0.45,0.85);
+  for (int i=0; i<3; i++)
+  {
+    if(i==0){
+      h_reco_Pi_pdgcheat[i]->GetYaxis()->SetRangeUser(0,1);
+      h_reco_Pi_pdgcheat[i]->Draw("h");
+    }else{
+      h_reco_Pi_pdgcheat[i]->Draw("hsame");
+    }
+
+    leg1->SetLineColor(0);
+    leg1->AddEntry(h_reco_Pi_pdgcheat[i],process_name[i],"l");
+  }
+  
+  c1->Draw();
+  leg1->Draw();
+
 }
