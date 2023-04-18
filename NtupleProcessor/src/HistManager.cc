@@ -180,10 +180,11 @@ void HistManager::InitializeHists()
     h_tagging[jets_info]->GetXaxis()->SetBinLabel(1,"Events");
     h_tagging[jets_info]->GetXaxis()->SetBinLabel(2,"Jet 1");
     h_tagging[jets_info]->GetXaxis()->SetBinLabel(3,"Jet 2");
-    h_tagging[jets_info]->GetXaxis()->SetBinLabel(4,"not Jet 1/2");
+    h_tagging[jets_info]->GetXaxis()->SetBinLabel(4,"Jets with no vtx");
     h_tagging[jets_info]->GetXaxis()->SetBinLabel(5,"Jets with S");
-    h_tagging[jets_info]->GetXaxis()->SetBinLabel(6,"Jets w/out S");
-    h_tagging[jets_info]->GetXaxis()->SetBinLabel(7,"Events with both jets");
+    h_tagging[jets_info]->GetXaxis()->SetBinLabel(6,"Jets w/o S");
+    h_tagging[jets_info]->GetXaxis()->SetBinLabel(7,"Events with both jets with S");
+    h_tagging[jets_info]->GetXaxis()->SetBinLabel(8,"Events with both jets w/o S");
 
     h_general[n_K_ecal] = new TH1F("n_K_ecal","number of charged Kaons which reached calorimeter",5,-2,2);
     // h_general[nvtx_ctag] = new TH2F("nvtx_ctag",";ctag;nvtx",100,0,1,5,0,5);

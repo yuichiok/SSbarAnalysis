@@ -289,8 +289,11 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
 
   _hm.h_tagging[_hm.jets_info]->Fill(0);
 
-  if(_pfo.pfo_n_j1 != 0 and _pfo.pfo_n_j2 != 0) {
+  if(_pfo.pfo_n_j1 == 2 and _pfo.pfo_n_j2 == 2) {
     _hm.h_tagging[_hm.jets_info]->Fill(6);
+  }
+  if(_pfo.pfo_n_j1 == 1 and _pfo.pfo_n_j2 == 1) {
+    _hm.h_tagging[_hm.jets_info]->Fill(7);
   }
 
   // with SV
@@ -325,14 +328,14 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
   if (_pfo.jet_nvtx_j1 == 0) {
     _hm.h_tagging[_hm.t_ctag]->Fill(_jet.jet_ctag[0]);
     _hm.h_tagging[_hm.t_btag]->Fill(_jet.jet_btag[0]);
+    _hm.h_tagging[_hm.jets_info]->Fill(1);
     _hm.h_tagging[_hm.jets_info]->Fill(3);
-    _hm.h_tagging[_hm.jets_info]->Fill(5);
   }
   if (_pfo.jet_nvtx_j2 == 0) {
     _hm.h_tagging[_hm.t_ctag]->Fill(_jet.jet_ctag[1]);
     _hm.h_tagging[_hm.t_btag]->Fill(_jet.jet_btag[1]);
+    _hm.h_tagging[_hm.jets_info]->Fill(2);
     _hm.h_tagging[_hm.jets_info]->Fill(3);
-    _hm.h_tagging[_hm.jets_info]->Fill(5);
   }
 
 
