@@ -210,6 +210,7 @@ class HistManager
       s_btag,
       t_ctag,
       t_btag,
+      jets_info,
 
       dummy_tagging,
       Last_h_tagging = dummy_tagging
