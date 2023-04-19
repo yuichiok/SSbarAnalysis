@@ -286,16 +286,22 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
 
   CCbarAnalysis(pfot);
 
+  // if(_pfo.jet_nvtx_j1 == 1 or _pfo.jet_nvtx_j2 == 1) {
+  //   cout << "entry " << entry << endl;
+  //   cout << "n_vtx = " << _pfo.jet_nvtx_j1 << " " << _pfo.jet_nvtx_j2 << endl;
+  // }
 
   _hm.h_tagging[_hm.jets_info]->Fill(0);
 
-  if(_pfo.pfo_n_j1 == 2 and _pfo.pfo_n_j2 == 2) {
+  if(_pfo.jet_nvtx_j1 == 2 and _pfo.jet_nvtx_j2 == 2) {
     _hm.h_tagging[_hm.jets_info]->Fill(6);
   }
-  if(_pfo.pfo_n_j1 == 1 and _pfo.pfo_n_j2 == 1) {
+  if(_pfo.jet_nvtx_j1 == 1 and _pfo.jet_nvtx_j2 == 1) {
     _hm.h_tagging[_hm.jets_info]->Fill(7);
   }
-
+  if(_pfo.jet_nvtx_j1 == 0 and _pfo.jet_nvtx_j2 == 0) {
+    _hm.h_tagging[_hm.jets_info]->Fill(8);
+  }
   // with SV
   if (_pfo.jet_nvtx_j1 == 2) {
     _hm.h_tagging[_hm.s_ctag]->Fill(_jet.jet_ctag[0]);
