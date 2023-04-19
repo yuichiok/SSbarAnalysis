@@ -109,6 +109,7 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
     PFOTools mct( &_mc, _config );
     PFOTools pfot( &_mc, &_pfo, _config );
 
+    ientry = entry;
     // cout << "evt: " << entry << endl;
     AnalyzeGenReco(mct,pfot);
 
@@ -913,24 +914,24 @@ void EventAnalyzer::ProcessDoubleTag(PFOTools pfot, PFOTools mct, vector<Bool_t>
 
       if(sign_check[kKaon]){
 
-        /*
-        cout << "===== test out =====" << endl;
-        cout << "MCRelation ID0:  " << pfot.KLPFO[0].pfo_pdgcheat << endl;
-        cout << "Charge     px0:  " << pfot.KLPFO[0].pfo_charge << endl;
-        cout << "Momentum   px0:  " << pfot.KLPFO[0].pfo_px << endl;
-        cout << "Momentum   pmag: " << pfot.KLPFO[0].p_mag << endl;
-        cout << "MCRelation ID1:  " << pfot.KLPFO[1].pfo_pdgcheat << endl;
-        cout << "Charge     px1:  " << pfot.KLPFO[1].pfo_charge << endl;
-        cout << "Momentum   px1:  " << pfot.KLPFO[1].pfo_px << endl;
-        cout << "Momentum   pmag: " << pfot.KLPFO[1].p_mag << endl;
-        cout << "===== test out =====" << endl;
-        */
+        Float_t reco_gen_cos_diff  = cos( abs( pfot.KLPFO[ineg].vt.v3().Theta() - mct.mc_quark[0].vt.v3().Theta() ) );
+        Float_t gen_cos_diff = cos( abs( mct.mc_quark[0].vt.v3().Theta() - mct.mc_quark[1].vt.v3().Theta() ) );
+        Float_t reco_cos_diff = cos( abs( pfot.KLPFO[0].vt.v3().Theta() - pfot.KLPFO[1].vt.v3().Theta() ) );
+
+        cout << "=== " << ientry << " ===" << endl;
+        cout << "reco_gen_cos_diff: " << reco_gen_cos_diff << endl;
+        cout << "jet_theta_diff: "    << cos( abs( _data.jet_theta_diff ) ) << endl;
+        cout << "gen_cos_diff: "      << gen_cos_diff << endl;
+        cout << "reco_cos_diff: "     << reco_cos_diff << endl;
+        // cout << "gen  theta  = " << mct.mc_quark[0].vt.v3().Theta() << endl;
+        // cout << "reco theta0 = " << pfot.KLPFO[ineg].vt.v3().Theta() << endl;
+        // cout << "reco theta1 = " << pfot.KLPFO[1-ineg].vt.v3().Theta() << endl;
 
         _hm.h1[_hm.reco_K_cos]->Fill( pfot.KLPFO[ineg].cos );
         _hm.h1[_hm.reco_K_qcos]->Fill( pfot.KLPFO[ineg].qcos );
         _hm.h1[_hm.reco_K_scos]->Fill( abs(pfot.KLPFO[ineg].cos) * sgn( -_mc.mc_quark_charge[0] ) * mct.mc_quark[0].cos / abs(mct.mc_quark[0].cos) );
 
-        _hm.h1[_hm.reco_K_mom]->Fill( pfot.KLPFO[ineg].p_mag );          
+        _hm.h1[_hm.reco_K_mom]->Fill( pfot.KLPFO[ineg].p_mag );
 
         // cheat
         switch ( abs(pfot.KLPFO[ineg].pfo_pdgcheat) ) {
@@ -1080,6 +1081,7 @@ void EventAnalyzer::Jet_sum_n_acol()
 
   _data.sum_jet_E = _jet.jet_E[0] + _jet.jet_E[1];
   _data.jet_acol  = cosacol;
+  _data.jet_theta_diff = std::abs( jetvt[0].v3().theta() - jetvt[1].v3().theta() );
 
   _hm.h1[_hm.reco_sum_jetE]->Fill( _data.sum_jet_E );
   _hm.h1[_hm.reco_jet_sep]->Fill( _data.jet_acol );
