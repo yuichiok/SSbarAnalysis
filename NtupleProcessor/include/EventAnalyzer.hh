@@ -89,6 +89,8 @@ class EventAnalyzer
 
   private:
 
+    Int_t ientry = -1;
+
     MC_QQbar      _mc      ;
     Jet_QQbar     _jet     ;
     PFO_QQbar     _pfo     ;
