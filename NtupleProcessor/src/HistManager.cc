@@ -171,10 +171,12 @@ void HistManager::InitializeHists()
     h_tagging[p_ctag] = new TH1F("p_ctag","ctag for primary vertex",100,0,1.);
     h_tagging[s_ctag] = new TH1F("s_ctag","ctag for secondary vertex",100,0,1.);
     h_tagging[t_ctag] = new TH1F("t_ctag","ctag for no vertex",100,0,1.);
+    h_tagging[tt_ctag]= new TH1F("tt_ctag","ctag for no vertex (double)",100,0,1.);
     
     h_tagging[p_btag] = new TH1F("p_btag","btag for primary vertex",100,0,1.);
     h_tagging[s_btag] = new TH1F("s_btag","btag for secondary vertex",100,0,1.);
     h_tagging[t_btag] = new TH1F("t_btag","btag for no vertex",100,0,1.);
+    h_tagging[tt_btag]= new TH1F("tt_btag","btag for no vertex (double)",100,0,1.);
 
     h_tagging[jets_info] = new TH1F("jets_info","Info", 10,0,10);
     h_tagging[jets_info]->GetXaxis()->SetBinLabel(1,"Events");

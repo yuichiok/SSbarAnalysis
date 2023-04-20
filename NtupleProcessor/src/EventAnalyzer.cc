@@ -344,6 +344,14 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
     _hm.h_tagging[_hm.jets_info]->Fill(3);
   }
 
+  // w/o Vertex both
+  if (_pfo.jet_nvtx_j1 == 0 and _pfo.jet_nvtx_j2 == 0){
+    _hm.h_tagging[_hm.tt_ctag]->Fill(_jet.jet_ctag[0]);
+    _hm.h_tagging[_hm.tt_btag]->Fill(_jet.jet_btag[0]);
+    _hm.h_tagging[_hm.tt_ctag]->Fill(_jet.jet_ctag[1]);
+    _hm.h_tagging[_hm.tt_btag]->Fill(_jet.jet_btag[1]);
+  }
+
 
   for ( long unsigned int i=0; i < PFO_Collection.size(); i++ )
   {

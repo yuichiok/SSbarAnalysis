@@ -210,6 +210,8 @@ class HistManager
       s_btag,
       t_ctag,
       t_btag,
+      tt_ctag,
+      tt_btag,
       jets_info,
 
       dummy_tagging,
