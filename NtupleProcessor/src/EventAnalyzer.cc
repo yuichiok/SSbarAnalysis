@@ -566,7 +566,7 @@ Bool_t EventAnalyzer::Cut_ACol ( VectorTools v[2] )
 {
   Float_t cosacol = std::cos( VectorTools::GetThetaBetween( v[0].v3(), v[1].v3() ) );
 
-  return (cosacol > 0.95);
+  return (cosacol < -0.95);
 }
 
 Bool_t EventAnalyzer::Cut_ISR ( VectorTools v[2] )
@@ -914,18 +914,7 @@ void EventAnalyzer::ProcessDoubleTag(PFOTools pfot, PFOTools mct, vector<Bool_t>
 
       if(sign_check[kKaon]){
 
-        Float_t reco_gen_cos_diff  = cos( abs( pfot.KLPFO[ineg].vt.v3().Theta() - mct.mc_quark[0].vt.v3().Theta() ) );
-        Float_t gen_cos_diff = cos( abs( mct.mc_quark[0].vt.v3().Theta() - mct.mc_quark[1].vt.v3().Theta() ) );
-        Float_t reco_cos_diff = cos( abs( pfot.KLPFO[0].vt.v3().Theta() - pfot.KLPFO[1].vt.v3().Theta() ) );
-
-        cout << "=== " << ientry << " ===" << endl;
-        cout << "reco_gen_cos_diff: " << reco_gen_cos_diff << endl;
-        cout << "jet_theta_diff: "    << cos( abs( _data.jet_theta_diff ) ) << endl;
-        cout << "gen_cos_diff: "      << gen_cos_diff << endl;
-        cout << "reco_cos_diff: "     << reco_cos_diff << endl;
-        // cout << "gen  theta  = " << mct.mc_quark[0].vt.v3().Theta() << endl;
-        // cout << "reco theta0 = " << pfot.KLPFO[ineg].vt.v3().Theta() << endl;
-        // cout << "reco theta1 = " << pfot.KLPFO[1-ineg].vt.v3().Theta() << endl;
+        Float_t reco_gen_cos_diff  = cos( VectorTools::GetThetaBetween(pfot.KLPFO[ineg].vt.v3(), mct.mc_quark[0].vt.v3())  );
 
         _hm.h1[_hm.reco_K_cos]->Fill( pfot.KLPFO[ineg].cos );
         _hm.h1[_hm.reco_K_qcos]->Fill( pfot.KLPFO[ineg].qcos );
@@ -997,6 +986,8 @@ void EventAnalyzer::ProcessDoubleTag(PFOTools pfot, PFOTools mct, vector<Bool_t>
       _hm.h1[_hm.reco_Pi_cos]->Fill( pfot.PiLPFO[ineg].cos );
       _hm.h1[_hm.reco_Pi_qcos]->Fill( pfot.PiLPFO[ineg].qcos );
       _hm.h1[_hm.reco_Pi_scos]->Fill( abs(pfot.PiLPFO[ineg].cos) * sgn( -_mc.mc_quark_charge[1] ) * mct.mc_quark[1].cos / abs(mct.mc_quark[1].cos) );
+
+      _hm.h1[_hm.reco_Pi_mom]->Fill( pfot.PiLPFO[ineg].p_mag );
 
       // cheat
       switch ( abs(pfot.PiLPFO[ineg].pfo_pdgcheat) ) {
