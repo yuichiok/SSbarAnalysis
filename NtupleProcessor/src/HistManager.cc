@@ -46,14 +46,18 @@ void HistManager::InitializeHists()
     h1[reco_K_scos]     = new TH1F("h_reco_K_scos",";LPFO Kaon cos#theta; Entries",cos_bin,-1,1);
     h1[reco_K_mom]      = new TH1F("h_reco_K_mom",";LPFO Kaon momentum (GeV); Entries",140,10,150);
     h1[reco_K_pdgcheat] = new TH1F("h_reco_K_pdgcheat",";LPFO Kaon pdgcheat (Pion, Kaon, Proton, others); Entries",4,-0.5,3.5);
+    h1[gen_reco_K_sep_cos] = new TH1F("h_gen_reco_K_sep_cos",";Kaon cos#theta_{gen-LPFOK}; Entries",cos_bin,-1,1);
+    h1[jet_reco_K_sep_cos] = new TH1F("h_jet_reco_K_sep_cos",";Kaon cos#theta_{jet-LPFOK}; Entries",cos_bin,-1,1);
 
     h1[reco_Pi_cos]      = new TH1F("h_reco_Pi_cos",";LPFO Pion cos#theta; Entries",cos_bin,-1,1);
     h1[reco_Pi_qcos]     = new TH1F("h_reco_Pi_qcos",";LPFO Pion cos#theta; Entries",cos_bin,-1,1);
     h1[reco_Pi_scos]     = new TH1F("h_reco_Pi_scos",";LPFO Pion cos#theta; Entries",cos_bin,-1,1);
     h1[reco_Pi_mom]      = new TH1F("h_reco_Pi_mom",";LPFO Pion momentum (GeV); Entries",140,10,150);
     h1[reco_Pi_pdgcheat] = new TH1F("h_reco_Pi_pdgcheat",";LPFO Pion pdgcheat (Pion, Kaon, Proton, others); Entries",4,-0.5,3.5);
+    h1[gen_reco_Pi_sep_cos] = new TH1F("h_gen_reco_Pi_sep_cos",";Kaon cos#theta_{gen-LPFOPi}; Entries",cos_bin,-1,1);
+    h1[jet_reco_Pi_sep_cos] = new TH1F("h_jet_reco_Pi_sep_cos",";Kaon cos#theta_{jet-LPFOPi}; Entries",cos_bin,-1,1);
 
-    h1[gen_reco_K_sep_cos] = new TH1F("h_gen_reco_K_sep_cos",";Kaon cos#theta_{gen-reco}; Entries",cos_bin,-1,1);
+    h1[gen_reco_K_sep_mincos] = new TH1F("h_gen_reco_K_sep_mincos",";Kaon cos#theta_{gen-reco}; Entries",cos_bin,-1,1);
 
   // ISR parameters
     h1[reco_sum_jetE]   = new TH1F("h_reco_sum_jetE", ";Visible Energy (GeV);", 100, 0, 300);
