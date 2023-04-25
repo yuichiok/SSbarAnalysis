@@ -571,6 +571,7 @@ struct Tree_Data {
   public:
     Float_t sum_jet_E = -100;
     Float_t jet_acol  = -100;
+    Float_t jet_theta_diff = -100;
 
     Int_t dEdx_pdg_match = -1;
 

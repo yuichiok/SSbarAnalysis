@@ -40,12 +40,20 @@ class HistManager
       reco_K_cos,
       reco_K_qcos,
       reco_K_scos,
+      reco_K_mom,
+      reco_K_pdgcheat,
+      gen_reco_K_sep_cos,
+      jet_reco_K_sep_cos,
 
       reco_Pi_cos,
       reco_Pi_qcos,
       reco_Pi_scos,
+      reco_Pi_mom,
+      reco_Pi_pdgcheat,
+      gen_reco_Pi_sep_cos,
+      jet_reco_Pi_sep_cos,
 
-      gen_reco_K_sep_cos,
+      gen_reco_K_sep_mincos,
 
       reco_sum_jetE,
       reco_jet_sep,
