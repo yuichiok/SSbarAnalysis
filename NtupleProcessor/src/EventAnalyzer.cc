@@ -177,7 +177,7 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
       for ( auto iSPFO_Pi : pfot.SPFOs_Pi[ijet] ){
         Bool_t charge_opposite = iSPFO_Pi.pfo_charge * pfot.PiLPFO[ijet].pfo_charge < 0;
         Bool_t momentum_above  = iSPFO_Pi.p_mag > 10;
-        if( charge_opposite && momentum_above && check_KSLPFO_PiLPFO ) is_gluon[kPion][ijet] = true;
+        if( (charge_opposite && momentum_above) || check_KSLPFO_PiLPFO ) is_gluon[kPion][ijet] = true;
       }
 
     }
