@@ -139,31 +139,6 @@ class HistManager
     };
     TH2F * h2_dEdx[Last_h2_dEdx];
 
-    enum h1_K_cheat{
-      d0_K_cheat_primary,
-      d0_sigma_K_cheat_primary,
-      d0_sigma_d0_K_cheat_primary,
-
-      z0_K_cheat_primary,
-      z0_sigma_K_cheat_primary,
-      z0_sigma_z0_K_cheat_primary,
-
-      d0_K_cheat_secondary,
-      d0_sigma_K_cheat_secondary,
-      d0_sigma_d0_K_cheat_secondary,
-
-      z0_K_cheat_secondary,
-      z0_sigma_K_cheat_secondary,
-      z0_sigma_z0_K_cheat_secondary,
-
-      pmag_K_cheat,
-      cos_theta_K_cheat,
-
-      dummy_K_cheat,
-      Last_h1_K_cheat = dummy_K_cheat
-    };
-    TH1F * h1_K_cheat[Last_h1_K_cheat];
-
     enum h1_K_reco{
       d0_K_reco_primary,
       d0_sigma_K_reco_primary,
@@ -210,8 +185,6 @@ class HistManager
       s_btag,
       t_ctag,
       t_btag,
-      tt_ctag,
-      tt_btag,
       jets_info,
 
       dummy_tagging,
@@ -236,7 +209,6 @@ class HistManager
     TList* hList2                = new TList();
     TList* hList2_dEdx           = new TList();
 
-    TList* hList_K_cheat         = new TList();
     TList* hList_K_reco          = new TList();
     TList* hList_general         = new TList();
     TList* hList_tagging         = new TList();

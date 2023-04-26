@@ -117,26 +117,6 @@ void HistManager::InitializeHists()
     h2_dEdx[gen_p_reco_K_KdEdx_dist_cos]  = new TH2F("h2_gen_p_reco_K_KdEdx_dist_cos"  ,";cos#theta;K #frac{dE}{dx} dist", 100, -1, 1, 100, -20, 20);
 
   // Own
-    h1_K_cheat[d0_K_cheat_primary] = new TH1F("d0_K_cheat_primary","Cheated primary K;d_0, [mm];",4000,-2,2);
-    h1_K_cheat[d0_sigma_K_cheat_primary] = new TH1F("d0_sigma_K_cheat_primary"  ,"Cheated primary K;#sigma(d_0), [mm];",100,0,0.1);
-    h1_K_cheat[d0_sigma_d0_K_cheat_primary] = new TH1F("d0_sigma_d0_K_cheat_primary"  ,"Cheated primary K;#frac{d0}{#sigma(d0)};",400,-200,200);
-
-    h1_K_cheat[z0_K_cheat_primary] = new TH1F("z0_K_cheat_primary"  ,"Cheated primary K;z_0, [mm];",4000,-2,2);
-    h1_K_cheat[z0_sigma_K_cheat_primary] = new TH1F("z0_sigma_K_cheat_primary"  ,"Cheated primary K;#sigma(z_0), [mm];",100,0,0.1);
-    h1_K_cheat[z0_sigma_z0_K_cheat_primary] = new TH1F("z0_sigma_z0_K_cheat_primary"  ,"Cheated primary K;#frac{z0}{#sigma(z0)};",400,-200,200);
-
-    h1_K_cheat[d0_K_cheat_secondary] = new TH1F("d0_K_cheat_secondary","Cheated secondary K;d_0, [mm];",4000,-2,2);
-    h1_K_cheat[d0_sigma_K_cheat_secondary] = new TH1F("d0_sigma_K_cheat_secondary"  ,"Cheated secondary K;#sigma(d_0), [mm];",100,0,0.1);
-    h1_K_cheat[d0_sigma_d0_K_cheat_secondary] = new TH1F("d0_sigma_d0_K_cheat_secondary"  ,"Cheated secondary K;#frac{d0}{#sigma(d0)};",400,-200,200);
-
-    h1_K_cheat[z0_K_cheat_secondary] = new TH1F("z0_K_cheat_secondary"  ,"Cheated secondary K;z_0, [mm];",4000,-2,2);
-    h1_K_cheat[z0_sigma_K_cheat_secondary] = new TH1F("z0_sigma_K_cheat_secondary"  ,"Cheated secondary K;#sigma(z_0), [mm];",100,0,0.1);
-    h1_K_cheat[z0_sigma_z0_K_cheat_secondary] = new TH1F("z0_sigma_z0_K_cheat_secondary"  ,"Cheated secondary K;#frac{z0}{#sigma(z0)};",400,-200,200);
-
-
-    h1_K_cheat[pmag_K_cheat] = new TH1F("pmag_K_cheat"  ,"Cheated K;p, [GeV];",100,0,100); 
-    h1_K_cheat[cos_theta_K_cheat] = new TH1F("cos_theta_K_cheat"  ,"Cheated K;cos#theta;",200,-1,1); 
-
 
     h1_K_reco[d0_K_reco_primary] = new TH1F("d0_K_reco_primary"  ,"Reconstructed primary K;d_0, [mm];",2000,0,2);
     h1_K_reco[d0_sigma_K_reco_primary] = new TH1F("d0_sigma_K_reco_primary"  ,"Reconstructed primary K;#sigma(d_0), [mm];",100,0,0.1);
@@ -146,7 +126,7 @@ void HistManager::InitializeHists()
     h1_K_reco[z0_sigma_K_reco_primary] = new TH1F("z0_sigma_K_reco_primary"  ,"Reconstructed primary K;#sigma(z_0), [mm];",100,0,0.1);
     h1_K_reco[z0_sigma_z0_K_reco_primary] = new TH1F("z0_sigma_z0_K_reco_primary"  ,"Reconstructed primary K;#frac{z0}{#sigma(z0)};",200,0,200);
 
-    h1_K_reco[d0_K_reco_secondary] = new TH1F("d0_K_reco_secondary"  ,"Reconstructed secondary K;d_0, [um];",2000,0,2);
+    h1_K_reco[d0_K_reco_secondary] = new TH1F("d0_K_reco_secondary"  ,"Reconstructed secondary K;d_0, [mm];",2000,0,2);
     h1_K_reco[d0_sigma_K_reco_secondary] = new TH1F("d0_sigma_K_reco_secondary"  ,"Reconstructed secondary K;#sigma(d_0), [mm];",100,0,0.1);
     h1_K_reco[d0_sigma_d0_K_reco_secondary] = new TH1F("d0_sigma_d0_K_reco_secondary"  ,"Reconstructed secondary K;#frac{d0}{#sigma(d0)};",200,0,200);
 
@@ -171,12 +151,10 @@ void HistManager::InitializeHists()
     h_tagging[p_ctag] = new TH1F("p_ctag","ctag for primary vertex",100,0,1.);
     h_tagging[s_ctag] = new TH1F("s_ctag","ctag for secondary vertex",100,0,1.);
     h_tagging[t_ctag] = new TH1F("t_ctag","ctag for no vertex",100,0,1.);
-    h_tagging[tt_ctag]= new TH1F("tt_ctag","ctag for no vertex (double)",100,0,1.);
     
     h_tagging[p_btag] = new TH1F("p_btag","btag for primary vertex",100,0,1.);
     h_tagging[s_btag] = new TH1F("s_btag","btag for secondary vertex",100,0,1.);
     h_tagging[t_btag] = new TH1F("t_btag","btag for no vertex",100,0,1.);
-    h_tagging[tt_btag]= new TH1F("tt_btag","btag for no vertex (double)",100,0,1.);
 
     h_tagging[jets_info] = new TH1F("jets_info","Info", 10,0,10);
     h_tagging[jets_info]->GetXaxis()->SetBinLabel(1,"Events");
@@ -187,7 +165,6 @@ void HistManager::InitializeHists()
     h_tagging[jets_info]->GetXaxis()->SetBinLabel(6,"Jets w/o S");
     h_tagging[jets_info]->GetXaxis()->SetBinLabel(7,"Events with both jets with S");
     h_tagging[jets_info]->GetXaxis()->SetBinLabel(8,"Events with both jets w/o S");
-    h_tagging[jets_info]->GetXaxis()->SetBinLabel(9,"Events with both jets w/o vtx");
 
     h_general[n_K_ecal] = new TH1F("n_K_ecal","number of charged Kaons which reached calorimeter",5,-2,2);
     // h_general[nvtx_ctag] = new TH2F("nvtx_ctag",";ctag;nvtx",100,0,1,5,0,5);
@@ -222,10 +199,6 @@ void HistManager::Hist2List()
     hList2_dEdx->Add(ih);
   }
 
-  for (auto ih : h1_K_cheat) {
-    hList_K_cheat->Add(ih);
-  }
-
   for (auto ih : h1_K_reco) {
     hList_K_reco->Add(ih);
   }
@@ -251,9 +224,6 @@ void HistManager::WriteLists( TFile * output)
   TDirectory * d_own = output->mkdir("Own");
     d_own->cd();
     hList_general->Write();
-  TDirectory * d_cheat = d_own->mkdir("Cheated");
-    d_cheat->cd();
-    hList_K_cheat->Write();
   
   TDirectory * d_reco = d_own->mkdir("Reconstructed");
     d_reco->cd();
