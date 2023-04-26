@@ -286,22 +286,16 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
 
   CCbarAnalysis(pfot);
 
-  // if(_pfo.jet_nvtx_j1 == 1 or _pfo.jet_nvtx_j2 == 1) {
-  //   cout << "entry " << entry << endl;
-  //   cout << "n_vtx = " << _pfo.jet_nvtx_j1 << " " << _pfo.jet_nvtx_j2 << endl;
-  // }
 
   _hm.h_tagging[_hm.jets_info]->Fill(0);
 
-  if(_pfo.jet_nvtx_j1 == 2 and _pfo.jet_nvtx_j2 == 2) {
+  if(_pfo.pfo_n_j1 == 2 and _pfo.pfo_n_j2 == 2) {
     _hm.h_tagging[_hm.jets_info]->Fill(6);
   }
-  if(_pfo.jet_nvtx_j1 == 1 and _pfo.jet_nvtx_j2 == 1) {
+  if(_pfo.pfo_n_j1 == 1 and _pfo.pfo_n_j2 == 1) {
     _hm.h_tagging[_hm.jets_info]->Fill(7);
   }
-  if(_pfo.jet_nvtx_j1 == 0 and _pfo.jet_nvtx_j2 == 0) {
-    _hm.h_tagging[_hm.jets_info]->Fill(8);
-  }
+
   // with SV
   if (_pfo.jet_nvtx_j1 == 2) {
     _hm.h_tagging[_hm.s_ctag]->Fill(_jet.jet_ctag[0]);
@@ -342,14 +336,6 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
     _hm.h_tagging[_hm.t_btag]->Fill(_jet.jet_btag[1]);
     _hm.h_tagging[_hm.jets_info]->Fill(2);
     _hm.h_tagging[_hm.jets_info]->Fill(3);
-  }
-
-  // w/o Vertex both
-  if (_pfo.jet_nvtx_j1 == 0 and _pfo.jet_nvtx_j2 == 0){
-    _hm.h_tagging[_hm.tt_ctag]->Fill(_jet.jet_ctag[0]);
-    _hm.h_tagging[_hm.tt_btag]->Fill(_jet.jet_btag[0]);
-    _hm.h_tagging[_hm.tt_ctag]->Fill(_jet.jet_ctag[1]);
-    _hm.h_tagging[_hm.tt_btag]->Fill(_jet.jet_btag[1]);
   }
 
 
@@ -929,14 +915,14 @@ void EventAnalyzer::CCbarAnalysis(PFOTools pfot)
   for ( long unsigned int i=0; i < PFO_Collection.size(); i++ )
   {
     PFO_Info ipfo = PFO_Collection.at(i);
-
     Int_t imatch = ipfo.pfo_match;
-    if(ipfo.pfo_vtx==1){
+    // < new >
+    if(ipfo.pfo_vtx==0){
       nprong[imatch][0]++;
-    }else if(ipfo.pfo_vtx==2){
+    }else if(ipfo.pfo_vtx==1){
       nprong[imatch][1]++;
     }
-
+    // </ new >
   }
 
   for ( long unsigned int i=0; i < PFO_Collection.size(); i++ )
@@ -947,100 +933,31 @@ void EventAnalyzer::CCbarAnalysis(PFOTools pfot)
     //---------------Own-----------------//
     if(ipfo.p_mag>5)
     {
-      Bool_t base_bool = ( abs(ipfo.pfo_pdgcheat)==321 and ipfo.pfo_ntracks==1 );
-
-      if( nprong[imatch][0]==1 && ipfo.pfo_vtx==1 ){
+      if( nprong[imatch][0]==1 && ipfo.pfo_vtx==0 ){
         _hm.h_PS[_hm.d0_P_single]->Fill(TMath::Abs(ipfo.pfo_d0));
         _hm.h_PS[_hm.z0_P_single]->Fill(TMath::Abs(ipfo.pfo_z0));
-      }else if( nprong[imatch][1]==1 && ipfo.pfo_vtx==2 ){
+      }else if( nprong[imatch][1]==1 && ipfo.pfo_vtx==1 ){
         _hm.h_PS[_hm.d0_S_single]->Fill(TMath::Abs(ipfo.pfo_d0));
         _hm.h_PS[_hm.z0_S_single]->Fill(TMath::Abs(ipfo.pfo_z0));
-      }else if ( nprong[imatch][0]>1 && ipfo.pfo_vtx==1 ){
+      }else if ( nprong[imatch][0]>1 && ipfo.pfo_vtx==0 ){
         _hm.h_PS[_hm.d0_P_mult]->Fill(TMath::Abs(ipfo.pfo_d0));
         _hm.h_PS[_hm.z0_P_mult]->Fill(TMath::Abs(ipfo.pfo_z0));
-      }else if ( nprong[imatch][1]>1 && ipfo.pfo_vtx==2 ){
+      }else if ( nprong[imatch][1]>1 && ipfo.pfo_vtx==1 ){
         _hm.h_PS[_hm.d0_S_mult]->Fill(TMath::Abs(ipfo.pfo_d0));
         _hm.h_PS[_hm.z0_S_mult]->Fill(TMath::Abs(ipfo.pfo_z0));
       }
 
-
-/*
-      if( base_bool and _pfo.pfo_n_j1==1 and ipfo.pfo_match==0 )
-      {
-        if( ipfo.pfo_vtx==1 )
-        {
-          _hm.h_PS[_hm.d0_P_single]->Fill(TMath::Abs(ipfo.pfo_d0));
-          _hm.h_PS[_hm.z0_P_single]->Fill(TMath::Abs(ipfo.pfo_z0));
-        }
-        else if( ipfo.pfo_vtx>=2 )
-        {
-          _hm.h_PS[_hm.d0_S_single]->Fill(TMath::Abs(ipfo.pfo_d0));
-          _hm.h_PS[_hm.z0_S_single]->Fill(TMath::Abs(ipfo.pfo_z0));
-        }
-      }
-      else if( base_bool and _pfo.pfo_n_j2==1 and ipfo.pfo_match==1 )
-      {
-        if( ipfo.pfo_vtx==1 )
-        {
-          _hm.h_PS[_hm.d0_P_single]->Fill(TMath::Abs(ipfo.pfo_d0));
-          _hm.h_PS[_hm.z0_P_single]->Fill(TMath::Abs(ipfo.pfo_z0));
-        }
-        else if( ipfo.pfo_vtx>=2 )
-        {
-          _hm.h_PS[_hm.d0_S_single]->Fill(TMath::Abs(ipfo.pfo_d0));
-          _hm.h_PS[_hm.z0_S_single]->Fill(TMath::Abs(ipfo.pfo_z0));
-        }
-      }
-      else
-      {
-        if( ipfo.pfo_vtx==1 )
-        {
-          _hm.h_PS[_hm.d0_P_mult]->Fill(TMath::Abs(ipfo.pfo_d0));
-          _hm.h_PS[_hm.z0_P_mult]->Fill(TMath::Abs(ipfo.pfo_z0));
-        }
-        else if( ipfo.pfo_vtx>=2 )
-        {
-          _hm.h_PS[_hm.d0_S_mult]->Fill(TMath::Abs(ipfo.pfo_d0));
-          _hm.h_PS[_hm.z0_S_mult]->Fill(TMath::Abs(ipfo.pfo_z0));
-        }
-      }
-*/
-      
-    /*
-      if(abs(ipfo.pfo_pdgcheat)==321 and ipfo.pfo_vtx==1)
+      if(abs(ipfo.pfo_pdgcheat)==321)
       {
         _hm.h_general[_hm.n_K_ecal]->Fill(ipfo.pfo_charge);
       }
-      // cheat
-      if(abs(ipfo.pfo_pdgcheat)==321 and ipfo.pfo_vtx==1 and ipfo.pfo_ntracks==1)
-      {
-        _hm.h1_K_cheat[_hm.d0_K_cheat_primary]->Fill(TMath::Abs(ipfo.pfo_d0));
-        _hm.h1_K_cheat[_hm.d0_sigma_K_cheat_primary]->Fill(TMath::Sqrt(ipfo.pfo_d0error));
-        _hm.h1_K_cheat[_hm.d0_sigma_d0_K_cheat_primary]->Fill(TMath::Abs(ipfo.pfo_d0)/TMath::Sqrt(ipfo.pfo_d0error));
-        
-        _hm.h1_K_cheat[_hm.z0_K_cheat_primary]->Fill(TMath::Abs(ipfo.pfo_z0));
-        _hm.h1_K_cheat[_hm.z0_sigma_K_cheat_primary]->Fill(TMath::Sqrt(ipfo.pfo_z0error));
-        _hm.h1_K_cheat[_hm.z0_sigma_z0_K_cheat_primary]->Fill(TMath::Abs(ipfo.pfo_z0)/TMath::Sqrt(ipfo.pfo_z0error));
-      }
-
-      if(abs(ipfo.pfo_pdgcheat)==321 and ipfo.pfo_vtx>=2 and ipfo.pfo_ntracks==1)
-      {
-        _hm.h1_K_cheat[_hm.d0_K_cheat_secondary]->Fill(TMath::Abs(ipfo.pfo_d0));
-        _hm.h1_K_cheat[_hm.d0_sigma_K_cheat_secondary]->Fill(TMath::Sqrt(ipfo.pfo_d0error));
-        _hm.h1_K_cheat[_hm.d0_sigma_d0_K_cheat_secondary]->Fill(TMath::Abs(ipfo.pfo_d0)/TMath::Sqrt(ipfo.pfo_d0error));
-        
-        _hm.h1_K_cheat[_hm.z0_K_cheat_secondary]->Fill(TMath::Abs(ipfo.pfo_z0));
-        _hm.h1_K_cheat[_hm.z0_sigma_K_cheat_secondary]->Fill(TMath::Sqrt(ipfo.pfo_z0error));
-        _hm.h1_K_cheat[_hm.z0_sigma_z0_K_cheat_secondary]->Fill(TMath::Abs(ipfo.pfo_z0)/TMath::Sqrt(ipfo.pfo_z0error));
-      }
-
-      if(abs(ipfo.pfo_pdgcheat)==321 and ipfo.pfo_ntracks==1)
-      {
-        _hm.h1_K_cheat[_hm.pmag_K_cheat]->Fill(ipfo.p_mag);
-        _hm.h1_K_cheat[_hm.cos_theta_K_cheat]->Fill(ipfo.qcos);
-      }
-      // reco
-      if(PFOTools::isKaon(ipfo) and ipfo.pfo_vtx==1 and ipfo.pfo_ntracks==1)
+      
+      // < new >
+      // charged kaons <=> abs(ipfo.pfo_pdgcheat)==321
+      // charged kaons of A category <=> abs(ipfo.pfo_pdgcheat)==321 and ipfo.pfo_vtx==0
+      // charged kaons of A category which have a multiple prong <=> abs(ipfo.pfo_pdgcheat)==321 and ipfo.pfo_vtx==0 and nprong[imatch][0]>1
+      // => have only primary vertex      
+      if(abs(ipfo.pfo_pdgcheat)==321 and ipfo.pfo_vtx==0 and nprong[imatch][0]>1)
       {
         _hm.h1_K_reco[_hm.d0_K_reco_primary]->Fill(TMath::Abs(ipfo.pfo_d0));
         _hm.h1_K_reco[_hm.d0_sigma_K_reco_primary]->Fill(TMath::Sqrt(ipfo.pfo_d0error));
@@ -1051,7 +968,12 @@ void EventAnalyzer::CCbarAnalysis(PFOTools pfot)
         _hm.h1_K_reco[_hm.z0_sigma_z0_K_reco_primary]->Fill(TMath::Abs(ipfo.pfo_z0)/TMath::Sqrt(ipfo.pfo_z0error));
       }
 
-      if(PFOTools::isKaon(ipfo) and ipfo.pfo_vtx>=2 and ipfo.pfo_ntracks==1)
+      // charged kaons <=> abs(ipfo.pfo_pdgcheat)==321
+      // charged kaons of B or C category <=> abs(ipfo.pfo_pdgcheat)==321 and ipfo.pfo_vtx==1
+      // nprong[imatch][1]>1 => not a single prong => not a category C => charged kaons of B category
+      // charged kaons of B category <=> abs(ipfo.pfo_pdgcheat)==321 and ipfo.pfo_vtx==1 and nprong[imatch][1]>1
+      // => have primary and secondary vertices
+      if(abs(ipfo.pfo_pdgcheat)==321 and ipfo.pfo_vtx==1 and nprong[imatch][1]>1)
       {
         _hm.h1_K_reco[_hm.d0_K_reco_secondary]->Fill(TMath::Abs(ipfo.pfo_d0));
         _hm.h1_K_reco[_hm.d0_sigma_K_reco_secondary]->Fill(TMath::Sqrt(ipfo.pfo_d0error));
@@ -1061,13 +983,12 @@ void EventAnalyzer::CCbarAnalysis(PFOTools pfot)
         _hm.h1_K_reco[_hm.z0_sigma_K_reco_secondary]->Fill(TMath::Sqrt(ipfo.pfo_z0error));
         _hm.h1_K_reco[_hm.z0_sigma_z0_K_reco_secondary]->Fill(TMath::Abs(ipfo.pfo_z0)/TMath::Sqrt(ipfo.pfo_z0error));
       }
-
-      if(PFOTools::isKaon(ipfo) and ipfo.pfo_ntracks==1)
+      // </ new >
+      if(abs(ipfo.pfo_pdgcheat)==321)
       {
         _hm.h1_K_reco[_hm.pmag_K_reco]->Fill(ipfo.p_mag);
         _hm.h1_K_reco[_hm.cos_theta_K_reco]->Fill(ipfo.qcos);
       }
-      */
 
     }
 
