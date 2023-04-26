@@ -916,13 +916,13 @@ void EventAnalyzer::CCbarAnalysis(PFOTools pfot)
   {
     PFO_Info ipfo = PFO_Collection.at(i);
     Int_t imatch = ipfo.pfo_match;
-    // < new >
+
     if(ipfo.pfo_vtx==0){
       nprong[imatch][0]++;
     }else if(ipfo.pfo_vtx==1){
       nprong[imatch][1]++;
     }
-    // </ new >
+
   }
 
   for ( long unsigned int i=0; i < PFO_Collection.size(); i++ )
