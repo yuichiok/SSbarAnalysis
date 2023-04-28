@@ -371,7 +371,7 @@ void pq_polar( TFile *file, modeLPFO mlpfo )
   StylePad(pad0,0,0.12,0,0.15);
 
   // h_reco_LPFO_pq_cos->GetYaxis()->SetRangeUser(0,50E3);
-  h_reco_LPFO_pq_cos->SetTitle(";cos#theta_{#pi^{-}};a.u.");
+  h_reco_LPFO_pq_cos->SetTitle(";cos#theta_{" + LPFOLabel[mlpfo] + "^{-}};a.u.");
   h_reco_LPFO_pq_cos->Draw("h");
   h_reco_LPFO_qcos_eff_corr->Draw("hsame");
   h_reco_LPFO_scos_eff_corr->Draw("hsame");
@@ -437,9 +437,9 @@ void main_pq()
 
   // TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.uu.KPiLPFO.PFOp15.LPFOp15_pNaN.tpc0.hists.all.root","READ");
 
-  TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.dd.KPiLPFO.PFOp15.LPFOp15_pNaN.tpc0.hists.all.root","READ");
+  // TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.dd.KPiLPFO.PFOp15.LPFOp15_pNaN.tpc0.hists.all.root","READ");
   
-  // TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ss.KPiLPFO.PFOp15.LPFOp15_pNaN.tpc0.hists.all.root","READ");
+  TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ss.KPiLPFO.PFOp15.LPFOp15_pNaN.tpc0.hists.all.root","READ");
 
   // mix
   // TFile *file = new TFile("../rootfiles/merged/rv02-02.sv0e-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ud.KPiLPFO.PFOp15.LPFOp15_pNaN.tpc0.hists.all.root","READ");
