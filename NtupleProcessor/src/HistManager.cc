@@ -49,6 +49,16 @@ void HistManager::InitializeHists()
     h1[gen_reco_K_sep_cos] = new TH1F("h_gen_reco_K_sep_cos",";Kaon cos#theta_{gen-LPFOK}; Entries",cos_bin,-1,1);
     h1[jet_reco_K_sep_cos] = new TH1F("h_jet_reco_K_sep_cos",";Kaon cos#theta_{jet-LPFOK}; Entries",cos_bin,-1,1);
 
+    h1[good_reco_Pi_endpt]       = new TH1F("h_good_reco_Pi_endpt",";vtx endpt (good); Entries",1000,2000,4000);
+    h1[good_reco_Pi_tpchits]     = new TH1F("h_good_reco_Pi_tpchits",";TPC nhits (good); Entries",221,0,221);
+    h1[good_reco_Pi_pidedx_dist] = new TH1F("h_good_reco_Pi_pidedx_dist",";#pi #frac{dE}{dx} dist (good); Entries",100,-20,20);
+    h1[good_reco_Pi_kdedx_dist]  = new TH1F("h_good_reco_Pi_kdedx_dist",";K #frac{dE}{dx} dist (good); Entries",100,-20,20);
+
+    h1[bad_reco_Pi_endpt]       = new TH1F("h_bad_reco_Pi_endpt",";vtx endpt (bad); Entries",1000,2000,4000);
+    h1[bad_reco_Pi_tpchits]     = new TH1F("h_bad_reco_Pi_tpchits",";TPC nhits (bad); Entries",221,0,221);
+    h1[bad_reco_Pi_pidedx_dist] = new TH1F("h_bad_reco_Pi_pidedx_dist",";#pi #frac{dE}{dx} dist (bad); Entries",100,-20,20);
+    h1[bad_reco_Pi_kdedx_dist]  = new TH1F("h_bad_reco_Pi_kdedx_dist",";K #frac{dE}{dx} dist (bad); Entries",100,-20,20);
+
     h1[reco_Pi_cos]      = new TH1F("h_reco_Pi_cos",";LPFO Pion cos#theta; Entries",cos_bin,-1,1);
     h1[reco_Pi_qcos]     = new TH1F("h_reco_Pi_qcos",";LPFO Pion cos#theta; Entries",cos_bin,-1,1);
     h1[reco_Pi_scos]     = new TH1F("h_reco_Pi_scos",";LPFO Pion cos#theta; Entries",cos_bin,-1,1);
