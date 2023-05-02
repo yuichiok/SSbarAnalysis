@@ -231,7 +231,7 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
     CutTrigger[kPion].push_back(charge_check[kPion]);
 
   // Try Stability and Purity Calculation here.
-    Int_t   *N_Ks  = Gen_Reco_Stats_Stable( mct, pfot, -1, 1 );
+    Int_t   *N_Ks  = Gen_Reco_Stats_Stable( mct, pfot, kKaon, -1, 1 );
     _data.N_K_Gen  = N_Ks[0];
     _data.N_K_PFO  = N_Ks[1];
     _data.N_K_corr = N_Ks[2];
@@ -247,7 +247,7 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
       Float_t bin_width  = xaxis->GetBinWidth(ibin);
       Float_t cos_min    = xaxis->GetBinLowEdge(ibin);
       Float_t cos_max    = cos_min + bin_width;
-      Int_t   *dN_Ks     = Gen_Reco_Stats_Stable( mct, pfot, cos_min, cos_max );
+      Int_t   *dN_Ks     = Gen_Reco_Stats_Stable( mct, pfot, kKaon, cos_min, cos_max );
       Float_t *dSPs      = Get_Stable_Purity(dN_Ks);
 
       _hm.h1[_hm.gen_N_K_cos]->Fill( bin_center ,dN_Ks[0]);
@@ -266,7 +266,7 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
       Float_t bin_width  = xaxis->GetBinWidth(ibin);
       Float_t cos_min    = xaxis->GetBinLowEdge(ibin);
       Float_t cos_max    = cos_min + bin_width;
-      Int_t   *dN_Ks     = Gen_Reco_Stats_Stable( mct, pfot, cos_min, cos_max );
+      Int_t   *dN_Ks     = Gen_Reco_Stats_Stable( mct, pfot, kKaon, cos_min, cos_max );
       Float_t *dSPs      = Get_Stable_Purity(dN_Ks);
       _hm.h1[_hm.gen_N_K_cos2]->Fill( bin_center ,dN_Ks[0]);
       _hm.h1[_hm.reco_N_K_cos2]->Fill( bin_center ,dN_Ks[1]);
@@ -568,7 +568,7 @@ Bool_t EventAnalyzer::Cut_ESum ( VectorTools v[2] )
 
 Bool_t EventAnalyzer::Cut_ACol ( VectorTools v[2] )
 {
-  Float_t cosacol = std::cos( VectorTools::GetThetaBetween( v[0].v3(), v[1].v3() ) );
+  Float_t cosacol = VectorTools::GetCosBetween( v[0].v3(), v[1].v3() );
 
   return (cosacol < -0.95);
 }
@@ -609,7 +609,7 @@ Bool_t EventAnalyzer::Notify()
    return kTRUE;
 }
 
-Int_t *EventAnalyzer::Gen_Reco_Stats_Stable( PFOTools mct, PFOTools pfot, Float_t cos_min, Float_t cos_max )
+Int_t *EventAnalyzer::Gen_Reco_Stats_Stable( PFOTools mct, PFOTools pfot, SelectID pid, Float_t cos_min, Float_t cos_max )
 {
   std::vector<PFO_Info> PFO_Collection = pfot.Get_Valid_PFOs();
 
@@ -636,8 +636,8 @@ Int_t *EventAnalyzer::Gen_Reco_Stats_Stable( PFOTools mct, PFOTools pfot, Float_
 
     Int_t counter = 0;
     for ( auto iremain : PFO_K_Remain ){
-      // Float_t cos_diff = igen.cos - iremain.cos;
-      Float_t cos_diff = 1.0 - std::cos( igen.vt.v3().Theta() - iremain.vt.v3().Theta() );
+      Float_t cos_diff = 1.0 - VectorTools::GetCosBetween( igen.vt.v3(), iremain.vt.v3() );
+
       if( cos_diff < min_cos_diff ) {
         min_cos_diff = cos_diff;
         i_min_cos_diff = counter;
@@ -664,7 +664,7 @@ Int_t *EventAnalyzer::Gen_Reco_Stats_Stable( PFOTools mct, PFOTools pfot, Float_
 
 }
 
-Int_t *EventAnalyzer::Gen_Reco_Stats_Cheat( PFOTools mct, PFOTools pfot, Float_t cos_min, Float_t cos_max )
+Int_t *EventAnalyzer::Gen_Reco_Stats_Cheat( PFOTools mct, PFOTools pfot, SelectID pid, Float_t cos_min, Float_t cos_max )
 {
   std::vector<PFO_Info> PFO_Collection;
   std::vector<PFO_Info> jet[2] = { pfot.GetJet(0), pfot.GetJet(1) };
@@ -702,8 +702,7 @@ Int_t *EventAnalyzer::Gen_Reco_Stats_Cheat( PFOTools mct, PFOTools pfot, Float_t
 
     Int_t counter = 0;
     for ( auto iremain : PFO_K_Remain ){
-      // Float_t cos_diff = igen.cos - iremain.cos;
-      Float_t cos_diff = 1.0 - std::cos( igen.vt.v3().Theta() - iremain.vt.v3().Theta() );
+      Float_t cos_diff = 1.0 - VectorTools::GetCosBetween( igen.vt.v3(), iremain.vt.v3() );
       if( cos_diff < min_cos_diff ) {
         min_cos_diff = cos_diff;
         i_min_cos_diff = counter;
@@ -918,7 +917,7 @@ void EventAnalyzer::ProcessDoubleTag(PFOTools pfot, PFOTools mct, vector<Bool_t>
 
     if(sign_check[kKaon]){
 
-      Float_t gen_reco_K_sep_cos  = cos( VectorTools::GetThetaBetween(pfot.KLPFO[ineg].vt.v3(), mct.mc_quark[0].vt.v3())  );
+      Float_t gen_reco_K_sep_cos  = VectorTools::GetCosBetween(pfot.KLPFO[ineg].vt.v3(), mct.mc_quark[0].vt.v3());
 
       _hm.h1[_hm.reco_K_cos]->Fill( pfot.KLPFO[ineg].cos );
       _hm.h1[_hm.reco_K_qcos]->Fill( pfot.KLPFO[ineg].qcos );
@@ -987,7 +986,7 @@ void EventAnalyzer::ProcessDoubleTag(PFOTools pfot, PFOTools mct, vector<Bool_t>
 
     if(sign_check[kPion]){
 
-      Float_t gen_reco_Pi_sep_cos  = cos( VectorTools::GetThetaBetween(pfot.PiLPFO[ineg].vt.v3(), mct.mc_quark[0].vt.v3())  );
+      Float_t gen_reco_Pi_sep_cos  = VectorTools::GetCosBetween(pfot.PiLPFO[ineg].vt.v3(), mct.mc_quark[0].vt.v3());
       Float_t vtx_endpt = sqrt(pfot.PiLPFO[ineg].pfo_endpt[0] * pfot.PiLPFO[ineg].pfo_endpt[0] + pfot.PiLPFO[ineg].pfo_endpt[1] * pfot.PiLPFO[ineg].pfo_endpt[1] + pfot.PiLPFO[ineg].pfo_endpt[2] * pfot.PiLPFO[ineg].pfo_endpt[2]);
 
       if( gen_reco_Pi_sep_cos > 0 ){
@@ -1102,7 +1101,7 @@ void EventAnalyzer::Jet_sum_n_acol()
   for (int i=0; i<2; i++){
     jetvt[i].SetCoordinates(_jet.jet_px[i],_jet.jet_py[i],_jet.jet_pz[i],_jet.jet_E[i]);
   }
-  Float_t cosacol = std::cos( VectorTools::GetThetaBetween( jetvt[0].v3(), jetvt[1].v3() ) );
+  Float_t cosacol = VectorTools::GetCosBetween( jetvt[0].v3(), jetvt[1].v3() );
   Float_t jet_cos[2]  = { std::cos( jetvt[0].v3().theta() ), std::cos( jetvt[1].v3().theta() ) };
 
   _data.sum_jet_E = _jet.jet_E[0] + _jet.jet_E[1];
