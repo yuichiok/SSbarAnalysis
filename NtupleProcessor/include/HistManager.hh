@@ -53,6 +53,15 @@ class HistManager
       gen_reco_Pi_sep_cos,
       jet_reco_Pi_sep_cos,
 
+      good_reco_Pi_endpt,
+      good_reco_Pi_tpchits,
+      good_reco_Pi_pidedx_dist,
+      good_reco_Pi_kdedx_dist,
+      bad_reco_Pi_endpt,
+      bad_reco_Pi_tpchits,
+      bad_reco_Pi_pidedx_dist,
+      bad_reco_Pi_kdedx_dist,
+
       gen_reco_K_sep_mincos,
 
       reco_sum_jetE,

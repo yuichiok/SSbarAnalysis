@@ -164,16 +164,20 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
     Bool_t is_there_a_gluon[3] = {false};
     for ( int ijet=0; ijet<2; ijet++){
 
+      Bool_t check_KSLPFO_PiLPFO = false;
+
       for ( auto iSPFO_K : pfot.SPFOs_K[ijet] ){
         Bool_t charge_opposite = iSPFO_K.pfo_charge * pfot.KLPFO[ijet].pfo_charge < 0;
+        Bool_t charge_opposite_KSLPFO_PiLPFO = iSPFO_K.pfo_charge * pfot.PiLPFO[ijet].pfo_charge < 0;
         Bool_t momentum_above  = iSPFO_K.p_mag > 10;
         if( charge_opposite && momentum_above ) is_gluon[kKaon][ijet] = true;
+        if( charge_opposite_KSLPFO_PiLPFO && momentum_above ) check_KSLPFO_PiLPFO = true;
       }
 
       for ( auto iSPFO_Pi : pfot.SPFOs_Pi[ijet] ){
         Bool_t charge_opposite = iSPFO_Pi.pfo_charge * pfot.PiLPFO[ijet].pfo_charge < 0;
         Bool_t momentum_above  = iSPFO_Pi.p_mag > 10;
-        if( charge_opposite && momentum_above ) is_gluon[kPion][ijet] = true;
+        if( (charge_opposite && momentum_above) || check_KSLPFO_PiLPFO ) is_gluon[kPion][ijet] = true;
       }
 
     }
@@ -984,6 +988,35 @@ void EventAnalyzer::ProcessDoubleTag(PFOTools pfot, PFOTools mct, vector<Bool_t>
     if(sign_check[kPion]){
 
       Float_t gen_reco_Pi_sep_cos  = cos( VectorTools::GetThetaBetween(pfot.PiLPFO[ineg].vt.v3(), mct.mc_quark[0].vt.v3())  );
+      Float_t vtx_endpt = sqrt(pfot.PiLPFO[ineg].pfo_endpt[0] * pfot.PiLPFO[ineg].pfo_endpt[0] + pfot.PiLPFO[ineg].pfo_endpt[1] * pfot.PiLPFO[ineg].pfo_endpt[1] + pfot.PiLPFO[ineg].pfo_endpt[2] * pfot.PiLPFO[ineg].pfo_endpt[2]);
+
+      if( gen_reco_Pi_sep_cos > 0 ){
+        // cout << "ievent   = " << ientry << endl;
+        // cout << "good hits     = " << pfot.PiLPFO[ineg].pfo_tpc_hits << endl;
+        // cout << "good PiLPFO p = [ " << pfot.PiLPFO[ineg].pfo_px << " , " << pfot.PiLPFO[ineg].pfo_py << " , " << pfot.PiLPFO[ineg].pfo_pz << " , " << pfot.PiLPFO[ineg].pfo_E <<" ]" << endl;
+        // cout << "good dEdx_dist pi: " << pfot.PiLPFO[ineg].pfo_piddedx_pi_dedxdist << ", K: " << pfot.PiLPFO[ineg].pfo_piddedx_k_dedxdist << endl;
+        _hm.h1[_hm.good_reco_Pi_endpt]->Fill( vtx_endpt );
+        _hm.h1[_hm.good_reco_Pi_tpchits]->Fill( pfot.PiLPFO[ineg].pfo_tpc_hits );
+        _hm.h1[_hm.good_reco_Pi_pidedx_dist]->Fill( pfot.PiLPFO[ineg].pfo_piddedx_pi_dedxdist );
+        _hm.h1[_hm.good_reco_Pi_kdedx_dist]->Fill( pfot.PiLPFO[ineg].pfo_piddedx_k_dedxdist );
+      }else{
+        // cout << "ievent   = " << ientry << endl;
+        // cout << "bad tpc hits  = " << pfot.PiLPFO[ineg].pfo_tpc_hits << endl;
+        // cout << "bad PiLPFO p  = [ " << pfot.PiLPFO[ineg].pfo_px << " , " << pfot.PiLPFO[ineg].pfo_py << " , " << pfot.PiLPFO[ineg].pfo_pz << " , " << pfot.PiLPFO[ineg].pfo_E <<" ]" << endl;
+        // cout << "bad dEdx_dist pi: " << pfot.PiLPFO[ineg].pfo_piddedx_pi_dedxdist << ", K: " << pfot.PiLPFO[ineg].pfo_piddedx_k_dedxdist << endl;
+        _hm.h1[_hm.bad_reco_Pi_endpt]->Fill( vtx_endpt );
+        _hm.h1[_hm.bad_reco_Pi_tpchits]->Fill( pfot.PiLPFO[ineg].pfo_tpc_hits );
+        _hm.h1[_hm.bad_reco_Pi_pidedx_dist]->Fill( pfot.PiLPFO[ineg].pfo_piddedx_pi_dedxdist );
+        _hm.h1[_hm.bad_reco_Pi_kdedx_dist]->Fill( pfot.PiLPFO[ineg].pfo_piddedx_k_dedxdist );
+      }
+
+      // if( gen_reco_Pi_sep_cos < 0 ){
+      //   cout << "ievent   = " << ientry << endl;
+      //   cout << "PiLPFO p = [ " << pfot.PiLPFO[ineg].pfo_px << " , " << pfot.PiLPFO[ineg].pfo_py << " , " << pfot.PiLPFO[ineg].pfo_pz << " , " << pfot.PiLPFO[ineg].pfo_E <<" ]" << endl;
+      //   Float_t vtx_endpt = sqrt(pfot.PiLPFO[ineg].pfo_endpt[0] * pfot.PiLPFO[ineg].pfo_endpt[0] + pfot.PiLPFO[ineg].pfo_endpt[1] * pfot.PiLPFO[ineg].pfo_endpt[1] + pfot.PiLPFO[ineg].pfo_endpt[2] * pfot.PiLPFO[ineg].pfo_endpt[2]);
+      //   cout << "     vtx = [ " << pfot.PiLPFO[ineg].pfo_endpt[0] << " , " << pfot.PiLPFO[ineg].pfo_endpt[1] << " , " << pfot.PiLPFO[ineg].pfo_endpt[2] << " , " << vtx_endpt <<" ]" << endl;
+      //   cout << "dEdx_dist pi: " << pfot.PiLPFO[ineg].pfo_piddedx_pi_dedxdist << ", K: " << pfot.PiLPFO[ineg].pfo_piddedx_k_dedxdist << endl;
+      // }
 
       _hm.h1[_hm.reco_Pi_cos]->Fill( pfot.PiLPFO[ineg].cos );
       _hm.h1[_hm.reco_Pi_qcos]->Fill( pfot.PiLPFO[ineg].qcos );
