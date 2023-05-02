@@ -62,8 +62,6 @@ class HistManager
       bad_reco_Pi_pidedx_dist,
       bad_reco_Pi_kdedx_dist,
 
-      gen_reco_K_sep_mincos,
-
       reco_sum_jetE,
       reco_jet_sep,
 
@@ -74,9 +72,9 @@ class HistManager
       reco_N_K_cos,
       N_K_corr_cos,
 
-      gen_N_K_cos2,
-      reco_N_K_cos2,
-      N_K_corr_cos2,
+      gen_N_Pi_cos,
+      reco_N_Pi_cos,
+      N_Pi_corr_cos,
 
       dummy_h1,
       Last_h1 = dummy_h1
@@ -121,8 +119,11 @@ class HistManager
       npi_gen_reco,
       np_gen_reco,
 
-      stable_cos,
-      purity_cos,
+      stable_K_cos,
+      purity_K_cos,
+
+      stable_Pi_cos,
+      purity_Pi_cos,
 
       dummy_h2,
       Last_h2 = dummy_h2

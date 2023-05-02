@@ -56,8 +56,8 @@ class EventAnalyzer
     virtual Bool_t   Notify();
 
   // Gadgets
-    Int_t           *Gen_Reco_Stats_Stable( PFOTools mct, PFOTools pfot, Float_t cos_min, Float_t cos_max );
-    Int_t           *Gen_Reco_Stats_Cheat( PFOTools mct, PFOTools pfot, Float_t cos_min, Float_t cos_max );
+    Int_t           *Gen_Reco_Stats_Stable( PFOTools mct, PFOTools pfot, SelectID pid , Float_t cos_min, Float_t cos_max );
+    Int_t           *Gen_Reco_Stats_Cheat( PFOTools mct, PFOTools pfot, SelectID pid , Float_t cos_min, Float_t cos_max );
     Float_t         *Get_Stable_Purity( Int_t *N_Ks );
 
     void             Count_Particle( PFO_Info ipfo, Int_t pdg, TH1F *h_n_reco, TH1F *h_n_gen );

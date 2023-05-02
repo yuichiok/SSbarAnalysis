@@ -64,10 +64,8 @@ void HistManager::InitializeHists()
     h1[reco_Pi_scos]     = new TH1F("h_reco_Pi_scos",";LPFO Pion cos#theta; Entries",cos_bin,-1,1);
     h1[reco_Pi_mom]      = new TH1F("h_reco_Pi_mom",";LPFO Pion momentum (GeV); Entries",140,10,150);
     h1[reco_Pi_pdgcheat] = new TH1F("h_reco_Pi_pdgcheat",";LPFO Pion pdgcheat (Pion, Kaon, Proton, others); Entries",4,-0.5,3.5);
-    h1[gen_reco_Pi_sep_cos] = new TH1F("h_gen_reco_Pi_sep_cos",";Kaon cos#theta_{gen-LPFOPi}; Entries",cos_bin,-1,1);
-    h1[jet_reco_Pi_sep_cos] = new TH1F("h_jet_reco_Pi_sep_cos",";Kaon cos#theta_{jet-LPFOPi}; Entries",cos_bin,-1,1);
-
-    h1[gen_reco_K_sep_mincos] = new TH1F("h_gen_reco_K_sep_mincos",";Kaon cos#theta_{gen-reco}; Entries",cos_bin,-1,1);
+    h1[gen_reco_Pi_sep_cos] = new TH1F("h_gen_reco_Pi_sep_cos",";cos#theta_{gen-LPFOPi}; Entries",cos_bin,-1,1);
+    h1[jet_reco_Pi_sep_cos] = new TH1F("h_jet_reco_Pi_sep_cos",";cos#theta_{jet-LPFOPi}; Entries",cos_bin,-1,1);
 
   // ISR parameters
     h1[reco_sum_jetE]   = new TH1F("h_reco_sum_jetE", ";Visible Energy (GeV);", 100, 0, 300);
@@ -76,14 +74,14 @@ void HistManager::InitializeHists()
     h1[lpfo_gen_K_mom]  = new TH1F("h_lpfo_gen_K_mom","; Leading Gen Kaon momentum (GeV); Entries",100,0,100);
     h1[lpfo_reco_K_mom] = new TH1F("h_lpfo_reco_K_mom","; Leading Reco Kaon momentum (GeV); Entries",100,0,100);
 
-  // Number of Gen Reco Kaons
+  // Number of Gen Reco Kaons & Pions
     h1[gen_N_K_cos]     = new TH1F("h_gen_N_K_cos",";cos#theta;Generated N Kaons", cos_bin,-1,1);
     h1[reco_N_K_cos]    = new TH1F("h_reco_N_K_cos",";cos#theta;Reconstructed N Kaons", cos_bin,-1,1);
     h1[N_K_corr_cos]    = new TH1F("h_N_K_corr_cos",";cos#theta;Correctly Reconstructed N Kaons", cos_bin,-1,1);
 
-    h1[gen_N_K_cos2]    = new TH1F("h_gen_N_K_cos2",";cos#theta;Generated N Kaons", 100,-1,1);
-    h1[reco_N_K_cos2]   = new TH1F("h_reco_N_K_cos2",";cos#theta;Reconstructed N Kaons", 100,-1,1);
-    h1[N_K_corr_cos2]   = new TH1F("h_N_K_corr_cos2",";cos#theta;Correctly Reconstructed N Kaons", 100,-1,1);
+    h1[gen_N_Pi_cos]     = new TH1F("h_gen_N_Pi_cos",";cos#theta;Generated N Pions", cos_bin,-1,1);
+    h1[reco_N_Pi_cos]    = new TH1F("h_reco_N_Pi_cos",";cos#theta;Reconstructed N Pions", cos_bin,-1,1);
+    h1[N_Pi_corr_cos]    = new TH1F("h_N_Pi_corr_cos",";cos#theta;Correctly Reconstructed N Pions", cos_bin,-1,1);
 
   // pq method
     //KID
@@ -114,8 +112,11 @@ void HistManager::InitializeHists()
     h2[npi_gen_reco] = new TH2F("h2_npi_gen_reco",";N Pions (Reco);N Pions (Gen)",   50,0,50,50,0,50);
     h2[np_gen_reco]  = new TH2F("h2_np_gen_reco",";N Protons (Reco);N Protons (Gen)",50,0,50,50,0,50);
     
-    h2[stable_cos]   = new TH2F("h2_stable_cos",";cos#theta;Stability",cos_bin,-1,1,50,0,1);
-    h2[purity_cos]   = new TH2F("h2_purity_cos",";cos#theta;Purity",   cos_bin,-1,1,50,0,1);
+    h2[stable_K_cos]   = new TH2F("h2_stable_K_cos",";cos#theta;Stability",cos_bin,-1,1,50,0,1);
+    h2[purity_K_cos]   = new TH2F("h2_purity_K_cos",";cos#theta;Purity",   cos_bin,-1,1,50,0,1);
+
+    h2[stable_Pi_cos]   = new TH2F("h2_stable_Pi_cos",";cos#theta;Stability",cos_bin,-1,1,50,0,1);
+    h2[purity_Pi_cos]   = new TH2F("h2_purity_Pi_cos",";cos#theta;Purity",   cos_bin,-1,1,50,0,1);
 
   // jet
     h2_jet[jet_mult_cos]         = new TH2F("h2_jet_mult_cos" ,";cos#theta;NPFOs/jet",cos_bin,-1,1,100,0,100);

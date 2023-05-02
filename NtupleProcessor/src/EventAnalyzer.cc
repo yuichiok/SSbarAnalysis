@@ -231,21 +231,13 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
     CutTrigger[kPion].push_back(charge_check[kPion]);
 
   // Try Stability and Purity Calculation here.
-    Int_t   *N_Ks  = Gen_Reco_Stats_Stable( mct, pfot, kKaon, -1, 1 );
-    _data.N_K_Gen  = N_Ks[0];
-    _data.N_K_PFO  = N_Ks[1];
-    _data.N_K_corr = N_Ks[2];
-
-    Float_t *SPs    = Get_Stable_Purity(N_Ks);
-    _data.stability = SPs[0];
-    _data.purity    = SPs[1];
-
-    Int_t nbins_cos = _hm.h2[_hm.stable_cos]->GetNbinsX();
-    TAxis *xaxis    = _hm.h2[_hm.stable_cos]->GetXaxis();
-    for ( int ibin=1; ibin<=nbins_cos; ibin++ ){
-      Float_t bin_center = xaxis->GetBinCenter(ibin);
-      Float_t bin_width  = xaxis->GetBinWidth(ibin);
-      Float_t cos_min    = xaxis->GetBinLowEdge(ibin);
+    // Kaon Efficiency
+    Int_t nbins_cos_K = _hm.h2[_hm.stable_K_cos]->GetNbinsX();
+    TAxis *xaxis_K    = _hm.h2[_hm.stable_K_cos]->GetXaxis();
+    for ( int ibin=1; ibin<=nbins_cos_K; ibin++ ){
+      Float_t bin_center = xaxis_K->GetBinCenter(ibin);
+      Float_t bin_width  = xaxis_K->GetBinWidth(ibin);
+      Float_t cos_min    = xaxis_K->GetBinLowEdge(ibin);
       Float_t cos_max    = cos_min + bin_width;
       Int_t   *dN_Ks     = Gen_Reco_Stats_Stable( mct, pfot, kKaon, cos_min, cos_max );
       Float_t *dSPs      = Get_Stable_Purity(dN_Ks);
@@ -254,23 +246,27 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
       _hm.h1[_hm.reco_N_K_cos]->Fill( bin_center ,dN_Ks[1]);
       _hm.h1[_hm.N_K_corr_cos]->Fill( bin_center ,dN_Ks[2]);
 
-      _hm.h2[_hm.stable_cos]->Fill( bin_center ,dSPs[0]);
-      _hm.h2[_hm.purity_cos]->Fill( bin_center ,dSPs[1]);
-
+      _hm.h2[_hm.stable_K_cos]->Fill( bin_center ,dSPs[0]);
+      _hm.h2[_hm.purity_K_cos]->Fill( bin_center ,dSPs[1]);
     }
 
-    Int_t nbins_cos2 = _hm.h1[_hm.gen_N_K_cos2]->GetNbinsX();
-    TAxis *xaxis2    = _hm.h1[_hm.gen_N_K_cos2]->GetXaxis();
-    for ( int ibin=1; ibin<=nbins_cos2; ibin++ ){
-      Float_t bin_center = xaxis->GetBinCenter(ibin);
-      Float_t bin_width  = xaxis->GetBinWidth(ibin);
-      Float_t cos_min    = xaxis->GetBinLowEdge(ibin);
+    // Pion Efficiency
+    Int_t nbins_cos_Pi = _hm.h2[_hm.stable_Pi_cos]->GetNbinsX();
+    TAxis *xaxis_Pi    = _hm.h2[_hm.stable_Pi_cos]->GetXaxis();
+    for ( int ibin=1; ibin<=nbins_cos_K; ibin++ ){
+      Float_t bin_center = xaxis_Pi->GetBinCenter(ibin);
+      Float_t bin_width  = xaxis_Pi->GetBinWidth(ibin);
+      Float_t cos_min    = xaxis_Pi->GetBinLowEdge(ibin);
       Float_t cos_max    = cos_min + bin_width;
-      Int_t   *dN_Ks     = Gen_Reco_Stats_Stable( mct, pfot, kKaon, cos_min, cos_max );
-      Float_t *dSPs      = Get_Stable_Purity(dN_Ks);
-      _hm.h1[_hm.gen_N_K_cos2]->Fill( bin_center ,dN_Ks[0]);
-      _hm.h1[_hm.reco_N_K_cos2]->Fill( bin_center ,dN_Ks[1]);
-      _hm.h1[_hm.N_K_corr_cos2]->Fill( bin_center ,dN_Ks[2]);
+      Int_t   *dN_Pis    = Gen_Reco_Stats_Stable( mct, pfot, kPion, cos_min, cos_max );
+      Float_t *dSP_Pis   = Get_Stable_Purity(dN_Pis);
+
+      _hm.h1[_hm.gen_N_Pi_cos]->Fill( bin_center ,dN_Pis[0]);
+      _hm.h1[_hm.reco_N_Pi_cos]->Fill( bin_center ,dN_Pis[1]);
+      _hm.h1[_hm.N_Pi_corr_cos]->Fill( bin_center ,dN_Pis[2]);
+
+      _hm.h2[_hm.stable_Pi_cos]->Fill( bin_center ,dSP_Pis[0]);
+      _hm.h2[_hm.purity_Pi_cos]->Fill( bin_center ,dSP_Pis[1]);
     }
 
   // Fill Hists can make another class called histogram extractor?
@@ -615,27 +611,44 @@ Int_t *EventAnalyzer::Gen_Reco_Stats_Stable( PFOTools mct, PFOTools pfot, Select
 
   Float_t p_min = _anCfg.PFO_p_min;
 
-  std::vector<PFO_Info> PFO_K_Collection;
-  std::vector<PFO_Info> Gen_K_Collection;
+  std::vector<PFO_Info> PFO_Hadron_Collection;
+  std::vector<PFO_Info> Gen_Hadron_Collection;
   for ( auto iPFO : PFO_Collection ){
     Bool_t cos_range = (cos_min < iPFO.cos && iPFO.cos < cos_max );
     Bool_t p_range   = p_min < iPFO.p_mag;
-    if( PFOTools::isKaon(iPFO) && cos_range && p_range )   PFO_K_Collection.push_back(iPFO);
-    if( abs(iPFO.pfo_pdgcheat) == 321 && cos_range && p_range ) Gen_K_Collection.push_back(iPFO);
+    Bool_t is_cos_p  = cos_range && p_range;
+    
+    if ( !is_cos_p ) continue;
+
+    switch ( pid ) {
+      case kKaon:
+        if( PFOTools::isKaon(iPFO) )        PFO_Hadron_Collection.push_back(iPFO);
+        if( abs(iPFO.pfo_pdgcheat) == 321 ) Gen_Hadron_Collection.push_back(iPFO);
+        break;
+
+      case kPion:
+        if( PFOTools::isPion(iPFO) )        PFO_Hadron_Collection.push_back(iPFO);
+        if( abs(iPFO.pfo_pdgcheat) == 211 ) Gen_Hadron_Collection.push_back(iPFO);
+        break;
+
+      default:
+        break;
+    }
+
   }
 
   Int_t N_K_corr  = 0;
 
   // Float_t cos_r = 0.02;
   Float_t cos_r = 0.37;
-  std::vector<PFO_Info> PFO_K_Remain = PFO_K_Collection;
+  std::vector<PFO_Info> PFO_Hadron_Remain = PFO_Hadron_Collection;
 
-  for ( auto igen : Gen_K_Collection ){
+  for ( auto igen : Gen_Hadron_Collection ){
     Float_t min_cos_diff   = 1000.0;
     Int_t   i_min_cos_diff = -1;
 
     Int_t counter = 0;
-    for ( auto iremain : PFO_K_Remain ){
+    for ( auto iremain : PFO_Hadron_Remain ){
       Float_t cos_diff = 1.0 - VectorTools::GetCosBetween( igen.vt.v3(), iremain.vt.v3() );
 
       if( cos_diff < min_cos_diff ) {
@@ -645,19 +658,16 @@ Int_t *EventAnalyzer::Gen_Reco_Stats_Stable( PFOTools mct, PFOTools pfot, Select
       counter++;
     }
 
-    // Fill min_cos_diff
-    _hm.h1[_hm.gen_reco_K_sep_mincos]->Fill(min_cos_diff);
-
     if( min_cos_diff < cos_r ) {
       N_K_corr++;
-      PFO_K_Remain.erase( PFO_K_Remain.begin() + i_min_cos_diff );
+      PFO_Hadron_Remain.erase( PFO_Hadron_Remain.begin() + i_min_cos_diff );
     }
 
   }
 
   static Int_t N_array[3] = {0};
-  N_array[0] = Gen_K_Collection.size();
-  N_array[1] = PFO_K_Collection.size();
+  N_array[0] = Gen_Hadron_Collection.size();
+  N_array[1] = PFO_Hadron_Collection.size();
   N_array[2] = N_K_corr;
 
   return N_array;
@@ -675,11 +685,11 @@ Int_t *EventAnalyzer::Gen_Reco_Stats_Cheat( PFOTools mct, PFOTools pfot, SelectI
 
   Float_t p_min = _anCfg.PFO_p_min;
 
-  std::vector<PFO_Info> PFO_K_Collection;
+  std::vector<PFO_Info> PFO_Hadron_Collection;
   for ( auto iPFO : PFO_Collection ){
     Bool_t cos_range = (cos_min < iPFO.cos && iPFO.cos < cos_max );
     Bool_t p_range   = p_min < iPFO.p_mag;
-    if( PFOTools::isKaon(iPFO) && cos_range && p_range ) PFO_K_Collection.push_back(iPFO);
+    if( PFOTools::isKaon(iPFO) && cos_range && p_range ) PFO_Hadron_Collection.push_back(iPFO);
   }
 
   std::vector<PFO_Info> PFO_Cheat_K_Collection;
@@ -694,14 +704,14 @@ Int_t *EventAnalyzer::Gen_Reco_Stats_Cheat( PFOTools mct, PFOTools pfot, SelectI
 
   // Float_t cos_r = 0.02;
   Float_t cos_r = 0.37;
-  std::vector<PFO_Info> PFO_K_Remain = PFO_K_Collection;
+  std::vector<PFO_Info> PFO_Hadron_Remain = PFO_Hadron_Collection;
 
   for ( auto igen : PFO_Cheat_K_Collection ){
     Float_t min_cos_diff   = 1000.0;
     Int_t   i_min_cos_diff = -1;
 
     Int_t counter = 0;
-    for ( auto iremain : PFO_K_Remain ){
+    for ( auto iremain : PFO_Hadron_Remain ){
       Float_t cos_diff = 1.0 - VectorTools::GetCosBetween( igen.vt.v3(), iremain.vt.v3() );
       if( cos_diff < min_cos_diff ) {
         min_cos_diff = cos_diff;
@@ -710,19 +720,16 @@ Int_t *EventAnalyzer::Gen_Reco_Stats_Cheat( PFOTools mct, PFOTools pfot, SelectI
       counter++;
     }
 
-    // Fill min_cos_diff
-    _hm.h1[_hm.gen_reco_K_sep_mincos]->Fill(min_cos_diff);
-
     if( min_cos_diff < cos_r ) {
       N_K_corr++;
-      PFO_K_Remain.erase( PFO_K_Remain.begin() + i_min_cos_diff );
+      PFO_Hadron_Remain.erase( PFO_Hadron_Remain.begin() + i_min_cos_diff );
     }
 
   }
 
   static Int_t N_array[3] = {0};
   N_array[0] = PFO_Cheat_K_Collection.size();
-  N_array[1] = PFO_K_Collection.size();
+  N_array[1] = PFO_Hadron_Collection.size();
   N_array[2] = N_K_corr;
 
   return N_array;
