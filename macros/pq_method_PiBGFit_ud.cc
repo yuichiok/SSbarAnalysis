@@ -352,19 +352,19 @@ void main_pq_BGFit( TFile *files[] )
   TH1F *h_reco_us_Pi_qcos = (TH1F*) files[kUD]->Get("h_reco_Pi_qcos");
 
   // efficiency correction
-  // TH1F *h_reco_us_Pi_scos_eff_corr = Efficiency_Correction2(h_reco_us_Pi_scos,"scos_corr",files[kUD]);
-  // TH1F *h_reco_us_Pi_qcos_eff_corr = Efficiency_Correction2(h_reco_us_Pi_qcos,"qcos_corr",files[kUD]);
-  TH1F *h_reco_us_Pi_scos_eff_corr = (TH1F*) h_reco_us_Pi_scos->Clone();
-  TH1F *h_reco_us_Pi_qcos_eff_corr = (TH1F*) h_reco_us_Pi_qcos->Clone();
+  TH1F *h_reco_us_Pi_scos_eff_corr = Efficiency_Correction2(h_reco_us_Pi_scos,"scos_corr",files[kUD]);
+  TH1F *h_reco_us_Pi_qcos_eff_corr = Efficiency_Correction2(h_reco_us_Pi_qcos,"qcos_corr",files[kUD]);
+  // TH1F *h_reco_us_Pi_scos_eff_corr = (TH1F*) h_reco_us_Pi_scos->Clone();
+  // TH1F *h_reco_us_Pi_qcos_eff_corr = (TH1F*) h_reco_us_Pi_qcos->Clone();
 
   // used for pq correction
   TH1F *h_acc_PiPi_cos  = (TH1F*) files[kUD]->Get("pq/h_acc_PiPi_cos");
   TH1F *h_rej_PiPi_cos  = (TH1F*) files[kUD]->Get("pq/h_rej_PiPi_cos");
 
-  // TH1F *h_acc_PiPi_cos_eff_corr = Efficiency_Correction2(h_acc_PiPi_cos,"acc_corr",files[kUD]);
-  // TH1F *h_rej_PiPi_cos_eff_corr = Efficiency_Correction2(h_rej_PiPi_cos,"rej_corr",files[kUD]);
-  TH1F *h_acc_PiPi_cos_eff_corr = (TH1F*) h_acc_PiPi_cos->Clone();
-  TH1F *h_rej_PiPi_cos_eff_corr = (TH1F*) h_rej_PiPi_cos->Clone();
+  TH1F *h_acc_PiPi_cos_eff_corr = Efficiency_Correction2(h_acc_PiPi_cos,"acc_corr",files[kUD]);
+  TH1F *h_rej_PiPi_cos_eff_corr = Efficiency_Correction2(h_rej_PiPi_cos,"rej_corr",files[kUD]);
+  // TH1F *h_acc_PiPi_cos_eff_corr = (TH1F*) h_acc_PiPi_cos->Clone();
+  // TH1F *h_rej_PiPi_cos_eff_corr = (TH1F*) h_rej_PiPi_cos->Clone();
 
   StyleHist(h_reco_us_Pi_scos_eff_corr,kBlack);
   h_reco_us_Pi_scos_eff_corr->SetFillStyle(0);
@@ -625,7 +625,7 @@ void pq_method_PiBGFit_ud()
     TString process[3] = {"uu","dd","ud"};
     TFile* files[3];
     for ( int i=0; i<3; i++ ){
-      files[i] = new TFile(TString::Format("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.%s.KPiLPFO.PFOp15.LPFOp15_pNaN.tpc0.hists.all.root",process[i].Data()),"READ");
+      files[i] = new TFile(TString::Format("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.%s.KPiLPFO.distPi0.PFOp15.LPFOp15_pNaN.tpc0.hists.all.root",process[i].Data()),"READ");
       if ( !files[i]->IsOpen() ) throw 0;
     }
 
