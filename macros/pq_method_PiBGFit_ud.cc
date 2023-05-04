@@ -328,12 +328,12 @@ void main_pq_BGFit( TFile *files[] )
   h_gen_uu_qcos_scale->Scale(eff_uu);
   h_gen_dd_qcos_scale->Scale(eff_ss);
 
-  TH1F *h_gen_us_qcos = (TH1F*) h_gen_uu_qcos_scale->Clone();
-  h_gen_us_qcos->Add(h_gen_dd_qcos_scale);
+  TH1F *h_gen_ud_qcos = (TH1F*) h_gen_uu_qcos_scale->Clone();
+  h_gen_ud_qcos->Add(h_gen_dd_qcos_scale);
 
-  StyleHist(h_gen_us_qcos,kGreen+1);
-  h_gen_us_qcos->SetFillStyle(0);
-  h_gen_us_qcos->SetLineStyle(2);
+  StyleHist(h_gen_ud_qcos,kGreen+1);
+  h_gen_ud_qcos->SetFillStyle(0);
+  h_gen_ud_qcos->SetLineStyle(2);
 
   StyleHist(h_gen_uu_qcos_scale,kOrange+7);
   h_gen_uu_qcos_scale->SetFillStyle(0);
@@ -388,14 +388,7 @@ void main_pq_BGFit( TFile *files[] )
   TH1F *h_reco_Pi_pq_cos = CorrectHist(h_reco_us_Pi_qcos_eff_corr, p_vec);
   StyleHist(h_reco_Pi_pq_cos,kBlue);
 
-
-
-
-
-
-
   // Float_t split_pt = 0.11;
-
 
   // GEN
   TF1 * f_gen_uu_front = new TF1("f_gen_uu_front","[0]*(1+x*x)+[1]*x",-0.8,-0.5);
@@ -568,16 +561,16 @@ void main_pq_BGFit( TFile *files[] )
   // Int_t scale_sum = h_gen_uu_qcos_scale->GetEntries();
   // h_gen_uu_qcos_scale->Scale( 1.8 / (Float_t) scale_sum );
 
-  double intgen  = h_gen_us_qcos->Integral(70,80);
+  double intgen  = h_gen_ud_qcos->Integral(70,80);
   double intreco = h_reco_Pi_pq_cos->Integral(70,80);
-  // h_gen_us_qcos->Scale(intreco/intgen);
+  // h_gen_ud_qcos->Scale(intreco/intgen);
 
   double intgen2  = h_gen_dd_qcos_scale->Integral(90,95);
-  double intreco2 = h_gen_us_qcos->Integral(90,95);
+  double intreco2 = h_gen_ud_qcos->Integral(90,95);
   // h_gen_dd_qcos_scale->Scale(intreco2/intgen2);
 
   double intgen3  = h_gen_uu_qcos_scale->Integral(5,10);
-  double intreco3 = h_gen_us_qcos->Integral(5,10);
+  double intreco3 = h_gen_ud_qcos->Integral(5,10);
   // h_gen_uu_qcos_scale->Scale(intreco3/intgen3);
 
 
@@ -592,7 +585,7 @@ void main_pq_BGFit( TFile *files[] )
   h_reco_us_Pi_scos_eff_corr->Draw("hsame");
 
   h_reco_Pi_pq_cos_remain_front->Draw("hsame");
-  h_gen_us_qcos->Draw("hsame");
+  h_gen_ud_qcos->Draw("hsame");
   h_gen_dd_qcos_scale->Draw("hsame");
   h_gen_uu_qcos_scale->Draw("hsame");
 
@@ -602,7 +595,7 @@ void main_pq_BGFit( TFile *files[] )
 
   TLegend *leg = new TLegend(0.2,0.70,0.7,0.85);
   leg->SetLineColor(0);
-  leg->AddEntry(h_gen_us_qcos,"Gen #bar{u}/d-quark angle","l");
+  leg->AddEntry(h_gen_ud_qcos,"Gen #bar{u}/d-quark angle","l");
   leg->AddEntry(h_gen_uu_qcos_scale,"Gen #bar{u}-quark angle","l");
   leg->AddEntry(h_gen_dd_qcos_scale,"Gen d-quark angle","l");
   leg->AddEntry(h_reco_us_Pi_scos_eff_corr,"Reco #pi^{+}#pi^{-} matched with #bar{u}/d-quark angle","l");
