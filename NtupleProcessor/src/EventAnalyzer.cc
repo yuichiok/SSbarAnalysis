@@ -54,6 +54,7 @@ Bool_t EventAnalyzer::InitReadTree(TTree* tree)
     TreeReader reader;
     reader.InitializeMCReadTree(fChain, _mc, _branch);
     reader.InitializeJetReadTree(fChain, _jet, _branch);
+    reader.InitializeVTXReadTree(fChain, _vtx, _branch);
     reader.InitializePFOReadTree(fChain, _pfo, _branch);
 
     Notify();
@@ -137,8 +138,8 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
     jetvt[i].SetCoordinates(_jet.jet_px[i],_jet.jet_py[i],_jet.jet_pz[i],_jet.jet_E[i]);
   }
   Float_t jet_cos[2]  = { std::cos( jetvt[0].v3().theta() ), std::cos( jetvt[1].v3().theta() ) };
-  _hm.h2_jet[_hm.jet_mult_cos_noISR]->Fill( jet_cos[0], _pfo.pfo_n_j1 );
-  _hm.h2_jet[_hm.jet_mult_cos_noISR]->Fill( jet_cos[1], _pfo.pfo_n_j2 );
+  _hm.h2_jet[_hm.jet_mult_cos_noISR]->Fill( jet_cos[0], _jet.jet_npfo[0] );
+  _hm.h2_jet[_hm.jet_mult_cos_noISR]->Fill( jet_cos[1], _jet.jet_npfo[1] );
 
   ////////////////
   // Selections //
@@ -1102,7 +1103,7 @@ void EventAnalyzer::Jet_sum_n_acol()
   _hm.h1[_hm.reco_sum_jetE]->Fill( _data.sum_jet_E );
   _hm.h1[_hm.reco_jet_sep]->Fill( _data.jet_acol );
 
-  _hm.h2_jet[_hm.jet_mult_cos]->Fill( jet_cos[0], _pfo.pfo_n_j1 );
-  _hm.h2_jet[_hm.jet_mult_cos]->Fill( jet_cos[1], _pfo.pfo_n_j2 );
+  _hm.h2_jet[_hm.jet_mult_cos]->Fill( jet_cos[0], _jet.jet_npfo[0] );
+  _hm.h2_jet[_hm.jet_mult_cos]->Fill( jet_cos[1], _jet.jet_npfo[1] );
 
 }
