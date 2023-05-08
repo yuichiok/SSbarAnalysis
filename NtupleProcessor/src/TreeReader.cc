@@ -95,14 +95,16 @@ void TreeReader::InitializeJetReadTree(TTree *_hTree, Jet_QQbar & _data, Branch_
     _hTree->SetBranchAddress("sphericity_tensor", _data.sphericity_tensor, &_branch.b_sphericity_tensor);
 }
 
+void TreeReader::InitializeVTXReadTree(TTree *_hTree, VTX_QQbar & _data, Branch_QQbar & _branch)
+{
+    _hTree->SetBranchAddress("nvtx", &_data.nvtx, &_branch.b_nvtx);
+    _hTree->SetBranchAddress("vtx_d0", _data.vtx_d0, &_branch.b_vtx_d0);
+    _hTree->SetBranchAddress("vtx_z0", _data.vtx_z0, &_branch.b_vtx_z0);
+}
+
 void TreeReader::InitializePFOReadTree(TTree *_hTree, PFO_QQbar & _data, Branch_QQbar & _branch)
 {
     _hTree->SetBranchAddress("pfo_n", &_data.pfo_n, &_branch.b_pfo_n);
-    _hTree->SetBranchAddress("jet_nvtx", &_data.jet_nvtx, &_branch.b_jet_nvtx);
-    _hTree->SetBranchAddress("pfo_n_j1", &_data.pfo_n_j1, &_branch.b_pfo_n_j1);
-    _hTree->SetBranchAddress("jet_nvtx_j1", &_data.jet_nvtx_j1, &_branch.b_jet_nvtx_j1);
-    _hTree->SetBranchAddress("pfo_n_j2", &_data.pfo_n_j2, &_branch.b_pfo_n_j2);
-    _hTree->SetBranchAddress("jet_nvtx_j2", &_data.jet_nvtx_j2, &_branch.b_jet_nvtx_j2);
     _hTree->SetBranchAddress("pfo_match", _data.pfo_match, &_branch.b_pfo_match);
     _hTree->SetBranchAddress("pfo_truejet_pdg", _data.pfo_truejet_pdg, &_branch.b_pfo_truejet_pdg);
     _hTree->SetBranchAddress("pfo_truejet_type", _data.pfo_truejet_type, &_branch.b_pfo_truejet_type);
