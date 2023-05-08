@@ -105,7 +105,7 @@ struct VTX_QQbar  {
     Float_t vtx_d0[NJETS][MAX_NVTX] = {0};
     Float_t vtx_z0[NJETS][MAX_NVTX] = {0};
 
-}
+};
 
 struct PFO_QQbar  {
 
