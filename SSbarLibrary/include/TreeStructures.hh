@@ -13,6 +13,7 @@ const static int MAX_NPARTICLES = 1000;
 const static int NTRUE_JETS     = 5;
 const static int NQUARKS        = 2;
 const static int NJETS          = 2;
+const static int MAX_NVTX       = 2;
 
 struct MC_QQbar  {
 
@@ -96,16 +97,22 @@ struct Jet_QQbar  {
     
 };
 
+struct VTX_QQbar  {
+
+  public:
+  //VTX Variables
+    Int_t   nvtx = 0;
+    Float_t vtx_d0[NJETS][MAX_NVTX] = {0};
+    Float_t vtx_z0[NJETS][MAX_NVTX] = {0};
+
+}
+
 struct PFO_QQbar  {
 
   public:
   // PFO VARIABLES
     Int_t   pfo_n       = 0;
     Int_t   jet_nvtx    = 0;
-    Int_t   pfo_n_j1    = 0;
-    Int_t   jet_nvtx_j1 = 0;
-    Int_t   pfo_n_j2    = 0;
-    Int_t   jet_nvtx_j2 = 0;
     Int_t   pfo_match[MAX_NPARTICLES] = {0};
     Int_t   pfo_truejet_pdg[MAX_NPARTICLES] = {0};
     Int_t   pfo_truejet_type[MAX_NPARTICLES] = {0};
@@ -372,12 +379,12 @@ struct Branch_QQbar  {
     TBranch        *b_principle_thrust_axis;   //!
     TBranch        *b_sphericity;   //!
     TBranch        *b_sphericity_tensor;   //!
-    TBranch        *b_pfo_n;   //!
+    TBranch        *b_jet_npfo;   //!
     TBranch        *b_jet_nvtx;   //!
-    TBranch        *b_pfo_n_j1;   //!
-    TBranch        *b_jet_nvtx_j1;   //!
-    TBranch        *b_pfo_n_j2;   //!
-    TBranch        *b_jet_nvtx_j2;   //!
+    TBranch        *b_vtx_d0;   //!
+    TBranch        *b_vtx_z0;   //!
+    TBranch        *b_pfo_n;   //!
+    TBranch        *b_nvtx;   //!
     TBranch        *b_pfo_match;   //!
     TBranch        *b_pfo_truejet_pdg;   //!
     TBranch        *b_pfo_truejet_type;   //!
