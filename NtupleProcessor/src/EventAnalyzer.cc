@@ -54,6 +54,7 @@ Bool_t EventAnalyzer::InitReadTree(TTree* tree)
     TreeReader reader;
     reader.InitializeMCReadTree(fChain, _mc, _branch);
     reader.InitializeJetReadTree(fChain, _jet, _branch);
+    reader.InitializeVTXReadTree(fChain, _vtx, _branch);
     reader.InitializePFOReadTree(fChain, _pfo, _branch);
 
     Notify();
@@ -137,8 +138,8 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
     jetvt[i].SetCoordinates(_jet.jet_px[i],_jet.jet_py[i],_jet.jet_pz[i],_jet.jet_E[i]);
   }
   Float_t jet_cos[2]  = { std::cos( jetvt[0].v3().theta() ), std::cos( jetvt[1].v3().theta() ) };
-  _hm.h2_jet[_hm.jet_mult_cos_noISR]->Fill( jet_cos[0], _pfo.pfo_n_j1 );
-  _hm.h2_jet[_hm.jet_mult_cos_noISR]->Fill( jet_cos[1], _pfo.pfo_n_j2 );
+  _hm.h2_jet[_hm.jet_mult_cos_noISR]->Fill( jet_cos[0], _jet.jet_npfo[0] );
+  _hm.h2_jet[_hm.jet_mult_cos_noISR]->Fill( jet_cos[1], _jet.jet_npfo[1] );
 
   ////////////////
   // Selections //
@@ -231,46 +232,42 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
     CutTrigger[kPion].push_back(charge_check[kPion]);
 
   // Try Stability and Purity Calculation here.
-    Int_t   *N_Ks  = Gen_Reco_Stats_Stable( mct, pfot, -1, 1 );
-    _data.N_K_Gen  = N_Ks[0];
-    _data.N_K_PFO  = N_Ks[1];
-    _data.N_K_corr = N_Ks[2];
-
-    Float_t *SPs    = Get_Stable_Purity(N_Ks);
-    _data.stability = SPs[0];
-    _data.purity    = SPs[1];
-
-    Int_t nbins_cos = _hm.h2[_hm.stable_cos]->GetNbinsX();
-    TAxis *xaxis    = _hm.h2[_hm.stable_cos]->GetXaxis();
-    for ( int ibin=1; ibin<=nbins_cos; ibin++ ){
-      Float_t bin_center = xaxis->GetBinCenter(ibin);
-      Float_t bin_width  = xaxis->GetBinWidth(ibin);
-      Float_t cos_min    = xaxis->GetBinLowEdge(ibin);
+    // Kaon Efficiency
+    Int_t nbins_cos_K = _hm.h2[_hm.stable_K_cos]->GetNbinsX();
+    TAxis *xaxis_K    = _hm.h2[_hm.stable_K_cos]->GetXaxis();
+    for ( int ibin=1; ibin<=nbins_cos_K; ibin++ ){
+      Float_t bin_center = xaxis_K->GetBinCenter(ibin);
+      Float_t bin_width  = xaxis_K->GetBinWidth(ibin);
+      Float_t cos_min    = xaxis_K->GetBinLowEdge(ibin);
       Float_t cos_max    = cos_min + bin_width;
-      Int_t   *dN_Ks     = Gen_Reco_Stats_Stable( mct, pfot, cos_min, cos_max );
+      Int_t   *dN_Ks     = Gen_Reco_Stats_Stable( mct, pfot, kKaon, cos_min, cos_max );
       Float_t *dSPs      = Get_Stable_Purity(dN_Ks);
 
       _hm.h1[_hm.gen_N_K_cos]->Fill( bin_center ,dN_Ks[0]);
       _hm.h1[_hm.reco_N_K_cos]->Fill( bin_center ,dN_Ks[1]);
       _hm.h1[_hm.N_K_corr_cos]->Fill( bin_center ,dN_Ks[2]);
 
-      _hm.h2[_hm.stable_cos]->Fill( bin_center ,dSPs[0]);
-      _hm.h2[_hm.purity_cos]->Fill( bin_center ,dSPs[1]);
-
+      _hm.h2[_hm.stable_K_cos]->Fill( bin_center ,dSPs[0]);
+      _hm.h2[_hm.purity_K_cos]->Fill( bin_center ,dSPs[1]);
     }
 
-    Int_t nbins_cos2 = _hm.h1[_hm.gen_N_K_cos2]->GetNbinsX();
-    TAxis *xaxis2    = _hm.h1[_hm.gen_N_K_cos2]->GetXaxis();
-    for ( int ibin=1; ibin<=nbins_cos2; ibin++ ){
-      Float_t bin_center = xaxis->GetBinCenter(ibin);
-      Float_t bin_width  = xaxis->GetBinWidth(ibin);
-      Float_t cos_min    = xaxis->GetBinLowEdge(ibin);
+    // Pion Efficiency
+    Int_t nbins_cos_Pi = _hm.h2[_hm.stable_Pi_cos]->GetNbinsX();
+    TAxis *xaxis_Pi    = _hm.h2[_hm.stable_Pi_cos]->GetXaxis();
+    for ( int ibin=1; ibin<=nbins_cos_K; ibin++ ){
+      Float_t bin_center = xaxis_Pi->GetBinCenter(ibin);
+      Float_t bin_width  = xaxis_Pi->GetBinWidth(ibin);
+      Float_t cos_min    = xaxis_Pi->GetBinLowEdge(ibin);
       Float_t cos_max    = cos_min + bin_width;
-      Int_t   *dN_Ks     = Gen_Reco_Stats_Stable( mct, pfot, cos_min, cos_max );
-      Float_t *dSPs      = Get_Stable_Purity(dN_Ks);
-      _hm.h1[_hm.gen_N_K_cos2]->Fill( bin_center ,dN_Ks[0]);
-      _hm.h1[_hm.reco_N_K_cos2]->Fill( bin_center ,dN_Ks[1]);
-      _hm.h1[_hm.N_K_corr_cos2]->Fill( bin_center ,dN_Ks[2]);
+      Int_t   *dN_Pis    = Gen_Reco_Stats_Stable( mct, pfot, kPion, cos_min, cos_max );
+      Float_t *dSP_Pis   = Get_Stable_Purity(dN_Pis);
+
+      _hm.h1[_hm.gen_N_Pi_cos]->Fill( bin_center ,dN_Pis[0]);
+      _hm.h1[_hm.reco_N_Pi_cos]->Fill( bin_center ,dN_Pis[1]);
+      _hm.h1[_hm.N_Pi_corr_cos]->Fill( bin_center ,dN_Pis[2]);
+
+      _hm.h2[_hm.stable_Pi_cos]->Fill( bin_center ,dSP_Pis[0]);
+      _hm.h2[_hm.purity_Pi_cos]->Fill( bin_center ,dSP_Pis[1]);
     }
 
   // Fill Hists can make another class called histogram extractor?
@@ -568,7 +565,7 @@ Bool_t EventAnalyzer::Cut_ESum ( VectorTools v[2] )
 
 Bool_t EventAnalyzer::Cut_ACol ( VectorTools v[2] )
 {
-  Float_t cosacol = std::cos( VectorTools::GetThetaBetween( v[0].v3(), v[1].v3() ) );
+  Float_t cosacol = VectorTools::GetCosBetween( v[0].v3(), v[1].v3() );
 
   return (cosacol < -0.95);
 }
@@ -609,35 +606,52 @@ Bool_t EventAnalyzer::Notify()
    return kTRUE;
 }
 
-Int_t *EventAnalyzer::Gen_Reco_Stats_Stable( PFOTools mct, PFOTools pfot, Float_t cos_min, Float_t cos_max )
+Int_t *EventAnalyzer::Gen_Reco_Stats_Stable( PFOTools mct, PFOTools pfot, SelectID pid, Float_t cos_min, Float_t cos_max )
 {
   std::vector<PFO_Info> PFO_Collection = pfot.Get_Valid_PFOs();
 
   Float_t p_min = _anCfg.PFO_p_min;
 
-  std::vector<PFO_Info> PFO_K_Collection;
-  std::vector<PFO_Info> Gen_K_Collection;
+  std::vector<PFO_Info> PFO_Hadron_Collection;
+  std::vector<PFO_Info> Gen_Hadron_Collection;
   for ( auto iPFO : PFO_Collection ){
     Bool_t cos_range = (cos_min < iPFO.cos && iPFO.cos < cos_max );
     Bool_t p_range   = p_min < iPFO.p_mag;
-    if( PFOTools::isKaon(iPFO) && cos_range && p_range )   PFO_K_Collection.push_back(iPFO);
-    if( abs(iPFO.pfo_pdgcheat) == 321 && cos_range && p_range ) Gen_K_Collection.push_back(iPFO);
+    Bool_t is_cos_p  = cos_range && p_range;
+    
+    if ( !is_cos_p ) continue;
+
+    switch ( pid ) {
+      case kKaon:
+        if( PFOTools::isKaon(iPFO) )        PFO_Hadron_Collection.push_back(iPFO);
+        if( abs(iPFO.pfo_pdgcheat) == 321 ) Gen_Hadron_Collection.push_back(iPFO);
+        break;
+
+      case kPion:
+        if( PFOTools::isPion(iPFO) )        PFO_Hadron_Collection.push_back(iPFO);
+        if( abs(iPFO.pfo_pdgcheat) == 211 ) Gen_Hadron_Collection.push_back(iPFO);
+        break;
+
+      default:
+        break;
+    }
+
   }
 
   Int_t N_K_corr  = 0;
 
   // Float_t cos_r = 0.02;
   Float_t cos_r = 0.37;
-  std::vector<PFO_Info> PFO_K_Remain = PFO_K_Collection;
+  std::vector<PFO_Info> PFO_Hadron_Remain = PFO_Hadron_Collection;
 
-  for ( auto igen : Gen_K_Collection ){
+  for ( auto igen : Gen_Hadron_Collection ){
     Float_t min_cos_diff   = 1000.0;
     Int_t   i_min_cos_diff = -1;
 
     Int_t counter = 0;
-    for ( auto iremain : PFO_K_Remain ){
-      // Float_t cos_diff = igen.cos - iremain.cos;
-      Float_t cos_diff = 1.0 - std::cos( igen.vt.v3().Theta() - iremain.vt.v3().Theta() );
+    for ( auto iremain : PFO_Hadron_Remain ){
+      Float_t cos_diff = 1.0 - VectorTools::GetCosBetween( igen.vt.v3(), iremain.vt.v3() );
+
       if( cos_diff < min_cos_diff ) {
         min_cos_diff = cos_diff;
         i_min_cos_diff = counter;
@@ -645,26 +659,23 @@ Int_t *EventAnalyzer::Gen_Reco_Stats_Stable( PFOTools mct, PFOTools pfot, Float_
       counter++;
     }
 
-    // Fill min_cos_diff
-    _hm.h1[_hm.gen_reco_K_sep_mincos]->Fill(min_cos_diff);
-
     if( min_cos_diff < cos_r ) {
       N_K_corr++;
-      PFO_K_Remain.erase( PFO_K_Remain.begin() + i_min_cos_diff );
+      PFO_Hadron_Remain.erase( PFO_Hadron_Remain.begin() + i_min_cos_diff );
     }
 
   }
 
   static Int_t N_array[3] = {0};
-  N_array[0] = Gen_K_Collection.size();
-  N_array[1] = PFO_K_Collection.size();
+  N_array[0] = Gen_Hadron_Collection.size();
+  N_array[1] = PFO_Hadron_Collection.size();
   N_array[2] = N_K_corr;
 
   return N_array;
 
 }
 
-Int_t *EventAnalyzer::Gen_Reco_Stats_Cheat( PFOTools mct, PFOTools pfot, Float_t cos_min, Float_t cos_max )
+Int_t *EventAnalyzer::Gen_Reco_Stats_Cheat( PFOTools mct, PFOTools pfot, SelectID pid, Float_t cos_min, Float_t cos_max )
 {
   std::vector<PFO_Info> PFO_Collection;
   std::vector<PFO_Info> jet[2] = { pfot.GetJet(0), pfot.GetJet(1) };
@@ -675,11 +686,11 @@ Int_t *EventAnalyzer::Gen_Reco_Stats_Cheat( PFOTools mct, PFOTools pfot, Float_t
 
   Float_t p_min = _anCfg.PFO_p_min;
 
-  std::vector<PFO_Info> PFO_K_Collection;
+  std::vector<PFO_Info> PFO_Hadron_Collection;
   for ( auto iPFO : PFO_Collection ){
     Bool_t cos_range = (cos_min < iPFO.cos && iPFO.cos < cos_max );
     Bool_t p_range   = p_min < iPFO.p_mag;
-    if( PFOTools::isKaon(iPFO) && cos_range && p_range ) PFO_K_Collection.push_back(iPFO);
+    if( PFOTools::isKaon(iPFO) && cos_range && p_range ) PFO_Hadron_Collection.push_back(iPFO);
   }
 
   std::vector<PFO_Info> PFO_Cheat_K_Collection;
@@ -694,16 +705,15 @@ Int_t *EventAnalyzer::Gen_Reco_Stats_Cheat( PFOTools mct, PFOTools pfot, Float_t
 
   // Float_t cos_r = 0.02;
   Float_t cos_r = 0.37;
-  std::vector<PFO_Info> PFO_K_Remain = PFO_K_Collection;
+  std::vector<PFO_Info> PFO_Hadron_Remain = PFO_Hadron_Collection;
 
   for ( auto igen : PFO_Cheat_K_Collection ){
     Float_t min_cos_diff   = 1000.0;
     Int_t   i_min_cos_diff = -1;
 
     Int_t counter = 0;
-    for ( auto iremain : PFO_K_Remain ){
-      // Float_t cos_diff = igen.cos - iremain.cos;
-      Float_t cos_diff = 1.0 - std::cos( igen.vt.v3().Theta() - iremain.vt.v3().Theta() );
+    for ( auto iremain : PFO_Hadron_Remain ){
+      Float_t cos_diff = 1.0 - VectorTools::GetCosBetween( igen.vt.v3(), iremain.vt.v3() );
       if( cos_diff < min_cos_diff ) {
         min_cos_diff = cos_diff;
         i_min_cos_diff = counter;
@@ -711,19 +721,16 @@ Int_t *EventAnalyzer::Gen_Reco_Stats_Cheat( PFOTools mct, PFOTools pfot, Float_t
       counter++;
     }
 
-    // Fill min_cos_diff
-    _hm.h1[_hm.gen_reco_K_sep_mincos]->Fill(min_cos_diff);
-
     if( min_cos_diff < cos_r ) {
       N_K_corr++;
-      PFO_K_Remain.erase( PFO_K_Remain.begin() + i_min_cos_diff );
+      PFO_Hadron_Remain.erase( PFO_Hadron_Remain.begin() + i_min_cos_diff );
     }
 
   }
 
   static Int_t N_array[3] = {0};
   N_array[0] = PFO_Cheat_K_Collection.size();
-  N_array[1] = PFO_K_Collection.size();
+  N_array[1] = PFO_Hadron_Collection.size();
   N_array[2] = N_K_corr;
 
   return N_array;
@@ -918,7 +925,7 @@ void EventAnalyzer::ProcessDoubleTag(PFOTools pfot, PFOTools mct, vector<Bool_t>
 
     if(sign_check[kKaon]){
 
-      Float_t gen_reco_K_sep_cos  = cos( VectorTools::GetThetaBetween(pfot.KLPFO[ineg].vt.v3(), mct.mc_quark[0].vt.v3())  );
+      Float_t gen_reco_K_sep_cos  = VectorTools::GetCosBetween(pfot.KLPFO[ineg].vt.v3(), mct.mc_quark[0].vt.v3());
 
       _hm.h1[_hm.reco_K_cos]->Fill( pfot.KLPFO[ineg].cos );
       _hm.h1[_hm.reco_K_qcos]->Fill( pfot.KLPFO[ineg].qcos );
@@ -987,36 +994,20 @@ void EventAnalyzer::ProcessDoubleTag(PFOTools pfot, PFOTools mct, vector<Bool_t>
 
     if(sign_check[kPion]){
 
-      Float_t gen_reco_Pi_sep_cos  = cos( VectorTools::GetThetaBetween(pfot.PiLPFO[ineg].vt.v3(), mct.mc_quark[0].vt.v3())  );
+      Float_t gen_reco_Pi_sep_cos  = VectorTools::GetCosBetween(pfot.PiLPFO[ineg].vt.v3(), mct.mc_quark[0].vt.v3());
       Float_t vtx_endpt = sqrt(pfot.PiLPFO[ineg].pfo_endpt[0] * pfot.PiLPFO[ineg].pfo_endpt[0] + pfot.PiLPFO[ineg].pfo_endpt[1] * pfot.PiLPFO[ineg].pfo_endpt[1] + pfot.PiLPFO[ineg].pfo_endpt[2] * pfot.PiLPFO[ineg].pfo_endpt[2]);
 
       if( gen_reco_Pi_sep_cos > 0 ){
-        // cout << "ievent   = " << ientry << endl;
-        // cout << "good hits     = " << pfot.PiLPFO[ineg].pfo_tpc_hits << endl;
-        // cout << "good PiLPFO p = [ " << pfot.PiLPFO[ineg].pfo_px << " , " << pfot.PiLPFO[ineg].pfo_py << " , " << pfot.PiLPFO[ineg].pfo_pz << " , " << pfot.PiLPFO[ineg].pfo_E <<" ]" << endl;
-        // cout << "good dEdx_dist pi: " << pfot.PiLPFO[ineg].pfo_piddedx_pi_dedxdist << ", K: " << pfot.PiLPFO[ineg].pfo_piddedx_k_dedxdist << endl;
         _hm.h1[_hm.good_reco_Pi_endpt]->Fill( vtx_endpt );
         _hm.h1[_hm.good_reco_Pi_tpchits]->Fill( pfot.PiLPFO[ineg].pfo_tpc_hits );
         _hm.h1[_hm.good_reco_Pi_pidedx_dist]->Fill( pfot.PiLPFO[ineg].pfo_piddedx_pi_dedxdist );
         _hm.h1[_hm.good_reco_Pi_kdedx_dist]->Fill( pfot.PiLPFO[ineg].pfo_piddedx_k_dedxdist );
       }else{
-        // cout << "ievent   = " << ientry << endl;
-        // cout << "bad tpc hits  = " << pfot.PiLPFO[ineg].pfo_tpc_hits << endl;
-        // cout << "bad PiLPFO p  = [ " << pfot.PiLPFO[ineg].pfo_px << " , " << pfot.PiLPFO[ineg].pfo_py << " , " << pfot.PiLPFO[ineg].pfo_pz << " , " << pfot.PiLPFO[ineg].pfo_E <<" ]" << endl;
-        // cout << "bad dEdx_dist pi: " << pfot.PiLPFO[ineg].pfo_piddedx_pi_dedxdist << ", K: " << pfot.PiLPFO[ineg].pfo_piddedx_k_dedxdist << endl;
         _hm.h1[_hm.bad_reco_Pi_endpt]->Fill( vtx_endpt );
         _hm.h1[_hm.bad_reco_Pi_tpchits]->Fill( pfot.PiLPFO[ineg].pfo_tpc_hits );
         _hm.h1[_hm.bad_reco_Pi_pidedx_dist]->Fill( pfot.PiLPFO[ineg].pfo_piddedx_pi_dedxdist );
         _hm.h1[_hm.bad_reco_Pi_kdedx_dist]->Fill( pfot.PiLPFO[ineg].pfo_piddedx_k_dedxdist );
       }
-
-      // if( gen_reco_Pi_sep_cos < 0 ){
-      //   cout << "ievent   = " << ientry << endl;
-      //   cout << "PiLPFO p = [ " << pfot.PiLPFO[ineg].pfo_px << " , " << pfot.PiLPFO[ineg].pfo_py << " , " << pfot.PiLPFO[ineg].pfo_pz << " , " << pfot.PiLPFO[ineg].pfo_E <<" ]" << endl;
-      //   Float_t vtx_endpt = sqrt(pfot.PiLPFO[ineg].pfo_endpt[0] * pfot.PiLPFO[ineg].pfo_endpt[0] + pfot.PiLPFO[ineg].pfo_endpt[1] * pfot.PiLPFO[ineg].pfo_endpt[1] + pfot.PiLPFO[ineg].pfo_endpt[2] * pfot.PiLPFO[ineg].pfo_endpt[2]);
-      //   cout << "     vtx = [ " << pfot.PiLPFO[ineg].pfo_endpt[0] << " , " << pfot.PiLPFO[ineg].pfo_endpt[1] << " , " << pfot.PiLPFO[ineg].pfo_endpt[2] << " , " << vtx_endpt <<" ]" << endl;
-      //   cout << "dEdx_dist pi: " << pfot.PiLPFO[ineg].pfo_piddedx_pi_dedxdist << ", K: " << pfot.PiLPFO[ineg].pfo_piddedx_k_dedxdist << endl;
-      // }
 
       _hm.h1[_hm.reco_Pi_cos]->Fill( pfot.PiLPFO[ineg].cos );
       _hm.h1[_hm.reco_Pi_qcos]->Fill( pfot.PiLPFO[ineg].qcos );
@@ -1102,7 +1093,7 @@ void EventAnalyzer::Jet_sum_n_acol()
   for (int i=0; i<2; i++){
     jetvt[i].SetCoordinates(_jet.jet_px[i],_jet.jet_py[i],_jet.jet_pz[i],_jet.jet_E[i]);
   }
-  Float_t cosacol = std::cos( VectorTools::GetThetaBetween( jetvt[0].v3(), jetvt[1].v3() ) );
+  Float_t cosacol = VectorTools::GetCosBetween( jetvt[0].v3(), jetvt[1].v3() );
   Float_t jet_cos[2]  = { std::cos( jetvt[0].v3().theta() ), std::cos( jetvt[1].v3().theta() ) };
 
   _data.sum_jet_E = _jet.jet_E[0] + _jet.jet_E[1];
@@ -1112,7 +1103,7 @@ void EventAnalyzer::Jet_sum_n_acol()
   _hm.h1[_hm.reco_sum_jetE]->Fill( _data.sum_jet_E );
   _hm.h1[_hm.reco_jet_sep]->Fill( _data.jet_acol );
 
-  _hm.h2_jet[_hm.jet_mult_cos]->Fill( jet_cos[0], _pfo.pfo_n_j1 );
-  _hm.h2_jet[_hm.jet_mult_cos]->Fill( jet_cos[1], _pfo.pfo_n_j2 );
+  _hm.h2_jet[_hm.jet_mult_cos]->Fill( jet_cos[0], _jet.jet_npfo[0] );
+  _hm.h2_jet[_hm.jet_mult_cos]->Fill( jet_cos[1], _jet.jet_npfo[1] );
 
 }
