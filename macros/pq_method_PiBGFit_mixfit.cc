@@ -72,6 +72,13 @@ void StyleHist(TH1F *h, Color_t col)
   h->SetFillColor(col);
 }
 
+void StyleFunc(TF1 *f, Int_t styl, Color_t col)
+{
+  f->SetLineColor(col);
+  f->SetLineWidth(7);
+  f->SetLineStyle(styl);
+}
+
 void StylePad(TPad *pad, Float_t t, Float_t b, Float_t r, Float_t l)
 {
   pad->SetGrid(1,1);
@@ -300,12 +307,17 @@ void main_pq_BGFit( TFile *files[] )
   // gen uu/ss polar
   TH1F *h_gen_uu_qcos = (TH1F*) files[kUU]->Get("h_gen_q_qcos");
   TH1F *h_gen_dd_qcos = (TH1F*) files[kDD]->Get("h_gen_q_qcos");
+
+  StyleHist(h_gen_uu_qcos,kBlue+1);
+  h_gen_uu_qcos->SetFillStyle(0);
+  h_gen_uu_qcos->SetLineStyle(2);
+  StyleHist(h_gen_dd_qcos,kGreen+2);
+  h_gen_dd_qcos->SetFillStyle(0);
+  h_gen_dd_qcos->SetLineStyle(2);
+
   TH1F *h_gen_uu_qcos_scale = (TH1F*) h_gen_uu_qcos->Clone();
   TH1F *h_gen_dd_qcos_scale = (TH1F*) h_gen_dd_qcos->Clone();
 
-  StyleHist(h_gen_dd_qcos,kBlack);
-  h_gen_dd_qcos->SetFillStyle(0);
-  h_gen_dd_qcos->SetLineStyle(2);
 
   // Normalize(h_gen_uu_qcos,1.0);
   // Normalize(h_gen_dd_qcos,1.0);
@@ -331,7 +343,7 @@ void main_pq_BGFit( TFile *files[] )
   TH1F *h_gen_ud_qcos = (TH1F*) h_gen_uu_qcos_scale->Clone();
   h_gen_ud_qcos->Add(h_gen_dd_qcos_scale);
 
-  StyleHist(h_gen_ud_qcos,kGreen+1);
+  StyleHist(h_gen_ud_qcos,kGreen+2);
   h_gen_ud_qcos->SetFillStyle(0);
   h_gen_ud_qcos->SetLineStyle(2);
 
@@ -391,8 +403,12 @@ void main_pq_BGFit( TFile *files[] )
 
 
   // GEN
-  TF1 * f_gen_uu      = new TF1("f_gen_uu","[0]*(1+x*x)+[1]*x",-0.9,0.9);
-  TF1 * f_gen_dd      = new TF1("f_gen_dd","[0]*(1+x*x)+[1]*x",-0.9,0.9);
+  TF1 * f_gen_uu      = new TF1("f_gen_uu","[0]*(1+x*x)+[1]*x",-1.0,1.0);
+  TF1 * f_gen_dd      = new TF1("f_gen_dd","[0]*(1+x*x)+[1]*x",-1.0,1.0);
+
+  StyleFunc(f_gen_uu,2,kBlue+1);
+  StyleFunc(f_gen_dd,2,kGreen+2);
+
   f_gen_uu->SetParNames("Su","Au");
   f_gen_dd->SetParNames("Sd","Ad");
 
@@ -408,6 +424,7 @@ void main_pq_BGFit( TFile *files[] )
   // RECO 
   TF1 * f_reco_ud_mix  = new TF1("f_reco_ud_mix","[0]*(1+x*x)+[1]*x+[2]*(1+x*x)+[3]*x",-0.9,0.9);
   f_reco_ud_mix->SetParNames("Su","Au","Sd","Ad");
+  StyleFunc(f_reco_ud_mix,1,kBlack);
 
   double gen_ud_par[4];
   std::copy(gen_uu_par, gen_uu_par + 2, gen_ud_par);
@@ -426,7 +443,8 @@ void main_pq_BGFit( TFile *files[] )
   f_reco_uu->SetParameters(reco_ud_par[0],reco_ud_par[1]);
   f_reco_dd->SetParameters(reco_ud_par[2],reco_ud_par[3]);
 
-
+  StyleFunc(f_reco_uu,1,kBlue+1);
+  StyleFunc(f_reco_dd,1,kGreen+2);
 
 
 
@@ -434,7 +452,10 @@ void main_pq_BGFit( TFile *files[] )
 
   TCanvas *c1 = new TCanvas("c1","c1",800,800);
   TPad *pad1 = new TPad("pad1", "pad1",0,0,1,1);
-  StylePad(pad1,0,0.12,0,0.15);
+  StylePad(pad1,0,0.12,0,0.12);
+
+  h_reco_Pi_pq_cos->SetTitle(";cos#theta_{#pi};Entries");
+  h_reco_Pi_pq_cos->GetYaxis()->SetRangeUser(0,30E3);
 
   h_reco_Pi_pq_cos->Draw("h");
   f_reco_ud_mix->Draw("same");
