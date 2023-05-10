@@ -332,13 +332,15 @@ void main_pq_BGFit( TFile *files[] )
   Int_t n_dd_reco = h_reco_dd_Pi_qcos->GetEntries();
 
   Float_t eff_uu = (Float_t) n_uu_reco / (Float_t) n_uu_gen;
-  Float_t eff_ss = (Float_t) n_dd_reco / (Float_t) n_dd_gen;
+  Float_t eff_dd = (Float_t) n_dd_reco / (Float_t) n_dd_gen;
+  // Float_t eff_uu = ((Float_t) n_uu_reco + (Float_t) n_dd_reco) / (Float_t) n_uu_gen;
+  // Float_t eff_dd = ((Float_t) n_uu_reco + (Float_t) n_dd_reco) / (Float_t) n_dd_gen;
 
   cout << "uu = eff : reco : gen = " <<  eff_uu << " : " << n_uu_reco << " : " << n_uu_gen << "\n";
-  cout << "ss = eff : reco : gen = " <<  eff_ss << " : " << n_dd_reco << " : " << n_dd_gen << "\n";
+  cout << "ss = eff : reco : gen = " <<  eff_dd << " : " << n_dd_reco << " : " << n_dd_gen << "\n";
 
   h_gen_uu_qcos_scale->Scale(eff_uu);
-  h_gen_dd_qcos_scale->Scale(eff_ss);
+  h_gen_dd_qcos_scale->Scale(eff_dd);
 
   TH1F *h_gen_ud_qcos = (TH1F*) h_gen_uu_qcos_scale->Clone();
   h_gen_ud_qcos->Add(h_gen_dd_qcos_scale);
@@ -449,7 +451,7 @@ void main_pq_BGFit( TFile *files[] )
 
 
 
-
+  // Draw
   TCanvas *c1 = new TCanvas("c1","c1",800,800);
   TPad *pad1 = new TPad("pad1", "pad1",0,0,1,1);
   StylePad(pad1,0,0.12,0,0.12);
@@ -464,6 +466,17 @@ void main_pq_BGFit( TFile *files[] )
 
   f_reco_uu->Draw("same");
   f_reco_dd->Draw("same");
+
+  TLegend *leg = new TLegend(0.2,0.70,0.7,0.85);
+  leg->SetLineColor(0);
+  leg->AddEntry(h_reco_Pi_pq_cos,"Reco #pi angle (pq corrected)","f");
+  leg->AddEntry(f_reco_ud_mix,"Reco Fit (S_{u}+S_{d})(1+cos^{2}#theta) + (A_{u}+A_{d})cos#theta","l");
+  leg->AddEntry(f_gen_uu,"Gen u-quark angle","l");
+  leg->AddEntry(f_gen_dd,"Gen d-quark angle","l");
+  leg->AddEntry(f_reco_uu,"Reco Fit u-quark angle","l");
+  leg->AddEntry(f_reco_dd,"Reco Fit d-quark angle","l");
+  leg->Draw();
+
 
 /*
   f_gen_uu_front->SetParNames("S","A");
