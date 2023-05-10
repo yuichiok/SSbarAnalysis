@@ -475,6 +475,7 @@ void main_pq_BGFit( TFile *files[] )
   leg->SetLineColor(0);
   leg->AddEntry(h_reco_Pi_pq_cos,"Reco #pi angle (pq corrected)","f");
   leg->AddEntry(f_reco_ud_mix,"Reco Fit (S_{u}+S_{d})(1+cos^{2}#theta) + (A_{u}+A_{d})cos#theta","l");
+  leg->AddEntry(f_gen_ud,"Gen u/d-quark angle","l");
   leg->AddEntry(f_gen_uu,"Gen u-quark angle","l");
   leg->AddEntry(f_gen_dd,"Gen d-quark angle","l");
   leg->AddEntry(f_reco_uu,"Reco Fit u-quark angle","l");
