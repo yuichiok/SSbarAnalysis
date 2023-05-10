@@ -75,7 +75,7 @@ void StyleHist(TH1F *h, Color_t col)
 void StyleFunc(TF1 *f, Int_t styl, Color_t col)
 {
   f->SetLineColor(col);
-  f->SetLineWidth(7);
+  f->SetLineWidth(5);
   f->SetLineStyle(styl);
 }
 
@@ -423,6 +423,9 @@ void main_pq_BGFit( TFile *files[] )
   f_gen_uu->GetParameters(gen_uu_par);
   f_gen_dd->GetParameters(gen_dd_par);
 
+  TF1 * f_gen_ud      = new TF1("f_gen_ud","f_gen_uu + f_gen_dd",-1.0,1.0);
+  StyleFunc(f_gen_ud,2,kBlack);
+
   // RECO 
   TF1 * f_reco_ud_mix  = new TF1("f_reco_ud_mix","[0]*(1+x*x)+[1]*x+[2]*(1+x*x)+[3]*x",-0.9,0.9);
   f_reco_ud_mix->SetParNames("Su","Au","Sd","Ad");
@@ -463,6 +466,7 @@ void main_pq_BGFit( TFile *files[] )
   f_reco_ud_mix->Draw("same");
   f_gen_uu->Draw("same");
   f_gen_dd->Draw("same");
+  f_gen_ud->Draw("same");
 
   f_reco_uu->Draw("same");
   f_reco_dd->Draw("same");
