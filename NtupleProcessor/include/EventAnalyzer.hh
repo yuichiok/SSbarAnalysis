@@ -93,6 +93,7 @@ class EventAnalyzer
 
     MC_QQbar      _mc      ;
     Jet_QQbar     _jet     ;
+    VTX_QQbar     _vtx     ;
     PFO_QQbar     _pfo     ;
     Branch_QQbar  _branch  ;
 
