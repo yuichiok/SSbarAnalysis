@@ -59,8 +59,8 @@ void NormalizeGen(TH1F *h, Float_t norm_top)
 
 void Normalize2Reco(TH1F *h_reco, TH1F *h_gen)
 {
-	double intCosReco = h_reco->Integral(20,80);
-	double intCosGen  = h_gen->Integral(20,80);
+	double intCosReco = h_reco->Integral(10,90);
+	double intCosGen  = h_gen->Integral(10,90);
   h_gen->Scale( intCosReco / intCosGen );
 }
 
@@ -304,9 +304,10 @@ void main_pq_BGFit( TFile *files[] )
   enum MixProcess {kUU,kDD,kUD};
   gStyle->SetOptStat(0);
 
-  // gen uu/ss polar
+  // gen uu/dd polar
   TH1F *h_gen_uu_qcos = (TH1F*) files[kUU]->Get("h_gen_q_qcos");
   TH1F *h_gen_dd_qcos = (TH1F*) files[kDD]->Get("h_gen_q_qcos");
+  TH1F *h_gen_ud_qcos = (TH1F*) files[kUD]->Get("h_gen_q_qcos");
 
   StyleHist(h_gen_uu_qcos,kBlue+1);
   h_gen_uu_qcos->SetFillStyle(0);
@@ -314,62 +315,19 @@ void main_pq_BGFit( TFile *files[] )
   StyleHist(h_gen_dd_qcos,kGreen+2);
   h_gen_dd_qcos->SetFillStyle(0);
   h_gen_dd_qcos->SetLineStyle(2);
-
-  TH1F *h_gen_uu_qcos_scale = (TH1F*) h_gen_uu_qcos->Clone();
-  TH1F *h_gen_dd_qcos_scale = (TH1F*) h_gen_dd_qcos->Clone();
-
-
-  // Normalize(h_gen_uu_qcos,1.0);
-  // Normalize(h_gen_dd_qcos,1.0);
-
-  // reco uu/ss polar
-  TH1F *h_reco_uu_Pi_qcos = (TH1F*) files[kUU]->Get("h_reco_Pi_qcos");
-  TH1F *h_reco_dd_Pi_qcos = (TH1F*) files[kDD]->Get("h_reco_Pi_qcos");
-
-  Int_t n_uu_gen  = h_gen_uu_qcos_scale->GetEntries();
-  Int_t n_dd_gen  = h_gen_dd_qcos_scale->GetEntries();
-  Int_t n_uu_reco = h_reco_uu_Pi_qcos->GetEntries();
-  Int_t n_dd_reco = h_reco_dd_Pi_qcos->GetEntries();
-
-  Float_t eff_uu = (Float_t) n_uu_reco / (Float_t) n_uu_gen;
-  Float_t eff_dd = (Float_t) n_dd_reco / (Float_t) n_dd_gen;
-  // Float_t eff_uu = ((Float_t) n_uu_reco + (Float_t) n_dd_reco) / (Float_t) n_uu_gen;
-  // Float_t eff_dd = ((Float_t) n_uu_reco + (Float_t) n_dd_reco) / (Float_t) n_dd_gen;
-
-  cout << "uu = eff : reco : gen = " <<  eff_uu << " : " << n_uu_reco << " : " << n_uu_gen << "\n";
-  cout << "ss = eff : reco : gen = " <<  eff_dd << " : " << n_dd_reco << " : " << n_dd_gen << "\n";
-
-  h_gen_uu_qcos_scale->Scale(eff_uu);
-  h_gen_dd_qcos_scale->Scale(eff_dd);
-
-  TH1F *h_gen_ud_qcos = (TH1F*) h_gen_uu_qcos_scale->Clone();
-  h_gen_ud_qcos->Add(h_gen_dd_qcos_scale);
-
-  StyleHist(h_gen_ud_qcos,kGreen+2);
+  StyleHist(h_gen_ud_qcos,kBlack);
   h_gen_ud_qcos->SetFillStyle(0);
   h_gen_ud_qcos->SetLineStyle(2);
 
-  StyleHist(h_gen_uu_qcos_scale,kOrange+7);
-  h_gen_uu_qcos_scale->SetFillStyle(0);
-  h_gen_uu_qcos_scale->SetLineStyle(2);
-  // Normalize(h_gen_uu_qcos_scale,1.0);
-  // h_gen_uu_qcos_scale->Scale(1.0 / (Float_t) (h_gen_uu_qcos_scale->Integral()) );
-
-  StyleHist(h_gen_dd_qcos_scale,kBlack);
-  h_gen_dd_qcos_scale->SetFillStyle(0);
-  h_gen_dd_qcos_scale->SetLineStyle(2);
-  // Normalize(h_gen_dd_qcos_scale,1.0);
-
-
   // reco us polar
-  TH1F *h_reco_us_Pi_scos = (TH1F*) files[kUD]->Get("h_reco_Pi_scos");
-  TH1F *h_reco_us_Pi_qcos = (TH1F*) files[kUD]->Get("h_reco_Pi_qcos");
+  TH1F *h_reco_ud_Pi_scos = (TH1F*) files[kUD]->Get("h_reco_Pi_scos");
+  TH1F *h_reco_ud_Pi_qcos = (TH1F*) files[kUD]->Get("h_reco_Pi_qcos");
 
   // efficiency correction
-  TH1F *h_reco_us_Pi_scos_eff_corr = Efficiency_Correction2(h_reco_us_Pi_scos,"scos_corr",files[kUD]);
-  TH1F *h_reco_us_Pi_qcos_eff_corr = Efficiency_Correction2(h_reco_us_Pi_qcos,"qcos_corr",files[kUD]);
-  // TH1F *h_reco_us_Pi_scos_eff_corr = (TH1F*) h_reco_us_Pi_scos->Clone();
-  // TH1F *h_reco_us_Pi_qcos_eff_corr = (TH1F*) h_reco_us_Pi_qcos->Clone();
+  TH1F *h_reco_ud_Pi_scos_eff_corr = Efficiency_Correction2(h_reco_ud_Pi_scos,"scos_corr",files[kUD]);
+  TH1F *h_reco_ud_Pi_qcos_eff_corr = Efficiency_Correction2(h_reco_ud_Pi_qcos,"qcos_corr",files[kUD]);
+  // TH1F *h_reco_ud_Pi_scos_eff_corr = (TH1F*) h_reco_ud_Pi_scos->Clone();
+  // TH1F *h_reco_ud_Pi_qcos_eff_corr = (TH1F*) h_reco_ud_Pi_qcos->Clone();
 
   // used for pq correction
   TH1F *h_acc_PiPi_cos  = (TH1F*) files[kUD]->Get("pq/h_acc_PiPi_cos");
@@ -380,13 +338,13 @@ void main_pq_BGFit( TFile *files[] )
   // TH1F *h_acc_PiPi_cos_eff_corr = (TH1F*) h_acc_PiPi_cos->Clone();
   // TH1F *h_rej_PiPi_cos_eff_corr = (TH1F*) h_rej_PiPi_cos->Clone();
 
-  StyleHist(h_reco_us_Pi_scos_eff_corr,kBlack);
-  h_reco_us_Pi_scos_eff_corr->SetFillStyle(0);
-  StyleHist(h_reco_us_Pi_qcos_eff_corr,kRed+2);
+  StyleHist(h_reco_ud_Pi_scos_eff_corr,kBlack);
+  h_reco_ud_Pi_scos_eff_corr->SetFillStyle(0);
+  StyleHist(h_reco_ud_Pi_qcos_eff_corr,kRed+2);
   StyleHist(h_acc_PiPi_cos_eff_corr,kRed+2);
   StyleHist(h_rej_PiPi_cos_eff_corr,kBlue+2);
 
-  const Int_t nbins = h_reco_us_Pi_scos_eff_corr->GetNbinsX();
+  const Int_t nbins = h_reco_ud_Pi_scos_eff_corr->GetNbinsX();
 
   TH1F *p_KK = new TH1F("p_KK", "p_KK", 50,0,1);
   p_KK->Sumw2();
@@ -399,10 +357,25 @@ void main_pq_BGFit( TFile *files[] )
     p_KK->SetBinError(nbins / 2 - i, p_vec.at(i + nbins / 2));
   }
 
-  TH1F *h_reco_Pi_pq_cos = CorrectHist(h_reco_us_Pi_qcos_eff_corr, p_vec);
+  TH1F *h_reco_Pi_pq_cos = CorrectHist(h_reco_ud_Pi_qcos_eff_corr, p_vec);
   StyleHist(h_reco_Pi_pq_cos,kBlack);
 
+  Normalize2Reco(h_reco_Pi_pq_cos,h_gen_ud_qcos);
 
+
+  // Draw
+  TCanvas *c1 = new TCanvas("c1","c1",800,800);
+  TPad *pad1 = new TPad("pad1", "pad1",0,0,1,1);
+  StylePad(pad1,0,0.12,0,0.12);
+
+  h_reco_Pi_pq_cos->SetTitle(";cos#theta_{#pi};Entries");
+  h_reco_Pi_pq_cos->GetYaxis()->SetRangeUser(0,30E3);
+
+  h_reco_Pi_pq_cos->Draw("h");
+  h_gen_ud_qcos->Draw("hsame");
+
+
+/*
 
   // GEN
   TF1 * f_gen_uu      = new TF1("f_gen_uu","[0]*(1+x*x)+[1]*x",-1.0,1.0);
@@ -482,56 +455,7 @@ void main_pq_BGFit( TFile *files[] )
   leg->AddEntry(f_reco_dd,"Reco Fit d-quark angle","l");
   leg->Draw();
 
-
-/*
-  f_gen_uu_front->SetParNames("S","A");
-  f_gen_uu_full->SetParNames("S","A");
-
-  h_gen_uu_qcos_scale->Fit("f_gen_uu_front","MNRS");
-
-  double gen_uu_par[2];
-
-  f_gen_uu_front->GetParameters(gen_uu_par);
-  f_gen_uu_full->SetParameters(gen_uu_par);
-
-
-  TCanvas *c0 = new TCanvas("c0","c0",800,800);
-  TPad *pad0 = new TPad("pad0", "pad0",0,0,1,1);
-  StylePad(pad0,0,0.12,0,0.15);
-
-  h_gen_uu_qcos_scale->Draw("h");
-  f_gen_uu_full->Draw("same");
-
-
-  // RECO
-  TF1 * f_reco_uu_front = new TF1("f_reco_uu_front","[0]*(1+x*x)+[1]*x",-0.6,-0.4);
-  TF1 * f_reco_uu_full  = new TF1("f_reco_uu_full","[0]*(1+x*x)+[1]*x",-1.0,1.0);
-
-  f_reco_uu_front->SetParNames("S","A");
-  f_reco_uu_full->SetParNames("S","A");
-
-  f_reco_uu_front->SetParameters(gen_uu_par[0],gen_uu_par[1]);
-  // f_reco_uu_front->SetParLimits(0,2E3,1E4);
-  f_reco_uu_front->SetParLimits(1,-1E5,-1E4);
-
-  h_reco_Pi_pq_cos->Fit("f_reco_uu_front","MNRS");
-
-  double reco_uu_par[2];
-
-  f_reco_uu_front->GetParameters(reco_uu_par);
-  f_reco_uu_full->SetParameters(reco_uu_par);
-  // f_reco_uu_full->SetParameters(1.03832E+04,-6.14863e+03);
-
-  TCanvas *c2 = new TCanvas("c2","c2",800,800);
-  TPad *pad2 = new TPad("pad2", "pad2",0,0,1,1);
-  StylePad(pad2,0,0.12,0,0.15);
-
-  h_reco_Pi_pq_cos->Draw("h");
-  f_reco_uu_full->Draw("same");
-  h_gen_uu_qcos_scale->Draw("hsame");
-  f_gen_uu_full->Draw("same");
 */
-
 
 }
 
