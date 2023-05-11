@@ -315,6 +315,11 @@ Bool_t PFOTools::isProton( PFO_Info iPFO )
     return iPFO.dEdx_dist_pdg == 2212;
 }
 
+Bool_t PFOTools::is_cheatNoOthers( PFO_Info iPFO )
+{
+    return (abs(iPFO.pfo_pdgcheat) != 11) && (abs(iPFO.pfo_pdgcheat) != 13);
+}
+
 Bool_t PFOTools::is_charge_config( ChargeConfig cc, Int_t charge0 , Int_t charge1 )
 {
 
