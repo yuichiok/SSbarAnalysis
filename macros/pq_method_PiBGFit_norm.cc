@@ -393,8 +393,8 @@ void main_pq_BGFit( TFile *files[] )
   leg->SetLineColor(0);
   leg->AddEntry(h_reco_Pi_pq_cos,"Reco #pi angle (pq corrected)","f");
   leg->AddEntry(h_gen_ud_qcos,"Gen #pi angle","f");
-  leg->AddEntry(f_gen_ud,"Reco #pi angle Fit","l");
-  leg->AddEntry(f_reco_ud,"Gen #pi angle Fit","l");
+  leg->AddEntry(f_reco_ud,"Reco #pi angle Fit","l");
+  leg->AddEntry(f_gen_ud,"Gen #pi angle Fit","l");
   leg->Draw();
 
 
