@@ -363,6 +363,19 @@ void main_pq_BGFit( TFile *files[] )
   Normalize2Reco(h_reco_Pi_pq_cos,h_gen_ud_qcos);
 
 
+  // Fit
+  // Gen
+  TF1 * f_gen_ud      = new TF1("f_gen_ud","[0]*(1+x*x)+[1]*x",-1.0,1.0);
+  StyleFunc(f_gen_ud,2,kBlack);
+  f_gen_ud->SetParNames("Su","Au");
+  h_gen_ud_qcos->Fit("f_gen_ud","MNRS");
+
+  // Reco
+  TF1 * f_reco_ud      = new TF1("f_reco_ud","[0]*(1+x*x)+[1]*x",-0.8,0.8);
+  StyleFunc(f_reco_ud,1,kBlack);
+  f_reco_ud->SetParNames("Su","Au");
+  h_reco_Pi_pq_cos->Fit("f_reco_ud","MNRS");
+
   // Draw
   TCanvas *c1 = new TCanvas("c1","c1",800,800);
   TPad *pad1 = new TPad("pad1", "pad1",0,0,1,1);
@@ -373,6 +386,16 @@ void main_pq_BGFit( TFile *files[] )
 
   h_reco_Pi_pq_cos->Draw("h");
   h_gen_ud_qcos->Draw("hsame");
+  f_gen_ud->Draw("same");
+  f_reco_ud->Draw("same");
+
+  TLegend *leg = new TLegend(0.4,0.75,0.8,0.85);
+  leg->SetLineColor(0);
+  leg->AddEntry(h_reco_Pi_pq_cos,"Reco #pi angle (pq corrected)","f");
+  leg->AddEntry(h_gen_ud_qcos,"Gen #pi angle","f");
+  leg->AddEntry(f_gen_ud,"Reco #pi angle Fit","l");
+  leg->AddEntry(f_reco_ud,"Gen #pi angle Fit","l");
+  leg->Draw();
 
 
 /*
