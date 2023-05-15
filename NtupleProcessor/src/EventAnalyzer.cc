@@ -832,10 +832,8 @@ Float_t *EventAnalyzer::Particle_Ratios( TH1F *h_n_particles[], Int_t mode )
 void EventAnalyzer::PolarAngleGen(PFOTools mct)
 {
   // Gen QQbar
-  for ( auto iq : mct.mc_quark ){
-    _hm.h1[_hm.gen_q_cos]->Fill(iq.cos);
-    _hm.h1[_hm.gen_q_qcos]->Fill(iq.qcos);
-  }
+  _hm.h1[_hm.gen_q_cos]->Fill(mct.mc_quark[0].cos);
+  _hm.h1[_hm.gen_q_qcos]->Fill(mct.mc_quark[0].qcos);
 
   // Gen K
   for ( int istable=0; istable < _mc.mc_stable_n; istable++ ){
@@ -892,18 +890,6 @@ void EventAnalyzer::ProcessDoubleTag(PFOTools pfot, PFOTools mct, vector<Bool_t>
 
     }
   }
-
-  /*
-  Int_t vec_size = cuts.size();
-  for (int i=0; i<vec_size-1; i++){
-
-    if (!cuts.at(i)){
-      LPFO_checks = false;
-      break;
-    }
-
-  }
-  */
 
   Bool_t sign_check[3] = {false, false, false};
   for (int i=0; i<3; i++ ){
