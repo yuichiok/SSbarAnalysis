@@ -184,8 +184,10 @@ void HistManager::Hist2List()
     hList2_dEdx->Add(ih);
   }
 
-  for (auto ih : h2_particle_dEdx) {
-    hList2_particle_dEdx->Add(ih);
+  for (int ih=0; ih < Last_h2_particle_dEdx; ih++) {
+    for (int jh=0; jh < Last_particle_List; jh++) {
+      hList2_particle_dEdx->Add(h2_particle_dEdx[ih][jh]);
+    }
   }
 }
 
