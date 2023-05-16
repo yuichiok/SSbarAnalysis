@@ -156,16 +156,8 @@ class HistManager
 
     enum h2_dEdx_index {
 
-      gen_K_dEdx_p,
-      gen_pi_dEdx_p,
-      gen_p_dEdx_p,
-
-      dummy_dEdx,
-      Last_h2_dEdx = dummy_dEdx
-    };
-    TH2F * h2_dEdx[Last_h2_dEdx];
-
-    enum particle_dEdx_index {
+      // dEdx vs p
+      gen_ipart_dEdx_p,
 
       // KID
       gen_ipart_reco_K_dEdx_p,
@@ -177,8 +169,8 @@ class HistManager
       gen_ipart_PidEdx_dist_cos,
       gen_ipart_reco_Pi_PidEdx_dist_cos,
 
-      dummy_particle_dEdx,
-      Last_h2_particle_dEdx = dummy_particle_dEdx
+      dummy_dEdx,
+      Last_h2_dEdx = dummy_dEdx
     };
     TString particle_list[5] = {"K", "pi", "p", "e", "mu"};
     enum particle_List_index {
@@ -190,7 +182,7 @@ class HistManager
       dummy_particle_List,
       Last_particle_List = dummy_particle_List
     };
-    TH2F * h2_particle_dEdx[Last_h2_particle_dEdx][Last_particle_List];
+    TH2F * h2_dEdx[Last_h2_dEdx][Last_particle_List];
 
   private:
     TList* hList1                = new TList();
@@ -199,7 +191,6 @@ class HistManager
     TList* hList2                = new TList();
     TList* hList2_jet            = new TList();
     TList* hList2_dEdx           = new TList();
-    TList* hList2_particle_dEdx  = new TList();
 
 };
 

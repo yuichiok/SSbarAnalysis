@@ -45,7 +45,7 @@ void HistManager::InitializeHists()
     h1[reco_K_qcos]     = new TH1F("h_reco_K_qcos",";LPFO Kaon cos#theta; Entries",cos_bin,-1,1);
     h1[reco_K_scos]     = new TH1F("h_reco_K_scos",";LPFO Kaon cos#theta; Entries",cos_bin,-1,1);
     h1[reco_K_mom]      = new TH1F("h_reco_K_mom",";LPFO Kaon momentum (GeV); Entries",140,10,150);
-    h1[reco_K_pdgcheat] = new TH1F("h_reco_K_pdgcheat",";LPFO Kaon pdgcheat (Pion, Kaon, Proton, others); Entries",4,-0.5,3.5);
+    h1[reco_K_pdgcheat] = new TH1F("h_reco_K_pdgcheat",";LPFO Kaon pdgcheat (Pion, Kaon, Proton, others); Entries",6,-0.5,5.5);
     h1[gen_reco_K_sep_cos] = new TH1F("h_gen_reco_K_sep_cos",";Kaon cos#theta_{gen-LPFOK}; Entries",cos_bin,-1,1);
     h1[jet_reco_K_sep_cos] = new TH1F("h_jet_reco_K_sep_cos",";Kaon cos#theta_{jet-LPFOK}; Entries",cos_bin,-1,1);
 
@@ -63,7 +63,7 @@ void HistManager::InitializeHists()
     h1[reco_Pi_qcos]     = new TH1F("h_reco_Pi_qcos",";LPFO Pion cos#theta; Entries",cos_bin,-1,1);
     h1[reco_Pi_scos]     = new TH1F("h_reco_Pi_scos",";LPFO Pion cos#theta; Entries",cos_bin,-1,1);
     h1[reco_Pi_mom]      = new TH1F("h_reco_Pi_mom",";LPFO Pion momentum (GeV); Entries",140,10,150);
-    h1[reco_Pi_pdgcheat] = new TH1F("h_reco_Pi_pdgcheat",";LPFO Pion pdgcheat (Pion, Kaon, Proton, others); Entries",4,-0.5,3.5);
+    h1[reco_Pi_pdgcheat] = new TH1F("h_reco_Pi_pdgcheat",";LPFO Pion pdgcheat (Pion, Kaon, Proton, others); Entries",6,-0.5,5.5);
     h1[gen_reco_Pi_sep_cos] = new TH1F("h_gen_reco_Pi_sep_cos",";cos#theta_{gen-LPFOPi}; Entries",cos_bin,-1,1);
     h1[jet_reco_Pi_sep_cos] = new TH1F("h_jet_reco_Pi_sep_cos",";cos#theta_{jet-LPFOPi}; Entries",cos_bin,-1,1);
 
@@ -131,23 +131,22 @@ void HistManager::InitializeHists()
     h2_particle_ratio_cos[pi_rate_cos_reco] = new TH2F("h2_pi_rate_cos_reco",";qcos#theta;Ratio of Pions / Event (reco)",40,-1,1,11,0,1.1);
     h2_particle_ratio_cos[p_rate_cos_reco]  = new TH2F("h2_p_rate_cos_reco",";qcos#theta;Ratio of Protons / Event (reco)",40,-1,1,11,0,1.1);
 
-  // dEdx
-    h2_dEdx[gen_K_dEdx_p]  = new TH2F("h2_gen_K_dEdx_p"  ,";p (GeV);#frac{dE}{dx}",nbins_p,bins_p,nbins_dEdx,bins_dEdx);
-    h2_dEdx[gen_pi_dEdx_p] = new TH2F("h2_gen_pi_dEdx_p" ,";p (GeV);#frac{dE}{dx}",nbins_p,bins_p,nbins_dEdx,bins_dEdx);
-    h2_dEdx[gen_p_dEdx_p]  = new TH2F("h2_gen_p_dEdx_p"  ,";p (GeV);#frac{dE}{dx}",nbins_p,bins_p,nbins_dEdx,bins_dEdx);
+  // dEd information
 
-  // particle dEdx
+    for (int iparticle = 0; iparticle < Last_particle_List; iparticle++){
 
-    for (int iparticle = 0; iparticle < 5; iparticle++){
+      // dEdx vs p
+      h2_dEdx[gen_ipart_dEdx_p][iparticle] = new TH2F("h2_gen_" + particle_list[iparticle] + "_dEdx_p"  ,";p (GeV);#frac{dE}{dx}",nbins_p,bins_p,nbins_dEdx,bins_dEdx);
+
       // KID
-      h2_particle_dEdx[gen_ipart_reco_K_dEdx_p][iparticle]         = new TH2F("h2_gen_" + particle_list[iparticle] + "_reco_K_dEdx_p"  ,";p (GeV);#frac{dE}{dx}",nbins_p,bins_p,nbins_dEdx,bins_dEdx);
-      h2_particle_dEdx[gen_ipart_KdEdx_dist_cos][iparticle]        = new TH2F("h2_gen_" + particle_list[iparticle] + "_KdEdx_dist_cos"  ,";cos#theta;K #frac{dE}{dx} dist", 100, -1, 1, 100, -20, 20);
-      h2_particle_dEdx[gen_ipart_reco_K_KdEdx_dist_cos][iparticle] = new TH2F("h2_gen_" + particle_list[iparticle] + "_reco_K_KdEdx_dist_cos"  ,";cos#theta;K #frac{dE}{dx} dist", 100, -1, 1, 100, -20, 20);
+      h2_dEdx[gen_ipart_reco_K_dEdx_p][iparticle]         = new TH2F("h2_gen_" + particle_list[iparticle] + "_reco_K_dEdx_p"  ,";p (GeV);#frac{dE}{dx}",nbins_p,bins_p,nbins_dEdx,bins_dEdx);
+      h2_dEdx[gen_ipart_KdEdx_dist_cos][iparticle]        = new TH2F("h2_gen_" + particle_list[iparticle] + "_KdEdx_dist_cos"  ,";cos#theta;K #frac{dE}{dx} dist", 100, -1, 1, 100, -20, 20);
+      h2_dEdx[gen_ipart_reco_K_KdEdx_dist_cos][iparticle] = new TH2F("h2_gen_" + particle_list[iparticle] + "_reco_K_KdEdx_dist_cos"  ,";cos#theta;K #frac{dE}{dx} dist", 100, -1, 1, 100, -20, 20);
 
       // PiID
-      h2_particle_dEdx[gen_ipart_reco_Pi_dEdx_p][iparticle]          = new TH2F("h2_gen_" + particle_list[iparticle] + "_reco_Pi_dEdx_p"  ,";p (GeV);#frac{dE}{dx}",nbins_p,bins_p,nbins_dEdx,bins_dEdx);
-      h2_particle_dEdx[gen_ipart_PidEdx_dist_cos][iparticle]         = new TH2F("h2_gen_" + particle_list[iparticle] + "_PidEdx_dist_cos"  ,";cos#theta;K #frac{dE}{dx} dist", 100, -1, 1, 100, -20, 20);
-      h2_particle_dEdx[gen_ipart_reco_Pi_PidEdx_dist_cos][iparticle] = new TH2F("h2_gen_" + particle_list[iparticle] + "_reco_Pi_PidEdx_dist_cos"  ,";cos#theta;K #frac{dE}{dx} dist", 100, -1, 1, 100, -20, 20);
+      h2_dEdx[gen_ipart_reco_Pi_dEdx_p][iparticle]          = new TH2F("h2_gen_" + particle_list[iparticle] + "_reco_Pi_dEdx_p"  ,";p (GeV);#frac{dE}{dx}",nbins_p,bins_p,nbins_dEdx,bins_dEdx);
+      h2_dEdx[gen_ipart_PidEdx_dist_cos][iparticle]         = new TH2F("h2_gen_" + particle_list[iparticle] + "_PidEdx_dist_cos"  ,";cos#theta;K #frac{dE}{dx} dist", 100, -1, 1, 100, -20, 20);
+      h2_dEdx[gen_ipart_reco_Pi_PidEdx_dist_cos][iparticle] = new TH2F("h2_gen_" + particle_list[iparticle] + "_reco_Pi_PidEdx_dist_cos"  ,";cos#theta;K #frac{dE}{dx} dist", 100, -1, 1, 100, -20, 20);
     }
 
     Hist2List();
@@ -180,13 +179,9 @@ void HistManager::Hist2List()
     hList1_particle_ratio->Add(ih);
   }
 
-  for (auto ih : h2_dEdx) {
-    hList2_dEdx->Add(ih);
-  }
-
-  for (int ih=0; ih < Last_h2_particle_dEdx; ih++) {
+  for (int ih=0; ih < Last_h2_dEdx; ih++) {
     for (int jh=0; jh < Last_particle_List; jh++) {
-      hList2_particle_dEdx->Add(h2_particle_dEdx[ih][jh]);
+      hList2_dEdx->Add(h2_dEdx[ih][jh]);
     }
   }
 }
