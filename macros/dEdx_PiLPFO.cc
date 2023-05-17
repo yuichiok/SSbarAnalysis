@@ -197,9 +197,9 @@ void dEdx_dist_cos_proj(TFile *file)
 
     hpi_proj[islice]->SetTitle(TString::Format("Slice %.2f < cos#theta < %.2f;dE/dx distance [MeV];a.u.",binL_low,binH_high).Data());
     if(islice==0) {
-      hpi_proj[islice]->GetYaxis()->SetRangeUser(0,1.7E4);
+      hpi_proj[islice]->GetYaxis()->SetRangeUser(0,0.4E4);
     }else{
-      hpi_proj[islice]->GetYaxis()->SetRangeUser(0,0.7E4);
+      hpi_proj[islice]->GetYaxis()->SetRangeUser(0,0.3E4);
     }
     hpi_proj[islice]->GetXaxis()->SetRangeUser(-5,5);
     hpi_proj[islice]->Draw("h");
@@ -223,7 +223,7 @@ void dEdx_dist_cos_proj(TFile *file)
 
 }
 
-vector<TGraph*> dEdx_dist_cos_eff_pur(TFile *file)
+void dEdx_dist_cos_eff_pur(TFile *file)
 {
   vector<TGraph*> graphs;
 
@@ -239,8 +239,8 @@ vector<TGraph*> dEdx_dist_cos_eff_pur(TFile *file)
   TH2F *he_sel  = (TH2F*) file->Get("dEdx/h2_gen_e_reco_Pi_PidEdx_dist_cos");
   TH2F *hmu_sel = (TH2F*) file->Get("dEdx/h2_gen_mu_reco_Pi_PidEdx_dist_cos");
 
-  Int_t NbinsX = hK_sel->GetNbinsX();
-  Int_t NbinsY = hK_sel->GetNbinsY();
+  Int_t NbinsX = hpi_sel->GetNbinsX();
+  Int_t NbinsY = hpi_sel->GetNbinsY();
 
   Float_t x[NbinsX], eff[NbinsX], pur[NbinsX];
 
@@ -250,7 +250,7 @@ vector<TGraph*> dEdx_dist_cos_eff_pur(TFile *file)
 
     x[iarr] = hK_sel->GetXaxis()->GetBinCenter(ibin);
 
-    Float_t nkaons_all = hK_gen->Integral(ibin,ibin,1,NbinsY);
+    Float_t npions_all = hpi_gen->Integral(ibin,ibin,1,NbinsY);
 
     Float_t nkaons     = hK_sel->Integral(ibin,ibin,1,NbinsY);
     Float_t npions     = hpi_sel->Integral(ibin,ibin,1,NbinsY);
@@ -258,8 +258,8 @@ vector<TGraph*> dEdx_dist_cos_eff_pur(TFile *file)
     Float_t nelectrons = he_sel->Integral(ibin,ibin,1,NbinsY);
     Float_t nmuons     = hmu_sel->Integral(ibin,ibin,1,NbinsY);
 
-    eff[iarr] = nkaons / nkaons_all;
-    pur[iarr] = nkaons / (nkaons + npions + nprotons + nelectrons + nmuons) ;
+    eff[iarr] = npions / npions_all;
+    pur[iarr] = npions / (nkaons + npions + nprotons + nelectrons + nmuons) ;
 
   }
 
@@ -267,10 +267,14 @@ vector<TGraph*> dEdx_dist_cos_eff_pur(TFile *file)
   TGraph *gr_pur = new TGraph(NbinsX, x, pur);
   TGraph *gr_eff_pur = new TGraph(NbinsX, eff, pur);
 
-  graphs.push_back(gr_eff);
-  graphs.push_back(gr_pur);
-  graphs.push_back(gr_eff_pur);
-  return graphs;
+  TCanvas * c_gr_eff = new TCanvas("c_gr_eff","c_gr_eff",800,800);
+  gr_eff->SetTitle(";cos#theta;Efficiency");
+  gr_eff->Draw("AC*");
+
+  TCanvas * c_gr_pur = new TCanvas("c_gr_pur","c_gr_pur",800,800);
+  gr_pur->SetTitle(";cos#theta;Purity");
+  gr_pur->GetYaxis()->SetRangeUser(0,1);
+  gr_pur->Draw("AC*");
 
 }
 
@@ -281,10 +285,11 @@ void dEdx_PiLPFO()
   // TFile *uu_file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.uu.PiLPFO.PFOp15.LPFOp15_pNaN.tpc0.hists.all.root","READ");
   // TFile *uu_file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ss.PiLPFO.PFOp15.LPFOp15_pNaN.tpc0.hists.all.root","READ");
 
-  TFile *uu_file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ud.KPiLPFO.distPi0.PFOp15.LPFOp15_pNaN.tpc0.hists.all.root","READ");
+  TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ud.KPiLPFO.distPi0.PFOp15.LPFOp15_pNaN.tpc0.hists.all.root","READ");
 
-  dEdx_p(uu_file);
-  dEdx_dist_cos(uu_file);
-  dEdx_dist_cos_proj(uu_file);
+  dEdx_p(file);
+  dEdx_dist_cos(file);
+  dEdx_dist_cos_proj(file);
+  dEdx_dist_cos_eff_pur(file);
 
 }
