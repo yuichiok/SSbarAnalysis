@@ -79,7 +79,7 @@ void dEdx_p(TFile *file)
   h2_gen_pi_dEdx_p->SetTitle(";Track momentum [GeV];#frac{dE}{dx}[MeV]");
   h2_gen_pi_dEdx_p->GetXaxis()->SetTitleOffset(1.5);
   h2_gen_pi_dEdx_p->GetXaxis()->SetRangeUser(10,100);
-  h2_gen_pi_dEdx_p->GetYaxis()->SetRangeUser(0.12,0.2);
+  h2_gen_pi_dEdx_p->GetYaxis()->SetRangeUser(0.16,0.26);
   h2_gen_pi_dEdx_p->Draw("box");
   h2_gen_K_dEdx_p->Draw("box same");
   h2_gen_p_dEdx_p->Draw("box same");
@@ -87,16 +87,19 @@ void dEdx_p(TFile *file)
   h2_gen_mu_dEdx_p->Draw("box same");
 
   // Kaon Bethe-Bloch formula
-  std::vector< double > parskaon;
-  parskaon.push_back(0.0792784);
-  parskaon.push_back(3798.12);
-  parskaon.push_back(4.06952e+07);
-  parskaon.push_back(0.450671);
-  parskaon.push_back(0.00050169);
-  parskaon.push_back(0.493677); // mass
+  std::vector< double > bethe_pars;
+  bethe_pars.push_back(0.0792784);
+  bethe_pars.push_back(3798.12);
+  bethe_pars.push_back(4.06952e+07);
+  bethe_pars.push_back(0.450671);
+  bethe_pars.push_back(0.00050169);
+
+  double K_mass  = 0.493677;
+  double pi_mass = 0.139570;
+  bethe_pars.push_back(pi_mass); // mass
 
   TF1 *func = new TF1("func",BetheBloch,0.1,100,6) ;
-  for (int i = 0; i < 6; ++i) func->SetParameter(i,parskaon[i]);
+  for (int i = 0; i < 6; ++i) func->SetParameter(i,bethe_pars[i]);
   func->SetLineColor(kBlack);
   func->Draw("same");
 
@@ -107,7 +110,7 @@ void dEdx_p(TFile *file)
   leg->AddEntry(h2_gen_p_dEdx_p,"p","l");
   leg->AddEntry(h2_gen_e_dEdx_p,"e^{#pm}","l");
   leg->AddEntry(h2_gen_mu_dEdx_p,"#mu^{#pm}","l");
-  leg->AddEntry(func,"K Bethe-Bloch formula","l");
+  leg->AddEntry(func,"Pion Bethe-Bloch formula","l");
   leg->Draw();
 
 }
