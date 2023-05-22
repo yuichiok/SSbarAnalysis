@@ -269,20 +269,10 @@ TH1F * Efficiency_Correction2( TH1F * h, TString name, TFile * file )
   if( h->GetNbinsX() != h_stable_cos->GetNbinsX() ) throw std::logic_error("Error");
   if( h->GetNbinsX() != h_purity_cos->GetNbinsX() ) throw std::logic_error("Error");
 
-  TH1F *h_weight = (TH1F*) h_purity_cos->Clone();
-  h_weight->Divide(h_stable_cos);
-
-  Int_t nbins = h_stable_cos->GetNbinsX();
-  TH1F *corrected = new TH1F(name.Data(), "corrected", 100,-1,1);
-  corrected->Sumw2();
-  for (int ibin = 1; ibin < nbins + 1; ibin++){
-
-    Float_t binc_h   = h->GetBinContent(ibin);
-    Float_t binc_eff = h_weight->GetBinContent(ibin);
-
-    corrected->SetBinContent(ibin,binc_h * binc_eff);
-
-  }
+  TH1F *h_weight = (TH1F*) h_stable_cos->Clone();
+  h_weight->Divide(h_purity_cos);
+  TH1F *corrected = (TH1F*) h->Clone();
+  corrected->Divide(h_weight);
 
   return corrected;
 
