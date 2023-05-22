@@ -389,6 +389,9 @@ void main_pq_BGFit( TFile *files[] )
   f_gen_ud->Draw("same");
   f_reco_ud->Draw("same");
 
+  cout << "Gen  Chi2 / ndf = " << f_gen_ud->GetChisquare() << " / " << f_gen_ud->GetNDF() << endl;
+  cout << "Reco Chi2 / ndf = " << f_reco_ud->GetChisquare() << " / " << f_reco_ud->GetNDF() << endl;
+
   TLegend *leg = new TLegend(0.4,0.75,0.8,0.85);
   leg->SetLineColor(0);
   leg->AddEntry(h_reco_Pi_pq_cos,"Reco #pi angle (pq corrected)","f");
