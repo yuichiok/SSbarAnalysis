@@ -310,12 +310,13 @@ void main_pq_BGFit( TFile *files[] )
   h_gen_ud_qcos->SetLineStyle(2);
 
   // reco us polar
-  TH1F *h_reco_ud_Pi_scos = (TH1F*) files[kUD]->Get("h_reco_Pi_scos");
-  TH1F *h_reco_ud_Pi_qcos = (TH1F*) files[kUD]->Get("h_reco_Pi_qcos");
+  TH1F *h_reco_ud_Pi_scos  = (TH1F*) files[kUD]->Get("h_reco_Pi_scos");
+  TH1F *h_reco_ud_Pi_qcos  = (TH1F*) files[kUD]->Get("h_reco_Pi_qcos");
+  TH1F *h_cheat_ud_Pi_qcos = (TH1F*) files[kUD]->Get("h_cheat_Pi_qcos");
 
   // efficiency correction
-  TH1F *h_reco_ud_Pi_scos_eff_corr = Efficiency_Correction2(h_reco_ud_Pi_scos,"scos_corr",files[kUD]);
-  TH1F *h_reco_ud_Pi_qcos_eff_corr = Efficiency_Correction2(h_reco_ud_Pi_qcos,"qcos_corr",files[kUD]);
+  TH1F *h_reco_ud_Pi_scos_eff_corr  = Efficiency_Correction2(h_reco_ud_Pi_scos,"scos_corr",files[kUD]);
+  TH1F *h_reco_ud_Pi_qcos_eff_corr  = Efficiency_Correction2(h_reco_ud_Pi_qcos,"qcos_corr",files[kUD]);
   // TH1F *h_reco_ud_Pi_scos_eff_corr = (TH1F*) h_reco_ud_Pi_scos->Clone();
   // TH1F *h_reco_ud_Pi_qcos_eff_corr = (TH1F*) h_reco_ud_Pi_qcos->Clone();
 
@@ -328,9 +329,11 @@ void main_pq_BGFit( TFile *files[] )
   // TH1F *h_acc_PiPi_cos_eff_corr = (TH1F*) h_acc_PiPi_cos->Clone();
   // TH1F *h_rej_PiPi_cos_eff_corr = (TH1F*) h_rej_PiPi_cos->Clone();
 
-  StyleHist(h_reco_ud_Pi_scos_eff_corr,kBlack);
+  StyleHist(h_reco_ud_Pi_scos_eff_corr,kBlue);
   h_reco_ud_Pi_scos_eff_corr->SetFillStyle(0);
   StyleHist(h_reco_ud_Pi_qcos_eff_corr,kRed+2);
+  StyleHist(h_cheat_ud_Pi_qcos,kBlue);
+
   StyleHist(h_acc_PiPi_cos_eff_corr,kRed+2);
   StyleHist(h_rej_PiPi_cos_eff_corr,kBlue+2);
 
@@ -351,6 +354,7 @@ void main_pq_BGFit( TFile *files[] )
   StyleHist(h_reco_Pi_pq_cos,kBlack);
 
   Normalize2Reco(h_reco_Pi_pq_cos,h_gen_ud_qcos);
+  Normalize2Reco(h_reco_Pi_pq_cos,h_cheat_ud_Pi_qcos);
 
 
   // Fit
@@ -375,6 +379,7 @@ void main_pq_BGFit( TFile *files[] )
   h_reco_Pi_pq_cos->GetYaxis()->SetRangeUser(0,30E3);
 
   h_reco_Pi_pq_cos->Draw("h");
+  h_reco_ud_Pi_scos_eff_corr->Draw("hsame");
   h_gen_ud_qcos->Draw("hsame");
   f_gen_ud->Draw("same");
   f_reco_ud->Draw("same");
