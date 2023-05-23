@@ -34,8 +34,8 @@ void Stability_Purity(TFile *file)
   StyleHist(h_ps.at(kStability),kBlue+2);
   StyleHist(h_ps.at(kPurity),kRed+2);
 
-  // h_ss_weight->Draw("");
-  // h_uu_weight->Draw("same");
+  h_ps.at(kStability)->Draw("");
+  h_ps.at(kPurity)->Draw("same");
 
   // TLegend *leg2 = new TLegend(0.2,0.15,0.35,0.23);
   // leg2->SetLineColor(0);
