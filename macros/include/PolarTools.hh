@@ -156,33 +156,6 @@ TH1F * Efficiency_Correction( TH1F * h, TString name, TFile * file )
   TH1F *h_N_Pi_corr_cos = (TH1F*) file->Get("h_N_Pi_corr_cos");
 
   TH1F *h_stable_cos = (TH1F*) h_N_Pi_corr_cos->Clone();
-  h_stable_cos->Divide(h_gen_N_Pi_cos);
-
-  if( h->GetNbinsX() != h_stable_cos->GetNbinsX() ) throw std::logic_error("Error");
-
-  Int_t nbins = h_stable_cos->GetNbinsX();
-  TH1F *corrected = new TH1F(name.Data(), "corrected", 100,-1,1);
-  corrected->Sumw2();
-  for (int ibin = 1; ibin < nbins + 1; ibin++){
-
-    Float_t binc_h   = h->GetBinContent(ibin);
-    Float_t binc_eff = h_stable_cos->GetBinContent(ibin);
-
-    corrected->SetBinContent(ibin,binc_h / binc_eff);
-
-  }
-
-  return corrected;
-
-}
-
-TH1F * Efficiency_Correction2( TH1F * h, TString name, TFile * file )
-{
-  TH1F *h_gen_N_Pi_cos  = (TH1F*) file->Get("h_gen_N_Pi_cos");
-  TH1F *h_reco_N_Pi_cos = (TH1F*) file->Get("h_reco_N_Pi_cos");
-  TH1F *h_N_Pi_corr_cos = (TH1F*) file->Get("h_N_Pi_corr_cos");
-
-  TH1F *h_stable_cos = (TH1F*) h_N_Pi_corr_cos->Clone();
   TH1F *h_purity_cos = (TH1F*) h_N_Pi_corr_cos->Clone();
   h_stable_cos->Divide(h_gen_N_Pi_cos);
   h_purity_cos->Divide(h_reco_N_Pi_cos);
