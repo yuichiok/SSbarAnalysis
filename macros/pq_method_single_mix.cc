@@ -1,29 +1,7 @@
 #include "include/Styles.hh"
+#include "include/PolarTools.hh"
 
-vector<TH1F*> extract_ps_hists(TFile *file)
-{
-  TH1F *h_gen_N_K_cos  = (TH1F*) file->Get("h_gen_N_Pi_cos");
-  TH1F *h_reco_N_K_cos = (TH1F*) file->Get("h_reco_N_Pi_cos");
-  TH1F *h_N_K_corr_cos = (TH1F*) file->Get("h_N_Pi_corr_cos");
-
-  TH1F *h_stable_cos = (TH1F*) h_N_K_corr_cos->Clone();
-  TH1F *h_purity_cos = (TH1F*) h_N_K_corr_cos->Clone();
-  h_stable_cos->Divide(h_gen_N_K_cos);
-  h_purity_cos->Divide(h_reco_N_K_cos);
-
-  TH1F *h_weight = (TH1F*) h_stable_cos->Clone();
-  h_weight->Divide(h_purity_cos);
-
-  vector<TH1F*> hists;
-  hists.push_back(h_stable_cos);
-  hists.push_back(h_purity_cos);
-  hists.push_back(h_weight);
-
-  return hists;
-
-}
-
-void single_mix(TFile *file)
+void single_mix( TFile *files[] )
 {
   enum MixProcess {kUU,kDD,kUD};
   gStyle->SetOptStat(0);
@@ -43,15 +21,22 @@ void single_mix(TFile *file)
   h_gen_ud_qcos->SetFillStyle(0);
   h_gen_ud_qcos->SetLineStyle(2);
 
+  Int_t NGen_uu = h_gen_uu_qcos->GetEntries();
+  Int_t NGen_dd = h_gen_dd_qcos->GetEntries();
+  Int_t NGen_ud = h_gen_ud_qcos->GetEntries();
+  cout << "NGen uu = " << NGen_uu << endl;
+  cout << "NGen dd = " << NGen_dd << endl;
+  cout << "NGen ud = " << NGen_ud << " (uu+dd = " << NGen_uu + NGen_dd << ")" << endl;
+
   // reco us polar
   TH1F *h_reco_ud_Pi_scos  = (TH1F*) files[kUD]->Get("h_reco_Pi_scos");
   TH1F *h_reco_ud_Pi_qcos  = (TH1F*) files[kUD]->Get("h_reco_Pi_qcos");
   TH1F *h_cheat_ud_Pi_qcos = (TH1F*) files[kUD]->Get("h_cheat_Pi_qcos");
 
   // efficiency correction
-  TH1F *h_reco_ud_Pi_scos_eff_corr  = Efficiency_Correction2(h_reco_ud_Pi_scos,"scos_corr",files[kUD]);
-  TH1F *h_reco_ud_Pi_qcos_eff_corr  = Efficiency_Correction2(h_reco_ud_Pi_qcos,"qcos_corr",files[kUD]);
-  TH1F *h_cheat_ud_Pi_qcos_eff_corr = Efficiency_Correction2(h_cheat_ud_Pi_qcos,"cheat_qcos_corr",files[kUD]);
+  TH1F *h_reco_ud_Pi_scos_eff_corr  = Efficiency_Correction(h_reco_ud_Pi_scos,"scos_corr",files[kUD]);
+  TH1F *h_reco_ud_Pi_qcos_eff_corr  = Efficiency_Correction(h_reco_ud_Pi_qcos,"qcos_corr",files[kUD]);
+  TH1F *h_cheat_ud_Pi_qcos_eff_corr = Efficiency_Correction(h_cheat_ud_Pi_qcos,"cheat_qcos_corr",files[kUD]);
   // TH1F *h_reco_ud_Pi_scos_eff_corr = (TH1F*) h_reco_ud_Pi_scos->Clone();
   // TH1F *h_reco_ud_Pi_qcos_eff_corr = (TH1F*) h_reco_ud_Pi_qcos->Clone();
 
@@ -59,8 +44,8 @@ void single_mix(TFile *file)
   TH1F *h_acc_PiPi_cos  = (TH1F*) files[kUD]->Get("pq/h_acc_PiPi_cos");
   TH1F *h_rej_PiPi_cos  = (TH1F*) files[kUD]->Get("pq/h_rej_PiPi_cos");
 
-  TH1F *h_acc_PiPi_cos_eff_corr = Efficiency_Correction2(h_acc_PiPi_cos,"acc_corr",files[kUD]);
-  TH1F *h_rej_PiPi_cos_eff_corr = Efficiency_Correction2(h_rej_PiPi_cos,"rej_corr",files[kUD]);
+  TH1F *h_acc_PiPi_cos_eff_corr = Efficiency_Correction(h_acc_PiPi_cos,"acc_corr",files[kUD]);
+  TH1F *h_rej_PiPi_cos_eff_corr = Efficiency_Correction(h_rej_PiPi_cos,"rej_corr",files[kUD]);
   // TH1F *h_acc_PiPi_cos_eff_corr = (TH1F*) h_acc_PiPi_cos->Clone();
   // TH1F *h_rej_PiPi_cos_eff_corr = (TH1F*) h_rej_PiPi_cos->Clone();
 
@@ -108,7 +93,7 @@ void pq_method_single_mix()
       if ( !files[i]->IsOpen() ) throw 0;
     }
 
-    main_pq_BGFit( files );
+    single_mix( files );
   }
   catch ( int error_code ) {
     switch ( error_code ){
