@@ -30,7 +30,7 @@ void KPiID()
 
   for( int i=0; i<3; i++ )
   {
-    TString str = "../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR." + process_name[i] + ".KPiLPFO.PFOp15.LPFOp15_pNaN.tpc0.hists.all.root";
+    TString str = "../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR." + process_name[i] + ".KPiLPFO.distPi0.PFOp15.LPFOp15_pNaN.tpc0.hists.all.root";
     files[i] = new TFile(str.Data(),"READ");
 
     h_reco_K_pdgcheat[i]  = (TH1F*) files[i]->Get("h_reco_K_pdgcheat");
