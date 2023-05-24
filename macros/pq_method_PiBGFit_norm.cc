@@ -289,6 +289,17 @@ void Func2Hist( TH1F * h, double * par )
   }
 }
 
+Float_t AFB_calculation( TF1 * f )
+{
+  float N_forward  = f->Integral(0,1);
+  float N_backward = f->Integral(-1,0);
+
+  float AFB = (N_forward - N_backward) / (N_forward + N_backward);
+
+  return AFB;
+
+}
+
 void main_pq_BGFit( TFile *files[] )
 {
   enum MixProcess {kUU,kDD,kUD};
@@ -352,12 +363,13 @@ void main_pq_BGFit( TFile *files[] )
     p_KK->SetBinError(nbins / 2 - i, p_vec.at(i + nbins / 2));
   }
 
-  // TH1F *h_reco_Pi_pq_cos = CorrectHist(h_reco_ud_Pi_qcos_eff_corr, p_vec);
-  TH1F *h_reco_Pi_pq_cos = (TH1F*) h_reco_ud_Pi_qcos_eff_corr->Clone();
+  TH1F *h_reco_Pi_pq_cos = CorrectHist(h_reco_ud_Pi_qcos_eff_corr, p_vec);
+  // TH1F *h_reco_Pi_pq_cos = (TH1F*) h_reco_ud_Pi_qcos_eff_corr->Clone();
   StyleHist(h_reco_Pi_pq_cos,kBlack);
 
   Normalize2Reco(h_reco_Pi_pq_cos,h_gen_ud_qcos);
-  Normalize2Reco(h_reco_Pi_pq_cos,h_cheat_ud_Pi_qcos);
+  // Normalize2Reco(h_reco_Pi_pq_cos,h_cheat_ud_Pi_qcos);
+  Normalize2Reco(h_gen_ud_qcos,h_cheat_ud_Pi_qcos);
 
 
   // Fit
@@ -391,6 +403,9 @@ void main_pq_BGFit( TFile *files[] )
 
   cout << "Gen  Chi2 / ndf = " << f_gen_ud->GetChisquare() << " / " << f_gen_ud->GetNDF() << endl;
   cout << "Reco Chi2 / ndf = " << f_reco_ud->GetChisquare() << " / " << f_reco_ud->GetNDF() << endl;
+
+  AFB_calculation(f_gen_ud);
+  AFB_calculation(f_reco_ud);
 
   TLegend *leg = new TLegend(0.4,0.70,0.8,0.85);
   leg->SetLineColor(0);
