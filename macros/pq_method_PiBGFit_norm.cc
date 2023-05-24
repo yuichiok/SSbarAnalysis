@@ -178,8 +178,8 @@ TH1F * CorrectHist( TH1F * h_reco, vector<Float_t> p_vec)
   corrected->Sumw2();
   for (int i = 1; i < nbins / 2 + 1; i++)
   {
-    // float p = p_vec.at(i - 1);
-    float p = 0.7;
+    float p = p_vec.at(i - 1);
+    // float p = 0.9;
     float q = 1 - p;
     float weight = (p * p + q * q) / (q * q * q * q - p * p * p * p);
 
@@ -317,6 +317,7 @@ void main_pq_BGFit( TFile *files[] )
   // efficiency correction
   TH1F *h_reco_ud_Pi_scos_eff_corr  = Efficiency_Correction2(h_reco_ud_Pi_scos,"scos_corr",files[kUD]);
   TH1F *h_reco_ud_Pi_qcos_eff_corr  = Efficiency_Correction2(h_reco_ud_Pi_qcos,"qcos_corr",files[kUD]);
+  TH1F *h_cheat_ud_Pi_qcos_eff_corr = Efficiency_Correction2(h_cheat_ud_Pi_qcos,"cheat_qcos_corr",files[kUD]);
   // TH1F *h_reco_ud_Pi_scos_eff_corr = (TH1F*) h_reco_ud_Pi_scos->Clone();
   // TH1F *h_reco_ud_Pi_qcos_eff_corr = (TH1F*) h_reco_ud_Pi_qcos->Clone();
 
@@ -332,6 +333,7 @@ void main_pq_BGFit( TFile *files[] )
   StyleHist(h_reco_ud_Pi_scos_eff_corr,kBlue);
   h_reco_ud_Pi_scos_eff_corr->SetFillStyle(0);
   StyleHist(h_reco_ud_Pi_qcos_eff_corr,kRed+2);
+  StyleHist(h_cheat_ud_Pi_qcos_eff_corr,kBlue);
   StyleHist(h_cheat_ud_Pi_qcos,kBlue);
 
   StyleHist(h_acc_PiPi_cos_eff_corr,kRed+2);
@@ -350,7 +352,8 @@ void main_pq_BGFit( TFile *files[] )
     p_KK->SetBinError(nbins / 2 - i, p_vec.at(i + nbins / 2));
   }
 
-  TH1F *h_reco_Pi_pq_cos = CorrectHist(h_reco_ud_Pi_qcos_eff_corr, p_vec);
+  // TH1F *h_reco_Pi_pq_cos = CorrectHist(h_reco_ud_Pi_qcos_eff_corr, p_vec);
+  TH1F *h_reco_Pi_pq_cos = (TH1F*) h_reco_ud_Pi_qcos_eff_corr->Clone();
   StyleHist(h_reco_Pi_pq_cos,kBlack);
 
   Normalize2Reco(h_reco_Pi_pq_cos,h_gen_ud_qcos);
@@ -366,7 +369,7 @@ void main_pq_BGFit( TFile *files[] )
 
   // Reco
   TF1 * f_reco_ud      = new TF1("f_reco_ud","[0]*(1+x*x)+[1]*x",-0.8,0.8);
-  StyleFunc(f_reco_ud,1,kBlack);
+  StyleFunc(f_reco_ud,1,kRed);
   f_reco_ud->SetParNames("Su","Au");
   h_reco_Pi_pq_cos->Fit("f_reco_ud","MNRS");
 
@@ -379,7 +382,9 @@ void main_pq_BGFit( TFile *files[] )
   h_reco_Pi_pq_cos->GetYaxis()->SetRangeUser(0,30E3);
 
   h_reco_Pi_pq_cos->Draw("h");
-  h_reco_ud_Pi_scos_eff_corr->Draw("hsame");
+  // h_reco_ud_Pi_scos_eff_corr->Draw("hsame");
+  h_cheat_ud_Pi_qcos->Draw("hsame");
+  // h_cheat_ud_Pi_qcos_eff_corr->Draw("hsame");
   h_gen_ud_qcos->Draw("hsame");
   f_gen_ud->Draw("same");
   f_reco_ud->Draw("same");
@@ -387,13 +392,24 @@ void main_pq_BGFit( TFile *files[] )
   cout << "Gen  Chi2 / ndf = " << f_gen_ud->GetChisquare() << " / " << f_gen_ud->GetNDF() << endl;
   cout << "Reco Chi2 / ndf = " << f_reco_ud->GetChisquare() << " / " << f_reco_ud->GetNDF() << endl;
 
-  TLegend *leg = new TLegend(0.4,0.75,0.8,0.85);
+  TLegend *leg = new TLegend(0.4,0.70,0.8,0.85);
   leg->SetLineColor(0);
-  leg->AddEntry(h_reco_Pi_pq_cos,"Reco #pi angle (pq corrected)","f");
+  leg->AddEntry(h_reco_Pi_pq_cos,"Reco #pi angle","f");
   leg->AddEntry(h_gen_ud_qcos,"Gen #pi angle","f");
+  leg->AddEntry(h_cheat_ud_Pi_qcos,"Cheated #pi angle","f");
   leg->AddEntry(f_reco_ud,"Reco #pi angle Fit","l");
   leg->AddEntry(f_gen_ud,"Gen #pi angle Fit","l");
   leg->Draw();
+
+  // Plot p value
+  TCanvas *c_pval = new TCanvas("c_pval","c_pval",800,800);
+  TPad *pad_pval = new TPad("pad_pval", "pad_pval",0,0,1,1);
+  StylePad(pad_pval,0,0.12,0,0.15);
+  
+  StyleHist(p_KK,kGreen+2);
+  p_KK->SetTitle(";cos#theta_{#pi};p value");
+  p_KK->GetYaxis()->SetRangeUser(0,1);
+  p_KK->Draw("h");
 
 }
 
