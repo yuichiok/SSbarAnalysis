@@ -1,5 +1,5 @@
 #include <iostream>
-#include "Styles.cc"
+#include "include/Styles.hh"
 
 template <class H2>
 void Normalize(H2 *h)

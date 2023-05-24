@@ -1,4 +1,4 @@
-#include "Styles.cc"
+#include "include/Styles.hh"
 
 vector<TH1F*> extract_ps_hists(TFile *file)
 {

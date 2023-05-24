@@ -1,5 +1,5 @@
 #include <iostream>
-#include "Styles.cc"
+#include "include/Styles.hh"
 
 void Normalize(TH1F *h)
 {
