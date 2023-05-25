@@ -65,7 +65,7 @@ void main_pq()
   cout << "NReco Pi 30th bin = " << h_reco_K_qcos->GetBinContent(30) << endl;
 
   // efficiency correction
-  Bool_t isEffCorr = false;
+  Bool_t isEffCorr = true;
   TH1F *h_reco_K_scos_eff_corr;
   TH1F *h_reco_K_qcos_eff_corr;
   if (isEffCorr)
@@ -133,9 +133,20 @@ void main_pq()
   // Normalize(h_reco_K_qcos_eff_corr);
 
   // Fitting
+  TF1 * f_gen = new TF1("f_gen","[0]*(1+x*x)+[1]*x",-0.8,0.8);
+  f_gen->SetParNames("S","A");
+  h_gen_q_qcos->Fit("f_gen","MNRS");
+  cout << "Gen Chi2 / ndf = " << f_gen->GetChisquare() << " / " << f_gen->GetNDF() << endl;
+
   TF1 * f_reco = new TF1("f_reco","[0]*(1+x*x)+[1]*x",-0.8,0.8);
   f_reco->SetParNames("S","A");
   h_reco_K_pq_cos->Fit("f_reco","MNRS");
+  cout << "Reco Chi2 / ndf = " << f_reco->GetChisquare() << " / " << f_reco->GetNDF() << endl;
+  
+  Float_t AFB_gen  = AFB_calculation(f_gen);
+  Float_t AFB_reco = AFB_calculation(f_reco);
+  cout << "Gen  AFB = " << AFB_gen << endl;
+  cout << "Reco AFB = " << AFB_reco << endl;
 
   // h_reco_K_pq_cos->GetYaxis()->SetRangeUser(0,50E3);
   h_reco_K_pq_cos->SetTitle(";cos#theta_{#pi^{-}};a.u.");
