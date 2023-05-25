@@ -177,8 +177,11 @@ void main_pq_BGFit( TFile *files[] )
   cout << "Gen  Chi2 / ndf = " << f_gen_ud->GetChisquare() << " / " << f_gen_ud->GetNDF() << endl;
   cout << "Reco Chi2 / ndf = " << f_reco_ud->GetChisquare() << " / " << f_reco_ud->GetNDF() << endl;
 
-  AFB_calculation(f_gen_ud);
-  AFB_calculation(f_reco_ud);
+  Float_t AFB_gen  = AFB_calculation(f_gen_ud);
+  Float_t AFB_reco = AFB_calculation(f_reco_ud);
+
+  cout << "Gen  AFB = " << AFB_gen << endl;
+  cout << "Reco AFB = " << AFB_reco << endl;
 
   TLegend *leg = new TLegend(0.4,0.70,0.8,0.85);
   leg->SetLineColor(0);
