@@ -911,8 +911,7 @@ void EventAnalyzer::ProcessDoubleTag(PFOTools pfot, PFOTools mct, vector<Bool_t>
     sign_check[i] = cuts[i].back();
   }
 
-  // Reco K_K
-
+  // case K_K:
   if ( LPFO_checks[kKaon] && pfot.is_ss() && double_tag[kKaon] == K_K ){
 
     Int_t ineg = -1;
