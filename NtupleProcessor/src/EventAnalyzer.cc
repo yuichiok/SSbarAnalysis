@@ -111,7 +111,7 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
     PFOTools pfot( &_mc, &_pfo, _config );
 
     ientry = entry;
-    // cout << "evt: " << entry << endl;
+    cout << "evt: " << entry << endl;
     AnalyzeGenReco(mct,pfot);
 
     if ( !pfot.ValidPFO() ) {
@@ -531,6 +531,12 @@ Bool_t EventAnalyzer::Select(Selector sel)
         CutTrigger.push_back( Cut_ESum( jetvt ) );
         CutTrigger.push_back( Cut_ACol( jetvt ) );
         CutTrigger.push_back( Cut_ISR ( jetvt ) );
+        cout << "=== cut section ===" << endl;
+        cout << "jetvt0 = " << jetvt[0].v3().x() << ", " << jetvt[0].v3().y() << ", " << jetvt[0].v3().z() << endl;
+        cout << "jetvt1 = " << jetvt[1].v3().x() << ", " << jetvt[1].v3().y() << ", " << jetvt[1].v3().z() << endl;
+        cout << "isr ang  = " << VectorTools::GetThetaBetween( jetvt[0].v3(), jetvt[1].v3() ) << endl;
+        cout << "cut reco = " << CutTrigger.at(0) << CutTrigger.at(1) << CutTrigger.at(2) << endl;
+        cout << "===================" << endl;
         break;
 
       default:
@@ -893,6 +899,12 @@ void EventAnalyzer::ProcessDoubleTag(PFOTools pfot, PFOTools mct, vector<Bool_t>
     }
   }
 
+  cout << "double tag cuts: ";
+  for ( auto i : cuts[kPion] ){
+    cout << i << " ";
+  }
+  cout << endl;
+  
   /*
   Int_t vec_size = cuts.size();
   for (int i=0; i<vec_size-1; i++){

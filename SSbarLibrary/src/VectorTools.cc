@@ -41,13 +41,14 @@ Float_t VectorTools::GetCosBetween( ROOT::Math::XYZVector v1, ROOT::Math::XYZVec
 Float_t VectorTools::GetThetaBetween( ROOT::Math::XYZVector v1, ROOT::Math::XYZVector v2 )
 {
   Float_t dot = v1.Dot(v2);
-  if ( dot <= -1.0 ){
-    return TMath::Pi();
-  } else if ( dot >= 1.0 ){
-    return 0;
-  } else{
-    return std::acos( dot/(v1.R()*v2.R()) );
-  }
+  return std::acos( dot/(v1.R()*v2.R()) );
+  // if ( dot <= -1.0 ){
+  //   return TMath::Pi();
+  // } else if ( dot >= 1.0 ){
+  //   return 0;
+  // } else{
+  //   return std::acos( dot/(v1.R()*v2.R()) );
+  // }
 }
 
 
