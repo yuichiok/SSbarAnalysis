@@ -102,10 +102,10 @@ struct PFO_QQbar  {
   // PFO VARIABLES
     Int_t   pfo_n       = 0;
     Int_t   jet_nvtx    = 0;
-    Int_t   pfo_n_j1    = 0;
-    Int_t   jet_nvtx_j1 = 0;
-    Int_t   pfo_n_j2    = 0;
-    Int_t   jet_nvtx_j2 = 0;
+    // Int_t   pfo_n_j1    = 0;
+    // Int_t   jet_nvtx_j1 = 0;
+    // Int_t   pfo_n_j2    = 0;
+    // Int_t   jet_nvtx_j2 = 0;
     Int_t   pfo_match[MAX_NPARTICLES] = {0};
     Int_t   pfo_truejet_pdg[MAX_NPARTICLES] = {0};
     Int_t   pfo_truejet_type[MAX_NPARTICLES] = {0};
@@ -374,10 +374,10 @@ struct Branch_QQbar  {
     TBranch        *b_sphericity_tensor;   //!
     TBranch        *b_pfo_n;   //!
     TBranch        *b_jet_nvtx;   //!
-    TBranch        *b_pfo_n_j1;   //!
-    TBranch        *b_jet_nvtx_j1;   //!
-    TBranch        *b_pfo_n_j2;   //!
-    TBranch        *b_jet_nvtx_j2;   //!
+    // TBranch        *b_pfo_n_j1;   //!
+    // TBranch        *b_jet_nvtx_j1;   //!
+    // TBranch        *b_pfo_n_j2;   //!
+    // TBranch        *b_jet_nvtx_j2;   //!
     TBranch        *b_pfo_match;   //!
     TBranch        *b_pfo_truejet_pdg;   //!
     TBranch        *b_pfo_truejet_type;   //!
