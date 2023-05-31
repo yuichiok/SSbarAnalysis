@@ -93,6 +93,8 @@ void TreeReader::InitializeJetReadTree(TTree *_hTree, Jet_QQbar & _data, Branch_
     _hTree->SetBranchAddress("principle_thrust_axis", _data.principle_thrust_axis, &_branch.b_principle_thrust_axis);
     _hTree->SetBranchAddress("sphericity", &_data.sphericity, &_branch.b_sphericity);
     _hTree->SetBranchAddress("sphericity_tensor", _data.sphericity_tensor, &_branch.b_sphericity_tensor);
+    _hTree->SetBranchAddress("jet_npfo", _data.jet_npfo, &_branch.b_jet_npfo);
+    _hTree->SetBranchAddress("jet_nvtx", _data.jet_nvtx, &_branch.b_jet_nvtx);
 }
 
 void TreeReader::InitializeVTXReadTree(TTree *_hTree, VTX_QQbar & _data, Branch_QQbar & _branch)

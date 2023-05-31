@@ -69,7 +69,7 @@ class EventAnalyzer
 
     void             Jet_sum_n_acol();
 
-    void             CCbarAnalysis(PFOTools pfot);
+    void             CCbarAnalysis(PFOTools pfot, Bool_t low_ctag);
 
 
 

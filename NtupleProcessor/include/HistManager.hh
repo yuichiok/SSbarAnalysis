@@ -156,6 +156,40 @@ class HistManager
       z0_sigma_K_reco_secondary,
       z0_sigma_z0_K_reco_secondary,
 
+      d0_K_reco_pseudo,
+      d0_sigma_K_reco_pseudo,
+      d0_sigma_d0_K_reco_pseudo,
+
+      z0_K_reco_pseudo,
+      z0_sigma_K_reco_pseudo,
+      z0_sigma_z0_K_reco_pseudo,
+
+      ctag,
+
+      d0_K_reco_garbage,
+      d0_sigma_K_reco_garbage,
+      d0_sigma_d0_K_reco_garbage,
+
+      z0_K_reco_garbage,
+      z0_sigma_K_reco_garbage,
+      z0_sigma_z0_K_reco_garbage,
+
+      d0_K_reco_primary_ctag_cut,
+      d0_sigma_K_reco_primary_ctag_cut,
+      d0_sigma_d0_K_reco_primary_ctag_cut,
+
+      z0_K_reco_primary_ctag_cut,
+      z0_sigma_K_reco_primary_ctag_cut,
+      z0_sigma_z0_K_reco_primary_ctag_cut,
+
+      d0_K_reco_secondary_ctag_cut,
+      d0_sigma_K_reco_secondary_ctag_cut,
+      d0_sigma_d0_K_reco_secondary_ctag_cut,
+
+      z0_K_reco_secondary_ctag_cut,
+      z0_sigma_K_reco_secondary_ctag_cut,
+      z0_sigma_z0_K_reco_secondary_ctag_cut,
+
       pmag_K_reco,
       cos_theta_K_reco,
 
