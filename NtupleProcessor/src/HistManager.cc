@@ -118,21 +118,57 @@ void HistManager::InitializeHists()
 
   // Own
 
-    h1_K_reco[d0_K_reco_primary] = new TH1F("d0_K_reco_primary"  ,"Reconstructed primary K;d_0, [mm];",2000,0,0.2);
+    h1_K_reco[d0_K_reco_primary] = new TH1F("d0_K_reco_primary"  ,"Reconstructed primary K;d_0, [mm];",2000,0,2);
     h1_K_reco[d0_sigma_K_reco_primary] = new TH1F("d0_sigma_K_reco_primary"  ,"Reconstructed primary K;#sigma(d_0), [mm];",1000,0,0.1);
-    h1_K_reco[d0_sigma_d0_K_reco_primary] = new TH1F("d0_sigma_d0_K_reco_primary"  ,"Reconstructed primary K;#frac{d0}{#sigma(d0)};",500,0,5);
+    h1_K_reco[d0_sigma_d0_K_reco_primary] = new TH1F("d0_sigma_d0_K_reco_primary"  ,"Reconstructed primary K;#frac{d0}{#sigma(d0)};",1000,0,100);
 
     h1_K_reco[z0_K_reco_primary] = new TH1F("z0_K_reco_primary"  ,"Reconstructed primary K;z_0, [mm];",2000,0,2);
     h1_K_reco[z0_sigma_K_reco_primary] = new TH1F("z0_sigma_K_reco_primary"  ,"Reconstructed primary K;#sigma(z_0), [mm];",1000,0,0.1);
-    h1_K_reco[z0_sigma_z0_K_reco_primary] = new TH1F("z0_sigma_z0_K_reco_primary"  ,"Reconstructed primary K;#frac{z0}{#sigma(z0)};",200,0,200);
+    h1_K_reco[z0_sigma_z0_K_reco_primary] = new TH1F("z0_sigma_z0_K_reco_primary"  ,"Reconstructed primary K;#frac{z0}{#sigma(z0)};",1000,0,100);
 
     h1_K_reco[d0_K_reco_secondary] = new TH1F("d0_K_reco_secondary"  ,"Reconstructed secondary K;d_0, [mm];",2000,0,2);
     h1_K_reco[d0_sigma_K_reco_secondary] = new TH1F("d0_sigma_K_reco_secondary"  ,"Reconstructed secondary K;#sigma(d_0), [mm];",1000,0,0.1);
-    h1_K_reco[d0_sigma_d0_K_reco_secondary] = new TH1F("d0_sigma_d0_K_reco_secondary"  ,"Reconstructed secondary K;#frac{d0}{#sigma(d0)};",200,0,200);
+    h1_K_reco[d0_sigma_d0_K_reco_secondary] = new TH1F("d0_sigma_d0_K_reco_secondary"  ,"Reconstructed secondary K;#frac{d0}{#sigma(d0)};",1000,0,100);
 
     h1_K_reco[z0_K_reco_secondary] = new TH1F("z0_K_reco_secondary"  ,"Reconstructed secondary K;z_0, [um];",2000,0,2);
     h1_K_reco[z0_sigma_K_reco_secondary] = new TH1F("z0_sigma_K_reco_secondary"  ,"Reconstructed secondary K;#sigma(z_0), [mm];",1000,0,0.1);
-    h1_K_reco[z0_sigma_z0_K_reco_secondary] = new TH1F("z0_sigma_z0_K_reco_secondary"  ,"Reconstructed secondary K;#frac{z0}{#sigma(z0)};",200,0,200);
+    h1_K_reco[z0_sigma_z0_K_reco_secondary] = new TH1F("z0_sigma_z0_K_reco_secondary"  ,"Reconstructed secondary K;#frac{z0}{#sigma(z0)};",1000,0,100);
+
+    h1_K_reco[d0_K_reco_pseudo] = new TH1F("d0_K_reco_pseudo"  ,"Reconstructed pseudo K;d_0, [mm];",2000,0,2);
+    h1_K_reco[d0_sigma_K_reco_pseudo] = new TH1F("d0_sigma_K_reco_pseudo"  ,"Reconstructed pseudo K;#sigma(d_0), [mm];",1000,0,0.1);
+    h1_K_reco[d0_sigma_d0_K_reco_pseudo] = new TH1F("d0_sigma_d0_K_reco_pseudo"  ,"Reconstructed pseudo K;#frac{d0}{#sigma(d0)};",1000,0,100);
+
+    h1_K_reco[z0_K_reco_pseudo] = new TH1F("z0_K_reco_pseudo"  ,"Reconstructed pseudo K;z_0, [um];",2000,0,2);
+    h1_K_reco[z0_sigma_K_reco_pseudo] = new TH1F("z0_sigma_K_reco_pseudo"  ,"Reconstructed pseudo K;#sigma(z_0), [mm];",1000,0,0.1);
+    h1_K_reco[z0_sigma_z0_K_reco_pseudo] = new TH1F("z0_sigma_z0_K_reco_pseudo"  ,"Reconstructed pseudo K;#frac{z0}{#sigma(z0)};",1000,0,100);
+
+
+    h1_K_reco[ctag] = new TH1F("ctag"  ,"Ctag values for K;ctag;",100,0,1);
+
+    h1_K_reco[d0_K_reco_garbage] = new TH1F("d0_K_reco_garbage"  ,"Reconstructed garbage K;d_0, [mm];",2000,0,2);
+    h1_K_reco[d0_sigma_K_reco_garbage] = new TH1F("d0_sigma_K_reco_garbage"  ,"Reconstructed garbage K;#sigma(d_0), [mm];",1000,0,0.1);
+    h1_K_reco[d0_sigma_d0_K_reco_garbage] = new TH1F("d0_sigma_d0_K_reco_garbage"  ,"Reconstructed garbage K;#frac{d0}{#sigma(d0)};",1000,0,100);
+
+    h1_K_reco[z0_K_reco_garbage] = new TH1F("z0_K_reco_garbage"  ,"Reconstructed garbage K;z_0, [um];",2000,0,2);
+    h1_K_reco[z0_sigma_K_reco_garbage] = new TH1F("z0_sigma_K_reco_garbage"  ,"Reconstructed garbage K;#sigma(z_0), [mm];",1000,0,0.1);
+    h1_K_reco[z0_sigma_z0_K_reco_garbage] = new TH1F("z0_sigma_z0_K_reco_garbage"  ,"Reconstructed garbage K;#frac{z0}{#sigma(z0)};",1000,0,100);
+
+
+    h1_K_reco[d0_K_reco_primary_ctag_cut] = new TH1F("d0_K_reco_primary_ctag_cut"  ,"Reconstructed primary K with ctag cut;d_0, [mm];",2000,0,2);
+    h1_K_reco[d0_sigma_K_reco_primary_ctag_cut] = new TH1F("d0_sigma_K_reco_primary_ctag_cut"  ,"Reconstructed primary K ctag cut;#sigma(d_0), [mm];",1000,0,0.1);
+    h1_K_reco[d0_sigma_d0_K_reco_primary_ctag_cut] = new TH1F("d0_sigma_d0_K_reco_primary_ctag_cut"  ,"Reconstructed primary K ctag cut;#frac{d0}{#sigma(d0)};",1000,0,100);
+
+    h1_K_reco[z0_K_reco_primary_ctag_cut] = new TH1F("z0_K_reco_primary_ctag_cut"  ,"Reconstructed primary K; ctag cutz_0, [mm];",2000,0,2);
+    h1_K_reco[z0_sigma_K_reco_primary_ctag_cut] = new TH1F("z0_sigma_K_reco_primary_ctag_cut"  ,"Reconstructed primary K ctag cut;#sigma(z_0), [mm];",1000,0,0.1);
+    h1_K_reco[z0_sigma_z0_K_reco_primary_ctag_cut] = new TH1F("z0_sigma_z0_K_reco_primary_ctag_cut"  ,"Reconstructed primary K ctag cut;#frac{z0}{#sigma(z0)};",1000,0,100);
+
+    h1_K_reco[d0_K_reco_secondary_ctag_cut] = new TH1F("d0_K_reco_secondary_ctag_cut"  ,"Reconstructed secondary K ctag cut;d_0, [mm];",2000,0,2);
+    h1_K_reco[d0_sigma_K_reco_secondary_ctag_cut] = new TH1F("d0_sigma_K_reco_secondary_ctag_cut"  ,"Reconstructed secondary K ctag cut;#sigma(d_0), [mm];",1000,0,0.1);
+    h1_K_reco[d0_sigma_d0_K_reco_secondary_ctag_cut] = new TH1F("d0_sigma_d0_K_reco_secondary_ctag_cut"  ,"Reconstructed secondary K ctag cut;#frac{d0}{#sigma(d0)};",1000,0,100);
+
+    h1_K_reco[z0_K_reco_secondary_ctag_cut] = new TH1F("z0_K_reco_secondary_ctag_cut"  ,"Reconstructed secondary K ctag cut;z_0, [um];",2000,0,2);
+    h1_K_reco[z0_sigma_K_reco_secondary_ctag_cut] = new TH1F("z0_sigma_K_reco_secondary_ctag_cut"  ,"Reconstructed secondary K ctag cut;#sigma(z_0), [mm];",1000,0,0.1);
+    h1_K_reco[z0_sigma_z0_K_reco_secondary_ctag_cut] = new TH1F("z0_sigma_z0_K_reco_secondary_ctag_cut"  ,"Reconstructed secondary K ctag cut;#frac{z0}{#sigma(z0)};",1000,0,100);
 
 
     h1_K_reco[pmag_K_reco] = new TH1F("pmag_K_reco"  ,"Reconstructed K;p, [GeV];",100,0,100); 
