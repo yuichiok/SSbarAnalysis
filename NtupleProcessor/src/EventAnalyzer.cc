@@ -163,23 +163,36 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
   // SPFO opposite check
     Bool_t is_gluon[3][2] = {0};
     Bool_t is_there_a_gluon[3] = {false};
+
+    // cout << "SPFO opposite check" << endl;
+    
     for ( int ijet=0; ijet<2; ijet++){
 
       Bool_t check_KSLPFO_PiLPFO = false;
 
+      // cout << "KLPFO charge  = (" << pfot.KLPFO[ijet].pfo_charge << ", " << pfot.KLPFO[ijet].p_mag << ")\n";
+      // cout << "PiLPFO charge = (" << pfot.PiLPFO[ijet].pfo_charge << ", " << pfot.PiLPFO[ijet].p_mag << ")\n";
+      // cout << "SLPFOK" << ijet << " : (";
       for ( auto iSPFO_K : pfot.SPFOs_K[ijet] ){
+        // cout << iSPFO_K.pfo_charge << ", " << iSPFO_K.p_mag << ") (";
         Bool_t charge_opposite = iSPFO_K.pfo_charge * pfot.KLPFO[ijet].pfo_charge < 0;
         Bool_t charge_opposite_KSLPFO_PiLPFO = iSPFO_K.pfo_charge * pfot.PiLPFO[ijet].pfo_charge < 0;
         Bool_t momentum_above  = iSPFO_K.p_mag > 10;
         if( charge_opposite && momentum_above ) is_gluon[kKaon][ijet] = true;
-        if( charge_opposite_KSLPFO_PiLPFO && momentum_above ) check_KSLPFO_PiLPFO = true;
+        // if( charge_opposite_KSLPFO_PiLPFO && momentum_above ) check_KSLPFO_PiLPFO = true;
+        if( charge_opposite_KSLPFO_PiLPFO && iSPFO_K.p_mag > 15 ) check_KSLPFO_PiLPFO = true;
       }
+      // cout << ")" << endl;
 
+      // cout << "SLPFOPi" << ijet << " : (";
       for ( auto iSPFO_Pi : pfot.SPFOs_Pi[ijet] ){
+        // cout << iSPFO_Pi.pfo_charge << ", " << iSPFO_Pi.p_mag << ") (";
         Bool_t charge_opposite = iSPFO_Pi.pfo_charge * pfot.PiLPFO[ijet].pfo_charge < 0;
         Bool_t momentum_above  = iSPFO_Pi.p_mag > 10;
         if( (charge_opposite && momentum_above) || check_KSLPFO_PiLPFO ) is_gluon[kPion][ijet] = true;
+        // if( (charge_opposite && momentum_above) ) is_gluon[kPion][ijet] = true;
       }
+      // cout << ")" << endl;
 
     }
 
@@ -531,12 +544,6 @@ Bool_t EventAnalyzer::Select(Selector sel)
         CutTrigger.push_back( Cut_ESum( jetvt ) );
         CutTrigger.push_back( Cut_ACol( jetvt ) );
         CutTrigger.push_back( Cut_ISR ( jetvt ) );
-        cout << "=== cut section ===" << endl;
-        cout << "jetvt0 = " << jetvt[0].v3().x() << ", " << jetvt[0].v3().y() << ", " << jetvt[0].v3().z() << endl;
-        cout << "jetvt1 = " << jetvt[1].v3().x() << ", " << jetvt[1].v3().y() << ", " << jetvt[1].v3().z() << endl;
-        cout << "isr ang  = " << VectorTools::GetThetaBetween( jetvt[0].v3(), jetvt[1].v3() ) << endl;
-        cout << "cut reco = " << CutTrigger.at(0) << CutTrigger.at(1) << CutTrigger.at(2) << endl;
-        cout << "===================" << endl;
         break;
 
       default:
