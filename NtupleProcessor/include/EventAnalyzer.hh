@@ -40,8 +40,6 @@ class EventAnalyzer
     void             CreateFile();
     void             WriteFile();
 
-    void             AnalyzeGen();
-    void             AnalyzeGenReco(PFOTools mct, PFOTools pfot);
     void             AnalyzeReco( Long64_t entry );
     
     Bool_t           Select( Selector s );          // Evaluates the class' list of event selection criteria
@@ -54,24 +52,9 @@ class EventAnalyzer
     virtual Bool_t   Notify();
 
   // Gadgets
-    Int_t           *Gen_Reco_Stats_Stable( PFOTools mct, PFOTools pfot, Float_t cos_min, Float_t cos_max );
-    Int_t           *Gen_Reco_Stats_Cheat( PFOTools mct, PFOTools pfot, Float_t cos_min, Float_t cos_max );
-    Float_t         *Get_Stable_Purity( Int_t *N_Ks );
-
-    void             Count_Particle( PFO_Info ipfo, Int_t pdg, TH1F *h_n_reco, TH1F *h_n_gen );
-    Float_t         *Particle_Ratios( TH1F *h_n_particles[], Int_t mode );
 
   // Histogram extractor
-    void             PolarAngleGen(PFOTools mct);
-    void             Mom_Polar_Gen(PFOTools mct,PFOTools pfot);
-    void             PolarAngle(PFOTools pfot, PFOTools mct, vector<Bool_t> cuts, Int_t double_tag);
-    void             PolarAngle_acc_rej(PFOTools pfot, vector<Bool_t> cuts, Bool_t ss_config);
-
-    void             Jet_sum_n_acol();
-
     void             CCbarAnalysis(PFOTools pfot, Bool_t low_ctag);
-
-
 
   // Running Variables
     TString  options;  // Options input with TreeIterator.
