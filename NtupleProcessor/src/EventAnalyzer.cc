@@ -172,13 +172,15 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
         Bool_t charge_opposite_KSLPFO_PiLPFO = iSPFO_K.pfo_charge * pfot.PiLPFO[ijet].pfo_charge < 0;
         Bool_t momentum_above  = iSPFO_K.p_mag > 10;
         if( charge_opposite && momentum_above ) is_gluon[kKaon][ijet] = true;
-        if( charge_opposite_KSLPFO_PiLPFO && momentum_above ) check_KSLPFO_PiLPFO = true;
+        // if( charge_opposite_KSLPFO_PiLPFO && momentum_above ) check_KSLPFO_PiLPFO = true;
+        // if( charge_opposite_KSLPFO_PiLPFO && iSPFO_K.p_mag > 15 ) check_KSLPFO_PiLPFO = true;
       }
 
       for ( auto iSPFO_Pi : pfot.SPFOs_Pi[ijet] ){
         Bool_t charge_opposite = iSPFO_Pi.pfo_charge * pfot.PiLPFO[ijet].pfo_charge < 0;
         Bool_t momentum_above  = iSPFO_Pi.p_mag > 10;
-        if( (charge_opposite && momentum_above) || check_KSLPFO_PiLPFO ) is_gluon[kPion][ijet] = true;
+        // if( (charge_opposite && momentum_above) || check_KSLPFO_PiLPFO ) is_gluon[kPion][ijet] = true;
+        if( charge_opposite && momentum_above ) is_gluon[kPion][ijet] = true;
       }
 
     }
