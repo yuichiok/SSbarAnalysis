@@ -30,7 +30,7 @@ void KPiID()
 
   for( int i=0; i<3; i++ )
   {
-    TString str = "../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR." + process_name[i] + ".KPiLPFO.distPi0.PFOp15.LPFOp15_pNaN.tpc0.hists.all.root";
+    TString str = "../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR." + process_name[i] + ".KPiLPFO.PFOp15.LPFOp15_pNaN.tpc0.hists.all.root";
     files[i] = new TFile(str.Data(),"READ");
 
     h_reco_K_pdgcheat[i]  = (TH1F*) files[i]->Get("h_reco_K_pdgcheat");
@@ -56,7 +56,8 @@ void KPiID()
   TCanvas *c0 = new TCanvas("c0","c0",800,800);
   gPad->SetGrid(1,1);
 
-  TLegend *leg = new TLegend(0.15,0.75,0.45,0.85);
+  TLegend *leg = new TLegend(0.70,0.75,0.85,0.85);
+  leg->SetMargin(0.7);
   for (int i=0; i<3; i++)
   {
     if(i==0){
@@ -77,7 +78,8 @@ void KPiID()
   TCanvas *c1 = new TCanvas("c1","c1",800,800);
   gPad->SetGrid(1,1);
 
-  TLegend *leg1 = new TLegend(0.15,0.75,0.45,0.85);
+  TLegend *leg1 = new TLegend(0.70,0.75,0.85,0.85);
+  leg->SetMargin(0.7);
   for (int i=0; i<3; i++)
   {
     if(i==0){
