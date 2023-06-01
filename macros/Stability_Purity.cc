@@ -38,9 +38,9 @@ void plot_stability_purity(TFile *file)
   Float_t xmax = 30.0;
 
   // For differential cosθ
-  TH1F *h_gen_N_K_cos  = (TH1F*) file->Get("h_gen_N_K_cos2");
-  TH1F *h_reco_N_K_cos = (TH1F*) file->Get("h_reco_N_K_cos2");
-  TH1F *h_N_K_corr_cos = (TH1F*) file->Get("h_N_K_corr_cos2");
+  TH1F *h_gen_N_K_cos  = (TH1F*) file->Get("h_gen_N_K_cos");
+  TH1F *h_reco_N_K_cos = (TH1F*) file->Get("h_reco_N_K_cos");
+  TH1F *h_N_K_corr_cos = (TH1F*) file->Get("h_N_K_corr_cos");
   StyleHist(h_gen_N_K_cos,kBlack);
   StyleHist(h_reco_N_K_cos,kRed+2);
   StyleHist(h_N_K_corr_cos,kBlue+2);
@@ -160,8 +160,11 @@ void Stability_Purity()
   TFile *ss_file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ss.PFOp15.LPFOp15_pNaN.tpc0.hists.all.root","READ");
   // TFile *us_file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.dd.LPFOp15_pNaN.tpc0.hists.all.root","READ");
 
-  plot_stability_purity(ss_file);
-  plot_sp_ratio(ss_file,uu_file);
+  TFile *ud_file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ud.KPiLPFO.PFOp15.LPFOp15_pNaN.tpc0.hists.all.testfinal.root","READ");
+
+  plot_stability_purity(ud_file);
+  // plot_stability_purity(ss_file);
+  // plot_sp_ratio(ss_file,uu_file);
 
 
 }
