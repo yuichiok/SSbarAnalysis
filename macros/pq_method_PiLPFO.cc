@@ -132,9 +132,11 @@ void main_pq()
   cout << "Gen  AFB = " << AFB_gen << endl;
   cout << "Reco AFB = " << AFB_reco << endl;
 
-  TCanvas *c0 = new TCanvas("c0","c0",800,800);
-  TPad *pad0 = new TPad("pad0", "pad0",0,0,1,1);
-  StylePad(pad0,0,0.12,0,0.15);
+
+  // Draw polar angle
+  TCanvas *c_polar = new TCanvas("c_polar","c_polar",800,800);
+  TPad *pad_polar  = new TPad("pad_polar", "pad_polar",0,0,1,1);
+  StylePad(pad_polar,0,0.12,0,0.15);
 
   h_reco_K_pq_cos->SetTitle(";cos#theta_{#pi^{-}};a.u.");
   h_reco_K_pq_cos->Draw("h");
@@ -154,21 +156,26 @@ void main_pq()
   leg->AddEntry(h_reco_K_pq_cos,"Reconstructed #pi^{-} (corrected)","l");
   leg->Draw();
 
-  TCanvas *c1 = new TCanvas("c1","c1",800,800);
-  TPad *pad1 = new TPad("pad1", "pad1",0,0,1,1);
-  StylePad(pad1,0,0.12,0,0.15);
+
+  // Draw p value
+  TCanvas *c_pval = new TCanvas("c_pval","c_pval",800,800);
+  TPad *pad_pval = new TPad("pad_pval", "pad_pval",0,0,1,1);
+  StylePad(pad_pval,0,0.12,0,0.15);
   
   StyleHist(p_KK,kGreen+2);
   p_KK->SetTitle(";cos#theta_{#pi^{-}};p value");
   p_KK->GetYaxis()->SetRangeUser(0,1);
   p_KK->Draw("h");
 
-  TCanvas *c2 = new TCanvas("c2","c2",800,800);
+
+  // Draw accepted and rejected
+  TCanvas *c_acc_rej = new TCanvas("c_acc_rej","c_acc_rej",800,800);
   TGaxis::SetMaxDigits(3);
-  gPad->SetGrid(1,1);
+  TPad *pad_acc_rej = new TPad("pad_acc_rej", "pad_acc_rej",0,0,1,1);
+  StylePad(pad_acc_rej,0,0.12,0,0.15);
+
   h_acc_KK_cos_eff_corr->SetTitle(";cos#theta_{#pi^{-}};Entries");
 
-  // h_acc_KK_cos_eff_corr->GetYaxis()->SetRangeUser(0,50E3);
   h_acc_KK_cos_eff_corr->Draw("h");
   h_rej_KK_cos_eff_corr->Draw("hsame");
 
