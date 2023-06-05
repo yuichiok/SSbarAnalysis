@@ -147,7 +147,8 @@ void main_pq()
 
   f_reco->Draw("same");
 
-  TLegend *leg = new TLegend(0.2,0.76,0.7,0.85);
+  TLegend *leg = new TLegend(0.3,0.7,0.75,0.85);
+  leg->SetMargin(0.4);
   leg->SetLineColor(0);
   leg->AddEntry(h_gen_q_qcos,"Generated quark angle","l");
   leg->AddEntry(h_cheat_Pi_qcos,"Cheated #pi^{-} PFO","l");
@@ -177,6 +178,14 @@ void main_pq()
   trp->Draw();
   trp->GetLowerRefGraph()->SetMinimum(-4);
   trp->GetLowerRefGraph()->SetMaximum(4);
+
+  trp->GetUpperPad()->cd();
+  TLegend *leg_trp = new TLegend(0.3,0.7,0.7,0.85);
+  leg_trp->SetMargin(0.4);
+  leg_trp->SetLineColor(0);
+  leg_trp->AddEntry(h_reco_Pi_pq_cos_subhist,"Reconstructed #pi^{-} (corrected)","p");
+  leg_trp->AddEntry(f_reco_ratio,"#frac{d#sigma}{dcos#theta} fit for LPFO","l");
+  leg_trp->Draw();
 
   // Draw p value
   TCanvas *c_pval = new TCanvas("c_pval","c_pval",800,800);
