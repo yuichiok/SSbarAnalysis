@@ -41,17 +41,7 @@ void main_pq()
 {
   gStyle->SetOptStat(0);
 
-  // TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.uu.KPiLPFO.PFOp15.LPFOp15_pNaN.tpc0.hists.all.root","READ");
-  TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.uu.KPiLPFO.distPi0.PFOp15.LPFOp15_pNaN.tpc0.hists.all.root","READ");
-
-  // TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.dd.KPiLPFO.PFOp15.LPFOp15_pNaN.tpc0.hists.all.root","READ");
-  // TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.dd.KPiLPFO.distPi0.PFOp15.LPFOp15_pNaN.tpc0.hists.all.root","READ");
-  
-  // TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ss.KPiLPFO.PFOp15.LPFOp15_pNaN.tpc0.hists.all.root","READ");
-  // TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ss.KPiLPFO.PFOp15.LPFOp15_pNaN.tpc0.hists.all.test.root","READ");
-
-  // TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ud.KPiLPFO.PFOp15.LPFOp15_pNaN.tpc0.hists.all.root","READ");
-  // TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ud.KPiLPFO.distPi0.PFOp15.LPFOp15_pNaN.tpc0.hists.all.root","READ");
+  TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ud.KPiLPFO.distPi0.PFOp15.LPFOp15_pNaN.tpc0.hists.all.root","READ");
 
   if (!file->IsOpen()) return;
 
@@ -122,15 +112,8 @@ void main_pq()
   TH1F *h_reco_K_pq_cos = CorrectHist(h_reco_K_qcos_eff_corr, p_vec);
   StyleHist(h_reco_K_pq_cos,kBlue);
 
-  TCanvas *c0 = new TCanvas("c0","c0",800,800);
-  TPad *pad0 = new TPad("pad0", "pad0",0,0,1,1);
-  StylePad(pad0,0,0.12,0,0.15);
-
   Normalize2Gen(h_gen_q_qcos,h_reco_K_scos_eff_corr);
   Normalize2Gen(h_cheat_Pi_qcos,h_gen_q_qcos);
-  // Normalize(h_reco_K_scos_eff_corr);
-  // Normalize(h_reco_K_pq_cos);
-  // Normalize(h_reco_K_qcos_eff_corr);
 
   // Fitting
   TF1 * f_gen = new TF1("f_gen","[0]*(1+x*x)+[1]*x",-0.8,0.8);
@@ -143,12 +126,16 @@ void main_pq()
   h_reco_K_pq_cos->Fit("f_reco","MNRS");
   cout << "Reco Chi2 / ndf = " << f_reco->GetChisquare() << " / " << f_reco->GetNDF() << endl;
   
+  // output AFB
   Float_t AFB_gen  = AFB_calculation(f_gen);
   Float_t AFB_reco = AFB_calculation(f_reco);
   cout << "Gen  AFB = " << AFB_gen << endl;
   cout << "Reco AFB = " << AFB_reco << endl;
 
-  // h_reco_K_pq_cos->GetYaxis()->SetRangeUser(0,50E3);
+  TCanvas *c0 = new TCanvas("c0","c0",800,800);
+  TPad *pad0 = new TPad("pad0", "pad0",0,0,1,1);
+  StylePad(pad0,0,0.12,0,0.15);
+
   h_reco_K_pq_cos->SetTitle(";cos#theta_{#pi^{-}};a.u.");
   h_reco_K_pq_cos->Draw("h");
   h_reco_K_qcos_eff_corr->Draw("hsame");
