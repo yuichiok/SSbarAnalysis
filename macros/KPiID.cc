@@ -15,8 +15,8 @@ void StyleHist(TH1F *h, Color_t col)
 
 void SetKPiIDLabels(TH1F *h)
 {
-  h->GetXaxis()->SetBinLabel(1,"Kaon");
-  h->GetXaxis()->SetBinLabel(2,"Pion");
+  h->GetXaxis()->SetBinLabel(1,"Pion");
+  h->GetXaxis()->SetBinLabel(2,"Kaon");
   h->GetXaxis()->SetBinLabel(3,"Proton");
   h->GetXaxis()->SetBinLabel(4,"Electron");
   h->GetXaxis()->SetBinLabel(5,"Muon");
