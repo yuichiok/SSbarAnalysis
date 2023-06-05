@@ -13,6 +13,16 @@ void StyleHist(TH1F *h, Color_t col)
   h->SetFillColor(col);
 }
 
+void SetKPiIDLabels(TH1F *h)
+{
+  h->GetXaxis()->SetBinLabel(1,"Kaon");
+  h->GetXaxis()->SetBinLabel(2,"Pion");
+  h->GetXaxis()->SetBinLabel(3,"Proton");
+  h->GetXaxis()->SetBinLabel(4,"Electron");
+  h->GetXaxis()->SetBinLabel(5,"Muon");
+  h->GetXaxis()->SetBinLabel(6,"Others");
+}
+
 void KPiID()
 {
   gStyle->SetOptStat(0);
@@ -30,7 +40,7 @@ void KPiID()
 
   for( int i=0; i<3; i++ )
   {
-    TString str = "../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR." + process_name[i] + ".KPiLPFO.PFOp15.LPFOp15_pNaN.tpc0.hists.all.root";
+    TString str = "../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR." + process_name[i] + ".KPiLPFO.distPi0.PFOp15.LPFOp15_pNaN.tpc0.hists.all.root";
     files[i] = new TFile(str.Data(),"READ");
 
     h_reco_K_pdgcheat[i]  = (TH1F*) files[i]->Get("h_reco_K_pdgcheat");
@@ -61,7 +71,9 @@ void KPiID()
   for (int i=0; i<3; i++)
   {
     if(i==0){
+      h_reco_K_pdgcheat[i]->SetTitle("Truth PID of Reconstructed Leading Kaon;;Ratio");
       h_reco_K_pdgcheat[i]->GetYaxis()->SetRangeUser(0,1);
+      SetKPiIDLabels(h_reco_K_pdgcheat[i]);
       h_reco_K_pdgcheat[i]->Draw("h");
     }else{
       h_reco_K_pdgcheat[i]->Draw("hsame");
@@ -83,7 +95,9 @@ void KPiID()
   for (int i=0; i<3; i++)
   {
     if(i==0){
+      h_reco_Pi_pdgcheat[i]->SetTitle("Truth PID of Reconstructed Leading Pion;;Ratio");
       h_reco_Pi_pdgcheat[i]->GetYaxis()->SetRangeUser(0,1);
+      SetKPiIDLabels(h_reco_Pi_pdgcheat[i]);
       h_reco_Pi_pdgcheat[i]->Draw("h");
     }else{
       h_reco_Pi_pdgcheat[i]->Draw("hsame");
