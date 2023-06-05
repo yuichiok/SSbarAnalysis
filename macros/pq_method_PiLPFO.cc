@@ -47,24 +47,24 @@ void main_pq()
 
   // reco and gen polar
   TH1F *h_gen_q_qcos  = (TH1F*) file->Get("h_gen_q_qcos");
-  TH1F *h_reco_K_scos = (TH1F*) file->Get("h_reco_Pi_scos");
-  TH1F *h_reco_K_qcos = (TH1F*) file->Get("h_reco_Pi_qcos");
+  TH1F *h_reco_Pi_scos = (TH1F*) file->Get("h_reco_Pi_scos");
+  TH1F *h_reco_Pi_qcos = (TH1F*) file->Get("h_reco_Pi_qcos");
   TH1F *h_cheat_Pi_qcos = (TH1F*) file->Get("h_cheat_Pi_qcos");
 
   cout << "========================" << endl;
-  cout << "NReco Pi 30th bin = " << h_reco_K_qcos->GetBinContent(30) << endl;
+  cout << "NReco Pi 30th bin = " << h_reco_Pi_qcos->GetBinContent(30) << endl;
 
   // efficiency correction
   Bool_t isEffCorr = true;
-  TH1F *h_reco_K_scos_eff_corr;
-  TH1F *h_reco_K_qcos_eff_corr;
+  TH1F *h_reco_Pi_scos_eff_corr;
+  TH1F *h_reco_Pi_qcos_eff_corr;
   if (isEffCorr)
   {
-    h_reco_K_scos_eff_corr = Efficiency_Correction(h_reco_K_scos,"scos_corr",file);
-    h_reco_K_qcos_eff_corr = Efficiency_Correction(h_reco_K_qcos,"qcos_corr",file);
+    h_reco_Pi_scos_eff_corr = Efficiency_Correction(h_reco_Pi_scos,"scos_corr",file);
+    h_reco_Pi_qcos_eff_corr = Efficiency_Correction(h_reco_Pi_qcos,"qcos_corr",file);
   }else{
-    h_reco_K_scos_eff_corr = (TH1F*) h_reco_K_scos->Clone();
-    h_reco_K_qcos_eff_corr = (TH1F*) h_reco_K_qcos->Clone();
+    h_reco_Pi_scos_eff_corr = (TH1F*) h_reco_Pi_scos->Clone();
+    h_reco_Pi_qcos_eff_corr = (TH1F*) h_reco_Pi_qcos->Clone();
   }
 
   // used for pq correction
@@ -90,13 +90,13 @@ void main_pq()
   h_cheat_Pi_qcos->SetFillStyle(0);
   h_cheat_Pi_qcos->SetLineStyle(2);
 
-  StyleHist(h_reco_K_scos_eff_corr,kBlack);
-  h_reco_K_scos_eff_corr->SetFillStyle(0);
-  StyleHist(h_reco_K_qcos_eff_corr,kRed+2);
+  StyleHist(h_reco_Pi_scos_eff_corr,kBlack);
+  h_reco_Pi_scos_eff_corr->SetFillStyle(0);
+  StyleHist(h_reco_Pi_qcos_eff_corr,kRed+2);
   StyleHist(h_acc_KK_cos_eff_corr,kRed+2);
   StyleHist(h_rej_KK_cos_eff_corr,kBlue+2);
 
-  const Int_t nbins = h_reco_K_scos_eff_corr->GetNbinsX();
+  const Int_t nbins = h_reco_Pi_scos_eff_corr->GetNbinsX();
 
   TH1F *p_KK = new TH1F("p_KK", "p_KK", 50,0,1);
   p_KK->Sumw2();
@@ -109,10 +109,10 @@ void main_pq()
     p_KK->SetBinError(nbins / 2 - i, p_vec.at(i + nbins / 2));
   }
 
-  TH1F *h_reco_K_pq_cos = CorrectHist(h_reco_K_qcos_eff_corr, p_vec);
-  StyleHist(h_reco_K_pq_cos,kBlue);
+  TH1F *h_reco_Pi_pq_cos = CorrectHist(h_reco_Pi_qcos_eff_corr, p_vec);
+  StyleHist(h_reco_Pi_pq_cos,kBlue);
 
-  Normalize2Gen(h_gen_q_qcos,h_reco_K_scos_eff_corr);
+  Normalize2Gen(h_gen_q_qcos,h_reco_Pi_scos_eff_corr);
   Normalize2Gen(h_cheat_Pi_qcos,h_gen_q_qcos);
 
   // Fitting
@@ -123,7 +123,7 @@ void main_pq()
 
   TF1 * f_reco = new TF1("f_reco","[0]*(1+x*x)+[1]*x",-0.8,0.8);
   f_reco->SetParNames("S","A");
-  h_reco_K_pq_cos->Fit("f_reco","MNRS");
+  h_reco_Pi_pq_cos->Fit("f_reco","MNRS");
   cout << "Reco Chi2 / ndf = " << f_reco->GetChisquare() << " / " << f_reco->GetNDF() << endl;
   
   // output AFB
@@ -135,13 +135,13 @@ void main_pq()
 
   // Draw polar angle
   TCanvas *c_polar = new TCanvas("c_polar","c_polar",800,800);
-  TPad *pad_polar  = new TPad("pad_polar", "pad_polar",0,0,1,1);
+  TPad  *pad_polar = new TPad("pad_polar", "pad_polar",0,0,1,1);
   StylePad(pad_polar,0,0.12,0,0.15);
 
-  h_reco_K_pq_cos->SetTitle(";cos#theta_{#pi^{-}};a.u.");
-  h_reco_K_pq_cos->Draw("h");
-  h_reco_K_qcos_eff_corr->Draw("hsame");
-  h_reco_K_scos_eff_corr->Draw("hsame");
+  h_reco_Pi_pq_cos->SetTitle(";cos#theta_{#pi^{-}};a.u.");
+  h_reco_Pi_pq_cos->Draw("h");
+  h_reco_Pi_qcos_eff_corr->Draw("hsame");
+  h_reco_Pi_scos_eff_corr->Draw("hsame");
   h_gen_q_qcos->Draw("hsame");
   h_cheat_Pi_qcos->Draw("hsame");
 
@@ -151,15 +151,21 @@ void main_pq()
   leg->SetLineColor(0);
   leg->AddEntry(h_gen_q_qcos,"Generated quark angle","l");
   leg->AddEntry(h_cheat_Pi_qcos,"Cheated #pi^{-} PFO","l");
-  leg->AddEntry(h_reco_K_scos_eff_corr,"Reconstructed #pi^{-} matched with quark angle","l");
-  leg->AddEntry(h_reco_K_qcos_eff_corr,"Reconstructed #pi^{-}","l");
-  leg->AddEntry(h_reco_K_pq_cos,"Reconstructed #pi^{-} (corrected)","l");
+  leg->AddEntry(h_reco_Pi_scos_eff_corr,"Reconstructed #pi^{-} matched with quark angle","l");
+  leg->AddEntry(h_reco_Pi_qcos_eff_corr,"Reconstructed #pi^{-}","l");
+  leg->AddEntry(h_reco_Pi_pq_cos,"Reconstructed #pi^{-} (corrected)","l");
   leg->Draw();
+
+  // Draw polar angle fit ratio
+  // TCanvas  *c_ratio = new TCanvas("c_ratio","c_ratio",800,800);
+  // TF1 *f_reco_ratio = new TF1("f_reco_ratio","[0]*(1+x*x)+[1]*x",-0.8,0.8);
+  // f_reco_ratio->SetParNames("S","A");
+  // TH1F *h_reco_Pi_pq_cos_subhist = 
 
 
   // Draw p value
   TCanvas *c_pval = new TCanvas("c_pval","c_pval",800,800);
-  TPad *pad_pval = new TPad("pad_pval", "pad_pval",0,0,1,1);
+  TPad  *pad_pval = new TPad("pad_pval", "pad_pval",0,0,1,1);
   StylePad(pad_pval,0,0.12,0,0.15);
   
   StyleHist(p_KK,kGreen+2);
