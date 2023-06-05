@@ -157,11 +157,26 @@ void main_pq()
   leg->Draw();
 
   // Draw polar angle fit ratio
-  // TCanvas  *c_ratio = new TCanvas("c_ratio","c_ratio",800,800);
-  // TF1 *f_reco_ratio = new TF1("f_reco_ratio","[0]*(1+x*x)+[1]*x",-0.8,0.8);
-  // f_reco_ratio->SetParNames("S","A");
-  // TH1F *h_reco_Pi_pq_cos_subhist = 
+  TCanvas  *c_ratio = new TCanvas("c_ratio","c_ratio",800,800);
+  TH1F *h_reco_Pi_pq_cos_subhist = new TH1F("h_reco_Pi_pq_cos_subhist",";LPFO Pion cos#theta; Entries",80,-0.8,0.8);
+  for ( int ibin=1; ibin<=h_reco_Pi_pq_cos_subhist->GetNbinsX(); ibin++ )
+  {
+    Int_t recobin = ibin + 10;
+    h_reco_Pi_pq_cos_subhist->SetBinContent(ibin,h_reco_Pi_pq_cos->GetBinContent(recobin));
+    h_reco_Pi_pq_cos_subhist->SetBinError(ibin,h_reco_Pi_pq_cos->GetBinError(recobin));
+  }
+  h_reco_Pi_pq_cos_subhist->SetMarkerStyle(20);
 
+  TF1 *f_reco_ratio = new TF1("f_reco_ratio","[0]*(1+x*x)+[1]*x",-0.8,0.8);
+  f_reco_ratio->SetParNames("S","A");
+  h_reco_Pi_pq_cos_subhist->Fit("f_reco_ratio");
+
+  auto trp = new TRatioPlot(h_reco_Pi_pq_cos_subhist);
+  trp->SetGraphDrawOpt("P");
+  trp->SetSeparationMargin(0.0);
+  trp->Draw();
+  trp->GetLowerRefGraph()->SetMinimum(-4);
+  trp->GetLowerRefGraph()->SetMaximum(4);
 
   // Draw p value
   TCanvas *c_pval = new TCanvas("c_pval","c_pval",800,800);
