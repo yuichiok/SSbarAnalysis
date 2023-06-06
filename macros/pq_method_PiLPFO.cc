@@ -51,8 +51,9 @@ void main_pq()
   TH1F *h_reco_Pi_qcos = (TH1F*) file->Get("h_reco_Pi_qcos");
   TH1F *h_cheat_Pi_qcos = (TH1F*) file->Get("h_cheat_Pi_qcos");
 
-  cout << "========================" << endl;
-  cout << "NReco Pi 30th bin = " << h_reco_Pi_qcos->GetBinContent(30) << endl;
+  // used for pq correction
+  TH1F *h_acc_PiPi_cos  = (TH1F*) file->Get("pq/h_acc_PiPi_cos");
+  TH1F *h_rej_PiPi_cos  = (TH1F*) file->Get("pq/h_rej_PiPi_cos");
 
   // efficiency correction
   Bool_t isEffCorr = true;
@@ -66,10 +67,6 @@ void main_pq()
     h_reco_Pi_scos_eff_corr = (TH1F*) h_reco_Pi_scos->Clone();
     h_reco_Pi_qcos_eff_corr = (TH1F*) h_reco_Pi_qcos->Clone();
   }
-
-  // used for pq correction
-  TH1F *h_acc_PiPi_cos  = (TH1F*) file->Get("pq/h_acc_PiPi_cos");
-  TH1F *h_rej_PiPi_cos  = (TH1F*) file->Get("pq/h_rej_PiPi_cos");
 
   TH1F *h_acc_PiPi_cos_eff_corr;
   TH1F *h_rej_PiPi_cos_eff_corr;
