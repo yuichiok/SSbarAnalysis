@@ -188,6 +188,8 @@ void PFOTools::InitializePFOTools( MC_QQbar *mc_data, PFO_QQbar *data )
     for (int ijet=0; ijet < 2; ijet++){
       LPFO[ijet]  = GetSortedJet(ijet).at(0);
       KLPFO[ijet] = Get_KLPFO(ijet);
+      PiLPFO[ijet] = Get_PiLPFO(ijet);
+
       if( PFO_jet[ijet].size() > 1 ){
         SPFOs[ijet] = GetSortedJet(ijet);
         // SPFOs[ijet].erase(SPFOs[ijet].begin());
@@ -248,6 +250,16 @@ PFO_Info PFOTools::Get_KLPFO( int ijet )
     vector<PFO_Info> sorted_jet = GetSortedJet(ijet);
     for ( auto iPFO : sorted_jet ) {
       if ( isKaon(iPFO) ) return iPFO;
+    }
+
+    return sorted_jet.at(0);
+}
+
+PFO_Info PFOTools::Get_PiLPFO( int ijet )
+{
+    vector<PFO_Info> sorted_jet = GetSortedJet(ijet);
+    for ( auto iPFO : sorted_jet ) {
+      if ( isPion(iPFO) ) return iPFO;
     }
 
     return sorted_jet.at(0);
@@ -345,4 +357,25 @@ Bool_t PFOTools::is_dEdxdist_bad( Float_t e_dist, Float_t mu_dist, Float_t pi_di
   if( !k_dist ) return 1;
   if( !p_dist ) return 1;
   return 0;
+}
+
+Bool_t PFOTools::is_ss()
+{
+  if ( KLPFO[0].p_mag > PiLPFO[0].p_mag &&
+       KLPFO[1].p_mag > PiLPFO[1].p_mag ){
+        return true;
+  }else{
+    return false;
+  }
+  
+}
+
+Bool_t PFOTools::is_uu_dd()
+{
+  if ( PiLPFO[0].p_mag > KLPFO[0].p_mag &&
+       PiLPFO[1].p_mag > KLPFO[1].p_mag ){
+        return true;
+  }else{
+    return false;
+  }
 }

@@ -31,6 +31,8 @@ class EventAnalyzer
 
     enum       Selector { kQQ, kMC, kReco };
     enum MCParticlePair { FIRST_ENTRY, kDD, kUU, kSS, kCC, kBB, kTT };
+    enum SelectID       { kKaon, kPion, kProton, kElectron, kMuon };
+    enum PDGConfig      { noKPi, K_K, K_Pi, Pi_Pi };
 
   // methods
     Bool_t           InitReadTree( TTree* ); // Maps class variables to an input TTree.
@@ -54,7 +56,7 @@ class EventAnalyzer
   // Gadgets
 
   // Histogram extractor
-    void             CCbarAnalysis(PFOTools pfot, Bool_t low_ctag);
+    void             CCbarAnalysis(PFOTools pfot, vector<Bool_t> cuts[3], PDGConfig double_tag[3], Bool_t low_ctag);
 
   // Running Variables
     TString  options;  // Options input with TreeIterator.

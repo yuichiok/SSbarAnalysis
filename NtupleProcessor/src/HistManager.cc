@@ -40,9 +40,6 @@ void HistManager::InitializeHists()
     h1_K_reco[z0_sigma_K_reco_pseudo] = new TH1F("z0_sigma_K_reco_pseudo"  ,"Reconstructed pseudo K;#sigma(z_0), [mm];",1000,0,0.1);
     h1_K_reco[z0_sigma_z0_K_reco_pseudo] = new TH1F("z0_sigma_z0_K_reco_pseudo"  ,"Reconstructed pseudo K;#frac{z0}{#sigma(z0)};",1000,0,100);
 
-
-    h1_K_reco[ctag] = new TH1F("ctag"  ,"Ctag values for K;ctag;",100,0,1);
-
     h1_K_reco[d0_K_reco_garbage] = new TH1F("d0_K_reco_garbage"  ,"Reconstructed garbage K;d_0, [mm];",2000,0,2);
     h1_K_reco[d0_sigma_K_reco_garbage] = new TH1F("d0_sigma_K_reco_garbage"  ,"Reconstructed garbage K;#sigma(d_0), [mm];",1000,0,0.1);
     h1_K_reco[d0_sigma_d0_K_reco_garbage] = new TH1F("d0_sigma_d0_K_reco_garbage"  ,"Reconstructed garbage K;#frac{d0}{#sigma(d0)};",1000,0,100);
@@ -68,6 +65,13 @@ void HistManager::InitializeHists()
     h1_K_reco[z0_sigma_K_reco_secondary_ctag_cut] = new TH1F("z0_sigma_K_reco_secondary_ctag_cut"  ,"Reconstructed secondary K ctag cut;#sigma(z_0), [mm];",1000,0,0.1);
     h1_K_reco[z0_sigma_z0_K_reco_secondary_ctag_cut] = new TH1F("z0_sigma_z0_K_reco_secondary_ctag_cut"  ,"Reconstructed secondary K ctag cut;#frac{z0}{#sigma(z0)};",1000,0,100);
 
+    h1_K_reco[cuts] = new TH1F("cuts"  ,"Cuts stages",10,0,10);
+    h1_K_reco[cuts]->GetXaxis()->SetBinLabel(1,"No cuts");
+    h1_K_reco[cuts]->GetXaxis()->SetBinLabel(2,"LPFO_checks && double_tag && is_ss");
+    h1_K_reco[cuts]->GetXaxis()->SetBinLabel(3,"sign_check");
+    h1_K_reco[cuts]->GetXaxis()->SetBinLabel(4,"P");
+    h1_K_reco[cuts]->GetXaxis()->SetBinLabel(5,"S");
+    
 
     h1_K_reco[pmag_K_reco] = new TH1F("pmag_K_reco"  ,"Reconstructed K;p, [GeV];",100,0,100); 
     h1_K_reco[cos_theta_K_reco] = new TH1F("cos_theta_K_reco"  ,"Reconstructed K;cos#theta;",200,-1,1); 
@@ -89,6 +93,8 @@ void HistManager::InitializeHists()
     h_tagging[p_btag] = new TH1F("p_btag","btag for primary vertex",100,0,1.);
     h_tagging[s_btag] = new TH1F("s_btag","btag for secondary vertex",100,0,1.);
     h_tagging[t_btag] = new TH1F("t_btag","btag for no vertex",100,0,1.);
+
+    h_tagging[ctag] = new TH1F("ctag"  ,"Ctag values;ctag;",100,0,1);
 
     h_tagging[jets_info] = new TH1F("jets_info","Info", 10,0,10);
     h_tagging[jets_info]->GetXaxis()->SetBinLabel(1,"Events");

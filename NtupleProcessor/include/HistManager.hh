@@ -50,8 +50,6 @@ class HistManager
       z0_sigma_K_reco_pseudo,
       z0_sigma_z0_K_reco_pseudo,
 
-      ctag,
-
       d0_K_reco_garbage,
       d0_sigma_K_reco_garbage,
       d0_sigma_d0_K_reco_garbage,
@@ -76,6 +74,8 @@ class HistManager
       z0_sigma_K_reco_secondary_ctag_cut,
       z0_sigma_z0_K_reco_secondary_ctag_cut,
 
+      cuts,
+
       pmag_K_reco,
       cos_theta_K_reco,
 
@@ -85,16 +85,16 @@ class HistManager
     TH1F * h1_K_reco[Last_h1_K_reco];
 
     enum h_PS{
-    d0_P_single,
-    d0_S_single,
-    d0_P_mult,
-    d0_S_mult,
-    z0_P_single,
-    z0_S_single,
-    z0_P_mult,
-    z0_S_mult,
-    dummy_h_PS,
-    Last_h_PS = dummy_h_PS
+      d0_P_single,
+      d0_S_single,
+      d0_P_mult,
+      d0_S_mult,
+      z0_P_single,
+      z0_S_single,
+      z0_P_mult,
+      z0_S_mult,
+      dummy_h_PS,
+      Last_h_PS = dummy_h_PS
     };
     TH1* h_PS[Last_h_PS];
 
@@ -106,11 +106,12 @@ class HistManager
       t_ctag,
       t_btag,
       jets_info,
-
+      ctag,
       dummy_tagging,
       Last_h_tagging = dummy_tagging
     };
     TH1F * h_tagging[Last_h_tagging];
+    
 
 
     enum h_general {
