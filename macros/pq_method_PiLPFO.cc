@@ -168,6 +168,7 @@ void main_pq()
   TF1 *f_reco_ratio = new TF1("f_reco_ratio","[0]*(1+x*x)+[1]*x",-0.8,0.8);
   f_reco_ratio->SetParNames("S","A");
   h_reco_Pi_pq_cos_subhist->Fit("f_reco_ratio");
+  c_ratio->Clear();
 
   auto trp = new TRatioPlot(h_reco_Pi_pq_cos_subhist);
   trp->SetGraphDrawOpt("P");
