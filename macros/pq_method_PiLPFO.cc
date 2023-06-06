@@ -68,18 +68,18 @@ void main_pq()
   }
 
   // used for pq correction
-  TH1F *h_acc_KK_cos  = (TH1F*) file->Get("pq/h_acc_PiPi_cos");
-  TH1F *h_rej_KK_cos  = (TH1F*) file->Get("pq/h_rej_PiPi_cos");
+  TH1F *h_acc_PiPi_cos  = (TH1F*) file->Get("pq/h_acc_PiPi_cos");
+  TH1F *h_rej_PiPi_cos  = (TH1F*) file->Get("pq/h_rej_PiPi_cos");
 
-  TH1F *h_acc_KK_cos_eff_corr;
-  TH1F *h_rej_KK_cos_eff_corr;
+  TH1F *h_acc_PiPi_cos_eff_corr;
+  TH1F *h_rej_PiPi_cos_eff_corr;
   if (isEffCorr)
   {
-    h_acc_KK_cos_eff_corr = Efficiency_Correction(h_acc_KK_cos,"acc_corr",file);
-    h_rej_KK_cos_eff_corr = Efficiency_Correction(h_rej_KK_cos,"rej_corr",file);
+    h_acc_PiPi_cos_eff_corr = Efficiency_Correction(h_acc_PiPi_cos,"acc_corr",file);
+    h_rej_PiPi_cos_eff_corr = Efficiency_Correction(h_rej_PiPi_cos,"rej_corr",file);
   }else{
-    h_acc_KK_cos_eff_corr = (TH1F*) h_acc_KK_cos->Clone();
-    h_rej_KK_cos_eff_corr = (TH1F*) h_rej_KK_cos->Clone();
+    h_acc_PiPi_cos_eff_corr = (TH1F*) h_acc_PiPi_cos->Clone();
+    h_rej_PiPi_cos_eff_corr = (TH1F*) h_rej_PiPi_cos->Clone();
   }
 
   StyleHist(h_gen_q_qcos,kGreen+1);
@@ -93,20 +93,20 @@ void main_pq()
   StyleHist(h_reco_Pi_scos_eff_corr,kBlack);
   h_reco_Pi_scos_eff_corr->SetFillStyle(0);
   StyleHist(h_reco_Pi_qcos_eff_corr,kRed+2);
-  StyleHist(h_acc_KK_cos_eff_corr,kRed+2);
-  StyleHist(h_rej_KK_cos_eff_corr,kBlue+2);
+  StyleHist(h_acc_PiPi_cos_eff_corr,kRed+2);
+  StyleHist(h_rej_PiPi_cos_eff_corr,kBlue+2);
 
   const Int_t nbins = h_reco_Pi_scos_eff_corr->GetNbinsX();
 
-  TH1F *p_KK = new TH1F("p_KK", "p_KK", 50,0,1);
-  p_KK->Sumw2();
+  TH1F *p_PiPi = new TH1F("p_PiPi", "p_PiPi", 50,0,1);
+  p_PiPi->Sumw2();
 
-  vector<Float_t> p_vec = GetP(h_acc_KK_cos_eff_corr, h_rej_KK_cos_eff_corr);
+  vector<Float_t> p_vec = GetP(h_acc_PiPi_cos_eff_corr, h_rej_PiPi_cos_eff_corr);
 
   for (unsigned i = 0; i < p_vec.size() / 2; i++)
   {
-    p_KK->SetBinContent(nbins / 2 - i, p_vec.at(i));
-    p_KK->SetBinError(nbins / 2 - i, p_vec.at(i + nbins / 2));
+    p_PiPi->SetBinContent(nbins / 2 - i, p_vec.at(i));
+    p_PiPi->SetBinError(nbins / 2 - i, p_vec.at(i + nbins / 2));
   }
 
   TH1F *h_reco_Pi_pq_cos = CorrectHist(h_reco_Pi_qcos_eff_corr, p_vec);
@@ -192,10 +192,10 @@ void main_pq()
   TPad  *pad_pval = new TPad("pad_pval", "pad_pval",0,0,1,1);
   StylePad(pad_pval,0,0.12,0,0.15);
   
-  StyleHist(p_KK,kGreen+2);
-  p_KK->SetTitle(";cos#theta_{#pi^{-}};p value");
-  p_KK->GetYaxis()->SetRangeUser(0,1);
-  p_KK->Draw("h");
+  StyleHist(p_PiPi,kGreen+2);
+  p_PiPi->SetTitle(";cos#theta_{#pi^{-}};p value");
+  p_PiPi->GetYaxis()->SetRangeUser(0,1);
+  p_PiPi->Draw("h");
 
 
   // Draw accepted and rejected
@@ -204,12 +204,12 @@ void main_pq()
   TPad *pad_acc_rej = new TPad("pad_acc_rej", "pad_acc_rej",0,0,1,1);
   StylePad(pad_acc_rej,0,0.12,0,0.15);
 
-  h_acc_KK_cos_eff_corr->SetTitle(";cos#theta_{#pi^{-}};Entries");
+  h_acc_PiPi_cos_eff_corr->SetTitle(";cos#theta_{#pi^{-}};Entries");
 
-  h_acc_KK_cos_eff_corr->Draw("h");
-  h_rej_KK_cos_eff_corr->Draw("hsame");
+  h_acc_PiPi_cos_eff_corr->Draw("h");
+  h_rej_PiPi_cos_eff_corr->Draw("hsame");
 
-  TH1F * acc_full = (TH1F*) h_acc_KK_cos_eff_corr->Clone();
+  TH1F * acc_full = (TH1F*) h_acc_PiPi_cos_eff_corr->Clone();
   TH1F * acc_add  = new TH1F("acc_add","acc_add",nbins,-1,1);
 
   for (int i = 1; i < nbins / 2 + 1; i++)
@@ -224,8 +224,8 @@ void main_pq()
 
   TLegend *leg2 = new TLegend(0.15,0.75,0.45,0.85);
   leg2->SetLineColor(0);
-  leg2->AddEntry(h_acc_KK_cos_eff_corr,"N Accepted","l");
-  leg2->AddEntry(h_rej_KK_cos_eff_corr,"N Rejected","l");
+  leg2->AddEntry(h_acc_PiPi_cos_eff_corr,"N Accepted","l");
+  leg2->AddEntry(h_rej_PiPi_cos_eff_corr,"N Rejected","l");
   leg2->AddEntry(acc_add,"N Accepted + opp. bin","l");
   leg2->Draw();
 
