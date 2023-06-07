@@ -174,6 +174,7 @@ void main_pq()
   trp->SetGraphDrawOpt("P");
   trp->SetSeparationMargin(0.0);
   trp->Draw();
+  trp->GetLowerRefYaxis()->SetTitle("Ratio");
   trp->GetLowerRefGraph()->SetMinimum(-4);
   trp->GetLowerRefGraph()->SetMaximum(4);
 
