@@ -40,6 +40,7 @@ class PFOTools
     static  Bool_t            isKaon            ( PFO_Info iPFO );
     static  Bool_t            isPion            ( PFO_Info iPFO );
     static  Bool_t            isProton          ( PFO_Info iPFO );
+    static  Bool_t            is_cheatNoOthers  ( PFO_Info iPFO );
 
   // LPFO checks
     virtual Bool_t           is_charge_config ( ChargeConfig cc, Int_t charge0, Int_t charge1 );

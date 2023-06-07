@@ -156,41 +156,33 @@ class HistManager
 
     enum h2_dEdx_index {
 
-      gen_K_dEdx_p,
-      gen_pi_dEdx_p,
-      gen_p_dEdx_p,
+      // dEdx vs p
+      gen_ipart_dEdx_p,
 
       // KID
-      gen_K_reco_K_dEdx_p,
-      gen_pi_reco_K_dEdx_p,
-      gen_p_reco_K_dEdx_p,
-
-      gen_K_KdEdx_dist_cos,
-      gen_pi_KdEdx_dist_cos,
-      gen_p_KdEdx_dist_cos,
-
-      gen_K_reco_K_KdEdx_dist_cos,
-      gen_pi_reco_K_KdEdx_dist_cos,
-      gen_p_reco_K_KdEdx_dist_cos,
+      gen_ipart_reco_K_dEdx_p,
+      gen_ipart_KdEdx_dist_cos,
+      gen_ipart_reco_K_KdEdx_dist_cos,
 
       // PiID
-      gen_K_reco_Pi_dEdx_p,
-      gen_pi_reco_Pi_dEdx_p,
-      gen_p_reco_Pi_dEdx_p,
-
-      gen_K_PidEdx_dist_cos,
-      gen_pi_PidEdx_dist_cos,
-      gen_p_PidEdx_dist_cos,
-
-      gen_K_reco_Pi_PidEdx_dist_cos,
-      gen_pi_reco_Pi_PidEdx_dist_cos,
-      gen_p_reco_Pi_PidEdx_dist_cos,
-
+      gen_ipart_reco_Pi_dEdx_p,
+      gen_ipart_PidEdx_dist_cos,
+      gen_ipart_reco_Pi_PidEdx_dist_cos,
 
       dummy_dEdx,
       Last_h2_dEdx = dummy_dEdx
     };
-    TH2F * h2_dEdx[Last_h2_dEdx];
+    TString particle_list[5] = {"K", "pi", "p", "e", "mu"};
+    enum particle_List_index {
+      kKaon,
+      kPion,
+      kProton,
+      kElectron,
+      kMuon,
+      dummy_particle_List,
+      Last_particle_List = dummy_particle_List
+    };
+    TH2F * h2_dEdx[Last_h2_dEdx][Last_particle_List];
 
   private:
     TList* hList1                = new TList();

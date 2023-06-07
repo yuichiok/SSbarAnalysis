@@ -88,8 +88,8 @@ struct Jet_QQbar  {
 
   public:
   // JET VARIABLES
-    Float_t truejet_E[NTRUE_JETS]    = {0};   Float_t jet_E[NJETS]    = {0};    Float_t jet_npfo[NJETS] = {0};    Float_t major_thrust_value     = 0;   Float_t major_thrust_axis[3]     = {0};
-    Float_t truejet_px[NTRUE_JETS]   = {0};   Float_t jet_px[NJETS]   = {0};    Float_t jet_nvtx[NJETS] = {0};    Float_t minor_thrust_value     = 0;   Float_t minor_thrust_axis[3]     = {0};
+    Float_t truejet_E[NTRUE_JETS]    = {0};   Float_t jet_E[NJETS]    = {0};    Int_t   jet_npfo[NJETS] = {0};    Float_t major_thrust_value     = 0;   Float_t major_thrust_axis[3]     = {0};
+    Float_t truejet_px[NTRUE_JETS]   = {0};   Float_t jet_px[NJETS]   = {0};    Int_t   jet_nvtx[NJETS] = {0};    Float_t minor_thrust_value     = 0;   Float_t minor_thrust_axis[3]     = {0};
     Float_t truejet_py[NTRUE_JETS]   = {0};   Float_t jet_py[NJETS]   = {0};    Float_t y23             = 0;      Float_t principle_thrust_value = 0;   Float_t principle_thrust_axis[3] = {0};
     Float_t truejet_pz[NTRUE_JETS]   = {0};   Float_t jet_pz[NJETS]   = {0};    Float_t y12             = 0;      Float_t sphericity = 0;               Float_t sphericity_tensor[3]     = {0};
     Int_t   truejet_type[NTRUE_JETS] = {0};   Float_t jet_btag[NJETS] = {0};    Float_t d23             = 0;      Float_t oblateness = 0; 
@@ -112,7 +112,6 @@ struct PFO_QQbar  {
   public:
   // PFO VARIABLES
     Int_t   pfo_n       = 0;
-    Int_t   jet_nvtx    = 0;
     Int_t   pfo_match[MAX_NPARTICLES] = {0};
     Int_t   pfo_truejet_pdg[MAX_NPARTICLES] = {0};
     Int_t   pfo_truejet_type[MAX_NPARTICLES] = {0};

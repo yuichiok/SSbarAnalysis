@@ -31,7 +31,7 @@ class EventAnalyzer
 
     enum Selector       { kQQ, kMC, kReco };
     enum MCParticlePair { FIRST_ENTRY, kDD, kUU, kSS, kCC, kBB, kTT };
-    enum SelectID       { kKaon, kPion, kProton };
+    enum SelectID       { kKaon, kPion, kProton, kElectron, kMuon };
     enum PDGConfig      { noKPi, K_K, K_Pi, Pi_Pi };
 
   // methods
