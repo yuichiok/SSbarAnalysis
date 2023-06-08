@@ -87,8 +87,6 @@ void EventAnalyzer::WriteFile()
 {
   // Write Tree
     _hm.WriteLists(_hfile);
-    _hTree->Write();
-    // _hfile->Write();
     _hfile->Close();
 
 }
@@ -495,8 +493,6 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
       if( abs(_stats_lpfo.lpfo_pdgcheat[i]) == 321 ) _hm.h1[_hm.lpfo_gen_K_mom]->Fill(pfot.KLPFO[i].p_mag);
     }
   }
-
-  _hTree->Fill();
 
   ClearStructs();
   for (int i=0; i < 3; i++){
