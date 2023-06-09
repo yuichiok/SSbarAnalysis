@@ -193,20 +193,8 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
   // dEdx dist PDG check
     PDGConfig dEdx_pdg_match[3] = {noKPi, noKPi, noKPi};
     
-    // if ( pfot.isKaon(pfot.KLPFO[0])  && pfot.isKaon(pfot.KLPFO[1]) && pfot.is_cheatNoOthers(pfot.KLPFO[0]) && pfot.is_cheatNoOthers(pfot.KLPFO[1])  ) { dEdx_pdg_match[kKaon] = K_K; }
-    // if ( pfot.isPion(pfot.PiLPFO[0]) && pfot.isPion(pfot.PiLPFO[1]) && pfot.is_cheatNoOthers(pfot.PiLPFO[0]) && pfot.is_cheatNoOthers(pfot.PiLPFO[1]) ) { dEdx_pdg_match[kPion] = Pi_Pi; }
-
     if ( pfot.isKaon(pfot.KLPFO[0])  && pfot.isKaon(pfot.KLPFO[1])  ) { dEdx_pdg_match[kKaon] = K_K; }
     if ( pfot.isPion(pfot.PiLPFO[0]) && pfot.isPion(pfot.PiLPFO[1]) ) { dEdx_pdg_match[kPion] = Pi_Pi; }
-
-
-    /*
-    if     (   pfot.isKaon(pfot.KLPFO[0]) && pfot.isKaon(pfot.KLPFO[1]) )  {  dEdx_pdg_match = K_K;    }
-    else if(   pfot.isPion(pfot.KLPFO[0]) && pfot.isPion(pfot.KLPFO[1]) )  {  dEdx_pdg_match = Pi_Pi;  }
-    else if( ( pfot.isKaon(pfot.KLPFO[0]) && pfot.isPion(pfot.KLPFO[1]) ) ||
-             ( pfot.isKaon(pfot.KLPFO[1]) && pfot.isPion(pfot.KLPFO[0]) ) ){  dEdx_pdg_match = K_Pi;   }
-    else{ dEdx_pdg_match = noKPi; }
-    */
 
   // charge config check
     Bool_t charge_check[3] = {false};
@@ -217,20 +205,6 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
     if( dEdx_pdg_match[kPion] == Pi_Pi ){
       charge_check[kPion] = pfot.is_charge_config(pfot.kOpposite,pfot.PiLPFO[0].pfo_charge,pfot.PiLPFO[1].pfo_charge);
     }
-
-    /*
-    switch ( dEdx_pdg_match )
-    {
-      case K_K:
-        charge_check[kKaon] = pfot.is_charge_config(pfot.kOpposite,pfot.KLPFO[0].pfo_charge,pfot.KLPFO[1].pfo_charge);
-        break;
-      case Pi_Pi:
-        charge_check[kPion] = pfot.is_charge_config(pfot.kOpposite,pfot.PiLPFO[0].pfo_charge,pfot.PiLPFO[1].pfo_charge);
-        break;
-    default:
-      break;
-    }
-    */
 
     CutTrigger[kKaon].push_back(charge_check[kKaon]);
     CutTrigger[kPion].push_back(charge_check[kPion]);
@@ -279,7 +253,6 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
   //                          * Quality = {momentum, tpc hits, offset}
 
   ProcessDoubleTag(pfot,mct,CutTrigger,dEdx_pdg_match);
-  // ProcessDoubleTag(pfot,mct,CutTrigger[kKaon],dEdx_pdg_match);
 
   // Fill PFO
 
