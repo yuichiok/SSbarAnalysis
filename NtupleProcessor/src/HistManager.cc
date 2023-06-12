@@ -31,6 +31,19 @@ namespace QQbarAnalysis
     //////////////////
     //     TH1F     //
     //////////////////
+
+    /* 
+    cos [gen,reco,cheat][q,K,Pi]
+    qcos[gen,reco,cheat][q,K,Pi]
+    scos        [K,Pi]
+    mom         [K,Pi]
+    pdgcheat    [K,Pi]
+    endpt       [K,Pi][good,bad]
+    tpchits     [K,Pi][good,bad]
+    pidedx_dist [K,Pi][good,bad]
+    kdedx_dist  [K,Pi][good,bad]
+    */
+
       h1[gen_q_cos]       = new TH1F("h_gen_q_cos","; Generated q#bar{q} cos#theta; Entries",cos_bin,-1,1);
       h1[gen_q_qcos]      = new TH1F("h_gen_q_qcos","; Generated q#bar{q} qcos#theta; Entries",cos_bin,-1,1);
 
@@ -40,8 +53,8 @@ namespace QQbarAnalysis
       h1[cheat_K_cos]     = new TH1F("h_cheat_K_cos",";LPFO Kaon cos#theta; Entries",cos_bin,-1,1);
       h1[cheat_K_qcos]    = new TH1F("h_cheat_K_qcos",";LPFO Kaon cos#theta; Entries",cos_bin,-1,1);
 
-      h1[cheat_Pi_cos]     = new TH1F("h_cheat_Pi_cos",";LPFO Pion cos#theta; Entries",cos_bin,-1,1);
-      h1[cheat_Pi_qcos]    = new TH1F("h_cheat_Pi_qcos",";LPFO Pion cos#theta; Entries",cos_bin,-1,1);
+      h1[cheat_Pi_cos]    = new TH1F("h_cheat_Pi_cos",";LPFO Pion cos#theta; Entries",cos_bin,-1,1);
+      h1[cheat_Pi_qcos]   = new TH1F("h_cheat_Pi_qcos",";LPFO Pion cos#theta; Entries",cos_bin,-1,1);
 
       h1[reco_K_cos]      = new TH1F("h_reco_K_cos",";LPFO Kaon cos#theta; Entries",cos_bin,-1,1);
       h1[reco_K_qcos]     = new TH1F("h_reco_K_qcos",";LPFO Kaon cos#theta; Entries",cos_bin,-1,1);
@@ -77,6 +90,10 @@ namespace QQbarAnalysis
       h1[lpfo_reco_K_mom] = new TH1F("h_lpfo_reco_K_mom","; Leading Reco Kaon momentum (GeV); Entries",100,0,100);
 
     // Number of Gen Reco Kaons & Pions
+    /*
+    SP_count [gen,reco,correct][K,Pi]
+    */
+
       h1[gen_N_K_cos]     = new TH1F("h_gen_N_K_cos",";cos#theta;Generated N Kaons", cos_bin,-1,1);
       h1[reco_N_K_cos]    = new TH1F("h_reco_N_K_cos",";cos#theta;Reconstructed N Kaons", cos_bin,-1,1);
       h1[N_K_corr_cos]    = new TH1F("h_N_K_corr_cos",";cos#theta;Correctly Reconstructed N Kaons", cos_bin,-1,1);
@@ -86,6 +103,10 @@ namespace QQbarAnalysis
       h1[N_Pi_corr_cos]    = new TH1F("h_N_Pi_corr_cos",";cos#theta;Correctly Reconstructed N Pions", cos_bin,-1,1);
 
     // pq method
+    /*
+    pq [K,Pi][acc,rej]
+    */
+
       //KID
       h1_pq[acc_KK]      = new TH1F("h_acc_KK_cos",";Accepted K^{+}K^{-} cos#theta;N_{acc}",cos_bin,-1,1);
       h1_pq[rej_KK]      = new TH1F("h_rej_KK_cos",";Rejected K^{+}K^{-} cos#theta;N_{rej}",cos_bin,-1,1);
@@ -95,6 +116,10 @@ namespace QQbarAnalysis
       h1_pq[rej_PiPi]      = new TH1F("h_rej_PiPi_cos",";Rejected Pi^{+}Pi^{-} cos#theta;N_{rej}",cos_bin,-1,1);
 
     // particle ratio
+    /*
+    ratio [acc,rej][K,Pi,p,e,mu]
+    */
+
       h1_particle_ratio[K_rate_gen]  = new TH1F("h_K_rate_gen",";Ratio of Kaons / Event (gen);Entries",11,0,1.1);
       h1_particle_ratio[pi_rate_gen] = new TH1F("h_pi_rate_gen",";Ratio of Pions / Event (gen);Entries",11,0,1.1);
       h1_particle_ratio[p_rate_gen]  = new TH1F("h_p_rate_gen",";Ratio of Protons / Event (gen);Entries",11,0,1.1);
@@ -107,6 +132,15 @@ namespace QQbarAnalysis
     //////////////////
     //     TH2F     //
     //////////////////
+    /*
+    mom_cos [gen,reco][K,Pi]
+    count_gen_reco [K,Pi]
+    SP        [K,Pi][stability,purity]
+    ratio_cos [K,pi,p,e,mu]
+    dEdx_p        [K,Pi][K,Pi,p,e,mu]
+    dEdx_dist_cos  [K,Pi][K,Pi][K,Pi,p,e,mu]
+    */
+
       h2[gen_K_p_cos]  = new TH2F("h2_gen_K_p_cos" ,";cos#theta;p (GeV)",cos_bin,-1,1,100,0,60);
       h2[reco_K_p_cos] = new TH2F("h2_reco_K_p_cos",";cos#theta;p (GeV)",cos_bin,-1,1,100,0,60);
 
