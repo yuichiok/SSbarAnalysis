@@ -125,7 +125,22 @@ namespace QQbarAnalysis
     // Selections //
     ////////////////
 
+    vector<TString> LPFO_mode = {"K","Pi"};
+    
     vector<Bool_t> CutTrigger[3];
+    map< TString, map<TString, Bool_t> > CutTriggerMap; // [particle][cutname]
+
+    for (auto imode : LPFO_mode){
+      // check if jets on both sides are not empty
+      CutTriggerMap[imode]["valid_lpfo"] = _eve.eve_valid_lpfo;
+      // Base Selection (mom, tpc_hit, offset)
+      // CutTriggerMap[imode]["jet_mult"] = ( _jet.jet_npfo[0] > 0 && _jet.jet_npfo[1] > 0 );
+
+    }
+
+
+
+
 
     // Valid LPFO
     CutTrigger[kKaon].push_back(_eve.eve_valid_lpfo);
