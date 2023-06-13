@@ -67,6 +67,14 @@ void HistManager::InitializeHists()
     h1[gen_reco_Pi_sep_cos] = new TH1F("h_gen_reco_Pi_sep_cos",";cos#theta_{gen-LPFOPi}; Entries",cos_bin,-1,1);
     h1[jet_reco_Pi_sep_cos] = new TH1F("h_jet_reco_Pi_sep_cos",";cos#theta_{jet-LPFOPi}; Entries",cos_bin,-1,1);
 
+    h1_cos_cut_eff[reco_Pi_cos_none]                      = new TH1F("h_reco_Pi_cos_none","None;LPFO Pion cos#theta; Entries",cos_bin,-1,1);
+    h1_cos_cut_eff[reco_Pi_cos_jet2]                      = new TH1F("h_reco_Pi_cos_jet2","Jet2;LPFO Pion cos#theta; Entries",cos_bin,-1,1);
+    h1_cos_cut_eff[reco_Pi_cos_jet2_ud]                   = new TH1F("h_reco_Pi_cos_jet2_ud","Jet2+ud;LPFO Pion cos#theta; Entries",cos_bin,-1,1);
+    h1_cos_cut_eff[reco_Pi_cos_jet2_ud_pid]               = new TH1F("h_reco_Pi_cos_jet2_ud_pid","Jet2+ud+PID;LPFO Pion cos#theta; Entries",cos_bin,-1,1);
+    h1_cos_cut_eff[reco_Pi_cos_jet2_ud_pid_chg]           = new TH1F("h_reco_Pi_cos_jet2_ud_pid_chg","Jet2+ud+PID+Chg;LPFO Pion cos#theta; Entries",cos_bin,-1,1);
+    h1_cos_cut_eff[reco_Pi_cos_jet2_ud_pid_chg_poff]      = new TH1F("h_reco_Pi_cos_jet2_ud_pid_chg_poff","Jet2+ud+PID+Chg+Poff;LPFO Pion cos#theta; Entries",cos_bin,-1,1);
+    h1_cos_cut_eff[reco_Pi_cos_jet2_ud_pid_chg_poff_spfo] = new TH1F("h_reco_Pi_cos_jet2_ud_pid_chg_poff_spfo","Jet2+ud+PID+Chg+Poff+spfo;LPFO Pion cos#theta; Entries",cos_bin,-1,1);
+
   // ISR parameters
     h1[reco_sum_jetE]   = new TH1F("h_reco_sum_jetE", ";Visible Energy (GeV);", 100, 0, 300);
     h1[reco_jet_sep]    = new TH1F("h_reco_jet_sep", ";Jet sep |cos#theta|;", 100, 0, 1);
@@ -165,6 +173,10 @@ void HistManager::Hist2List()
 
   for (auto ih : h1_particle_ratio) {
     hList1_particle_ratio->Add(ih);
+  }
+
+  for (auto ih : h1_cos_cut_eff) {
+    hList1_cos_cut_eff->Add(ih);
   }
 
   for (auto ih : h2) {

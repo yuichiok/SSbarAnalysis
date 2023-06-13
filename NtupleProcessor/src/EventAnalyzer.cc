@@ -909,6 +909,34 @@ void EventAnalyzer::ProcessDoubleTag(PFOTools pfot, PFOTools mct, vector<Bool_t>
     sign_check[i] = cuts[i].back();
   }
 
+  // case Pi_Pi eff
+  Int_t ineg_eff = -1;
+  if( pfot.PiLPFO[0].pfo_charge < 0 ){
+    ineg_eff = 0;
+  }else{
+    ineg_eff = 1;
+  }
+
+  _hm.h1_cos_cut_eff[_hm.reco_Pi_cos_none]->Fill(pfot.PiLPFO[ineg_eff].qcos);
+  if( cuts[kPion].at(0) ){
+    _hm.h1_cos_cut_eff[_hm.reco_Pi_cos_jet2]->Fill(pfot.PiLPFO[ineg_eff].qcos);
+  }
+  if( cuts[kPion].at(0) && pfot.is_uu_dd() ){
+    _hm.h1_cos_cut_eff[_hm.reco_Pi_cos_jet2_ud]->Fill(pfot.PiLPFO[ineg_eff].qcos);
+  }
+  if( cuts[kPion].at(0) && pfot.is_uu_dd() && double_tag[kPion] == Pi_Pi ){
+    _hm.h1_cos_cut_eff[_hm.reco_Pi_cos_jet2_ud_pid]->Fill(pfot.PiLPFO[ineg_eff].qcos);
+  }
+  if( cuts[kPion].at(0) && pfot.is_uu_dd() && double_tag[kPion] == Pi_Pi && sign_check[kPion] ){
+    _hm.h1_cos_cut_eff[_hm.reco_Pi_cos_jet2_ud_pid_chg]->Fill(pfot.PiLPFO[ineg_eff].qcos);
+  }
+  if( cuts[kPion].at(0) && pfot.is_uu_dd() && double_tag[kPion] == Pi_Pi && sign_check[kPion] && cuts[kPion].at(1) ){
+    _hm.h1_cos_cut_eff[_hm.reco_Pi_cos_jet2_ud_pid_chg_poff]->Fill(pfot.PiLPFO[ineg_eff].qcos);
+  }
+  if( cuts[kPion].at(0) && pfot.is_uu_dd() && double_tag[kPion] == Pi_Pi && sign_check[kPion] && cuts[kPion].at(1) && cuts[kPion].at(2) ){
+    _hm.h1_cos_cut_eff[_hm.reco_Pi_cos_jet2_ud_pid_chg_poff_spfo]->Fill(pfot.PiLPFO[ineg_eff].qcos);
+  }
+
   // Reco K_K
 
   if ( LPFO_checks[kKaon] && pfot.is_ss() && double_tag[kKaon] == K_K ){
