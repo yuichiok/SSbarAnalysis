@@ -3,24 +3,21 @@
 EventAnalyzer.cpp
  Created : 2022-09-05  okugawa
 ------------------------------------------------------------------------------*/
+#include "EventAnalyzer.hh"
 
-#include <algorithm>
-#include <iomanip>
-#include <iostream>
-#include <utility>
-#include <vector>
 #include <TBranch.h>
 #include <TLeaf.h>
 #include <TMath.h>
 #include <Math/Vector4D.h>
 #include <Math/Vector3D.h>
 
-#include "EventAnalyzer.hh"
-#include "TreeReader.hh"
-#include "PFOTools.hh"
-#include "VectorTools.hh"
+#include <iostream>
+#include <algorithm>
+#include <iomanip>
+#include <utility>
 
 using std::cout;   using std::endl;
+using std::map;
 typedef unsigned int Index;
 
 namespace QQbarAnalysis
@@ -114,20 +111,6 @@ namespace QQbarAnalysis
     if ( !pfot.ValidPFO() ) {
       _eve.eve_valid_lpfo = 0;
     }else{ _eve.eve_valid_lpfo = 1; }
-
-    // Fill raw LPFO info
-    writer.WriteLPFO_Info(pfot,&_pfo,&_stats_lpfo);
-    for (int i=0; i<2; i++){
-      _data_lpfo.lpfo_p_mag[i]         = pfot.KLPFO[i].p_mag;
-      _data_lpfo.lpfo_dEdx_dist_pdg[i] = pfot.KLPFO[i].dEdx_dist_pdg;
-      _data_lpfo.lpfo_cos[i]           = pfot.KLPFO[i].cos;
-      _data_lpfo.lpfo_qcos[i]          = pfot.KLPFO[i].qcos;
-    }
-
-    for (int i=0; i<2; i++){
-      _data.LPFO_cos[i]  = pfot.KLPFO[i].cos;
-      _data.LPFO_qcos[i] = pfot.KLPFO[i].qcos;
-    }
 
     // jet info
     VectorTools jetvt[2];

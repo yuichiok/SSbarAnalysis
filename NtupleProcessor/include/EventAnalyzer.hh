@@ -9,12 +9,6 @@
  Takes input variables (datasets, configurations, etc) and sets up the
  appropriate classes to handle each portion of the analysis process.
 ------------------------------------------------------------------------------*/
-#include <TString.h>
-#include <TROOT.h>
-#include <TChain.h>
-#include <TFile.h>
-#include <vector>
-#include <fstream>
 #include "PFOTools.hh"
 #include "TreeStructures.hh"
 #include "TreeReader.hh"
@@ -22,6 +16,15 @@
 #include "FileSelector.hh"
 #include "HistManager.hh"
 #include "AnalysisConfig.hh"
+
+#include <TString.h>
+#include <TROOT.h>
+#include <TChain.h>
+#include <TFile.h>
+
+#include <map>
+#include <vector>
+#include <fstream>
 
 namespace QQbarAnalysis
 {
