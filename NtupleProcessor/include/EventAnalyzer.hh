@@ -41,7 +41,6 @@ namespace QQbarAnalysis
 
     // methods
       Bool_t           InitReadTree( TTree* ); // Maps class variables to an input TTree.
-      void             InitWriteTree();
       void             InitHists();
       
       void             CreateFile();
@@ -102,7 +101,6 @@ namespace QQbarAnalysis
       PFO_QQbar     _pfo     ;
       Branch_QQbar  _branch  ;
 
-      TreeWriter writer;
       TFile * _hfile;
 
       TTree * _hTree;

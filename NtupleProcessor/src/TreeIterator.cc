@@ -25,7 +25,6 @@ namespace QQbarAnalysis
 
       eAnalyzer.CreateFile();
       eAnalyzer.InitHists();
-      eAnalyzer.InitWriteTree();
 
   }
 

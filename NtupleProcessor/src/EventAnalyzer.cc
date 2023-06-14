@@ -68,13 +68,6 @@ namespace QQbarAnalysis
     _hfile = new TFile( _hfilename, "RECREATE", _hfilename ) ;
   }
 
-  void EventAnalyzer::InitWriteTree()
-  {
-    // Initialize Write Tree
-    _hTree     = new TTree( "data", "tree" );
-    writer.InitializeDataTree(_hTree,_data);
-  }
-
   void EventAnalyzer::InitHists()
   {
     _hm.InitializeHists();
@@ -125,9 +118,11 @@ namespace QQbarAnalysis
     // Selections //
     ////////////////
 
+    vector<Bool_t> CutTrigger[3];
+
+/*
     vector<TString> LPFO_mode = {"K","Pi"};
     
-    vector<Bool_t> CutTrigger[3];
     map< TString, map<TString, Bool_t> > CutTriggerMap; // [particle][cutname]
 
     for (auto imode : LPFO_mode){
@@ -137,7 +132,7 @@ namespace QQbarAnalysis
       // CutTriggerMap[imode]["jet_mult"] = ( _jet.jet_npfo[0] > 0 && _jet.jet_npfo[1] > 0 );
 
     }
-
+*/
 
 
 
