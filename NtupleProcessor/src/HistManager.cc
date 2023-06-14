@@ -217,6 +217,11 @@ void HistManager::WriteLists( TFile * output)
     hList1_particle_ratio->Write();
     output->cd();
 
+  TDirectory * d_cos_cut_eff = output->mkdir("cos_cut_eff");
+    d_cos_cut_eff->cd();
+    hList1_cos_cut_eff->Write();
+    output->cd();
+
   TDirectory * d_jet = output->mkdir("jet");
     d_jet->cd();
     hList2_jet->Write();
