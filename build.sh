@@ -6,10 +6,10 @@ then
     echo "rm -rf build/"
 fi
 
-if compgen -G "*.exe" > /dev/null
+if compgen -G "main.exe" > /dev/null
 then
-    rm -rf *.exe
-    echo "rm -rf *.exe"
+    rm -rf main.exe
+    echo "rm -rf main.exe"
 fi
 
 mkdir build
