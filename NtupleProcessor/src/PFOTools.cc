@@ -197,11 +197,11 @@ namespace QQbarAnalysis
           // SPFOs[ijet].erase(SPFOs[ijet].begin());
           pop_front(SPFOs[ijet]); // faster algorithm wise?
 
-          std::copy_if(SPFOs[ijet].begin(), SPFOs[ijet].end(), std::back_inserter(SPFOs_K[ijet]), [](PFO_Info iPFO) {
+          std::copy_if(SPFOs[ijet].begin(), SPFOs[ijet].end(), std::back_inserter(SPFOs_["K"][ijet]), [](PFO_Info iPFO) {
               return isKaon(iPFO);
           });
 
-          std::copy_if(SPFOs[ijet].begin(), SPFOs[ijet].end(), std::back_inserter(SPFOs_Pi[ijet]), [](PFO_Info iPFO) {
+          std::copy_if(SPFOs[ijet].begin(), SPFOs[ijet].end(), std::back_inserter(SPFOs_["Pi"][ijet]), [](PFO_Info iPFO) {
               return isPion(iPFO);
           });
 
