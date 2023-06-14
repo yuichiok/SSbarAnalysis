@@ -6,13 +6,15 @@
  Created : 2022-09-11  okugawa
  Main class of PFOTool program.
 ------------------------------------------------------------------------------*/
+#include "TreeStructures.hh"
+#include "AnalysisConfig.hh"
 
-#include <vector>
 #include <TString.h>
 #include <TFile.h>
 #include <TTree.h>
-#include "TreeStructures.hh"
-#include "AnalysisConfig.hh"
+
+#include <vector>
+#include <map>
 
 using std::vector;
 
@@ -68,6 +70,8 @@ namespace QQbarAnalysis
 
     // Leading/Sub-Leading PFOs
       PFO_Info LPFO[2];
+      std::map<TString,std::map<int, PFO_Info> > LPFO_;
+
       PFO_Info KLPFO[2];
       PFO_Info PiLPFO[2];
       PFO_Info cheat_KLPFO[2];

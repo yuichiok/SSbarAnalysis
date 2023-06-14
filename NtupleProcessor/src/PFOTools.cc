@@ -185,6 +185,9 @@ namespace QQbarAnalysis
     if( ValidPFO() ){
       for (int ijet=0; ijet < 2; ijet++){
         LPFO[ijet]        = GetSortedJet(ijet).at(0);
+        LPFO_["K"][ijet]  = Get_Particle_LPFO(ijet,kKaon);
+        LPFO_["Pi"][ijet] = Get_Particle_LPFO(ijet,kPion);
+
         KLPFO[ijet]       = Get_Particle_LPFO(ijet,kKaon);
         PiLPFO[ijet]      = Get_Particle_LPFO(ijet,kPion);
 
