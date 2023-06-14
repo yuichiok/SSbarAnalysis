@@ -70,7 +70,7 @@ namespace QQbarAnalysis
 
     // Leading/Sub-Leading PFOs
       PFO_Info LPFO[2];
-      std::map<TString,std::map<int, PFO_Info> > LPFO_;
+      std::map< TString, std::map<int, PFO_Info> > LPFO_;
       std::map< TString, std::map<int, std::vector<PFO_Info> > > SPFOs_;
 
       PFO_Info KLPFO[2];

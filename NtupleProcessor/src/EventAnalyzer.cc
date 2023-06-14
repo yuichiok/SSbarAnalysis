@@ -120,16 +120,48 @@ namespace QQbarAnalysis
 
     vector<Bool_t> CutTrigger[3];
 
-    vector<TString> LPFO_mode = {"K","Pi"};
+    vector<TString> PFO_mode = {"K","Pi"};
     
     map< TString, map<TString, Bool_t> > CutTriggerMap; // [particle][cutname]
 
-    for (auto imode : LPFO_mode){
+    for (auto i_lmode : PFO_mode){
+
       // check if jets on both sides are not empty
-      CutTriggerMap[imode]["valid_lpfo"] = _eve.eve_valid_lpfo;
+      CutTriggerMap[i_lmode]["valid_lpfo"] = _eve.eve_valid_lpfo;
+      
       // Base Selection (mom, tpc_hit, offset)
-      CutTriggerMap[imode]["double_quality"] = ( !pfot.LPFO_Quality_checks(pfot.LPFO_[imode][0]) && !pfot.LPFO_Quality_checks(pfot.LPFO_[imode][1]) );
+      Bool_t is_double_quality = true;
+      for ( int ijet=0; ijet<2; ijet++ ){
+        if( !pfot.LPFO_Quality_checks(pfot.LPFO_[i_lmode][ijet]) ) is_double_quality = false;
+      }
+      CutTriggerMap[i_lmode]["double_quality"] = is_double_quality;
+      
       // SPFO opposite check
+      map< TString, map<int, Bool_t> > is_gluon; // [mode][jet]
+      Bool_t is_there_a_gluon = false;
+      for ( int ijet=0; ijet<2; ijet++ ){
+        for ( auto i_smode : PFO_mode ){
+          for ( auto iSPFO : pfot.SPFOs_[i_smode][ijet] ){
+            Bool_t charge_opposite = iSPFO.pfo_charge * pfot.LPFO_[i_lmode][ijet].pfo_charge < 0;
+            Bool_t momentum_above  = iSPFO.p_mag > 10;
+            if( charge_opposite && momentum_above ) is_gluon[i_smode][ijet] = true;
+          }
+        }
+      }
+      for ( int ijet=0; ijet<2; ijet++ ){
+        for ( auto i_smode : PFO_mode ){
+          if( is_gluon[i_smode][ijet] ) is_there_a_gluon = true;
+        }
+      }
+      CutTriggerMap[i_lmode]["SLPFO"] = is_there_a_gluon;
+
+      // Charge opposite check
+      Bool_t is_charge_opposite = pfot.is_charge_config(pfot.kOpposite,pfot.LPFO_[i_lmode][0].pfo_charge,pfot.LPFO_[i_lmode][1].pfo_charge);
+
+      // Particle ID both sides
+      // Bool_t is_PID_both_sides = pfot.is_PID_config(pfot.kBothSides,pfot.LPFO_[i_lmode][0].pfo_pid,pfot.LPFO_[i_lmode][1].pfo_pid);
+
+
     }
 
 
@@ -153,21 +185,15 @@ namespace QQbarAnalysis
     Bool_t is_there_a_gluon[3] = {false};
     for ( int ijet=0; ijet<2; ijet++){
 
-      Bool_t check_KSLPFO_PiLPFO = false;
-
       for ( auto iSPFO_K : pfot.SPFOs_K[ijet] ){
         Bool_t charge_opposite = iSPFO_K.pfo_charge * pfot.KLPFO[ijet].pfo_charge < 0;
-        Bool_t charge_opposite_KSLPFO_PiLPFO = iSPFO_K.pfo_charge * pfot.PiLPFO[ijet].pfo_charge < 0;
         Bool_t momentum_above  = iSPFO_K.p_mag > 10;
         if( charge_opposite && momentum_above ) is_gluon[kKaon][ijet] = true;
-        // if( charge_opposite_KSLPFO_PiLPFO && momentum_above ) check_KSLPFO_PiLPFO = true;
-        // if( charge_opposite_KSLPFO_PiLPFO && iSPFO_K.p_mag > 15 ) check_KSLPFO_PiLPFO = true;
       }
 
       for ( auto iSPFO_Pi : pfot.SPFOs_Pi[ijet] ){
         Bool_t charge_opposite = iSPFO_Pi.pfo_charge * pfot.PiLPFO[ijet].pfo_charge < 0;
         Bool_t momentum_above  = iSPFO_Pi.p_mag > 10;
-        // if( (charge_opposite && momentum_above) || check_KSLPFO_PiLPFO ) is_gluon[kPion][ijet] = true;
         if( charge_opposite && momentum_above ) is_gluon[kPion][ijet] = true;
       }
 
