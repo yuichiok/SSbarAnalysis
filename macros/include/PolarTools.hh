@@ -4,6 +4,9 @@
 using std::cout; using std::endl;
 using std::vector;
 
+vector<TString> modeLPFO = {"K","Pi"};
+vector<TString> modePID  = {"K","Pi","p","e","mu"};
+
 Float_t bins_cos_fine[] = {-1.0,-0.98,-0.96,-0.94,-0.92,-0.90,-0.88,-0.86,-0.84,-0.82,-0.80,-0.75,-0.70,-0.60,-0.50,-0.40,-0.30,-0.20,-0.10,
                             0.0,0.10,0.20,0.30,0.40,0.50,0.60,0.70,0.75,0.80,0.82,0.84,0.86,0.88,0.90,0.92,0.94,0.96,0.98,1.0};
 // Int_t   nbins_cos = sizeof(bins_cos_fine) / sizeof(Float_t) - 1;
