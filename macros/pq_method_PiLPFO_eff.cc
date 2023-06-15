@@ -37,16 +37,26 @@ void Normalize2Gen(TH1F *h, TH1F *h_gen)
   h->Scale( intCosGen / intCosReco );
 }
 
+vector<TH1F*> GetHists(TFile *file, TString dir)
+{
+  vector<TH1F*> vec;
+  file->cd(dir);
+  for(auto k : *gDirectory->GetListOfKeys()) {
+    TKey *key = static_cast<TKey*>(k);
+    TClass *cl = gROOT->GetClass(key->GetClassName());
+    if (!cl->InheritsFrom("TH1")) continue;
+    vec.push_back( (TH1F*)key->ReadObj() );
+  }
+  return vec;
+}
 
-void main_pq(TFile *file, TString LPFO_mode)
+TCanvas * main_pq(TFile *file, TH1F *h_reco_LPFO_qcos, TString LPFO_mode)
 {
   gStyle->SetOptStat(0);
 
-  if (!file->IsOpen()) return;
-
   // reco and gen polar
   TH1F *h_gen_q_qcos     = (TH1F*) file->Get("h_gen_q_qcos");
-  TH1F *h_reco_LPFO_qcos = (TH1F*) file->Get("h_reco_" + LPFO_mode + "_qcos");
+  // TH1F *h_reco_LPFO_qcos = (TH1F*) file->Get("h_reco_" + LPFO_mode + "_qcos");
 
   // used for pq correction
   TH1F *h_acc_LPFO_cos  = (TH1F*) file->Get("pq/h_acc_" + LPFO_mode + LPFO_mode + "_cos");
@@ -117,7 +127,8 @@ void main_pq(TFile *file, TString LPFO_mode)
   cout << "Reco AFB = " << AFB_reco << endl;
 
   // Draw polar angle fit ratio
-  TCanvas  *c_ratio = new TCanvas("c_ratio","c_ratio",800,800);
+  TString c_name = "c_" + (TString)h_reco_LPFO_qcos->GetName();
+  TCanvas  *c_ratio = new TCanvas(c_name,c_name,800,800);
   TH1F *h_reco_LPFO_pq_cos_subhist = new TH1F("h_reco_LPFO_pq_cos_subhist",";LPFO Pion cos#theta; Entries",80,-0.8,0.8);
   for ( int ibin=1; ibin<=h_reco_LPFO_pq_cos_subhist->GetNbinsX(); ibin++ )
   {
@@ -148,6 +159,20 @@ void main_pq(TFile *file, TString LPFO_mode)
   leg_trp->AddEntry(f_reco_ratio,"#frac{d#sigma}{dcos#theta} fit for LPFO","l");
   leg_trp->Draw();
 
+  return c_ratio;
+
+}
+
+void IterateEffHists(TFile *file, TString LPFO_mode)
+{
+  if (!file->IsOpen()) return;
+  vector<TH1F*> hvec = GetHists(file, "cos_cut_eff");
+  for ( auto ih : hvec )
+  {
+    TCanvas *c = main_pq(file, ih, LPFO_mode);
+    c->Draw();
+  }
+
 }
 
 void pq_method_PiLPFO_eff()
@@ -156,7 +181,8 @@ void pq_method_PiLPFO_eff()
 
   try
   {
-    main_pq(file,"Pi");
+    // main_pq(file,"Pi");
+    IterateEffHists(file,"Pi");
   }
   catch(const std::exception& e)
   {
