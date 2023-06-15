@@ -98,7 +98,8 @@ TH1F * CorrectHist( TH1F * h_reco, vector<Float_t> p_vec)
 {
   const Int_t nbins = h_reco->GetNbinsX();
 
-  TH1F *corrected = new TH1F("corrected", "corrected", 100,-1,1);
+  TString corrected_name = "corrected_" + (TString) h_reco->GetName();
+  TH1F *corrected = new TH1F(corrected_name, corrected_name, 100,-1,1);
   corrected->Sumw2();
   for (int i = 1; i < nbins / 2 + 1; i++)
   {

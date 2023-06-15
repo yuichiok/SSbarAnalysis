@@ -93,15 +93,16 @@ TCanvas * main_pq(TFile *file, TH1F *h_reco_LPFO_qcos, TString LPFO_mode)
 
   const Int_t nbins = h_reco_LPFO_qcos_eff_corr->GetNbinsX();
 
-  TH1F *p_PiPi = new TH1F("p_PiPi", "p_PiPi", 50,0,1);
-  p_PiPi->Sumw2();
+  TString p_name = "p_" + (TString)h_reco_LPFO_qcos->GetName();
+  TH1F *p_LPFO = new TH1F(p_name, "p value", 50,0,1);
+  p_LPFO->Sumw2();
 
   vector<Float_t> p_vec = GetP(h_acc_LPFO_cos_eff_corr, h_rej_LPFO_cos_eff_corr);
 
   for (unsigned i = 0; i < p_vec.size() / 2; i++)
   {
-    p_PiPi->SetBinContent(nbins / 2 - i, p_vec.at(i));
-    p_PiPi->SetBinError(nbins / 2 - i, p_vec.at(i + nbins / 2));
+    p_LPFO->SetBinContent(nbins / 2 - i, p_vec.at(i));
+    p_LPFO->SetBinError(nbins / 2 - i, p_vec.at(i + nbins / 2));
   }
 
   TH1F *h_reco_LPFO_pq_cos = CorrectHist(h_reco_LPFO_qcos_eff_corr, p_vec);
@@ -128,8 +129,9 @@ TCanvas * main_pq(TFile *file, TH1F *h_reco_LPFO_qcos, TString LPFO_mode)
 
   // Draw polar angle fit ratio
   TString c_name = "c_" + (TString)h_reco_LPFO_qcos->GetName();
+  TString subh_name = "subh_" + (TString)h_reco_LPFO_qcos->GetName();
   TCanvas  *c_ratio = new TCanvas(c_name,c_name,800,800);
-  TH1F *h_reco_LPFO_pq_cos_subhist = new TH1F("h_reco_LPFO_pq_cos_subhist",";LPFO Pion cos#theta; Entries",80,-0.8,0.8);
+  TH1F *h_reco_LPFO_pq_cos_subhist = new TH1F(subh_name,";LPFO Pion cos#theta; Entries",80,-0.8,0.8);
   for ( int ibin=1; ibin<=h_reco_LPFO_pq_cos_subhist->GetNbinsX(); ibin++ )
   {
     Int_t recobin = ibin + 10;
@@ -177,7 +179,7 @@ void IterateEffHists(TFile *file, TString LPFO_mode)
 
 void pq_method_PiLPFO_eff()
 {
-  TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ud.KPiLPFO.distPi0.PFOp15.LPFOp15_pNaN.tpc0.eff.hists.all.root","READ");
+  TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.uu.KPiLPFO.distPi0.PFOp15.LPFOp15_pNaN.tpc0.eff.hists.all.root","READ");
 
   try
   {
