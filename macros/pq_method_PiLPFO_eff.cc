@@ -59,7 +59,7 @@ void main_pq(TFile *file, TString LPFO_mode)
   TH1F *h_reco_LPFO_qcos_eff_corr;
   if (isEffCorr)
   {
-    h_reco_LPFO_qcos_eff_corr = Efficiency_Correction(h_reco_LPFO_qcos,"qcos_corr",file);
+    h_reco_LPFO_qcos_eff_corr = Efficiency_Correction(h_reco_LPFO_qcos, LPFO_mode, file);
   }else{
     h_reco_LPFO_qcos_eff_corr = (TH1F*) h_reco_LPFO_qcos->Clone();
   }
@@ -68,8 +68,8 @@ void main_pq(TFile *file, TString LPFO_mode)
   TH1F *h_rej_LPFO_cos_eff_corr;
   if (isEffCorr)
   {
-    h_acc_LPFO_cos_eff_corr = Efficiency_Correction(h_acc_LPFO_cos,"acc_corr",file);
-    h_rej_LPFO_cos_eff_corr = Efficiency_Correction(h_rej_LPFO_cos,"rej_corr",file);
+    h_acc_LPFO_cos_eff_corr = Efficiency_Correction(h_acc_LPFO_cos, LPFO_mode, file);
+    h_rej_LPFO_cos_eff_corr = Efficiency_Correction(h_rej_LPFO_cos, LPFO_mode, file);
   }else{
     h_acc_LPFO_cos_eff_corr = (TH1F*) h_acc_LPFO_cos->Clone();
     h_rej_LPFO_cos_eff_corr = (TH1F*) h_rej_LPFO_cos->Clone();
