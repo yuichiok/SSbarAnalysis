@@ -45,10 +45,8 @@ void main_pq(TFile *file, TString LPFO_mode)
   if (!file->IsOpen()) return;
 
   // reco and gen polar
-  TH1F *h_gen_q_qcos  = (TH1F*) file->Get("h_gen_q_qcos");
-  TH1F *h_reco_LPFO_scos = (TH1F*) file->Get("h_reco_" + LPFO_mode + "_scos");
+  TH1F *h_gen_q_qcos     = (TH1F*) file->Get("h_gen_q_qcos");
   TH1F *h_reco_LPFO_qcos = (TH1F*) file->Get("h_reco_" + LPFO_mode + "_qcos");
-  TH1F *h_cheat_LPFO_qcos = (TH1F*) file->Get("h_cheat_" + LPFO_mode + "_qcos");
 
   // used for pq correction
   TH1F *h_acc_LPFO_cos  = (TH1F*) file->Get("pq/h_acc_" + LPFO_mode + LPFO_mode + "_cos");
@@ -78,10 +76,6 @@ void main_pq(TFile *file, TString LPFO_mode)
   StyleHist(h_gen_q_qcos,kGreen+1);
   h_gen_q_qcos->SetFillStyle(0);
   h_gen_q_qcos->SetLineStyle(2);
-
-  StyleHist(h_cheat_LPFO_qcos,kOrange+1);
-  h_cheat_LPFO_qcos->SetFillStyle(0);
-  h_cheat_LPFO_qcos->SetLineStyle(2);
 
   StyleHist(h_reco_LPFO_qcos_eff_corr,kRed+2);
   StyleHist(h_acc_LPFO_cos_eff_corr,kRed+2);
