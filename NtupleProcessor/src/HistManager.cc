@@ -1,11 +1,12 @@
 #include <iostream>
+#include <vector>
 #include <TString.h>
 #include <TH1.h>
 #include <TH2.h>
 #include <TList.h>
 #include <TFile.h> 
 
-#include "../include/HistManager.hh"
+#include "HistManager.hh"
 
 using std::cout;   using std::endl;
 
@@ -67,13 +68,14 @@ void HistManager::InitializeHists()
     h1[gen_reco_Pi_sep_cos] = new TH1F("h_gen_reco_Pi_sep_cos",";cos#theta_{gen-LPFOPi}; Entries",cos_bin,-1,1);
     h1[jet_reco_Pi_sep_cos] = new TH1F("h_jet_reco_Pi_sep_cos",";cos#theta_{jet-LPFOPi}; Entries",cos_bin,-1,1);
 
-    h1_cos_cut_eff[reco_Pi_cos_none]                      = new TH1F("h_reco_Pi_cos_none","None;LPFO Pion cos#theta; Entries",cos_bin,-1,1);
-    h1_cos_cut_eff[reco_Pi_cos_jet2]                      = new TH1F("h_reco_Pi_cos_jet2","Jet2;LPFO Pion cos#theta; Entries",cos_bin,-1,1);
-    h1_cos_cut_eff[reco_Pi_cos_jet2_ud]                   = new TH1F("h_reco_Pi_cos_jet2_ud","Jet2+ud;LPFO Pion cos#theta; Entries",cos_bin,-1,1);
-    h1_cos_cut_eff[reco_Pi_cos_jet2_ud_pid]               = new TH1F("h_reco_Pi_cos_jet2_ud_pid","Jet2+ud+PID;LPFO Pion cos#theta; Entries",cos_bin,-1,1);
-    h1_cos_cut_eff[reco_Pi_cos_jet2_ud_pid_chg]           = new TH1F("h_reco_Pi_cos_jet2_ud_pid_chg","Jet2+ud+PID+Chg;LPFO Pion cos#theta; Entries",cos_bin,-1,1);
-    h1_cos_cut_eff[reco_Pi_cos_jet2_ud_pid_chg_poff]      = new TH1F("h_reco_Pi_cos_jet2_ud_pid_chg_poff","Jet2+ud+PID+Chg+Poff;LPFO Pion cos#theta; Entries",cos_bin,-1,1);
-    h1_cos_cut_eff[reco_Pi_cos_jet2_ud_pid_chg_poff_spfo] = new TH1F("h_reco_Pi_cos_jet2_ud_pid_chg_poff_spfo","Jet2+ud+PID+Chg+Poff+spfo;LPFO Pion cos#theta; Entries",cos_bin,-1,1);
+
+    std::vector<TString> cut_list = {"jet2","poff","pid","ud","spfo","chg"};
+    h1_cos_cut_eff[TString("none")] = new TH1F("h_cos_cut_eff_"+TString("none"),"None;LPFO Pion cos#theta; Entries",cos_bin,-1,1);
+    TString cut_hname = "h_reco_Pi_cos";
+    for( auto cut : cut_list ){
+        cut_hname = cut_hname + "_" + cut;
+        h1_cos_cut_eff[cut_hname] = new TH1F(cut_hname,cut_hname+";LPFO Pion cos#theta; Entries",cos_bin,-1,1);
+    }
 
   // ISR parameters
     h1[reco_sum_jetE]   = new TH1F("h_reco_sum_jetE", ";Visible Energy (GeV);", 100, 0, 300);
@@ -175,8 +177,8 @@ void HistManager::Hist2List()
     hList1_particle_ratio->Add(ih);
   }
 
-  for (auto ih : h1_cos_cut_eff) {
-    hList1_cos_cut_eff->Add(ih);
+  for (auto const& ih : h1_cos_cut_eff) {
+    hList1_cos_cut_eff->Add(ih.second);
   }
 
   for (auto ih : h2) {

@@ -917,24 +917,33 @@ void EventAnalyzer::ProcessDoubleTag(PFOTools pfot, PFOTools mct, vector<Bool_t>
     ineg_eff = 1;
   }
 
-  _hm.h1_cos_cut_eff[_hm.reco_Pi_cos_none]->Fill(pfot.PiLPFO[ineg_eff].qcos);
-  if( cuts[kPion].at(0) ){
-    _hm.h1_cos_cut_eff[_hm.reco_Pi_cos_jet2]->Fill(pfot.PiLPFO[ineg_eff].qcos);
+  std::vector<TString> cut_list = {"jet2","poff","pid","ud","spfo","chg"};
+  TString cut_hname = "h_reco_Pi_cos";
+  vector<TString> cut_hname_list;
+  for( auto icut_list : cut_list ){
+    cut_hname += "_" + icut_list;
+    cut_hname_list.push_back(cut_hname);
   }
-  if( cuts[kPion].at(0) && pfot.is_uu_dd() ){
-    _hm.h1_cos_cut_eff[_hm.reco_Pi_cos_jet2_ud]->Fill(pfot.PiLPFO[ineg_eff].qcos);
+
+
+  _hm.h1_cos_cut_eff[TString("none")]->Fill(pfot.PiLPFO[ineg_eff].qcos);
+  if( cuts[kPion].at(0) ){ // jet association
+    _hm.h1_cos_cut_eff[cut_hname_list.at(0)]->Fill(pfot.PiLPFO[ineg_eff].qcos);
   }
-  if( cuts[kPion].at(0) && pfot.is_uu_dd() && double_tag[kPion] == Pi_Pi ){
-    _hm.h1_cos_cut_eff[_hm.reco_Pi_cos_jet2_ud_pid]->Fill(pfot.PiLPFO[ineg_eff].qcos);
+  if( cuts[kPion].at(0) && cuts[kPion].at(1) ){ // mom & offset
+    _hm.h1_cos_cut_eff[cut_hname_list.at(1)]->Fill(pfot.PiLPFO[ineg_eff].qcos);
   }
-  if( cuts[kPion].at(0) && pfot.is_uu_dd() && double_tag[kPion] == Pi_Pi && sign_check[kPion] ){
-    _hm.h1_cos_cut_eff[_hm.reco_Pi_cos_jet2_ud_pid_chg]->Fill(pfot.PiLPFO[ineg_eff].qcos);
+  if( cuts[kPion].at(0) && cuts[kPion].at(1) && double_tag[kPion] == Pi_Pi ){ // dE/dx PID
+    _hm.h1_cos_cut_eff[cut_hname_list.at(2)]->Fill(pfot.PiLPFO[ineg_eff].qcos);  
   }
-  if( cuts[kPion].at(0) && pfot.is_uu_dd() && double_tag[kPion] == Pi_Pi && sign_check[kPion] && cuts[kPion].at(1) ){
-    _hm.h1_cos_cut_eff[_hm.reco_Pi_cos_jet2_ud_pid_chg_poff]->Fill(pfot.PiLPFO[ineg_eff].qcos);
+  if( cuts[kPion].at(0) && cuts[kPion].at(1) && double_tag[kPion] == Pi_Pi && pfot.is_uu_dd() ){ // Pi-K Leading
+    _hm.h1_cos_cut_eff[cut_hname_list.at(3)]->Fill(pfot.PiLPFO[ineg_eff].qcos);  
   }
-  if( cuts[kPion].at(0) && pfot.is_uu_dd() && double_tag[kPion] == Pi_Pi && sign_check[kPion] && cuts[kPion].at(1) && cuts[kPion].at(2) ){
-    _hm.h1_cos_cut_eff[_hm.reco_Pi_cos_jet2_ud_pid_chg_poff_spfo]->Fill(pfot.PiLPFO[ineg_eff].qcos);
+  if( cuts[kPion].at(0) && cuts[kPion].at(1) && double_tag[kPion] == Pi_Pi && pfot.is_uu_dd() && cuts[kPion].at(2) ){ // SPFO check
+    _hm.h1_cos_cut_eff[cut_hname_list.at(4)]->Fill(pfot.PiLPFO[ineg_eff].qcos);  
+  }
+  if( cuts[kPion].at(0) && cuts[kPion].at(1) && double_tag[kPion] == Pi_Pi && pfot.is_uu_dd() && cuts[kPion].at(2) && sign_check[kPion] ){ // Charge check
+    _hm.h1_cos_cut_eff[cut_hname_list.at(5)]->Fill(pfot.PiLPFO[ineg_eff].qcos);  
   }
 
   // Reco K_K

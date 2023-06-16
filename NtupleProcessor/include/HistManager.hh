@@ -109,19 +109,7 @@ class HistManager
     };
     TH1F * h1_particle_ratio[Last_h1_dummy_particle_ratio];
 
-    enum h1_cos_cut_eff {
-      reco_Pi_cos_none,
-      reco_Pi_cos_jet2,
-      reco_Pi_cos_jet2_ud,
-      reco_Pi_cos_jet2_ud_pid,
-      reco_Pi_cos_jet2_ud_pid_chg,
-      reco_Pi_cos_jet2_ud_pid_chg_poff,
-      reco_Pi_cos_jet2_ud_pid_chg_poff_spfo,
-
-      dummy_cos_cut_eff,
-      Last_h1_dummy_cos_cut_eff = dummy_cos_cut_eff
-    };
-    TH1F * h1_cos_cut_eff[Last_h1_dummy_cos_cut_eff];
+    std::map<TString, TH1F*> h1_cos_cut_eff;
 
   // h2 hist
     enum h2_index {
