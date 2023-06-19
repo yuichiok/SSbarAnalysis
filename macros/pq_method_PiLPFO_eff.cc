@@ -165,26 +165,47 @@ TCanvas * main_pq(TFile *file, TH1F *h_reco_LPFO_qcos, TString LPFO_mode)
 
 }
 
-void IterateEffHists(TFile *file, TString LPFO_mode)
+void SaveHists(TFile *file, TString prod_mode, TString LPFO_mode, vector<TH1F*> hvec)
 {
   if (!file->IsOpen()) return;
-  vector<TH1F*> hvec = GetHists(file, "cos_cut_eff");
+
   for ( auto ih : hvec )
   {
     TCanvas *c = main_pq(file, ih, LPFO_mode);
-    c->Draw();
+    TString printname = "c_" + prod_mode + "_" + (TString)ih->GetName() + ".png";
+    c->Print("~/Desktop/" + printname);
+  }
+}
+
+void PrintEfficiency(TFile *file, vector<TH1F*> hvec)
+{
+  if (!file->IsOpen()) return;
+  TH1F *h_gen_q_qcos     = (TH1F*) file->Get("h_gen_q_qcos");
+  Int_t n_gen_events     = h_gen_q_qcos->GetEntries();
+  cout << "name,nevents,efficiency\n";
+  cout << "gen," << n_gen_events << ",-\n";
+  for ( auto ih : hvec )
+  {
+    Int_t n_reco_events = ih->GetEntries();
+    cout << ih->GetName() << ",";
+    cout << ih->GetEntries() << "\n";
   }
 
 }
 
 void pq_method_PiLPFO_eff()
 {
-  TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.uu.KPiLPFO.distPi0.PFOp15.LPFOp15_pNaN.tpc0.eff.hists.all.root","READ");
+  TString prod_mode = "ud";
+  TString LPFO_mode = "Pi";
+  TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR." + prod_mode + ".KPiLPFO.distPi0.PFOp15.LPFOp15_pNaN.tpc0.eff.hists.all.root","READ");
 
   try
   {
-    // main_pq(file,"Pi");
-    IterateEffHists(file,"Pi");
+    if (!file->IsOpen()) return;
+    vector<TH1F*> hvec = GetHists(file, "cos_cut_eff");
+    SaveHists(file, prod_mode, LPFO_mode, hvec);
+    PrintEfficiency(file, hvec);
+
   }
   catch(const std::exception& e)
   {
