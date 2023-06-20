@@ -45,8 +45,10 @@ namespace QQbarAnalysis
       static  Bool_t            isPion            ( PFO_Info iPFO );
       static  Bool_t            isProton          ( PFO_Info iPFO );
       static  Bool_t            is_cheatNoOthers  ( PFO_Info iPFO );
+      virtual Bool_t            is_PID            ( TString lmode, PFO_Info iPFO );
 
     // LPFO checks
+      virtual Bool_t           is_PID_config    ( TString lmode );
       virtual Bool_t           is_charge_config ( ChargeConfig cc, Int_t charge0, Int_t charge1 );
 
       virtual Bool_t           LPFO_Quality_checks   ( PFO_Info iPFO );

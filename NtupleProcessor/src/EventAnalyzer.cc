@@ -153,13 +153,13 @@ namespace QQbarAnalysis
           if( is_gluon[i_smode][ijet] ) is_there_a_gluon = true;
         }
       }
-      CutTriggerMap[i_lmode]["SPFO"] = is_there_a_gluon;
+      CutTriggerMap[i_lmode]["SPFO"]   = is_there_a_gluon;
 
       // Charge opposite check
       CutTriggerMap[i_lmode]["charge"] = pfot.is_charge_config(pfot.kOpposite,pfot.LPFO_[i_lmode][0].pfo_charge,pfot.LPFO_[i_lmode][1].pfo_charge);
 
       // Particle ID both sides
-      // Bool_t is_PID_both_sides = pfot.is_PID_config(pfot.kBothSides,pfot.LPFO_[i_lmode][0].pfo_pid,pfot.LPFO_[i_lmode][1].pfo_pid);
+      CutTriggerMap[i_lmode]["PID"]    = pfot.is_PID_config( i_lmode );
 
 
     }

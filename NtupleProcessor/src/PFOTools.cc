@@ -311,18 +311,31 @@ namespace QQbarAnalysis
 
   Bool_t PFOTools::isPion( PFO_Info iPFO )
   {
-      // return iPFO.dEdx_dist_pdg == 211;
-      return (iPFO.dEdx_dist_pdg == 211) && (0 < iPFO.pfo_piddedx_pi_dedxdist);
+    // return iPFO.dEdx_dist_pdg == 211;
+    return (iPFO.dEdx_dist_pdg == 211) && (0 < iPFO.pfo_piddedx_pi_dedxdist);
   }
 
   Bool_t PFOTools::isProton( PFO_Info iPFO )
   {
-      return iPFO.dEdx_dist_pdg == 2212;
+    return iPFO.dEdx_dist_pdg == 2212;
   }
 
   Bool_t PFOTools::is_cheatNoOthers( PFO_Info iPFO )
   {
-      return (abs(iPFO.pfo_pdgcheat) != 11) && (abs(iPFO.pfo_pdgcheat) != 13);
+    return (abs(iPFO.pfo_pdgcheat) != 11) && (abs(iPFO.pfo_pdgcheat) != 13);
+  }
+
+  Bool_t PFOTools::is_PID( TString lmode, PFO_Info iPFO )
+  {
+    if     ( lmode == "K"  ){ return isKaon(iPFO);   }
+    else if( lmode == "Pi" ){ return isPion(iPFO);   }
+    else if( lmode == "p"  ){ return isProton(iPFO); }
+    else                    { return false; }
+  }
+
+  Bool_t PFOTools::is_PID_config( TString lmode )
+  {
+    return is_PID( lmode, LPFO_[lmode][0] ) && is_PID( lmode, LPFO_[lmode][1] );
   }
 
   Bool_t PFOTools::is_charge_config( ChargeConfig cc, Int_t charge0 , Int_t charge1 )
