@@ -137,23 +137,15 @@ namespace QQbarAnalysis
       CutTriggerMap[i_lmode]["quality"] = is_double_quality;
       
       // SPFO opposite check
-      map< TString, map<int, Bool_t> > is_gluon; // [mode][jet]
-      Bool_t is_there_a_gluon = false;
+      vector<Bool_t> is_SPFO_charge_opposite(2,false);
       for ( int ijet=0; ijet<2; ijet++ ){
-        for ( auto i_smode : PFO_mode ){
-          for ( auto iSPFO : pfot.SPFOs_[i_smode][ijet] ){
-            Bool_t charge_opposite = iSPFO.pfo_charge * pfot.LPFO_[i_lmode][ijet].pfo_charge < 0;
-            Bool_t momentum_above  = iSPFO.p_mag > 10;
-            if( charge_opposite && momentum_above ) is_gluon[i_smode][ijet] = true;
-          }
+        for ( auto iSPFO : pfot.SPFOs_[i_lmode][ijet] ){
+          Bool_t charge_opposite = iSPFO.pfo_charge * pfot.LPFO_[i_lmode][ijet].pfo_charge < 0;
+          Bool_t momentum_above  = iSPFO.p_mag > 10;
+          if( charge_opposite && momentum_above ) is_SPFO_charge_opposite.at(ijet) = true;
         }
       }
-      for ( int ijet=0; ijet<2; ijet++ ){
-        for ( auto i_smode : PFO_mode ){
-          if( is_gluon[i_smode][ijet] ) is_there_a_gluon = true;
-        }
-      }
-      CutTriggerMap[i_lmode]["SPFO"]   = is_there_a_gluon;
+      CutTriggerMap[i_lmode]["SPFO"] = std::none_of(is_SPFO_charge_opposite.begin(), is_SPFO_charge_opposite.end(), [](bool v) { return v; });
 
       // Charge opposite check
       CutTriggerMap[i_lmode]["charge"] = pfot.is_charge_config(pfot.kOpposite,pfot.LPFO_[i_lmode][0].pfo_charge,pfot.LPFO_[i_lmode][1].pfo_charge);
@@ -161,11 +153,7 @@ namespace QQbarAnalysis
       // Particle ID both sides
       CutTriggerMap[i_lmode]["PID"]    = pfot.is_PID_config( i_lmode );
 
-
     }
-
-
-
 
     // Valid LPFO
     CutTrigger[kKaon].push_back(_eve.eve_valid_lpfo);
