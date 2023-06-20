@@ -127,14 +127,14 @@ namespace QQbarAnalysis
     for (auto i_lmode : PFO_mode){
 
       // check if jets on both sides are not empty
-      CutTriggerMap[i_lmode]["valid_lpfo"] = _eve.eve_valid_lpfo;
+      CutTriggerMap[i_lmode]["jet_association"] = _eve.eve_valid_lpfo;
       
       // Base Selection (mom, tpc_hit, offset)
       Bool_t is_double_quality = true;
       for ( int ijet=0; ijet<2; ijet++ ){
         if( !pfot.LPFO_Quality_checks(pfot.LPFO_[i_lmode][ijet]) ) is_double_quality = false;
       }
-      CutTriggerMap[i_lmode]["double_quality"] = is_double_quality;
+      CutTriggerMap[i_lmode]["quality"] = is_double_quality;
       
       // SPFO opposite check
       map< TString, map<int, Bool_t> > is_gluon; // [mode][jet]
@@ -153,10 +153,10 @@ namespace QQbarAnalysis
           if( is_gluon[i_smode][ijet] ) is_there_a_gluon = true;
         }
       }
-      CutTriggerMap[i_lmode]["SLPFO"] = is_there_a_gluon;
+      CutTriggerMap[i_lmode]["SPFO"] = is_there_a_gluon;
 
       // Charge opposite check
-      Bool_t is_charge_opposite = pfot.is_charge_config(pfot.kOpposite,pfot.LPFO_[i_lmode][0].pfo_charge,pfot.LPFO_[i_lmode][1].pfo_charge);
+      CutTriggerMap[i_lmode]["charge"] = pfot.is_charge_config(pfot.kOpposite,pfot.LPFO_[i_lmode][0].pfo_charge,pfot.LPFO_[i_lmode][1].pfo_charge);
 
       // Particle ID both sides
       // Bool_t is_PID_both_sides = pfot.is_PID_config(pfot.kBothSides,pfot.LPFO_[i_lmode][0].pfo_pid,pfot.LPFO_[i_lmode][1].pfo_pid);
