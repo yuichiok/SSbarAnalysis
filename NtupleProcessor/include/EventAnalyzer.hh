@@ -26,6 +26,8 @@
 #include <vector>
 #include <fstream>
 
+using std::map;
+
 namespace QQbarAnalysis
 {
   class EventAnalyzer
@@ -71,7 +73,7 @@ namespace QQbarAnalysis
       void             PolarAngleGen( PFOTools mct );
       void             Mom_Polar_Gen( PFOTools mct, PFOTools pfot );
       void             ProcessDoubleTag( PFOTools pfot, PFOTools mct, vector<Bool_t> cuts[3], PDGConfig double_tag[3]);
-      void             ProcessDoubleTag( PFOTools pfot, PFOTools mct, std::map< TString, std::map<TString, Bool_t> > cuts );
+      void             ProcessDoubleTag( PFOTools pfot, PFOTools mct, map< TString, map<TString, Bool_t> > cuts );
       void             PolarAngle_acc_rej( PFOTools pfot, vector<Bool_t> cuts, Bool_t ss_config );
 
       void             Jet_sum_n_acol();
@@ -85,15 +87,7 @@ namespace QQbarAnalysis
       long patEventsAnalyzed;     // Number of events that were processed to make the Ntuple.
       long entriesInNtuple  ;     // Number of events that were processed to make the Ntuple.
 
-    // Fixed size dimensions of array or collections stored in the TTree if any.
-      FileSelector  _fs;
-      HistManager   _hm;
-
-      AnalysisConfig _anCfg;
-      TString       _config;
-
     // List of cut names
-      vector<TString> PFO_mode  = {"K","Pi"};
       vector<TString> cut_names = {"jet_association","quality","SPFO","charge","PID"};
 
     private:
@@ -106,6 +100,8 @@ namespace QQbarAnalysis
       PFO_QQbar     _pfo     ;
       Branch_QQbar  _branch  ;
 
+      PFOTools      _pt;
+
       TFile * _hfile;
 
       TTree * _hTree;
@@ -116,6 +112,14 @@ namespace QQbarAnalysis
       LPFO_Info        _data_lpfo;
 
       TString _hfilename;
+
+    // Fixed size dimensions of array or collections stored in the TTree if any.
+      FileSelector  _fs;
+      HistManager   _hm;
+
+      AnalysisConfig _anCfg;
+      TString       _config;
+
 
   };
 }

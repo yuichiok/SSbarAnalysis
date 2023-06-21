@@ -44,6 +44,19 @@ namespace QQbarAnalysis
     kdedx_dist  [K,Pi][good,bad]
     */
 
+    // Mapping
+    vector<TString> hcos_name = {"cos","qcos","scos","gen_reco_sep_cos"};
+    Float_t cos_min = -1.0, cos_max = 1.0;
+    for( auto i_lmode : _pt.PFO_mode ){
+      for( auto iname : hcos_name){
+        TString hname = "h_" + i_lmode + "_" + iname;
+        hcos_map[i_lmode][iname] = new TH1F(hname,iname + ";cos#theta;Entries",cos_bin,cos_min,cos_max);
+      }
+    }
+
+
+    // Original
+
       h1[gen_q_cos]       = new TH1F("h_gen_q_cos","; Generated q#bar{q} cos#theta; Entries",cos_bin,-1,1);
       h1[gen_q_qcos]      = new TH1F("h_gen_q_qcos","; Generated q#bar{q} qcos#theta; Entries",cos_bin,-1,1);
 
@@ -101,6 +114,7 @@ namespace QQbarAnalysis
       h1[gen_N_Pi_cos]     = new TH1F("h_gen_N_Pi_cos",";cos#theta;Generated N Pions", cos_bin,-1,1);
       h1[reco_N_Pi_cos]    = new TH1F("h_reco_N_Pi_cos",";cos#theta;Reconstructed N Pions", cos_bin,-1,1);
       h1[N_Pi_corr_cos]    = new TH1F("h_N_Pi_corr_cos",";cos#theta;Correctly Reconstructed N Pions", cos_bin,-1,1);
+
 
     // pq method
     /*

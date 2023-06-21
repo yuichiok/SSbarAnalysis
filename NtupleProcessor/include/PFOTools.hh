@@ -16,7 +16,7 @@
 #include <vector>
 #include <map>
 
-using std::vector;
+using std::vector; using std::map;
 
 namespace QQbarAnalysis
 {
@@ -59,8 +59,6 @@ namespace QQbarAnalysis
       virtual Bool_t           is_ss                 ();
       virtual Bool_t           is_uu_dd              ();
 
-      AnalysisConfig _anCfg;
-
     // MC gen info
       MC_Info    mc_quark[2];
       MC_Info    mc_stable[1000];
@@ -72,24 +70,30 @@ namespace QQbarAnalysis
 
     // Leading/Sub-Leading PFOs
       PFO_Info LPFO[2];
-      std::map< TString, std::map<int, PFO_Info> > LPFO_;
-      std::map< TString, std::map<int, std::vector<PFO_Info> > > SPFOs_;
+      map< TString, map<int, PFO_Info> > LPFO_;
+      map< TString, map<int, vector<PFO_Info> > > SPFOs_;
 
       PFO_Info KLPFO[2];
       PFO_Info PiLPFO[2];
       PFO_Info cheat_KLPFO[2];
       PFO_Info cheat_PiLPFO[2];
-      std::vector<PFO_Info> SPFOs[2];
-      std::vector<PFO_Info> SPFOs_K[2];
-      std::vector<PFO_Info> SPFOs_cheat_K[2];
-      std::vector<PFO_Info> SPFOs_Pi[2];
-      std::vector<PFO_Info> SPFOs_cheat_Pi[2];
+      vector<PFO_Info> SPFOs[2];
+      vector<PFO_Info> SPFOs_K[2];
+      vector<PFO_Info> SPFOs_cheat_K[2];
+      vector<PFO_Info> SPFOs_Pi[2];
+      vector<PFO_Info> SPFOs_cheat_Pi[2];
+
+    // PFO modes and types
+      vector<TString> PFO_mode  = {"K","Pi"};
+      vector<TString> PFO_type  = {"K","Pi", "p", "e", "mu"};
 
 
     private:
       MC_QQbar  *mc_data  ;
       PFO_QQbar *data     ;
       PFO_Info   PFO      ;
+
+      AnalysisConfig _anCfg;
 
   };
 }

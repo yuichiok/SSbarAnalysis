@@ -1,13 +1,17 @@
 #ifndef GUARD_HistManager_h
 #define GUARD_HistManager_h
 
+#include "PFOTools.hh"
+
 #include <iostream>
 #include <map>
 #include <TString.h>
 #include <TH1.h>
 #include <TH2.h>
 #include <TList.h>
-#include <TFile.h> 
+#include <TFile.h>
+
+using std::map;
 
 namespace QQbarAnalysis
 {
@@ -80,6 +84,8 @@ namespace QQbarAnalysis
         Last_h1 = dummy_h1
       };
       TH1F * h1[Last_h1];
+
+      map< TString, map< TString, TH1F* > > hcos_map;
 
       enum h1_pq_index {
         // KID
@@ -185,12 +191,16 @@ namespace QQbarAnalysis
       TH2F * h2_dEdx[Last_h2_dEdx][Last_particle_List];
 
     private:
+    // Lists
       TList* hList1                = new TList();
       TList* hList1_pq             = new TList();
       TList* hList1_particle_ratio = new TList();
       TList* hList2                = new TList();
       TList* hList2_jet            = new TList();
       TList* hList2_dEdx           = new TList();
+
+    // PFO Tools
+      PFOTools _pt;
 
   };
 }

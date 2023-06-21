@@ -17,7 +17,6 @@ EventAnalyzer.cpp
 #include <utility>
 
 using std::cout;   using std::endl;
-using std::map;
 typedef unsigned int Index;
 
 namespace QQbarAnalysis
@@ -121,7 +120,7 @@ namespace QQbarAnalysis
     vector<Bool_t> CutTrigger[3];    
     map< TString, map<TString, Bool_t> > CutTriggerMap; // [particle][cutname]
 
-    for (auto i_lmode : PFO_mode){
+    for (auto i_lmode : _pt.PFO_mode){
 
       // check if jets on both sides are not empty
       CutTriggerMap[i_lmode]["jet_association"] = _eve.eve_valid_lpfo;
@@ -863,16 +862,26 @@ namespace QQbarAnalysis
   void EventAnalyzer::ProcessDoubleTag(PFOTools pfot, PFOTools mct, map< TString, map<TString, Bool_t> > cuts)
   {
     map< TString, vector<Bool_t> > is_pass;
-    for( auto i_lmode : PFO_mode ){
+    for( auto i_lmode : _pt.PFO_mode ){
       for( auto icut : cut_names ){
         if( icut != "charge" ) is_pass[i_lmode].push_back(cuts[i_lmode][icut]);
       }
     }
 
-    for( auto i_lmode : PFO_mode ){
+    for( auto i_lmode : _pt.PFO_mode ){
+
+      Int_t ineg     = pfot.LPFO_[i_lmode][0].pfo_charge > 0 ;
+      Int_t ineg_gen = _mc.mc_quark_charge[0] > 0;
 
       if( cuts[i_lmode]["charge"] ){
-        
+        _hm.hcos_map[i_lmode]["cos"]->Fill( pfot.LPFO_[i_lmode][ineg].cos );
+        _hm.hcos_map[i_lmode]["qcos"]->Fill( pfot.LPFO_[i_lmode][ineg].qcos );
+
+        Float_t scos = abs(pfot.LPFO_[i_lmode][ineg].cos) * sgn( -_mc.mc_quark_charge[0] ) * mct.mc_quark[0].cos / abs(mct.mc_quark[0].cos);
+        _hm.hcos_map[i_lmode]["scos"]->Fill( scos );
+
+        Float_t gen_reco_sep_cos = VectorTools::GetCosBetween(pfot.LPFO_[i_lmode][ineg].vt.v3(), mct.mc_quark[ineg_gen].vt.v3());
+        _hm.hcos_map[i_lmode]["gen_reco_sep_cos"]->Fill( gen_reco_sep_cos );
       }
 
     }
