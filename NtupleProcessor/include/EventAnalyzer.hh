@@ -68,10 +68,11 @@ namespace QQbarAnalysis
       Float_t         *Particle_Ratios( TH1F *h_n_particles[], Int_t mode );
 
     // Histogram extractor
-      void             PolarAngleGen(PFOTools mct);
-      void             Mom_Polar_Gen(PFOTools mct,PFOTools pfot);
-      void             ProcessDoubleTag(PFOTools pfot, PFOTools mct, vector<Bool_t> cuts[3], PDGConfig double_tag[3]);
-      void             PolarAngle_acc_rej(PFOTools pfot, vector<Bool_t> cuts, Bool_t ss_config);
+      void             PolarAngleGen( PFOTools mct );
+      void             Mom_Polar_Gen( PFOTools mct, PFOTools pfot );
+      void             ProcessDoubleTag( PFOTools pfot, PFOTools mct, vector<Bool_t> cuts[3], PDGConfig double_tag[3]);
+      void             ProcessDoubleTag( PFOTools pfot, PFOTools mct, std::map< TString, std::map<TString, Bool_t> > cuts );
+      void             PolarAngle_acc_rej( PFOTools pfot, vector<Bool_t> cuts, Bool_t ss_config );
 
       void             Jet_sum_n_acol();
 
@@ -90,6 +91,10 @@ namespace QQbarAnalysis
 
       AnalysisConfig _anCfg;
       TString       _config;
+
+    // List of cut names
+      vector<TString> PFO_mode  = {"K","Pi"};
+      vector<TString> cut_names = {"jet_association","quality","SPFO","charge","PID"};
 
     private:
 
