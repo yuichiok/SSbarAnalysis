@@ -205,6 +205,18 @@ namespace QQbarAnalysis
               return isPion(iPFO);
           });
 
+          // delete here afterwards
+
+          std::copy_if(SPFOs[ijet].begin(), SPFOs[ijet].end(), std::back_inserter(SPFOs_K[ijet]), [](PFO_Info iPFO) {
+              return isKaon(iPFO);
+          });
+
+          std::copy_if(SPFOs[ijet].begin(), SPFOs[ijet].end(), std::back_inserter(SPFOs_Pi[ijet]), [](PFO_Info iPFO) {
+              return isPion(iPFO);
+          });
+
+          //////
+
         }
 
         // Cheated PFO
