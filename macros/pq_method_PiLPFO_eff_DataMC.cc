@@ -113,7 +113,16 @@ TCanvas * main_pq(TFile *file, TH1F *h_reco_LPFO_qcos, TString LPFO_mode)
     p_LPFO->SetBinError(nbins / 2 - i, p_vec.at(i + nbins / 2));
   }
 
-  TH1F *h_reco_LPFO_pq_cos = CorrectHist(h_reco_LPFO_qcos_eff_corr, p_vec);
+  TH1F *h_reco_LPFO_pq_cos;
+  TString hlast = "h_reco_" + LPFO_mode + "_cos_jet2_poff_pid_ud_spfo_chg";
+  if ((TString) h_reco_LPFO_qcos_eff_corr->GetName() == hlast)
+  {
+    cout << "check\n";
+    h_reco_LPFO_pq_cos = CorrectHist(h_reco_LPFO_qcos_eff_corr, p_vec);
+  }else{
+    h_reco_LPFO_pq_cos = (TH1F*) h_reco_LPFO_qcos_eff_corr->Clone();
+  }  
+
   StyleHist(h_reco_LPFO_pq_cos,kBlue);
 
   // Normalize2Gen(h_gen_q_qcos,h_reco_LPFO_qcos_eff_corr);
@@ -138,10 +147,10 @@ TCanvas * main_pq(TFile *file, TH1F *h_reco_LPFO_qcos, TString LPFO_mode)
 
   // Draw polar angle fit ratio
   TString c_name = "c_" + (TString)h_reco_LPFO_qcos->GetName();
-  TCanvas  *c_dmc = new TCanvas(c_name,c_name,600,970);
+  TCanvas  *c_dmc = new TCanvas(c_name,c_name,600,800);
 
-  TPad *pad1 = new TPad("pad1", "pad1", 0.00, 0.33, 1.00, 1.00);
-  TPad *pad2 = new TPad("pad2", "pad2", 0.00, 0.00, 1.00, 0.33);
+  TPad *pad1 = new TPad("pad1", "pad1", 0.00, 0.3, 1.00, 1.00);
+  TPad *pad2 = new TPad("pad2", "pad2", 0.00, 0.00, 1.00, 0.3);
 
   pad1->SetBottomMargin(0.00001);
   pad1->SetBorderMode(0);
@@ -150,17 +159,18 @@ TCanvas * main_pq(TFile *file, TH1F *h_reco_LPFO_qcos, TString LPFO_mode)
   pad1->SetTicky(1);
   pad1->SetGrid(1,1);
   pad2->SetTopMargin(0.00001);
-  pad2->SetBottomMargin(0.4);
+  pad2->SetBottomMargin(0.3);
   pad2->SetBorderMode(0);
   pad2->SetLeftMargin(0.14);
   pad2->SetTickx(1);
   pad2->SetTicky(1);
-  pad2->SetGrid(0,1);
+  pad2->SetGrid(1,1);
   pad1->Draw();
   pad2->Draw();
 
   pad1->cd();
 
+  h_reco_LPFO_pq_cos->SetTitle(";cos#theta;Entries");
   h_reco_LPFO_pq_cos->Draw("h");
   h_gen_q_qcos->Draw("hsame");
 
@@ -168,8 +178,14 @@ TCanvas * main_pq(TFile *file, TH1F *h_reco_LPFO_qcos, TString LPFO_mode)
 
   TH1F *h_ratio = (TH1F*) h_reco_LPFO_pq_cos->Clone();
   h_ratio->Divide(h_gen_q_qcos);
+  h_ratio->GetYaxis()->SetRangeUser(0.8,1.2);
 
   h_ratio->SetTitle(";cos#theta;Data/MC");
+  h_ratio->GetXaxis()->SetTitleSize(0.08);
+  h_ratio->GetXaxis()->SetLabelSize(0.07);
+  h_ratio->GetYaxis()->SetTitleSize(0.07);
+  h_ratio->GetYaxis()->SetTitleOffset(0.75);
+  h_ratio->GetYaxis()->SetLabelSize(0.07);
   h_ratio->Draw("P");
 
   return c_dmc;
@@ -200,6 +216,8 @@ void PrintEfficiency(TFile *file, vector<TH1F*> hvec)
 
 void pq_method_PiLPFO_eff_DataMC()
 {
+  TGaxis::SetMaxDigits(3);
+
   TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR." + prod_mode + ".KPiLPFO.distPi0.PFOp15.LPFOp15_pNaN.tpc0.eff.hists.all.root","READ");
 
   try
