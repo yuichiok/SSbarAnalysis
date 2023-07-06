@@ -24,7 +24,6 @@ void SLPFO_mom_diff()
   StyleHist(h_reco_Pi_SLPFO_mom_diff,kBlue);
 
   TCanvas *c0 = new TCanvas("c0","c0",800,800);
-  // gPad->SetGrid(1,1);
   StylePad(gPad,0,0.15,0,0.17);
 
   h_reco_K_SLPFO_mom_diff->SetTitle(";Kaon cos#theta (no filter); Entries / 0.02");
