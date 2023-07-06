@@ -8,6 +8,9 @@
 using std::cout; using std::endl;
 using std::vector;
 
+TString prod_mode = "dd";
+TString LPFO_mode = "Pi";
+
 void BinNormal(TH1F *h)
 {
   const Int_t nbins = h->GetNbinsX();
@@ -165,16 +168,10 @@ TCanvas * main_pq(TFile *file, TH1F *h_reco_LPFO_qcos, TString LPFO_mode)
 
 }
 
-void SaveHists(TFile *file, TString prod_mode, TString LPFO_mode, vector<TH1F*> hvec)
+void SaveHists(TCanvas *c, TH1F *ih)
 {
-  if (!file->IsOpen()) return;
-
-  for ( auto ih : hvec )
-  {
-    TCanvas *c = main_pq(file, ih, LPFO_mode);
-    TString printname = "c_" + prod_mode + "_" + (TString)ih->GetName() + ".png";
-    c->Print("~/Desktop/" + printname);
-  }
+  TString printname = "c_" + prod_mode + "_" + (TString)ih->GetName() + ".png";
+  c->Print("~/Desktop/" + printname);
 }
 
 void PrintEfficiency(TFile *file, vector<TH1F*> hvec)
@@ -195,15 +192,17 @@ void PrintEfficiency(TFile *file, vector<TH1F*> hvec)
 
 void pq_method_PiLPFO_eff()
 {
-  TString prod_mode = "ud";
-  TString LPFO_mode = "Pi";
   TFile *file = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR." + prod_mode + ".KPiLPFO.distPi0.PFOp15.LPFOp15_pNaN.tpc0.eff.hists.all.root","READ");
 
   try
   {
     if (!file->IsOpen()) return;
     vector<TH1F*> hvec = GetHists(file, "cos_cut_eff");
-    SaveHists(file, prod_mode, LPFO_mode, hvec);
+    for ( auto ih : hvec )
+    {
+      TCanvas *c = main_pq(file, ih, LPFO_mode);
+      // SaveHists(c, ih);
+    }
     PrintEfficiency(file, hvec);
 
   }
