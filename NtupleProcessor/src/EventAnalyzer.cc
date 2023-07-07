@@ -169,16 +169,18 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
         Bool_t charge_opposite = iSPFO_K.pfo_charge * pfot.KLPFO[ijet].pfo_charge < 0;
         Bool_t charge_opposite_KSLPFO_PiLPFO = iSPFO_K.pfo_charge * pfot.PiLPFO[ijet].pfo_charge < 0;
         Bool_t momentum_above  = iSPFO_K.p_mag > 10;
+        if( charge_opposite ) _hm.h1[_hm.reco_K_SLPFO_mom_diff]->Fill( pfot.KLPFO[ijet].p_mag - iSPFO_K.p_mag );
         if( charge_opposite && momentum_above ) is_gluon[kKaon][ijet] = true;
         // if( charge_opposite_KSLPFO_PiLPFO && momentum_above ) check_KSLPFO_PiLPFO = true;
-        // if( charge_opposite_KSLPFO_PiLPFO && iSPFO_K.p_mag > 15 ) check_KSLPFO_PiLPFO = true;
+        if( charge_opposite_KSLPFO_PiLPFO && iSPFO_K.p_mag > 15 ) check_KSLPFO_PiLPFO = true;
       }
 
       for ( auto iSPFO_Pi : pfot.SPFOs_Pi[ijet] ){
         Bool_t charge_opposite = iSPFO_Pi.pfo_charge * pfot.PiLPFO[ijet].pfo_charge < 0;
         Bool_t momentum_above  = iSPFO_Pi.p_mag > 10;
-        // if( (charge_opposite && momentum_above) || check_KSLPFO_PiLPFO ) is_gluon[kPion][ijet] = true;
-        if( charge_opposite && momentum_above ) is_gluon[kPion][ijet] = true;
+        if( charge_opposite ) _hm.h1[_hm.reco_Pi_SLPFO_mom_diff]->Fill( pfot.PiLPFO[ijet].p_mag - iSPFO_Pi.p_mag );
+        if( (charge_opposite && momentum_above) || check_KSLPFO_PiLPFO ) is_gluon[kPion][ijet] = true;
+        // if( charge_opposite && momentum_above ) is_gluon[kPion][ijet] = true;
       }
 
     }
@@ -961,12 +963,14 @@ void EventAnalyzer::ProcessDoubleTag(PFOTools pfot, PFOTools mct, vector<Bool_t>
     if(sign_check[kKaon]){
 
       Float_t gen_reco_K_sep_cos  = VectorTools::GetCosBetween(pfot.KLPFO[ineg].vt.v3(), mct.mc_quark[0].vt.v3());
+      Float_t lpfo_reco_K_sep_cos  = VectorTools::GetCosBetween(pfot.KLPFO[0].vt.v3(), pfot.KLPFO[1].vt.v3());
 
       _hm.h1[_hm.reco_K_cos]->Fill( pfot.KLPFO[ineg].cos );
       _hm.h1[_hm.reco_K_qcos]->Fill( pfot.KLPFO[ineg].qcos );
       _hm.h1[_hm.reco_K_scos]->Fill( abs(pfot.KLPFO[ineg].cos) * sgn( -_mc.mc_quark_charge[0] ) * mct.mc_quark[0].cos / abs(mct.mc_quark[0].cos) );
       _hm.h1[_hm.reco_K_mom]->Fill( pfot.KLPFO[ineg].p_mag );
       _hm.h1[_hm.gen_reco_K_sep_cos]->Fill( gen_reco_K_sep_cos );
+      _hm.h1[_hm.lpfo_reco_K_sep_cos]->Fill( lpfo_reco_K_sep_cos );
 
       // cheat
       switch ( abs(pfot.KLPFO[ineg].pfo_pdgcheat) ) {
@@ -1045,7 +1049,8 @@ void EventAnalyzer::ProcessDoubleTag(PFOTools pfot, PFOTools mct, vector<Bool_t>
 
     if(sign_check[kPion]){
 
-      Float_t gen_reco_Pi_sep_cos  = VectorTools::GetCosBetween(pfot.PiLPFO[ineg].vt.v3(), mct.mc_quark[0].vt.v3());
+      Float_t gen_reco_Pi_sep_cos   = VectorTools::GetCosBetween(pfot.PiLPFO[ineg].vt.v3(), mct.mc_quark[0].vt.v3());
+      Float_t lpfo_reco_Pi_sep_cos  = VectorTools::GetCosBetween(pfot.PiLPFO[0].vt.v3(), pfot.PiLPFO[1].vt.v3());
       Float_t vtx_endpt = sqrt(pfot.PiLPFO[ineg].pfo_endpt[0] * pfot.PiLPFO[ineg].pfo_endpt[0] + pfot.PiLPFO[ineg].pfo_endpt[1] * pfot.PiLPFO[ineg].pfo_endpt[1] + pfot.PiLPFO[ineg].pfo_endpt[2] * pfot.PiLPFO[ineg].pfo_endpt[2]);
 
       if( gen_reco_Pi_sep_cos > 0 ){
@@ -1065,6 +1070,7 @@ void EventAnalyzer::ProcessDoubleTag(PFOTools pfot, PFOTools mct, vector<Bool_t>
       _hm.h1[_hm.reco_Pi_scos]->Fill( abs(pfot.PiLPFO[ineg].cos) * sgn( -_mc.mc_quark_charge[1] ) * mct.mc_quark[1].cos / abs(mct.mc_quark[1].cos) );
       _hm.h1[_hm.reco_Pi_mom]->Fill( pfot.PiLPFO[ineg].p_mag );
       _hm.h1[_hm.gen_reco_Pi_sep_cos]->Fill( gen_reco_Pi_sep_cos );
+      _hm.h1[_hm.lpfo_reco_Pi_sep_cos]->Fill( lpfo_reco_Pi_sep_cos );
 
       // cheat
       switch ( abs(pfot.PiLPFO[ineg].pfo_pdgcheat) ) {
