@@ -117,7 +117,6 @@ TCanvas * main_pq(TFile *file, TH1F *h_reco_LPFO_qcos, TString LPFO_mode)
   TString hlast = "h_reco_" + LPFO_mode + "_cos_jet2_poff_pid_ud_spfo_chg";
   if ((TString) h_reco_LPFO_qcos_eff_corr->GetName() == hlast)
   {
-    cout << "check\n";
     h_reco_LPFO_pq_cos = CorrectHist(h_reco_LPFO_qcos_eff_corr, p_vec);
   }else{
     h_reco_LPFO_pq_cos = (TH1F*) h_reco_LPFO_qcos_eff_corr->Clone();
@@ -227,7 +226,7 @@ void pq_method_PiLPFO_eff_DataMC()
     for ( auto ih : hvec )
     {
       TCanvas *c = main_pq(file, ih, LPFO_mode);
-      // SaveHists(c, ih);
+      SaveHists(c, ih);
     }
     PrintEfficiency(file, hvec);
 

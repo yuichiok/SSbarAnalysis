@@ -8,7 +8,7 @@
 using std::cout; using std::endl;
 using std::vector;
 
-TString prod_mode = "dd";
+TString prod_mode = "ud";
 TString LPFO_mode = "Pi";
 
 void BinNormal(TH1F *h)
@@ -108,7 +108,15 @@ TCanvas * main_pq(TFile *file, TH1F *h_reco_LPFO_qcos, TString LPFO_mode)
     p_LPFO->SetBinError(nbins / 2 - i, p_vec.at(i + nbins / 2));
   }
 
-  TH1F *h_reco_LPFO_pq_cos = CorrectHist(h_reco_LPFO_qcos_eff_corr, p_vec);
+  TH1F *h_reco_LPFO_pq_cos;
+  TString hlast = "h_reco_" + LPFO_mode + "_cos_jet2_poff_pid_ud_spfo_chg";
+  if ((TString) h_reco_LPFO_qcos_eff_corr->GetName() == hlast)
+  {
+    h_reco_LPFO_pq_cos = CorrectHist(h_reco_LPFO_qcos_eff_corr, p_vec);
+  }else{
+    h_reco_LPFO_pq_cos = (TH1F*) h_reco_LPFO_qcos_eff_corr->Clone();
+  }  
+
   StyleHist(h_reco_LPFO_pq_cos,kBlue);
 
   Normalize2Gen(h_gen_q_qcos,h_reco_LPFO_qcos_eff_corr);
@@ -201,7 +209,7 @@ void pq_method_PiLPFO_eff()
     for ( auto ih : hvec )
     {
       TCanvas *c = main_pq(file, ih, LPFO_mode);
-      // SaveHists(c, ih);
+      SaveHists(c, ih);
     }
     PrintEfficiency(file, hvec);
 
