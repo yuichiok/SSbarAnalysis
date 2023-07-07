@@ -26,9 +26,17 @@ void SLPFO_mom_diff()
   TCanvas *c0 = new TCanvas("c0","c0",800,800);
   StylePad(gPad,0,0.15,0,0.17);
 
-  h_reco_K_SLPFO_mom_diff->SetTitle(";Kaon cos#theta (no filter); Entries / 0.02");
+  h_reco_K_SLPFO_mom_diff->SetTitle("LPFO Momentum Separation;#Delta_{p} |LPFO - SPFO|; Entries(Norm.)");
   h_reco_K_SLPFO_mom_diff->Draw("h");
   h_reco_Pi_SLPFO_mom_diff->Draw("hsame");
+
+  TLegend *leg_trp = new TLegend(0.3,0.8,0.7,0.85);
+  leg_trp->SetMargin(0.4);
+  leg_trp->SetLineColor(0);
+  leg_trp->AddEntry(h_reco_K_SLPFO_mom_diff,"K^{#pm}","l");
+  leg_trp->AddEntry(h_reco_Pi_SLPFO_mom_diff,"#pi^{#pm}","l");
+  leg_trp->Draw();
+
   c0->Draw();
 
 }
