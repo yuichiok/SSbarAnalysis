@@ -169,7 +169,12 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
         Bool_t charge_opposite = iSPFO_K.pfo_charge * pfot.KLPFO[ijet].pfo_charge < 0;
         Bool_t charge_opposite_KSLPFO_PiLPFO = iSPFO_K.pfo_charge * pfot.PiLPFO[ijet].pfo_charge < 0;
         Bool_t momentum_above  = iSPFO_K.p_mag > 10;
-        if( charge_opposite ) _hm.h1[_hm.reco_K_SLPFO_mom_diff]->Fill( pfot.KLPFO[ijet].p_mag - iSPFO_K.p_mag );
+        Float_t mom_diff_K  = pfot.KLPFO[ijet].p_mag - iSPFO_K.p_mag;
+
+        if( charge_opposite ) {
+          _hm.h1[_hm.reco_K_SLPFO_mom_diff]->Fill( mom_diff_K );
+          _hm.h1[_hm.reco_K_SLPFO_mom_diff_sigma]->Fill( mom_diff_K / pfot.KLPFO[ijet].p_mag );
+        }
         if( charge_opposite && momentum_above ) is_gluon[kKaon][ijet] = true;
         // if( charge_opposite_KSLPFO_PiLPFO && momentum_above ) check_KSLPFO_PiLPFO = true;
         if( charge_opposite_KSLPFO_PiLPFO && iSPFO_K.p_mag > 15 ) check_KSLPFO_PiLPFO = true;
@@ -178,7 +183,12 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
       for ( auto iSPFO_Pi : pfot.SPFOs_Pi[ijet] ){
         Bool_t charge_opposite = iSPFO_Pi.pfo_charge * pfot.PiLPFO[ijet].pfo_charge < 0;
         Bool_t momentum_above  = iSPFO_Pi.p_mag > 10;
-        if( charge_opposite ) _hm.h1[_hm.reco_Pi_SLPFO_mom_diff]->Fill( pfot.PiLPFO[ijet].p_mag - iSPFO_Pi.p_mag );
+        Float_t mom_diff_Pi = pfot.PiLPFO[ijet].p_mag - iSPFO_Pi.p_mag;
+
+        if( charge_opposite ) {
+          _hm.h1[_hm.reco_Pi_SLPFO_mom_diff]->Fill( mom_diff_Pi );
+          _hm.h1[_hm.reco_Pi_SLPFO_mom_diff_sigma]->Fill( mom_diff_Pi / pfot.PiLPFO[ijet].p_mag );
+        }
         if( (charge_opposite && momentum_above) || check_KSLPFO_PiLPFO ) is_gluon[kPion][ijet] = true;
         // if( charge_opposite && momentum_above ) is_gluon[kPion][ijet] = true;
       }

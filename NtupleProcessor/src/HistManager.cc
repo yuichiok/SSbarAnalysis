@@ -47,6 +47,7 @@ void HistManager::InitializeHists()
     h1[reco_K_scos]     = new TH1F("h_reco_K_scos",";LPFO Kaon cos#theta; Entries",cos_bin,-1,1);
     h1[reco_K_mom]      = new TH1F("h_reco_K_mom",";LPFO Kaon momentum (GeV); Entries",140,10,150);
     h1[reco_K_SLPFO_mom_diff] = new TH1F("h_reco_K_SLPFO_mom_diff",";LPFO-SPFO Kaon momentum difference (GeV); Entries",50,0,50);
+    h1[reco_K_SLPFO_mom_diff_sigma] = new TH1F("h_reco_K_SLPFO_mom_diff_sigma",";LPFO-SPFO Kaon momentum difference sigma (GeV); Entries",100,0,1);
     h1[reco_K_pdgcheat] = new TH1F("h_reco_K_pdgcheat",";LPFO Kaon pdgcheat (Pion, Kaon, Proton, others); Entries",6,-0.5,5.5);
     h1[gen_reco_K_sep_cos] = new TH1F("h_gen_reco_K_sep_cos",";Kaon cos#theta_{gen-LPFOK}; Entries",cos_bin,-1,1);
     h1[jet_reco_K_sep_cos] = new TH1F("h_jet_reco_K_sep_cos",";Kaon cos#theta_{jet-LPFOK}; Entries",cos_bin,-1,1);
@@ -67,6 +68,7 @@ void HistManager::InitializeHists()
     h1[reco_Pi_scos]     = new TH1F("h_reco_Pi_scos",";LPFO Pion cos#theta; Entries",cos_bin,-1,1);
     h1[reco_Pi_mom]      = new TH1F("h_reco_Pi_mom",";LPFO Pion momentum (GeV); Entries",140,10,150);
     h1[reco_Pi_SLPFO_mom_diff] = new TH1F("h_reco_Pi_SLPFO_mom_diff",";LPFO-SPFO Pion momentum difference (GeV); Entries",50,0,50);
+    h1[reco_Pi_SLPFO_mom_diff_sigma] = new TH1F("h_reco_Pi_SLPFO_mom_diff_sigma",";LPFO-SPFO Pion momentum difference sigma (GeV); Entries",100,0,1);
     h1[reco_Pi_pdgcheat] = new TH1F("h_reco_Pi_pdgcheat",";LPFO Pion pdgcheat (Pion, Kaon, Proton, others); Entries",6,-0.5,5.5);
     h1[gen_reco_Pi_sep_cos] = new TH1F("h_gen_reco_Pi_sep_cos",";cos#theta_{gen-LPFOPi}; Entries",cos_bin,-1,1);
     h1[jet_reco_Pi_sep_cos] = new TH1F("h_jet_reco_Pi_sep_cos",";cos#theta_{jet-LPFOPi}; Entries",cos_bin,-1,1);
