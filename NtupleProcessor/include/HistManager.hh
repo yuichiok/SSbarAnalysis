@@ -162,6 +162,8 @@ class HistManager
     };
     TH2F * h2_particle_ratio_cos[Last_h2_dummy_particle_ratio_cos];
 
+    std::map<TString, std::map<TString, TH2F*> > h2_ISR;
+
     enum h2_dEdx_index {
 
       // dEdx vs p

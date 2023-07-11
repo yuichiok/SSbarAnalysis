@@ -147,6 +147,12 @@ void HistManager::InitializeHists()
     h2_particle_ratio_cos[pi_rate_cos_reco] = new TH2F("h2_pi_rate_cos_reco",";qcos#theta;Ratio of Pions / Event (reco)",40,-1,1,11,0,1.1);
     h2_particle_ratio_cos[p_rate_cos_reco]  = new TH2F("h2_p_rate_cos_reco",";qcos#theta;Ratio of Protons / Event (reco)",40,-1,1,11,0,1.1);
 
+  // ISR parameters
+    h2_ISR["npfos"]["ISR"]        = new TH2F("h2_npfos_ISR",";# PFOs Jet_{1};# PFOs Jet_{2}",40,0,40,40,0,40);
+    h2_ISR["npfos"]["signal"]     = new TH2F("h2_npfos_signal",";# PFOs Jet_{1};# PFOs Jet_{2}",40,0,40,40,0,40);
+    h2_ISR["npfos"]["ISR_signal"] = new TH2F("h2_npfos_ISR_signal",";# PFOs Jet_{1};# PFOs Jet_{2}",40,0,40,40,0,40);
+
+
   // dEd information
 
     for (int iparticle = 0; iparticle < Last_particle_List; iparticle++){
