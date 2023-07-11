@@ -63,15 +63,7 @@ Bool_t TreeIterator::Process(Long64_t entry)
   // Evaluate the criteria for this entry
     if ( eAnalyzer.Select( EventAnalyzer::kQQ ) ){
 
-      eAnalyzer.Jet_sum_n_acol();
       eAnalyzer.AnalyzeISR();
-
-      if( eAnalyzer.Select( EventAnalyzer::kMC ) ){
-        eAnalyzer.AnalyzeGen();
-      }
-      if( eAnalyzer.Select( EventAnalyzer::kReco ) ){
-        eAnalyzer.AnalyzeReco(entry);
-      }
       
     }
 
