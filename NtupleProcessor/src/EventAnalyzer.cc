@@ -1170,6 +1170,11 @@ void EventAnalyzer::PolarAngle_acc_rej(PFOTools pfot, vector<Bool_t> cuts, Bool_
 
 }
 
+void EventAnalyzer::AnalyzeISR()
+{
+  
+}
+
 void EventAnalyzer::Jet_sum_n_acol()
 {
   VectorTools jetvt[2];

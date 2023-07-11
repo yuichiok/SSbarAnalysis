@@ -45,6 +45,7 @@ class EventAnalyzer
     void             AnalyzeGen();
     void             AnalyzeGenReco(PFOTools mct, PFOTools pfot);
     void             AnalyzeReco( Long64_t entry );
+    void             AnalyzeISR();
     
     Bool_t           Select( Selector s );          // Evaluates the class' list of event selection criteria
     Bool_t           GenPairPicker( Float_t mc_particle, std::vector<int> input_gen );
