@@ -201,6 +201,7 @@ class HistManager
     TList* hList1_cos_cut_eff    = new TList();
     TList* hList2                = new TList();
     TList* hList2_jet            = new TList();
+    TList* hList2_ISR            = new TList();
     TList* hList2_dEdx           = new TList();
 
 };

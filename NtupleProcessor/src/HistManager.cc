@@ -150,7 +150,6 @@ void HistManager::InitializeHists()
   // ISR parameters
     h2_ISR["npfos"]["ISR"]        = new TH2F("h2_npfos_ISR",";# PFOs Jet_{1};# PFOs Jet_{2}",40,0,40,40,0,40);
     h2_ISR["npfos"]["signal"]     = new TH2F("h2_npfos_signal",";# PFOs Jet_{1};# PFOs Jet_{2}",40,0,40,40,0,40);
-    h2_ISR["npfos"]["ISR_signal"] = new TH2F("h2_npfos_ISR_signal",";# PFOs Jet_{1};# PFOs Jet_{2}",40,0,40,40,0,40);
 
 
   // dEd information
@@ -205,6 +204,12 @@ void HistManager::Hist2List()
     hList1_particle_ratio->Add(ih);
   }
 
+  for (auto const& ih : h2_ISR ) {
+    for (auto const& ih2 : ih.second ) {
+      hList2_ISR->Add(ih2.second);
+    }
+  }
+
   for (int ih=0; ih < Last_h2_dEdx; ih++) {
     for (int jh=0; jh < Last_particle_List; jh++) {
       hList2_dEdx->Add(h2_dEdx[ih][jh]);
@@ -239,6 +244,11 @@ void HistManager::WriteLists( TFile * output)
   TDirectory * d_jet = output->mkdir("jet");
     d_jet->cd();
     hList2_jet->Write();
+    output->cd();
+
+  TDirectory * d_ISR = output->mkdir("ISR_Analysis");
+    d_ISR->cd();
+    hList2_ISR->Write();
     output->cd();
 
   TDirectory * d_dEdx = output->mkdir("dEdx");

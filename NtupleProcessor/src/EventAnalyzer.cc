@@ -1172,7 +1172,16 @@ void EventAnalyzer::PolarAngle_acc_rej(PFOTools pfot, vector<Bool_t> cuts, Bool_
 
 void EventAnalyzer::AnalyzeISR()
 {
-  
+  Float_t mc_ISR_E = _mc.mc_ISR_E[0] + _mc.mc_ISR_E[1];
+  Bool_t is_mc_ISR = (mc_ISR_E > 35.0);
+
+  if (is_mc_ISR){
+    _hm.h2_ISR["npfos"]["ISR"]->Fill( _jet.jet_npfo[0], _jet.jet_npfo[1] );
+  }else{
+    _hm.h2_ISR["npfos"]["signal"]->Fill( _jet.jet_npfo[0], _jet.jet_npfo[1] );
+
+  }
+
 }
 
 void EventAnalyzer::Jet_sum_n_acol()
