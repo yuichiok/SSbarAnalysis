@@ -1172,15 +1172,49 @@ void EventAnalyzer::PolarAngle_acc_rej(PFOTools pfot, vector<Bool_t> cuts, Bool_
 
 void EventAnalyzer::AnalyzeISR()
 {
+  const Int_t NJETS = 2;
   Float_t mc_ISR_E = _mc.mc_ISR_E[0] + _mc.mc_ISR_E[1];
   Bool_t is_mc_ISR = (mc_ISR_E > 35.0);
 
+  // photon jets ISR
+  vector<Int_t>   npfo_photon(NJETS,0); // photon_jet_E[ijet]
+  vector<Float_t> photon_jet_E(NJETS,0); // photon_jet_E[ijet]
+  vector<vector<Float_t>> p(NJETS, vector<Float_t> (3,0)); //  p[ijet][xyz]
+  for ( int ipfo=0; ipfo < _pfo.pfo_n; ipfo++ ){
+    if(_pfo.pfo_match[ipfo]<0) continue;
+    if(_pfo.pfo_E[ipfo]<1) continue;
+    if(_pfo.pfo_match[ipfo]>1) continue;
+
+    if( _pfo.pfo_type[ipfo]==22  || fabs(_pfo.pfo_type[ipfo])==2112 ) {
+      
+      npfo_photon.at(_pfo.pfo_match[ipfo])++;
+
+      p.at(_pfo.pfo_match[ipfo]).at(0) += _pfo.pfo_px[ipfo];
+      p.at(_pfo.pfo_match[ipfo]).at(1) += _pfo.pfo_py[ipfo];
+      p.at(_pfo.pfo_match[ipfo]).at(2) += _pfo.pfo_pz[ipfo];
+
+      photon_jet_E.at(_pfo.pfo_match[ipfo]) += _pfo.pfo_E[ipfo];
+    }
+  }
+
+  vector<VectorTools> vt(NJETS);
+  vector<Float_t> photon_jet_cos(NJETS,0);
+  for (int ijet=0; ijet<NJETS; ijet++){
+    vt.at(ijet).SetCoordinates( p.at(ijet).at(0), p.at(ijet).at(1), p.at(ijet).at(2), photon_jet_E.at(ijet));
+    photon_jet_cos.at(ijet) = std::cos( vt.at(ijet).v3().Theta() );
+  }
+
+  // fill hists ISR
   if (is_mc_ISR){
     _hm.h2_ISR["npfos"]["ISR"]->Fill( _jet.jet_npfo[0], _jet.jet_npfo[1] );
+    _hm.h2_ISR["photon_Ecos"]["ISR"]->Fill( fabs(photon_jet_cos[0]), photon_jet_E[0] );
+    _hm.h2_ISR["photon_Ecos"]["ISR"]->Fill( fabs(photon_jet_cos[1]), photon_jet_E[1] );
   }else{
     _hm.h2_ISR["npfos"]["signal"]->Fill( _jet.jet_npfo[0], _jet.jet_npfo[1] );
-
+    _hm.h2_ISR["photon_Ecos"]["signal"]->Fill( fabs(photon_jet_cos[0]), photon_jet_E[0] );
+    _hm.h2_ISR["photon_Ecos"]["signal"]->Fill( fabs(photon_jet_cos[1]), photon_jet_E[1] );
   }
+
 
 }
 

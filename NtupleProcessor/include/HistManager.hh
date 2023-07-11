@@ -116,6 +116,7 @@ class HistManager
     TH1F * h1_particle_ratio[Last_h1_dummy_particle_ratio];
 
     std::map<TString, TH1F*> h1_cos_cut_eff;
+    std::map<TString, TH1F*> h1_ISR;
 
   // h2 hist
     enum h2_index {

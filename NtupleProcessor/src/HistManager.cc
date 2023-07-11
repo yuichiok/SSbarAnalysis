@@ -151,6 +151,9 @@ void HistManager::InitializeHists()
     h2_ISR["npfos"]["ISR"]        = new TH2F("h2_npfos_ISR",";# PFOs Jet_{1};# PFOs Jet_{2}",40,0,40,40,0,40);
     h2_ISR["npfos"]["signal"]     = new TH2F("h2_npfos_signal",";# PFOs Jet_{1};# PFOs Jet_{2}",40,0,40,40,0,40);
 
+    h2_ISR["photon_Ecos"]["ISR"]    = new TH2F("h2_photon_Ecos_ISR",";E_{#gamma_{clus}} (GeV);|cos#theta_{#gamma_{clus}}|",cos_bin,0,1,150,0,150);
+    h2_ISR["photon_Ecos"]["signal"] = new TH2F("h2_photon_Ecos_signal",";E_{#gamma_{clus}} (GeV);|cos#theta_{#gamma_{clus}}|",cos_bin,0,1,150,0,150);
+
 
   // dEd information
 
@@ -223,37 +226,9 @@ void HistManager::WriteLists( TFile * output)
   output->cd();
 
   // Write histogram lists
-  hList1->Write();
-  hList2->Write();
-
-  TDirectory * d_pq = output->mkdir("pq");
-    d_pq->cd();
-    hList1_pq->Write();
-    output->cd();
-
-  TDirectory * d_particle_ratio = output->mkdir("particle_ratio");
-    d_particle_ratio->cd();
-    hList1_particle_ratio->Write();
-    output->cd();
-
-  TDirectory * d_cos_cut_eff = output->mkdir("cos_cut_eff");
-    d_cos_cut_eff->cd();
-    hList1_cos_cut_eff->Write();
-    output->cd();
-
-  TDirectory * d_jet = output->mkdir("jet");
-    d_jet->cd();
-    hList2_jet->Write();
-    output->cd();
-
   TDirectory * d_ISR = output->mkdir("ISR_Analysis");
     d_ISR->cd();
     hList2_ISR->Write();
-    output->cd();
-
-  TDirectory * d_dEdx = output->mkdir("dEdx");
-    d_dEdx->cd();
-    hList2_dEdx->Write();
     output->cd();
 
 }
