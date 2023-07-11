@@ -64,6 +64,7 @@ Bool_t TreeIterator::Process(Long64_t entry)
     if ( eAnalyzer.Select( EventAnalyzer::kQQ ) ){
 
       eAnalyzer.Jet_sum_n_acol();
+      eAnalyzer.AnalyzeISR();
 
       if( eAnalyzer.Select( EventAnalyzer::kMC ) ){
         eAnalyzer.AnalyzeGen();
