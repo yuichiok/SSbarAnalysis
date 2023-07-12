@@ -8,7 +8,7 @@
 using std::cout; using std::endl;
 using std::vector;
 
-TString prod_mode = "dd";
+TString prod_mode = "ud";
 TString LPFO_mode = "Pi";
 
 void BinNormal(TH1F *h)
