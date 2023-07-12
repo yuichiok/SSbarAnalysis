@@ -79,6 +79,8 @@ void TreeReader::InitializeJetReadTree(TTree *_hTree, Jet_QQbar & _data, Branch_
     _hTree->SetBranchAddress("jet_pz", _data.jet_pz, &_branch.b_jet_pz);
     _hTree->SetBranchAddress("jet_btag", _data.jet_btag, &_branch.b_jet_btag);
     _hTree->SetBranchAddress("jet_ctag", _data.jet_ctag, &_branch.b_jet_ctag);
+    _hTree->SetBranchAddress("jet_npfo", _data.jet_npfo, &_branch.b_jet_npfo);
+    _hTree->SetBranchAddress("jet_nvtx", _data.jet_nvtx, &_branch.b_jet_nvtx);
     _hTree->SetBranchAddress("y23", &_data.y23, &_branch.b_y23);
     _hTree->SetBranchAddress("y12", &_data.y12, &_branch.b_y12);
     _hTree->SetBranchAddress("d23", &_data.d23, &_branch.b_d23);
