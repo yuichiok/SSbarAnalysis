@@ -54,6 +54,8 @@ class HistManager
       reco_Pi_mom,
       reco_Pi_SLPFO_mom_diff,
       reco_Pi_SLPFO_mom_diff_sigma,
+      reco_Pi_SLPFOPiK_mom_diff,
+      reco_Pi_SLPFOPiK_mom_diff_sigma,      
       reco_Pi_pdgcheat,
       gen_reco_Pi_sep_cos,
       jet_reco_Pi_sep_cos,
@@ -63,10 +65,15 @@ class HistManager
       good_reco_Pi_tpchits,
       good_reco_Pi_pidedx_dist,
       good_reco_Pi_kdedx_dist,
+      good_reco_Pi_SLPFOPiK_mom_diff,
+      good_reco_Pi_SLPFOPiK_mom_diff_sigma,      
+
       bad_reco_Pi_endpt,
       bad_reco_Pi_tpchits,
       bad_reco_Pi_pidedx_dist,
       bad_reco_Pi_kdedx_dist,
+      bad_reco_Pi_SLPFOPiK_mom_diff,
+      bad_reco_Pi_SLPFOPiK_mom_diff_sigma,      
 
       reco_sum_jetE,
       reco_jet_sep,
@@ -132,6 +139,10 @@ class HistManager
 
       stable_Pi_cos,
       purity_Pi_cos,
+
+      reco_Pi_SLPFOPiK_mom,
+      good_reco_Pi_SLPFOPiK_mom,
+      bad_reco_Pi_SLPFOPiK_mom,
 
       dummy_h2,
       Last_h2 = dummy_h2

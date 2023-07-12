@@ -57,11 +57,15 @@ void HistManager::InitializeHists()
     h1[good_reco_Pi_tpchits]     = new TH1F("h_good_reco_Pi_tpchits",";TPC nhits (good); Entries",221,0,221);
     h1[good_reco_Pi_pidedx_dist] = new TH1F("h_good_reco_Pi_pidedx_dist",";#pi #frac{dE}{dx} dist (good); Entries",100,-20,20);
     h1[good_reco_Pi_kdedx_dist]  = new TH1F("h_good_reco_Pi_kdedx_dist",";K #frac{dE}{dx} dist (good); Entries",100,-20,20);
+    h1[good_reco_Pi_SLPFOPiK_mom_diff] = new TH1F("h_good_reco_Pi_SLPFOPiK_mom_diff",";LPFO Pi - SPFO(Pi,K) momentum difference (GeV); Entries",50,0,50);
+    h1[good_reco_Pi_SLPFOPiK_mom_diff_sigma] = new TH1F("h_good_reco_Pi_SLPFOPiK_mom_diff_sigma",";LPFO Pi - SPFO(Pi,K) momentum difference sigma (GeV); Entries",100,0,1);
 
     h1[bad_reco_Pi_endpt]       = new TH1F("h_bad_reco_Pi_endpt",";vtx endpt (bad); Entries",1000,2000,4000);
     h1[bad_reco_Pi_tpchits]     = new TH1F("h_bad_reco_Pi_tpchits",";TPC nhits (bad); Entries",221,0,221);
     h1[bad_reco_Pi_pidedx_dist] = new TH1F("h_bad_reco_Pi_pidedx_dist",";#pi #frac{dE}{dx} dist (bad); Entries",100,-20,20);
     h1[bad_reco_Pi_kdedx_dist]  = new TH1F("h_bad_reco_Pi_kdedx_dist",";K #frac{dE}{dx} dist (bad); Entries",100,-20,20);
+    h1[bad_reco_Pi_SLPFOPiK_mom_diff] = new TH1F("h_bad_reco_Pi_SLPFOPiK_mom_diff",";LPFO Pi - SPFO(Pi,K) momentum difference (GeV); Entries",50,0,50);
+    h1[bad_reco_Pi_SLPFOPiK_mom_diff_sigma] = new TH1F("h_bad_reco_Pi_SLPFOPiK_mom_diff_sigma",";LPFO Pi - SPFO(Pi,K) momentum difference sigma (GeV); Entries",100,0,1);
 
     h1[reco_Pi_cos]      = new TH1F("h_reco_Pi_cos",";LPFO Pion cos#theta; Entries",cos_bin,-1,1);
     h1[reco_Pi_qcos]     = new TH1F("h_reco_Pi_qcos",";LPFO Pion cos#theta; Entries",cos_bin,-1,1);
@@ -69,6 +73,8 @@ void HistManager::InitializeHists()
     h1[reco_Pi_mom]      = new TH1F("h_reco_Pi_mom",";LPFO Pion momentum (GeV); Entries",140,10,150);
     h1[reco_Pi_SLPFO_mom_diff] = new TH1F("h_reco_Pi_SLPFO_mom_diff",";LPFO-SPFO Pion momentum difference (GeV); Entries",50,0,50);
     h1[reco_Pi_SLPFO_mom_diff_sigma] = new TH1F("h_reco_Pi_SLPFO_mom_diff_sigma",";LPFO-SPFO Pion momentum difference sigma (GeV); Entries",100,0,1);
+    h1[reco_Pi_SLPFOPiK_mom_diff] = new TH1F("h_reco_Pi_SLPFOPiK_mom_diff",";LPFO Pi - SPFO(Pi,K) momentum difference (GeV); Entries",50,0,50);
+    h1[reco_Pi_SLPFOPiK_mom_diff_sigma] = new TH1F("h_reco_Pi_SLPFOPiK_mom_diff_sigma",";LPFO Pi - SPFO(Pi,K) momentum difference sigma (GeV); Entries",100,0,1);
     h1[reco_Pi_pdgcheat] = new TH1F("h_reco_Pi_pdgcheat",";LPFO Pion pdgcheat (Pion, Kaon, Proton, others); Entries",6,-0.5,5.5);
     h1[gen_reco_Pi_sep_cos] = new TH1F("h_gen_reco_Pi_sep_cos",";cos#theta_{gen-LPFOPi}; Entries",cos_bin,-1,1);
     h1[jet_reco_Pi_sep_cos] = new TH1F("h_jet_reco_Pi_sep_cos",";cos#theta_{jet-LPFOPi}; Entries",cos_bin,-1,1);
@@ -133,6 +139,11 @@ void HistManager::InitializeHists()
 
     h2[stable_Pi_cos]   = new TH2F("h2_stable_Pi_cos",";cos#theta;Stability",cos_bin,-1,1,50,0,1);
     h2[purity_Pi_cos]   = new TH2F("h2_purity_Pi_cos",";cos#theta;Purity",   cos_bin,-1,1,50,0,1);
+
+  // SLPFO
+    h2[reco_Pi_SLPFOPiK_mom]      = new TH2F("h_reco_Pi_SLPFOPiK_mom",";SLPFO (pi,K) momentum (GeV); LPFO pion momentum (GeV)",50,0,50,50,0,50);
+    h2[good_reco_Pi_SLPFOPiK_mom] = new TH2F("h_good_reco_Pi_SLPFOPiK_mom",";SLPFO (pi,K) momentum (GeV); LPFO pion momentum (GeV)",50,0,50,50,0,50);
+    h2[bad_reco_Pi_SLPFOPiK_mom]  = new TH2F("h_bad_reco_Pi_SLPFOPiK_mom",";SLPFO (pi,K) momentum (GeV); LPFO pion momentum (GeV)",50,0,50,50,0,50);
 
   // jet
     h2_jet[jet_mult_cos]         = new TH2F("h2_jet_mult_cos" ,";cos#theta;NPFOs/jet",cos_bin,-1,1,100,0,100);

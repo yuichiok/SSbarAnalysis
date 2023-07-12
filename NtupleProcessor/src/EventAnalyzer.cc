@@ -168,29 +168,61 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
       for ( auto iSPFO_K : pfot.SPFOs_K[ijet] ){
         Bool_t charge_opposite = iSPFO_K.pfo_charge * pfot.KLPFO[ijet].pfo_charge < 0;
         Bool_t charge_opposite_KSLPFO_PiLPFO = iSPFO_K.pfo_charge * pfot.PiLPFO[ijet].pfo_charge < 0;
-        Bool_t momentum_above  = iSPFO_K.p_mag > 10;
         Float_t mom_diff_K  = pfot.KLPFO[ijet].p_mag - iSPFO_K.p_mag;
+        Float_t mom_diff_sig_K = mom_diff_K / pfot.KLPFO[ijet].p_mag;
 
         if( charge_opposite ) {
           _hm.h1[_hm.reco_K_SLPFO_mom_diff]->Fill( mom_diff_K );
-          _hm.h1[_hm.reco_K_SLPFO_mom_diff_sigma]->Fill( mom_diff_K / pfot.KLPFO[ijet].p_mag );
+          _hm.h1[_hm.reco_K_SLPFO_mom_diff_sigma]->Fill( mom_diff_sig_K );
         }
-        if( charge_opposite && momentum_above ) is_gluon[kKaon][ijet] = true;
+        if( charge_opposite && (mom_diff_sig_K < 0.4) ) is_gluon[kKaon][ijet] = true;
         // if( charge_opposite_KSLPFO_PiLPFO && momentum_above ) check_KSLPFO_PiLPFO = true;
         if( charge_opposite_KSLPFO_PiLPFO && iSPFO_K.p_mag > 15 ) check_KSLPFO_PiLPFO = true;
       }
 
       for ( auto iSPFO_Pi : pfot.SPFOs_Pi[ijet] ){
         Bool_t charge_opposite = iSPFO_Pi.pfo_charge * pfot.PiLPFO[ijet].pfo_charge < 0;
-        Bool_t momentum_above  = iSPFO_Pi.p_mag > 10;
         Float_t mom_diff_Pi = pfot.PiLPFO[ijet].p_mag - iSPFO_Pi.p_mag;
+        Float_t mom_diff_sig_Pi = mom_diff_Pi / pfot.PiLPFO[ijet].p_mag;
 
         if( charge_opposite ) {
           _hm.h1[_hm.reco_Pi_SLPFO_mom_diff]->Fill( mom_diff_Pi );
-          _hm.h1[_hm.reco_Pi_SLPFO_mom_diff_sigma]->Fill( mom_diff_Pi / pfot.PiLPFO[ijet].p_mag );
+          _hm.h1[_hm.reco_Pi_SLPFO_mom_diff_sigma]->Fill( mom_diff_sig_Pi );
         }
-        if( (charge_opposite && momentum_above) || check_KSLPFO_PiLPFO ) is_gluon[kPion][ijet] = true;
+        if( (charge_opposite && (mom_diff_sig_Pi < 0.4)) || check_KSLPFO_PiLPFO ) is_gluon[kPion][ijet] = true;
         // if( charge_opposite && momentum_above ) is_gluon[kPion][ijet] = true;
+      }
+
+      // plot Pi LPFO an K (LPFO&SLPFO) momentum difference when LPFOPi_p > LPFOK_p
+      if (pfot.PiLPFO[ijet].p_mag > pfot.KLPFO[ijet].p_mag ){
+        Bool_t charge_opposite_Pi_LPFOK = pfot.PiLPFO[ijet].pfo_charge * pfot.KLPFO[ijet].pfo_charge < 0;
+        Float_t mom_diff_Pi_LPFOK = pfot.PiLPFO[ijet].p_mag - pfot.KLPFO[ijet].p_mag;
+        if( charge_opposite_Pi_LPFOK ) {
+          _hm.h2[_hm.reco_Pi_SLPFOPiK_mom]->Fill( pfot.KLPFO[ijet].p_mag, pfot.PiLPFO[ijet].p_mag );
+          _hm.h1[_hm.reco_Pi_SLPFOPiK_mom_diff]->Fill( mom_diff_Pi_LPFOK );
+          _hm.h1[_hm.reco_Pi_SLPFOPiK_mom_diff_sigma]->Fill( mom_diff_Pi_LPFOK / pfot.PiLPFO[ijet].p_mag );
+        }
+
+        for( auto iSPFO_K : pfot.SPFOs_K[ijet] ){
+          Bool_t charge_opposite_Pi_SLPFOK = pfot.PiLPFO[ijet].pfo_charge * iSPFO_K.pfo_charge < 0;
+          Float_t mom_diff_Pi_SLPFOK = pfot.PiLPFO[ijet].p_mag - iSPFO_K.p_mag;
+          if( charge_opposite_Pi_SLPFOK ) {
+            _hm.h2[_hm.reco_Pi_SLPFOPiK_mom]->Fill( iSPFO_K.p_mag, pfot.PiLPFO[ijet].p_mag );
+            _hm.h1[_hm.reco_Pi_SLPFOPiK_mom_diff]->Fill( mom_diff_Pi_SLPFOK );
+            _hm.h1[_hm.reco_Pi_SLPFOPiK_mom_diff_sigma]->Fill( mom_diff_Pi_SLPFOK / pfot.PiLPFO[ijet].p_mag );
+          }
+        }
+
+        for ( auto iSPFO_Pi : pfot.SPFOs_Pi[ijet] ){
+          Bool_t charge_opposite = iSPFO_Pi.pfo_charge * pfot.PiLPFO[ijet].pfo_charge < 0;
+          Float_t mom_diff_Pi = pfot.PiLPFO[ijet].p_mag - iSPFO_Pi.p_mag;
+          if( charge_opposite ) {
+            _hm.h2[_hm.reco_Pi_SLPFOPiK_mom]->Fill( iSPFO_Pi.p_mag, pfot.PiLPFO[ijet].p_mag );
+            _hm.h1[_hm.reco_Pi_SLPFOPiK_mom_diff]->Fill( mom_diff_Pi );
+            _hm.h1[_hm.reco_Pi_SLPFOPiK_mom_diff_sigma]->Fill( mom_diff_Pi / pfot.PiLPFO[ijet].p_mag );
+          }
+        }
+
       }
 
     }
@@ -1063,6 +1095,42 @@ void EventAnalyzer::ProcessDoubleTag(PFOTools pfot, PFOTools mct, vector<Bool_t>
       Float_t lpfo_reco_Pi_sep_cos  = VectorTools::GetCosBetween(pfot.PiLPFO[0].vt.v3(), pfot.PiLPFO[1].vt.v3());
       Float_t vtx_endpt = sqrt(pfot.PiLPFO[ineg].pfo_endpt[0] * pfot.PiLPFO[ineg].pfo_endpt[0] + pfot.PiLPFO[ineg].pfo_endpt[1] * pfot.PiLPFO[ineg].pfo_endpt[1] + pfot.PiLPFO[ineg].pfo_endpt[2] * pfot.PiLPFO[ineg].pfo_endpt[2]);
 
+      for(int ijet=0; ijet<2; ijet++)
+      {
+        // plot Pi LPFO an K (LPFO&SLPFO) momentum difference when LPFOPi_p > LPFOK_p
+        if (pfot.PiLPFO[ijet].p_mag > pfot.KLPFO[ijet].p_mag ){
+          Bool_t charge_opposite_Pi_LPFOK = pfot.PiLPFO[ijet].pfo_charge * pfot.KLPFO[ijet].pfo_charge < 0;
+          Float_t mom_diff_Pi_LPFOK = pfot.PiLPFO[ijet].p_mag - pfot.KLPFO[ijet].p_mag;
+          if( charge_opposite_Pi_LPFOK ) {
+            _hm.h2[_hm.good_reco_Pi_SLPFOPiK_mom]->Fill( pfot.KLPFO[ijet].p_mag, pfot.PiLPFO[ijet].p_mag );
+            _hm.h1[_hm.good_reco_Pi_SLPFOPiK_mom_diff]->Fill( mom_diff_Pi_LPFOK );
+            _hm.h1[_hm.good_reco_Pi_SLPFOPiK_mom_diff_sigma]->Fill( mom_diff_Pi_LPFOK / pfot.PiLPFO[ijet].p_mag );
+          }
+
+          for( auto iSPFO_K : pfot.SPFOs_K[ijet] ){
+            Bool_t charge_opposite_Pi_SLPFOK = pfot.PiLPFO[ijet].pfo_charge * iSPFO_K.pfo_charge < 0;
+            Float_t mom_diff_Pi_SLPFOK = pfot.PiLPFO[ijet].p_mag - iSPFO_K.p_mag;
+            if( charge_opposite_Pi_SLPFOK ) {
+              _hm.h2[_hm.good_reco_Pi_SLPFOPiK_mom]->Fill( iSPFO_K.p_mag, pfot.PiLPFO[ijet].p_mag );
+              _hm.h1[_hm.good_reco_Pi_SLPFOPiK_mom_diff]->Fill( mom_diff_Pi_SLPFOK );
+              _hm.h1[_hm.good_reco_Pi_SLPFOPiK_mom_diff_sigma]->Fill( mom_diff_Pi_SLPFOK / pfot.PiLPFO[ijet].p_mag );
+            }
+          }
+
+          for ( auto iSPFO_Pi : pfot.SPFOs_Pi[ijet] ){
+            Bool_t charge_opposite = iSPFO_Pi.pfo_charge * pfot.PiLPFO[ijet].pfo_charge < 0;
+            Float_t mom_diff_Pi = pfot.PiLPFO[ijet].p_mag - iSPFO_Pi.p_mag;
+            if( charge_opposite ) {
+              _hm.h2[_hm.good_reco_Pi_SLPFOPiK_mom]->Fill( iSPFO_Pi.p_mag, pfot.PiLPFO[ijet].p_mag );
+              _hm.h1[_hm.good_reco_Pi_SLPFOPiK_mom_diff]->Fill( mom_diff_Pi );
+              _hm.h1[_hm.good_reco_Pi_SLPFOPiK_mom_diff_sigma]->Fill( mom_diff_Pi / pfot.PiLPFO[ijet].p_mag );
+            }
+          }
+
+        }
+      }
+
+
       if( gen_reco_Pi_sep_cos > 0 ){
         _hm.h1[_hm.good_reco_Pi_endpt]->Fill( vtx_endpt );
         _hm.h1[_hm.good_reco_Pi_tpchits]->Fill( pfot.PiLPFO[ineg].pfo_tpc_hits );
@@ -1138,6 +1206,41 @@ void EventAnalyzer::ProcessDoubleTag(PFOTools pfot, PFOTools mct, vector<Bool_t>
       _hm.h1_pq[_hm.acc_PiPi]->Fill( pfot.PiLPFO[ineg].qcos );
 
     }else{
+
+      for(int ijet=0; ijet<2; ijet++)
+      {
+        // plot Pi LPFO an K (LPFO&SLPFO) momentum difference when LPFOPi_p > LPFOK_p
+        if (pfot.PiLPFO[ijet].p_mag > pfot.KLPFO[ijet].p_mag ){
+          Bool_t charge_opposite_Pi_LPFOK = pfot.PiLPFO[ijet].pfo_charge * pfot.KLPFO[ijet].pfo_charge < 0;
+          Float_t mom_diff_Pi_LPFOK = pfot.PiLPFO[ijet].p_mag - pfot.KLPFO[ijet].p_mag;
+          if( charge_opposite_Pi_LPFOK ) {
+            _hm.h1[_hm.bad_reco_Pi_SLPFOPiK_mom]->Fill( pfot.KLPFO[ijet].p_mag, pfot.PiLPFO[ijet].p_mag );
+            _hm.h1[_hm.bad_reco_Pi_SLPFOPiK_mom_diff]->Fill( mom_diff_Pi_LPFOK );
+            _hm.h1[_hm.bad_reco_Pi_SLPFOPiK_mom_diff_sigma]->Fill( mom_diff_Pi_LPFOK / pfot.PiLPFO[ijet].p_mag );
+          }
+
+          for( auto iSPFO_K : pfot.SPFOs_K[ijet] ){
+            Bool_t charge_opposite_Pi_SLPFOK = pfot.PiLPFO[ijet].pfo_charge * iSPFO_K.pfo_charge < 0;
+            Float_t mom_diff_Pi_SLPFOK = pfot.PiLPFO[ijet].p_mag - iSPFO_K.p_mag;
+            if( charge_opposite_Pi_SLPFOK ) {
+              _hm.h2[_hm.bad_reco_Pi_SLPFOPiK_mom]->Fill( iSPFO_K.p_mag, pfot.PiLPFO[ijet].p_mag );
+              _hm.h1[_hm.bad_reco_Pi_SLPFOPiK_mom_diff]->Fill( mom_diff_Pi_SLPFOK );
+              _hm.h1[_hm.bad_reco_Pi_SLPFOPiK_mom_diff_sigma]->Fill( mom_diff_Pi_SLPFOK / pfot.PiLPFO[ijet].p_mag );
+            }
+          }
+
+          for ( auto iSPFO_Pi : pfot.SPFOs_Pi[ijet] ){
+            Bool_t charge_opposite = iSPFO_Pi.pfo_charge * pfot.PiLPFO[ijet].pfo_charge < 0;
+            Float_t mom_diff_Pi = pfot.PiLPFO[ijet].p_mag - iSPFO_Pi.p_mag;
+            if( charge_opposite ) {
+              _hm.h2[_hm.bad_reco_Pi_SLPFOPiK_mom]->Fill( iSPFO_Pi.p_mag, pfot.PiLPFO[ijet].p_mag );
+              _hm.h1[_hm.bad_reco_Pi_SLPFOPiK_mom_diff]->Fill( mom_diff_Pi );
+              _hm.h1[_hm.bad_reco_Pi_SLPFOPiK_mom_diff_sigma]->Fill( mom_diff_Pi / pfot.PiLPFO[ijet].p_mag );
+            }
+          }
+
+        }
+      }
 
       _hm.h1_pq[_hm.rej_PiPi]->Fill( pfot.PiLPFO[ineg].cos );
       _hm.h1_pq[_hm.rej_PiPi]->Fill( -pfot.PiLPFO[1-ineg].cos );
