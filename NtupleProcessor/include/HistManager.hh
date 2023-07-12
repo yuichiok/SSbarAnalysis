@@ -58,26 +58,13 @@ class HistManager
       z0_sigma_K_reco_garbage,
       z0_sigma_z0_K_reco_garbage,
 
-      d0_K_reco_primary_ctag_cut,
-      d0_sigma_K_reco_primary_ctag_cut,
-      d0_sigma_d0_K_reco_primary_ctag_cut,
-
-      z0_K_reco_primary_ctag_cut,
-      z0_sigma_K_reco_primary_ctag_cut,
-      z0_sigma_z0_K_reco_primary_ctag_cut,
-
-      d0_K_reco_secondary_ctag_cut,
-      d0_sigma_K_reco_secondary_ctag_cut,
-      d0_sigma_d0_K_reco_secondary_ctag_cut,
-
-      z0_K_reco_secondary_ctag_cut,
-      z0_sigma_K_reco_secondary_ctag_cut,
-      z0_sigma_z0_K_reco_secondary_ctag_cut,
-
       cuts,
+      ctag_final,
 
       pmag_K_reco,
       cos_theta_K_reco,
+
+      pmag_K_reco_final,
 
       dummy_K_reco,
       Last_h1_K_reco = dummy_K_reco
@@ -112,7 +99,21 @@ class HistManager
     };
     TH1F * h_tagging[Last_h_tagging];
     
+    enum h2_K_reco{
+      ctag_pmag,
+      dummy_h2_K_reco,
+      Last_h2_K_reco = dummy_h2_K_reco
+    };
+    TH2F * h2_K_reco[Last_h2_K_reco];
 
+    enum h_cos_theta{
+      cos_theta,
+      acc_cos_theta,
+      rej_cos_theta,
+      dummy_h_cos_theta,
+      Last_h_cos_theta = dummy_h_cos_theta
+    };
+    TH1F * h_cos_theta[Last_h_cos_theta];
 
     enum h_general {
       // nvtx_ctag,
@@ -128,6 +129,8 @@ class HistManager
     TList* hList_general         = new TList();
     TList* hList_tagging         = new TList();
     TList* hList_PS              = new TList();
+    TList* hList_cos_theta       = new TList();
+    TList* hList_K_reco_2        = new TList();
 };
 
 #endif
