@@ -117,7 +117,6 @@ TCanvas * main_pq(TFile *file, TH1F *h_reco_LPFO_qcos, TString LPFO_mode)
   TString hlast = "h_reco_" + LPFO_mode + "_cos_jet2_poff_pid_ud_spfo_chg";
   if ((TString) h_reco_LPFO_qcos_eff_corr->GetName() == hlast)
   {
-    cout << "check\n";
     h_reco_LPFO_pq_cos = CorrectHist(h_reco_LPFO_qcos_eff_corr, p_vec);
   }else{
     h_reco_LPFO_pq_cos = (TH1F*) h_reco_LPFO_qcos_eff_corr->Clone();
@@ -176,9 +175,10 @@ TCanvas * main_pq(TFile *file, TH1F *h_reco_LPFO_qcos, TString LPFO_mode)
 
   pad2->cd();
 
-  TH1F *h_ratio = (TH1F*) h_reco_LPFO_pq_cos->Clone();
-  h_ratio->Divide(h_gen_q_qcos);
-  h_ratio->GetYaxis()->SetRangeUser(0.8,1.2);
+  TH1F *h_ratio = (TH1F*) h_reco_LPFO_qcos_eff_corr->Clone();
+  cout << "reco integral = " << h_reco_LPFO_qcos->Integral() << ", gen integral = " << h_gen_q_qcos_orig->Integral() << endl;
+  h_ratio->Divide(h_gen_q_qcos_orig);
+  // h_ratio->GetYaxis()->SetRangeUser(0.8,1.2);
 
   h_ratio->SetTitle(";cos#theta;Data/MC");
   h_ratio->GetXaxis()->SetTitleSize(0.08);
@@ -187,6 +187,13 @@ TCanvas * main_pq(TFile *file, TH1F *h_reco_LPFO_qcos, TString LPFO_mode)
   h_ratio->GetYaxis()->SetTitleOffset(0.75);
   h_ratio->GetYaxis()->SetLabelSize(0.07);
   h_ratio->Draw("P");
+
+  TString iname = "h_reco_Pi_cos_jet2_poff_pid_ud_spfo_chg";
+  TString pname = (TString) h_reco_LPFO_qcos->GetName();
+  if(pname == iname){
+    TCanvas *c_test = new TCanvas("c_test","c_test",800,800);
+    h_ratio->Draw("h");
+  }
 
   return c_dmc;
 
