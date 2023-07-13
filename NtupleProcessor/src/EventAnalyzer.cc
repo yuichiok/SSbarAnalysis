@@ -493,7 +493,7 @@ void EventAnalyzer::CCbarAnalysis(PFOTools pfot, vector<Bool_t> cuts[3], PDGConf
       _hm.h_cos_theta[_hm.cos_theta]->Fill(pfot.KLPFO[ineg].cos);
       
       if(sign_check[kKaon]){  
-          _hm.h_cos_theta[_hm.acc_cos_theta]->Fill(pfot.KLPFO[ineg].cos);
+          _hm.h_cos_theta[_hm.acc_cos_theta]->Fill(pfot.KLPFO[ineg].qcos);
       }
       else{
         _hm.h_cos_theta[_hm.rej_cos_theta]->Fill(pfot.KLPFO[ineg].cos);
