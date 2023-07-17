@@ -870,21 +870,27 @@ namespace QQbarAnalysis
 
     for( auto i_lmode : _pt.PFO_mode ){
 
-      Int_t ineg     = pfot.LPFO_[i_lmode][0].pfo_charge > 0 ;
-      Int_t ineg_gen = _mc.mc_quark_charge[0] > 0;
+      if( std::all_of(is_pass[i_lmode].begin(), is_pass[i_lmode].end(), [](bool v) { return v; }) ){
 
-      if( cuts[i_lmode]["charge"] ){
-        _hm.hcos_map[i_lmode]["cos"]->Fill( pfot.LPFO_[i_lmode][ineg].cos );
-        _hm.hcos_map[i_lmode]["qcos"]->Fill( pfot.LPFO_[i_lmode][ineg].qcos );
+        Int_t ineg     = pfot.LPFO_[i_lmode][0].pfo_charge > 0 ;
+        Int_t ineg_gen = _mc.mc_quark_charge[0] > 0;
 
-        Float_t scos = abs(pfot.LPFO_[i_lmode][ineg].cos) * sgn( -_mc.mc_quark_charge[0] ) * mct.mc_quark[0].cos / abs(mct.mc_quark[0].cos);
-        _hm.hcos_map[i_lmode]["scos"]->Fill( scos );
+        if( cuts[i_lmode]["charge"] ){
+          _hm.hcos_map[i_lmode]["cos"]->Fill( pfot.LPFO_[i_lmode][ineg].cos );
+          _hm.hcos_map[i_lmode]["qcos"]->Fill( pfot.LPFO_[i_lmode][ineg].qcos );
 
-        Float_t gen_reco_sep_cos = VectorTools::GetCosBetween(pfot.LPFO_[i_lmode][ineg].vt.v3(), mct.mc_quark[ineg_gen].vt.v3());
-        _hm.hcos_map[i_lmode]["gen_reco_sep_cos"]->Fill( gen_reco_sep_cos );
-      }
+          Float_t scos = abs(pfot.LPFO_[i_lmode][ineg].cos) * sgn( -_mc.mc_quark_charge[0] ) * mct.mc_quark[0].cos / abs(mct.mc_quark[0].cos);
+          _hm.hcos_map[i_lmode]["scos"]->Fill( scos );
 
-    }
+          Float_t gen_reco_sep_cos = VectorTools::GetCosBetween(pfot.LPFO_[i_lmode][ineg].vt.v3(), mct.mc_quark[ineg_gen].vt.v3());
+          _hm.hcos_map[i_lmode]["gen_reco_sep_cos"]->Fill( gen_reco_sep_cos );
+        }else{
+
+        } // charge consistency check
+
+      } // LPFO event selection
+
+    } // LPFO mode loop
 
   }
 
