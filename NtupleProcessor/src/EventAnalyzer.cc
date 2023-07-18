@@ -894,7 +894,7 @@ namespace QQbarAnalysis
           if( it != _pt.PFO_type_map.end() ){
             TString type = it->second;
             _hm.h2_dEdx[i_lmode][type]["dEdx_p"]->Fill( LPFO.p_mag, LPFO.pfo_dedx );
-            _hm.h2_dEdx[i_lmode][type]["dEdx_dist_cos"]->Fill( LPFO.p_mag, LPFO.pfo_dedx );
+            _hm.h2_dEdx[i_lmode][type]["dEdx_dist_cos"]->Fill( LPFO.p_mag, pfot.Get_dEdx_dist(LPFO, i_lmode) );
           }
 
         }else{
