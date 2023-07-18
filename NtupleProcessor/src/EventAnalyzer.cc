@@ -149,6 +149,9 @@ namespace QQbarAnalysis
       // Particle ID both sides
       CutTriggerMap[i_lmode]["PID"]    = pfot.is_PID_config( i_lmode );
 
+      // Higher LPFO momentum
+      CutTriggerMap[i_lmode]["LPFO_higher_p"] = pfot.is_high_LPFO( i_lmode );
+
     }
 
     // Valid LPFO
@@ -886,6 +889,13 @@ namespace QQbarAnalysis
 
           Float_t scos = abs(LPFO.cos) * sgn( -_mc.mc_quark_charge[0] ) * mct.mc_quark[0].cos / abs(mct.mc_quark[0].cos);
           _hm.h1_cos[i_lmode]["scos"]->Fill( scos );
+
+          auto it = _pt.PFO_type_map.find(LPFO.pfo_pdgcheat);
+          if( it != _pt.PFO_type_map.end() ){
+            TString type = it->second;
+            _hm.h2_dEdx[i_lmode][type]["dEdx_p"]->Fill( LPFO.p_mag, LPFO.pfo_dedx );
+            _hm.h2_dEdx[i_lmode][type]["dEdx_dist_cos"]->Fill( LPFO.p_mag, LPFO.pfo_dedx );
+          }
 
         }else{
 
