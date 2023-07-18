@@ -41,6 +41,7 @@ namespace QQbarAnalysis
       virtual vector<PFO_Info>  GetSortedJet      ( int ijet );
       virtual PFO_Info          Get_Particle_LPFO ( int ijet, ParticleID pdg );
       virtual Int_t             Get_dEdx_dist_PID ( Float_t kdEdx_dist, Float_t pidEdx_dist, Float_t pdEdx_dist );
+      virtual Float_t           Get_dEdx_dist     ( PFO_Info iPFO, TString particle );
       static  Bool_t            isKaon            ( PFO_Info iPFO );
       static  Bool_t            isPion            ( PFO_Info iPFO );
       static  Bool_t            isProton          ( PFO_Info iPFO );
@@ -56,6 +57,7 @@ namespace QQbarAnalysis
       virtual Bool_t           is_tpc_hits           ( PFO_Info iPFO, Int_t MIN_TPC_HITS );
       virtual Bool_t           is_offset_small       ( PFO_Info iPFO, Int_t MAX_OFFSET );
       virtual Bool_t           is_dEdxdist_bad       ( Float_t e_dist, Float_t mu_dist, Float_t pi_dist, Float_t k_dist, Float_t p_dist );
+      virtual Bool_t           is_high_LPFO          ( TString mode );
       virtual Bool_t           is_ss                 ();
       virtual Bool_t           is_uu_dd              ();
 
@@ -86,6 +88,7 @@ namespace QQbarAnalysis
     // PFO modes and types
       vector<TString> PFO_mode  = {"K","Pi"};
       vector<TString> PFO_type  = {"K","Pi", "p", "e", "mu"};
+      map<Int_t,TString> PFO_type_map = { {321,"K"}, {211,"Pi"}, {2212,"p"}, {11,"e"}, {13,"mu"} };
 
 
     private:

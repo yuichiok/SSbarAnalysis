@@ -316,6 +316,16 @@ namespace QQbarAnalysis
 
   }
 
+  Float_t PFOTools::Get_dEdx_dist( PFO_Info iPFO, TString particle )
+  {
+         if( particle == "K" )  { return iPFO.pfo_piddedx_k_dedxdist;  }
+    else if( particle == "Pi" ) { return iPFO.pfo_piddedx_pi_dedxdist; }
+    else if( particle == "p" )  { return iPFO.pfo_piddedx_p_dedxdist;  }
+    else if( particle == "e" )  { return iPFO.pfo_piddedx_e_dedxdist;  }
+    else if( particle == "mu" )  { return iPFO.pfo_piddedx_mu_dedxdist;  }
+    else {return -1000;}
+  }
+
   Bool_t PFOTools::isKaon( PFO_Info iPFO )
   {
       return iPFO.dEdx_dist_pdg == 321;
@@ -414,6 +424,19 @@ namespace QQbarAnalysis
     if( !k_dist ) return 1;
     if( !p_dist ) return 1;
     return 0;
+  }
+
+  Bool_t PFOTools::is_high_LPFO( TString mode )
+  {
+    for( int ijet=0; ijet < 2; ijet++ ){
+      for( auto lmode : PFO_mode ){
+        if( mode == lmode ) continue;
+        if( LPFO_[mode][ijet].p_mag < LPFO_[lmode][ijet].p_mag ){
+          return false;
+        }
+      }
+    }
+    return true;
   }
 
   Bool_t PFOTools::is_ss()
