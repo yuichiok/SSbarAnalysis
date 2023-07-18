@@ -45,12 +45,12 @@ namespace QQbarAnalysis
     */
 
     // Mapping
-    vector<TString> hcos_name = {"cos","qcos","scos","gen_reco_sep_cos"};
+    vector<TString> hcos_name = {"cos","qcos","scos"};
     Float_t cos_min = -1.0, cos_max = 1.0;
     for( auto i_lmode : _pt.PFO_mode ){
       for( auto iname : hcos_name){
         TString hname = "h_" + i_lmode + "_" + iname;
-        hcos_map[i_lmode][iname] = new TH1F(hname,iname + ";cos#theta;Entries",cos_bin,cos_min,cos_max);
+        h1_cos[i_lmode][iname] = new TH1F(hname,iname + ";cos#theta;Entries",cos_bin,cos_min,cos_max);
       }
     }
 
@@ -186,17 +186,25 @@ namespace QQbarAnalysis
       for (int iparticle = 0; iparticle < Last_particle_List; iparticle++){
 
         // dEdx vs p
-        h2_dEdx[gen_ipart_dEdx_p][iparticle] = new TH2F("h2_gen_" + particle_list[iparticle] + "_dEdx_p"  ,";p (GeV);#frac{dE}{dx}",nbins_p,bins_p,nbins_dEdx,bins_dEdx);
+        h2_dEdx_nomap[gen_ipart_dEdx_p][iparticle] = new TH2F("h2_gen_" + particle_list[iparticle] + "_dEdx_p"  ,";p (GeV);#frac{dE}{dx}",nbins_p,bins_p,nbins_dEdx,bins_dEdx);
 
         // KID
-        h2_dEdx[gen_ipart_reco_K_dEdx_p][iparticle]         = new TH2F("h2_gen_" + particle_list[iparticle] + "_reco_K_dEdx_p"  ,";p (GeV);#frac{dE}{dx}",nbins_p,bins_p,nbins_dEdx,bins_dEdx);
-        h2_dEdx[gen_ipart_KdEdx_dist_cos][iparticle]        = new TH2F("h2_gen_" + particle_list[iparticle] + "_KdEdx_dist_cos"  ,";cos#theta;K #frac{dE}{dx} dist", 100, -1, 1, 100, -20, 20);
-        h2_dEdx[gen_ipart_reco_K_KdEdx_dist_cos][iparticle] = new TH2F("h2_gen_" + particle_list[iparticle] + "_reco_K_KdEdx_dist_cos"  ,";cos#theta;K #frac{dE}{dx} dist", 100, -1, 1, 100, -20, 20);
+        h2_dEdx_nomap[gen_ipart_reco_K_dEdx_p][iparticle]         = new TH2F("h2_gen_" + particle_list[iparticle] + "_reco_K_dEdx_p"  ,";p (GeV);#frac{dE}{dx}",nbins_p,bins_p,nbins_dEdx,bins_dEdx);
+        h2_dEdx_nomap[gen_ipart_KdEdx_dist_cos][iparticle]        = new TH2F("h2_gen_" + particle_list[iparticle] + "_KdEdx_dist_cos"  ,";cos#theta;K #frac{dE}{dx} dist", 100, -1, 1, 100, -20, 20);
+        h2_dEdx_nomap[gen_ipart_reco_K_KdEdx_dist_cos][iparticle] = new TH2F("h2_gen_" + particle_list[iparticle] + "_reco_K_KdEdx_dist_cos"  ,";cos#theta;K #frac{dE}{dx} dist", 100, -1, 1, 100, -20, 20);
 
         // PiID
-        h2_dEdx[gen_ipart_reco_Pi_dEdx_p][iparticle]          = new TH2F("h2_gen_" + particle_list[iparticle] + "_reco_Pi_dEdx_p"  ,";p (GeV);#frac{dE}{dx}",nbins_p,bins_p,nbins_dEdx,bins_dEdx);
-        h2_dEdx[gen_ipart_PidEdx_dist_cos][iparticle]         = new TH2F("h2_gen_" + particle_list[iparticle] + "_PidEdx_dist_cos"  ,";cos#theta;K #frac{dE}{dx} dist", 100, -1, 1, 100, -20, 20);
-        h2_dEdx[gen_ipart_reco_Pi_PidEdx_dist_cos][iparticle] = new TH2F("h2_gen_" + particle_list[iparticle] + "_reco_Pi_PidEdx_dist_cos"  ,";cos#theta;K #frac{dE}{dx} dist", 100, -1, 1, 100, -20, 20);
+        h2_dEdx_nomap[gen_ipart_reco_Pi_dEdx_p][iparticle]          = new TH2F("h2_gen_" + particle_list[iparticle] + "_reco_Pi_dEdx_p"  ,";p (GeV);#frac{dE}{dx}",nbins_p,bins_p,nbins_dEdx,bins_dEdx);
+        h2_dEdx_nomap[gen_ipart_PidEdx_dist_cos][iparticle]         = new TH2F("h2_gen_" + particle_list[iparticle] + "_PidEdx_dist_cos"  ,";cos#theta;K #frac{dE}{dx} dist", 100, -1, 1, 100, -20, 20);
+        h2_dEdx_nomap[gen_ipart_reco_Pi_PidEdx_dist_cos][iparticle] = new TH2F("h2_gen_" + particle_list[iparticle] + "_reco_Pi_PidEdx_dist_cos"  ,";cos#theta;K #frac{dE}{dx} dist", 100, -1, 1, 100, -20, 20);
+      }
+
+      vector<TString> hdEdx_name = {"dEdx_p","dEdx_cos","dEdx_dist_cos"};
+      for( auto i_lmode : _pt.PFO_mode ){
+        for( auto i_type : _pt.PFO_type ){
+          h2_dEdx[i_lmode][i_type]["dEdx_p"]   = new TH2F("h2_" + i_lmode + "_" + i_type + "_dEdx_p",";p (GeV);#frac{dE}{dx}",nbins_p,bins_p,nbins_dEdx,bins_dEdx);
+          h2_dEdx[i_lmode][i_type]["dEdx_cos"] = new TH2F("h2_" + i_lmode + "_" + i_type + "_dEdx_cos",";cos#theta;#frac{dE}{dx}",nbins_cos,bins_cos,nbins_dEdx,bins_dEdx);
+        }
       }
 
       Hist2List();
@@ -229,9 +237,9 @@ namespace QQbarAnalysis
       hList1_particle_ratio->Add(ih);
     }
 
-    for (int ih=0; ih < Last_h2_dEdx; ih++) {
+    for (int ih=0; ih < Last_h2_dEdx_nomap; ih++) {
       for (int jh=0; jh < Last_particle_List; jh++) {
-        hList2_dEdx->Add(h2_dEdx[ih][jh]);
+        hList2_dEdx->Add(h2_dEdx_nomap[ih][jh]);
       }
     }
   }

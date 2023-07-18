@@ -85,7 +85,7 @@ namespace QQbarAnalysis
       };
       TH1F * h1[Last_h1];
 
-      map< TString, map< TString, TH1F* > > hcos_map;
+      map< TString, map< TString, TH1F* > > h1_cos; // [LPFO][hist]
 
       enum h1_pq_index {
         // KID
@@ -160,7 +160,7 @@ namespace QQbarAnalysis
       };
       TH2F * h2_particle_ratio_cos[Last_h2_dummy_particle_ratio_cos];
 
-      enum h2_dEdx_index {
+      enum h2_dEdx_nomap_index {
 
         // dEdx vs p
         gen_ipart_dEdx_p,
@@ -176,7 +176,7 @@ namespace QQbarAnalysis
         gen_ipart_reco_Pi_PidEdx_dist_cos,
 
         dummy_dEdx,
-        Last_h2_dEdx = dummy_dEdx
+        Last_h2_dEdx_nomap = dummy_dEdx
       };
       TString particle_list[5] = {"K", "pi", "p", "e", "mu"};
       enum particle_List_index {
@@ -188,7 +188,9 @@ namespace QQbarAnalysis
         dummy_particle_List,
         Last_particle_List = dummy_particle_List
       };
-      TH2F * h2_dEdx[Last_h2_dEdx][Last_particle_List];
+      TH2F * h2_dEdx_nomap[Last_h2_dEdx_nomap][Last_particle_List];
+
+      map< TString, map< TString, map< TString, TH2F* > > > h2_dEdx; // [LPFO][TruthID][hist]
 
     private:
     // Lists

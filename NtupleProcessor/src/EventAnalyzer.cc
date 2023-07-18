@@ -285,29 +285,29 @@ namespace QQbarAnalysis
       // cheat
       switch ( abs(ipfo.pfo_pdgcheat) ) {
         case 321:
-          _hm.h2_dEdx[_hm.gen_ipart_dEdx_p][kKaon]->Fill(ipfo.p_mag,ipfo.pfo_dedx);
-          _hm.h2_dEdx[_hm.gen_ipart_KdEdx_dist_cos][kKaon]->Fill(ipfo.cos,ipfo.pfo_piddedx_k_dedxdist);
-          _hm.h2_dEdx[_hm.gen_ipart_PidEdx_dist_cos][kKaon]->Fill(ipfo.cos,ipfo.pfo_piddedx_pi_dedxdist);
+          _hm.h2_dEdx_nomap[_hm.gen_ipart_dEdx_p][kKaon]->Fill(ipfo.p_mag,ipfo.pfo_dedx);
+          _hm.h2_dEdx_nomap[_hm.gen_ipart_KdEdx_dist_cos][kKaon]->Fill(ipfo.cos,ipfo.pfo_piddedx_k_dedxdist);
+          _hm.h2_dEdx_nomap[_hm.gen_ipart_PidEdx_dist_cos][kKaon]->Fill(ipfo.cos,ipfo.pfo_piddedx_pi_dedxdist);
           break;
         case 211:
-          _hm.h2_dEdx[_hm.gen_ipart_dEdx_p][kPion]->Fill(ipfo.p_mag,ipfo.pfo_dedx);
-          _hm.h2_dEdx[_hm.gen_ipart_KdEdx_dist_cos][kPion]->Fill(ipfo.cos,ipfo.pfo_piddedx_k_dedxdist);
-          _hm.h2_dEdx[_hm.gen_ipart_PidEdx_dist_cos][kPion]->Fill(ipfo.cos,ipfo.pfo_piddedx_pi_dedxdist);
+          _hm.h2_dEdx_nomap[_hm.gen_ipart_dEdx_p][kPion]->Fill(ipfo.p_mag,ipfo.pfo_dedx);
+          _hm.h2_dEdx_nomap[_hm.gen_ipart_KdEdx_dist_cos][kPion]->Fill(ipfo.cos,ipfo.pfo_piddedx_k_dedxdist);
+          _hm.h2_dEdx_nomap[_hm.gen_ipart_PidEdx_dist_cos][kPion]->Fill(ipfo.cos,ipfo.pfo_piddedx_pi_dedxdist);
           break;
         case 2212:
-          _hm.h2_dEdx[_hm.gen_ipart_dEdx_p][kProton]->Fill(ipfo.p_mag,ipfo.pfo_dedx);
-          _hm.h2_dEdx[_hm.gen_ipart_KdEdx_dist_cos][kProton]->Fill(ipfo.cos,ipfo.pfo_piddedx_k_dedxdist);
-          _hm.h2_dEdx[_hm.gen_ipart_PidEdx_dist_cos][kProton]->Fill(ipfo.cos,ipfo.pfo_piddedx_pi_dedxdist);
+          _hm.h2_dEdx_nomap[_hm.gen_ipart_dEdx_p][kProton]->Fill(ipfo.p_mag,ipfo.pfo_dedx);
+          _hm.h2_dEdx_nomap[_hm.gen_ipart_KdEdx_dist_cos][kProton]->Fill(ipfo.cos,ipfo.pfo_piddedx_k_dedxdist);
+          _hm.h2_dEdx_nomap[_hm.gen_ipart_PidEdx_dist_cos][kProton]->Fill(ipfo.cos,ipfo.pfo_piddedx_pi_dedxdist);
           break;
         case 11:
-          _hm.h2_dEdx[_hm.gen_ipart_dEdx_p][kElectron]->Fill(ipfo.p_mag,ipfo.pfo_dedx);
-          _hm.h2_dEdx[_hm.gen_ipart_KdEdx_dist_cos][kElectron]->Fill(ipfo.cos,ipfo.pfo_piddedx_k_dedxdist);
-          _hm.h2_dEdx[_hm.gen_ipart_PidEdx_dist_cos][kElectron]->Fill(ipfo.cos,ipfo.pfo_piddedx_pi_dedxdist);
+          _hm.h2_dEdx_nomap[_hm.gen_ipart_dEdx_p][kElectron]->Fill(ipfo.p_mag,ipfo.pfo_dedx);
+          _hm.h2_dEdx_nomap[_hm.gen_ipart_KdEdx_dist_cos][kElectron]->Fill(ipfo.cos,ipfo.pfo_piddedx_k_dedxdist);
+          _hm.h2_dEdx_nomap[_hm.gen_ipart_PidEdx_dist_cos][kElectron]->Fill(ipfo.cos,ipfo.pfo_piddedx_pi_dedxdist);
           break;
         case 13:
-          _hm.h2_dEdx[_hm.gen_ipart_dEdx_p][kMuon]->Fill(ipfo.p_mag,ipfo.pfo_dedx);
-          _hm.h2_dEdx[_hm.gen_ipart_KdEdx_dist_cos][kMuon]->Fill(ipfo.cos,ipfo.pfo_piddedx_k_dedxdist);
-          _hm.h2_dEdx[_hm.gen_ipart_PidEdx_dist_cos][kMuon]->Fill(ipfo.cos,ipfo.pfo_piddedx_pi_dedxdist);
+          _hm.h2_dEdx_nomap[_hm.gen_ipart_dEdx_p][kMuon]->Fill(ipfo.p_mag,ipfo.pfo_dedx);
+          _hm.h2_dEdx_nomap[_hm.gen_ipart_KdEdx_dist_cos][kMuon]->Fill(ipfo.cos,ipfo.pfo_piddedx_k_dedxdist);
+          _hm.h2_dEdx_nomap[_hm.gen_ipart_PidEdx_dist_cos][kMuon]->Fill(ipfo.cos,ipfo.pfo_piddedx_pi_dedxdist);
           break;
         default:
           break;
@@ -870,20 +870,23 @@ namespace QQbarAnalysis
 
     for( auto i_lmode : _pt.PFO_mode ){
 
-      if( std::all_of(is_pass[i_lmode].begin(), is_pass[i_lmode].end(), [](bool v) { return v; }) ){
+      Bool_t isPass = std::all_of(is_pass[i_lmode].begin(), is_pass[i_lmode].end(), [](bool v) { return v; });
+
+      if( isPass ){
 
         Int_t ineg     = pfot.LPFO_[i_lmode][0].pfo_charge > 0 ;
         Int_t ineg_gen = _mc.mc_quark_charge[0] > 0;
 
         if( cuts[i_lmode]["charge"] ){
-          _hm.hcos_map[i_lmode]["cos"]->Fill( pfot.LPFO_[i_lmode][ineg].cos );
-          _hm.hcos_map[i_lmode]["qcos"]->Fill( pfot.LPFO_[i_lmode][ineg].qcos );
 
-          Float_t scos = abs(pfot.LPFO_[i_lmode][ineg].cos) * sgn( -_mc.mc_quark_charge[0] ) * mct.mc_quark[0].cos / abs(mct.mc_quark[0].cos);
-          _hm.hcos_map[i_lmode]["scos"]->Fill( scos );
+          PFO_Info LPFO = pfot.LPFO_[i_lmode][ineg];
 
-          Float_t gen_reco_sep_cos = VectorTools::GetCosBetween(pfot.LPFO_[i_lmode][ineg].vt.v3(), mct.mc_quark[ineg_gen].vt.v3());
-          _hm.hcos_map[i_lmode]["gen_reco_sep_cos"]->Fill( gen_reco_sep_cos );
+          _hm.h1_cos[i_lmode]["cos"]->Fill( LPFO.cos );
+          _hm.h1_cos[i_lmode]["qcos"]->Fill( LPFO.qcos );
+
+          Float_t scos = abs(LPFO.cos) * sgn( -_mc.mc_quark_charge[0] ) * mct.mc_quark[0].cos / abs(mct.mc_quark[0].cos);
+          _hm.h1_cos[i_lmode]["scos"]->Fill( scos );
+
         }else{
 
         } // charge consistency check
@@ -943,28 +946,28 @@ namespace QQbarAnalysis
         // cheat
         switch ( abs(pfot.KLPFO[ineg].pfo_pdgcheat) ) {
           case 321:
-            _hm.h2_dEdx[_hm.gen_ipart_reco_K_dEdx_p][kKaon]->Fill(pfot.KLPFO[ineg].p_mag,pfot.KLPFO[ineg].pfo_dedx);
-            _hm.h2_dEdx[_hm.gen_ipart_reco_K_KdEdx_dist_cos][kKaon]->Fill(pfot.KLPFO[ineg].cos,pfot.KLPFO[ineg].pfo_piddedx_k_dedxdist);
+            _hm.h2_dEdx_nomap[_hm.gen_ipart_reco_K_dEdx_p][kKaon]->Fill(pfot.KLPFO[ineg].p_mag,pfot.KLPFO[ineg].pfo_dedx);
+            _hm.h2_dEdx_nomap[_hm.gen_ipart_reco_K_KdEdx_dist_cos][kKaon]->Fill(pfot.KLPFO[ineg].cos,pfot.KLPFO[ineg].pfo_piddedx_k_dedxdist);
             _hm.h1[_hm.reco_K_pdgcheat]->Fill( 1 );
             break;
           case 211:
-            _hm.h2_dEdx[_hm.gen_ipart_reco_K_dEdx_p][kPion]->Fill(pfot.KLPFO[ineg].p_mag,pfot.KLPFO[ineg].pfo_dedx);
-            _hm.h2_dEdx[_hm.gen_ipart_reco_K_KdEdx_dist_cos][kPion]->Fill(pfot.KLPFO[ineg].cos,pfot.KLPFO[ineg].pfo_piddedx_k_dedxdist);
+            _hm.h2_dEdx_nomap[_hm.gen_ipart_reco_K_dEdx_p][kPion]->Fill(pfot.KLPFO[ineg].p_mag,pfot.KLPFO[ineg].pfo_dedx);
+            _hm.h2_dEdx_nomap[_hm.gen_ipart_reco_K_KdEdx_dist_cos][kPion]->Fill(pfot.KLPFO[ineg].cos,pfot.KLPFO[ineg].pfo_piddedx_k_dedxdist);
             _hm.h1[_hm.reco_K_pdgcheat]->Fill( 0 );
             break;
           case 2212:
-            _hm.h2_dEdx[_hm.gen_ipart_reco_K_dEdx_p][kProton]->Fill(pfot.KLPFO[ineg].p_mag,pfot.KLPFO[ineg].pfo_dedx);
-            _hm.h2_dEdx[_hm.gen_ipart_reco_K_KdEdx_dist_cos][kProton]->Fill(pfot.KLPFO[ineg].cos,pfot.KLPFO[ineg].pfo_piddedx_k_dedxdist);
+            _hm.h2_dEdx_nomap[_hm.gen_ipart_reco_K_dEdx_p][kProton]->Fill(pfot.KLPFO[ineg].p_mag,pfot.KLPFO[ineg].pfo_dedx);
+            _hm.h2_dEdx_nomap[_hm.gen_ipart_reco_K_KdEdx_dist_cos][kProton]->Fill(pfot.KLPFO[ineg].cos,pfot.KLPFO[ineg].pfo_piddedx_k_dedxdist);
             _hm.h1[_hm.reco_K_pdgcheat]->Fill( 2 );
             break;
           case 11:
-            _hm.h2_dEdx[_hm.gen_ipart_reco_K_dEdx_p][kElectron]->Fill(pfot.KLPFO[ineg].p_mag,pfot.KLPFO[ineg].pfo_dedx);
-            _hm.h2_dEdx[_hm.gen_ipart_reco_K_KdEdx_dist_cos][kElectron]->Fill(pfot.KLPFO[ineg].cos,pfot.KLPFO[ineg].pfo_piddedx_k_dedxdist);
+            _hm.h2_dEdx_nomap[_hm.gen_ipart_reco_K_dEdx_p][kElectron]->Fill(pfot.KLPFO[ineg].p_mag,pfot.KLPFO[ineg].pfo_dedx);
+            _hm.h2_dEdx_nomap[_hm.gen_ipart_reco_K_KdEdx_dist_cos][kElectron]->Fill(pfot.KLPFO[ineg].cos,pfot.KLPFO[ineg].pfo_piddedx_k_dedxdist);
             _hm.h1[_hm.reco_K_pdgcheat]->Fill( 3 );
             break;
           case 13:
-            _hm.h2_dEdx[_hm.gen_ipart_reco_K_dEdx_p][kMuon]->Fill(pfot.KLPFO[ineg].p_mag,pfot.KLPFO[ineg].pfo_dedx);
-            _hm.h2_dEdx[_hm.gen_ipart_reco_K_KdEdx_dist_cos][kMuon]->Fill(pfot.KLPFO[ineg].cos,pfot.KLPFO[ineg].pfo_piddedx_k_dedxdist);
+            _hm.h2_dEdx_nomap[_hm.gen_ipart_reco_K_dEdx_p][kMuon]->Fill(pfot.KLPFO[ineg].p_mag,pfot.KLPFO[ineg].pfo_dedx);
+            _hm.h2_dEdx_nomap[_hm.gen_ipart_reco_K_KdEdx_dist_cos][kMuon]->Fill(pfot.KLPFO[ineg].cos,pfot.KLPFO[ineg].pfo_piddedx_k_dedxdist);
             _hm.h1[_hm.reco_K_pdgcheat]->Fill( 4 );
             break;
           default:
@@ -1041,28 +1044,28 @@ namespace QQbarAnalysis
         // cheat
         switch ( abs(pfot.PiLPFO[ineg].pfo_pdgcheat) ) {
           case 321:
-            _hm.h2_dEdx[_hm.gen_ipart_reco_Pi_dEdx_p][kKaon]->Fill(pfot.PiLPFO[ineg].p_mag,pfot.PiLPFO[ineg].pfo_dedx);
-            _hm.h2_dEdx[_hm.gen_ipart_reco_Pi_PidEdx_dist_cos][kKaon]->Fill(pfot.PiLPFO[ineg].cos,pfot.PiLPFO[ineg].pfo_piddedx_pi_dedxdist);
+            _hm.h2_dEdx_nomap[_hm.gen_ipart_reco_Pi_dEdx_p][kKaon]->Fill(pfot.PiLPFO[ineg].p_mag,pfot.PiLPFO[ineg].pfo_dedx);
+            _hm.h2_dEdx_nomap[_hm.gen_ipart_reco_Pi_PidEdx_dist_cos][kKaon]->Fill(pfot.PiLPFO[ineg].cos,pfot.PiLPFO[ineg].pfo_piddedx_pi_dedxdist);
             _hm.h1[_hm.reco_Pi_pdgcheat]->Fill( 1 );
             break;
           case 211:
-            _hm.h2_dEdx[_hm.gen_ipart_reco_Pi_dEdx_p][kPion]->Fill(pfot.PiLPFO[ineg].p_mag,pfot.PiLPFO[ineg].pfo_dedx);
-            _hm.h2_dEdx[_hm.gen_ipart_reco_Pi_PidEdx_dist_cos][kPion]->Fill(pfot.PiLPFO[ineg].cos,pfot.PiLPFO[ineg].pfo_piddedx_pi_dedxdist);
+            _hm.h2_dEdx_nomap[_hm.gen_ipart_reco_Pi_dEdx_p][kPion]->Fill(pfot.PiLPFO[ineg].p_mag,pfot.PiLPFO[ineg].pfo_dedx);
+            _hm.h2_dEdx_nomap[_hm.gen_ipart_reco_Pi_PidEdx_dist_cos][kPion]->Fill(pfot.PiLPFO[ineg].cos,pfot.PiLPFO[ineg].pfo_piddedx_pi_dedxdist);
             _hm.h1[_hm.reco_Pi_pdgcheat]->Fill( 0 );
             break;
           case 2212:
-            _hm.h2_dEdx[_hm.gen_ipart_reco_Pi_dEdx_p][kProton]->Fill(pfot.PiLPFO[ineg].p_mag,pfot.PiLPFO[ineg].pfo_dedx);
-            _hm.h2_dEdx[_hm.gen_ipart_reco_Pi_PidEdx_dist_cos][kProton]->Fill(pfot.PiLPFO[ineg].cos,pfot.KLPFO[ineg].pfo_piddedx_pi_dedxdist);
+            _hm.h2_dEdx_nomap[_hm.gen_ipart_reco_Pi_dEdx_p][kProton]->Fill(pfot.PiLPFO[ineg].p_mag,pfot.PiLPFO[ineg].pfo_dedx);
+            _hm.h2_dEdx_nomap[_hm.gen_ipart_reco_Pi_PidEdx_dist_cos][kProton]->Fill(pfot.PiLPFO[ineg].cos,pfot.KLPFO[ineg].pfo_piddedx_pi_dedxdist);
             _hm.h1[_hm.reco_Pi_pdgcheat]->Fill( 2 );
             break;
           case 11:
-            _hm.h2_dEdx[_hm.gen_ipart_reco_Pi_dEdx_p][kElectron]->Fill(pfot.PiLPFO[ineg].p_mag,pfot.PiLPFO[ineg].pfo_dedx);
-            _hm.h2_dEdx[_hm.gen_ipart_reco_Pi_PidEdx_dist_cos][kElectron]->Fill(pfot.PiLPFO[ineg].cos,pfot.PiLPFO[ineg].pfo_piddedx_pi_dedxdist);
+            _hm.h2_dEdx_nomap[_hm.gen_ipart_reco_Pi_dEdx_p][kElectron]->Fill(pfot.PiLPFO[ineg].p_mag,pfot.PiLPFO[ineg].pfo_dedx);
+            _hm.h2_dEdx_nomap[_hm.gen_ipart_reco_Pi_PidEdx_dist_cos][kElectron]->Fill(pfot.PiLPFO[ineg].cos,pfot.PiLPFO[ineg].pfo_piddedx_pi_dedxdist);
             _hm.h1[_hm.reco_Pi_pdgcheat]->Fill( 3 );
             break;
           case 13:
-            _hm.h2_dEdx[_hm.gen_ipart_reco_Pi_dEdx_p][kMuon]->Fill(pfot.PiLPFO[ineg].p_mag,pfot.PiLPFO[ineg].pfo_dedx);
-            _hm.h2_dEdx[_hm.gen_ipart_reco_Pi_PidEdx_dist_cos][kMuon]->Fill(pfot.PiLPFO[ineg].cos,pfot.PiLPFO[ineg].pfo_piddedx_pi_dedxdist);
+            _hm.h2_dEdx_nomap[_hm.gen_ipart_reco_Pi_dEdx_p][kMuon]->Fill(pfot.PiLPFO[ineg].p_mag,pfot.PiLPFO[ineg].pfo_dedx);
+            _hm.h2_dEdx_nomap[_hm.gen_ipart_reco_Pi_PidEdx_dist_cos][kMuon]->Fill(pfot.PiLPFO[ineg].cos,pfot.PiLPFO[ineg].pfo_piddedx_pi_dedxdist);
             _hm.h1[_hm.reco_Pi_pdgcheat]->Fill( 4 );
             break;
           default:
