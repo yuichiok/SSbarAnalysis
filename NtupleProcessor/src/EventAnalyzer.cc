@@ -85,11 +85,6 @@ namespace QQbarAnalysis
     PolarAngleGen(mct);
   }
 
-  void EventAnalyzer::AnalyzeGenReco(PFOTools mct, PFOTools pfot)
-  {
-    Mom_Polar_Gen(mct,pfot);
-  }
-
   void EventAnalyzer::AnalyzeReco(Long64_t entry)
   {
     // MC, PFO Analysis
@@ -98,11 +93,6 @@ namespace QQbarAnalysis
 
     ientry = entry;
     // cout << "evt: " << entry << endl;
-    AnalyzeGenReco(mct,pfot);
-
-    if ( !pfot.ValidPFO() ) {
-      _eve.eve_valid_lpfo = 0;
-    }else{ _eve.eve_valid_lpfo = 1; }
 
     // jet info
     VectorTools jetvt[2];
@@ -122,24 +112,44 @@ namespace QQbarAnalysis
 
     for (auto i_lmode : _pt.PFO_mode){
 
-      // check if jets on both sides are not empty
-      CutTriggerMap[i_lmode]["jet_association"] = _eve.eve_valid_lpfo;
+      unordered_map<int, PFO_Info> LPFOs = pfot.LPFO_.at(i_lmode);
 
+      // check single track
+      CutTriggerMap[i_lmode]["single_track"] = LPFOs.at(0).pfo_ntracks == 1 && LPFOs.at(1).pfo_ntracks == 1;
 
-      // Base Selection (mom, tpc_hit, offset)
-      Bool_t is_double_quality = true;
-      for ( int ijet=0; ijet<2; ijet++ ){
-        if( !pfot.LPFO_Quality_checks(pfot.LPFO_.at(i_lmode).at(ijet)) ) is_double_quality = false;
-      }
-      CutTriggerMap[i_lmode]["quality"] = is_double_quality;
+      // check dEdx dist default value problem
+      CutTriggerMap[i_lmode]["dEdx_dist"] = pfot.is_dEdxdist_bad( LPFOs.at(0).pfo_piddedx_e_dedxdist,
+                                                                  LPFOs.at(0).pfo_piddedx_mu_dedxdist,
+                                                                  LPFOs.at(0).pfo_piddedx_pi_dedxdist,
+                                                                  LPFOs.at(0).pfo_piddedx_k_dedxdist,
+                                                                  LPFOs.at(0).pfo_piddedx_pi_dedxdist) &&
+                                            pfot.is_dEdxdist_bad( LPFOs.at(1).pfo_piddedx_e_dedxdist,
+                                                                  LPFOs.at(1).pfo_piddedx_mu_dedxdist,
+                                                                  LPFOs.at(1).pfo_piddedx_pi_dedxdist,
+                                                                  LPFOs.at(1).pfo_piddedx_k_dedxdist,
+                                                                  LPFOs.at(1).pfo_piddedx_pi_dedxdist);
+
+      // check momentum
+      CutTriggerMap[i_lmode]["momentum"] = pfot.is_momentum( LPFOs.at(0), _anCfg.LPFO_p_min, _anCfg.LPFO_p_max ) &&
+                                           pfot.is_momentum( LPFOs.at(1), _anCfg.LPFO_p_min, _anCfg.LPFO_p_max );
+
+      // check tpc hits
+      CutTriggerMap[i_lmode]["tpc_hits"] = pfot.is_tpc_hits( LPFOs.at(0), _anCfg.PFO_TPCHits_min ) &&
+                                           pfot.is_tpc_hits( LPFOs.at(1), _anCfg.PFO_TPCHits_min );
+
+      // check offsets
+      CutTriggerMap[i_lmode]["offset"] = pfot.is_offset_small( LPFOs.at(0), _anCfg.PFO_offset_max ) &&
+                                         pfot.is_offset_small( LPFOs.at(1), _anCfg.PFO_offset_max );
       
       // SPFO opposite check
       vector<Bool_t> is_SPFO_charge_opposite(2,false);
       for ( int ijet=0; ijet<2; ijet++ ){
-        for ( auto iSPFO : pfot.SPFOs_.at(i_lmode).at(ijet) ){
-          Bool_t charge_opposite = iSPFO.pfo_charge * pfot.LPFO_.at(i_lmode).at(ijet).pfo_charge < 0;
-          Bool_t momentum_above  = iSPFO.p_mag > 10;
-          if( charge_opposite && momentum_above ) is_SPFO_charge_opposite.at(ijet) = true;
+        if( pfot.PFO_jet[ijet].size() > 1 ){
+          for ( auto iSPFO : pfot.SPFOs_.at(i_lmode).at(ijet) ){
+            Bool_t charge_opposite = iSPFO.pfo_charge * pfot.LPFO_.at(i_lmode).at(ijet).pfo_charge < 0;
+            Bool_t momentum_above  = iSPFO.p_mag > 10;
+            if( charge_opposite && momentum_above ) is_SPFO_charge_opposite.at(ijet) = true;
+          }
         }
       }
       CutTriggerMap[i_lmode]["SPFO"] = std::none_of(is_SPFO_charge_opposite.begin(), is_SPFO_charge_opposite.end(), [](bool v) { return v; });
@@ -155,6 +165,7 @@ namespace QQbarAnalysis
 
     }
 
+///////////////////////////////////////////
     // Valid LPFO
     CutTrigger[kKaon].push_back(_eve.eve_valid_lpfo);
     CutTrigger[kPion].push_back(_eve.eve_valid_lpfo);
@@ -212,6 +223,7 @@ namespace QQbarAnalysis
 
     CutTrigger[kKaon].push_back(charge_check[kKaon]);
     CutTrigger[kPion].push_back(charge_check[kPion]);
+///////////////////////////////////////////
 
     // Try Stability and Purity Calculation here.
     // Kaon Efficiency
@@ -275,7 +287,7 @@ namespace QQbarAnalysis
       h_n_gen_particles[i] = new TH1F(TString::Format("h_n_gen_particles%d",i),TString::Format("h_n_gen_particles%d",i),40,-1,1);
     }
 
-    std::vector<PFO_Info> PFO_Collection = pfot.Get_Valid_PFOs();
+    std::vector<PFO_Info> PFO_Collection = pfot.Valid_PFOs;
     _data.n_valid_pfo = PFO_Collection.size();
 
     for ( long unsigned int i=0; i < PFO_Collection.size(); i++ )
@@ -598,7 +610,7 @@ namespace QQbarAnalysis
 
   Int_t *EventAnalyzer::Gen_Reco_Stats_Stable( PFOTools mct, PFOTools pfot, SelectID pid, Float_t cos_min, Float_t cos_max )
   {
-    std::vector<PFO_Info> PFO_Collection = pfot.Get_Valid_PFOs();
+    std::vector<PFO_Info> PFO_Collection = pfot.Valid_PFOs;
 
     Float_t p_min = _anCfg.PFO_p_min;
 
@@ -835,40 +847,12 @@ namespace QQbarAnalysis
 
   }
 
-  void EventAnalyzer::Mom_Polar_Gen(PFOTools mct, PFOTools pfot)
-  {
-    Int_t cnt_gen_K = 0;
-    Int_t cnt_reco_K = 0;
-
-    // Gen K
-    for ( int istable=0; istable < _mc.mc_stable_n; istable++ ){
-
-      if(abs(_mc.mc_stable_pdg[istable]) == 321 && 20 < mct.mc_stable[istable].p_mag) {
-        cnt_gen_K++;
-        _hm.h2[_hm.gen_K_p_cos]->Fill(mct.mc_stable[istable].cos,mct.mc_stable[istable].p_mag);
-      }
-    }
-
-    // PFO cheat K
-    for ( int ipfo=0; ipfo < _pfo.pfo_n; ipfo++ ){
-      VectorTools vt(_pfo.pfo_px[ipfo], _pfo.pfo_py[ipfo], _pfo.pfo_pz[ipfo], _pfo.pfo_E[ipfo]);
-      Float_t pfo_p_mag = (Float_t) vt.v3().R();
-      Float_t pfo_cos   = std::cos(vt.v3().Theta());
-
-      if(abs(_pfo.pfo_pdgcheat[ipfo]) == 321 && 20 < pfo_p_mag) {
-        cnt_reco_K++;
-        _hm.h2[_hm.reco_K_p_cos]->Fill(pfo_cos,pfo_p_mag);
-      }
-    }
-
-  }
-
   void EventAnalyzer::ProcessDoubleTag(PFOTools pfot, PFOTools mct, unordered_map< TString, unordered_map<TString, Bool_t> > cuts)
   {
     unordered_map< TString, vector<Bool_t> > is_pass;
     for( auto i_lmode : _pt.PFO_mode ){
-      for( auto icut : cut_names ){
-        if( icut != "charge" ) is_pass.at(i_lmode).push_back(cuts.at(i_lmode).at(icut));
+      for ( const auto &[key, cut_val]: cuts.at(i_lmode) ) {
+        if( key != "charge" ) is_pass[i_lmode].push_back(cut_val);
       }
     }
 
