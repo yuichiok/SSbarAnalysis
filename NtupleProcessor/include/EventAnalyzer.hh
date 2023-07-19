@@ -49,7 +49,6 @@ namespace QQbarAnalysis
       void             WriteFile();
 
       void             AnalyzeGen();
-      void             AnalyzeGenReco(PFOTools mct, PFOTools pfot);
       void             AnalyzeReco( Long64_t entry );
       
       Bool_t           Select( Selector s );          // Evaluates the class' list of event selection criteria
@@ -71,7 +70,6 @@ namespace QQbarAnalysis
 
     // Histogram extractor
       void             PolarAngleGen( PFOTools mct );
-      void             Mom_Polar_Gen( PFOTools mct, PFOTools pfot );
       void             ProcessDoubleTag( PFOTools pfot, PFOTools mct, vector<Bool_t> cuts[3], PDGConfig double_tag[3]);
       void             ProcessDoubleTag( PFOTools pfot, PFOTools mct, unordered_map< TString, unordered_map<TString, Bool_t> > cuts );
       void             PolarAngle_acc_rej( PFOTools pfot, vector<Bool_t> cuts, Bool_t ss_config );
@@ -86,9 +84,6 @@ namespace QQbarAnalysis
     // Extra data
       long patEventsAnalyzed;     // Number of events that were processed to make the Ntuple.
       long entriesInNtuple  ;     // Number of events that were processed to make the Ntuple.
-
-    // List of cut names
-      vector<TString> cut_names = {"jet_association","quality","SPFO","charge","PID"};
 
     private:
 

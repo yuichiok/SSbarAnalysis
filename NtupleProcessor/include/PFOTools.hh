@@ -34,9 +34,7 @@ namespace QQbarAnalysis
       enum   ParticleID   { kKaon, kPion, kProton };
 
       virtual vector<PFO_Info>  SortJet  ( vector<PFO_Info> jet );
-      virtual Bool_t            ValidPFO ();
 
-      virtual vector<PFO_Info>  Get_Valid_PFOs    ();
       virtual vector<PFO_Info>  GetJet            ( int ijet );
       virtual vector<PFO_Info>  GetSortedJet      ( int ijet );
       virtual PFO_Info          Get_Particle_LPFO ( int ijet, ParticleID pdg );
@@ -53,6 +51,7 @@ namespace QQbarAnalysis
       virtual Bool_t           is_charge_config ( ChargeConfig cc, Int_t charge0, Int_t charge1 );
 
       virtual Bool_t           LPFO_Quality_checks   ( PFO_Info iPFO );
+      // virtual Bool_t           is_single_track       ( PFO_Info iPFO );
       virtual Bool_t           is_momentum           ( PFO_Info iPFO, Float_t MINP, Float_t MAXP );
       virtual Bool_t           is_tpc_hits           ( PFO_Info iPFO, Int_t MIN_TPC_HITS );
       virtual Bool_t           is_offset_small       ( PFO_Info iPFO, Int_t MAX_OFFSET );
@@ -69,6 +68,7 @@ namespace QQbarAnalysis
       vector<PFO_Info> PFO_jet[2];
       vector<PFO_Info> PFO_cheat_Ks[2];
       vector<PFO_Info> PFO_cheat_Pis[2];
+      vector<PFO_Info> Valid_PFOs;
 
     // Leading/Sub-Leading PFOs
       PFO_Info LPFO[2];
