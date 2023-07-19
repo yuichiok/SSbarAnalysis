@@ -16,17 +16,17 @@
 #include "FileSelector.hh"
 #include "HistManager.hh"
 #include "AnalysisConfig.hh"
+#include "MapTString.hh"
 
 #include <TString.h>
 #include <TROOT.h>
 #include <TChain.h>
 #include <TFile.h>
 
-#include <map>
 #include <vector>
 #include <fstream>
 
-using std::map;
+using std::unordered_map;
 
 namespace QQbarAnalysis
 {
@@ -73,7 +73,7 @@ namespace QQbarAnalysis
       void             PolarAngleGen( PFOTools mct );
       void             Mom_Polar_Gen( PFOTools mct, PFOTools pfot );
       void             ProcessDoubleTag( PFOTools pfot, PFOTools mct, vector<Bool_t> cuts[3], PDGConfig double_tag[3]);
-      void             ProcessDoubleTag( PFOTools pfot, PFOTools mct, map< TString, map<TString, Bool_t> > cuts );
+      void             ProcessDoubleTag( PFOTools pfot, PFOTools mct, unordered_map< TString, unordered_map<TString, Bool_t> > cuts );
       void             PolarAngle_acc_rej( PFOTools pfot, vector<Bool_t> cuts, Bool_t ss_config );
 
       void             Jet_sum_n_acol();

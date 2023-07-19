@@ -9,14 +9,15 @@
  Takes input variables (datasets, configurations, etc) and sets up the
  appropriate classes to handle each portion of the analysis process.
 ------------------------------------------------------------------------------*/
-#include <map>
+#include "MapTString.hh"
+#include "EventAnalyzer.hh"
+
 #include <sstream>
 #include <vector>
 #include <TBranch.h>
 #include <TChain.h>
 #include <TSelector.h>
 #include <TTree.h>
-#include "EventAnalyzer.hh"
 
 typedef unsigned long counter;
 

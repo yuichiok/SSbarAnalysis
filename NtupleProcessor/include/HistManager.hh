@@ -4,14 +4,14 @@
 #include "PFOTools.hh"
 
 #include <iostream>
-#include <map>
+
 #include <TString.h>
 #include <TH1.h>
 #include <TH2.h>
 #include <TList.h>
 #include <TFile.h>
 
-using std::map;
+using std::unordered_map;
 
 namespace QQbarAnalysis
 {
@@ -85,7 +85,7 @@ namespace QQbarAnalysis
       };
       TH1F * h1[Last_h1];
 
-      map< TString, map< TString, TH1F* > > h1_cos; // [LPFO][hist]
+      unordered_map< TString, unordered_map< TString, TH1F* > > h1_cos; // [LPFO][hist]
 
       enum h1_pq_index {
         // KID
@@ -190,7 +190,7 @@ namespace QQbarAnalysis
       };
       TH2F * h2_dEdx_nomap[Last_h2_dEdx_nomap][Last_particle_List];
 
-      map< TString, map< TString, map< TString, TH2F* > > > h2_dEdx; // [LPFO][TruthID][hist]
+      unordered_map< TString, unordered_map< TString, unordered_map< TString, TH2F* > > > h2_dEdx; // [LPFO][TruthID][hist]
 
     private:
     // Lists

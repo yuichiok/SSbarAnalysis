@@ -8,15 +8,15 @@
 ------------------------------------------------------------------------------*/
 #include "TreeStructures.hh"
 #include "AnalysisConfig.hh"
+#include "MapTString.hh"
 
 #include <TString.h>
 #include <TFile.h>
 #include <TTree.h>
 
 #include <vector>
-#include <map>
 
-using std::vector; using std::map;
+using std::vector; using std::unordered_map;
 
 namespace QQbarAnalysis
 {
@@ -72,8 +72,8 @@ namespace QQbarAnalysis
 
     // Leading/Sub-Leading PFOs
       PFO_Info LPFO[2];
-      map< TString, map<int, PFO_Info> > LPFO_;
-      map< TString, map<int, vector<PFO_Info> > > SPFOs_;
+      unordered_map< TString, unordered_map<int, PFO_Info> > LPFO_;
+      unordered_map< TString, unordered_map<int, vector<PFO_Info> > > SPFOs_;
 
       PFO_Info KLPFO[2];
       PFO_Info PiLPFO[2];
@@ -88,7 +88,7 @@ namespace QQbarAnalysis
     // PFO modes and types
       vector<TString> PFO_mode  = {"K","Pi"};
       vector<TString> PFO_type  = {"K","Pi", "p", "e", "mu"};
-      map<Int_t,TString> PFO_type_map = { {321,"K"}, {211,"Pi"}, {2212,"p"}, {11,"e"}, {13,"mu"} };
+      unordered_map<Int_t,TString> PFO_type_map = { {321,"K"}, {211,"Pi"}, {2212,"p"}, {11,"e"}, {13,"mu"} };
 
 
     private:

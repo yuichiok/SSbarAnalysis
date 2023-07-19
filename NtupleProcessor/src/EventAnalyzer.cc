@@ -118,7 +118,7 @@ namespace QQbarAnalysis
     ////////////////
 
     vector<Bool_t> CutTrigger[3];    
-    map< TString, map<TString, Bool_t> > CutTriggerMap; // [particle][cutname]
+    unordered_map< TString, unordered_map<TString, Bool_t> > CutTriggerMap; // [particle][cutname]
 
     for (auto i_lmode : _pt.PFO_mode){
 
@@ -862,9 +862,9 @@ namespace QQbarAnalysis
 
   }
 
-  void EventAnalyzer::ProcessDoubleTag(PFOTools pfot, PFOTools mct, map< TString, map<TString, Bool_t> > cuts)
+  void EventAnalyzer::ProcessDoubleTag(PFOTools pfot, PFOTools mct, unordered_map< TString, unordered_map<TString, Bool_t> > cuts)
   {
-    map< TString, vector<Bool_t> > is_pass;
+    unordered_map< TString, vector<Bool_t> > is_pass;
     for( auto i_lmode : _pt.PFO_mode ){
       for( auto icut : cut_names ){
         if( icut != "charge" ) is_pass[i_lmode].push_back(cuts[i_lmode][icut]);
