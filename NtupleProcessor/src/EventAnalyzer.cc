@@ -877,15 +877,15 @@ namespace QQbarAnalysis
 
       if( isPass ){
 
-        Int_t ineg     = pfot.LPFO_[i_lmode][0].pfo_charge > 0 ;
-        Int_t ineg_gen = _mc.mc_quark_charge[0] > 0;
+        Int_t ineg             = pfot.LPFO_[i_lmode][0].pfo_charge > 0 ;
+        PFO_Info LPFO          = pfot.LPFO_[i_lmode][ineg];
+        PFO_Info LPFO_opposite = pfot.LPFO_[i_lmode][1-ineg];
 
         if( cuts[i_lmode]["charge"] ){
 
-          PFO_Info LPFO = pfot.LPFO_[i_lmode][ineg];
-
           _hm.h1_cos[i_lmode]["cos"]->Fill( LPFO.cos );
           _hm.h1_cos[i_lmode]["qcos"]->Fill( LPFO.qcos );
+          _hm.h1_cos[i_lmode]["acc_cos"]->Fill( LPFO.qcos );
 
           Float_t scos = abs(LPFO.cos) * sgn( -_mc.mc_quark_charge[0] ) * mct.mc_quark[0].cos / abs(mct.mc_quark[0].cos);
           _hm.h1_cos[i_lmode]["scos"]->Fill( scos );
@@ -898,6 +898,9 @@ namespace QQbarAnalysis
           }
 
         }else{
+
+          _hm.h1_cos[i_lmode]["rej_cos"]->Fill( LPFO.cos );
+          _hm.h1_cos[i_lmode]["rej_cos"]->Fill( -LPFO_opposite.cos );
 
         } // charge consistency check
 

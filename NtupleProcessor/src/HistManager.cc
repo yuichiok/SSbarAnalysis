@@ -49,7 +49,7 @@ namespace QQbarAnalysis
     */
 
     // Mapping
-    vector<TString> hcos_name = {"cos","qcos","scos"};
+    vector<TString> hcos_name = {"cos","qcos","scos","acc_cos","rej_cos"};
     for( auto i_lmode : _pt.PFO_mode ){
       for( auto iname : hcos_name){
         TString hname = "h_" + i_lmode + "_" + iname;
