@@ -30,7 +30,7 @@ class AnalysisConfig
     std::vector<int> gen_quarks;
 
   // PFO cuts
-    int   PFO_TPCHits_max;
+    int   PFO_TPCHits_min;
     float PFO_p_min;
     float PFO_p_max;
     float PFO_offset_max;
