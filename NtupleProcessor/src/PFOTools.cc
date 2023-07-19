@@ -183,6 +183,7 @@ namespace QQbarAnalysis
     }
 
     if( ValidPFO() ){
+
       for (int ijet=0; ijet < 2; ijet++){
         LPFO[ijet]        = GetSortedJet(ijet).at(0);
         LPFO_["K"][ijet]  = Get_Particle_LPFO(ijet,kKaon);
@@ -197,11 +198,11 @@ namespace QQbarAnalysis
           // SPFOs[ijet].erase(SPFOs[ijet].begin());
           pop_front(SPFOs[ijet]); // faster algorithm wise?
 
-          std::copy_if(SPFOs[ijet].begin(), SPFOs[ijet].end(), std::back_inserter(SPFOs_["K"][ijet]), [](PFO_Info iPFO) {
+          std::copy_if(SPFOs[ijet].begin(), SPFOs[ijet].end(), std::back_inserter(SPFOs_.at("K").at(ijet)), [](PFO_Info iPFO) {
               return isKaon(iPFO);
           });
 
-          std::copy_if(SPFOs[ijet].begin(), SPFOs[ijet].end(), std::back_inserter(SPFOs_["Pi"][ijet]), [](PFO_Info iPFO) {
+          std::copy_if(SPFOs[ijet].begin(), SPFOs[ijet].end(), std::back_inserter(SPFOs_.at("Pi").at(ijet)), [](PFO_Info iPFO) {
               return isPion(iPFO);
           });
 
@@ -357,7 +358,7 @@ namespace QQbarAnalysis
 
   Bool_t PFOTools::is_PID_config( TString lmode )
   {
-    return is_PID( lmode, LPFO_[lmode][0] ) && is_PID( lmode, LPFO_[lmode][1] );
+    return is_PID( lmode, LPFO_.at(lmode).at(0) ) && is_PID( lmode, LPFO_.at(lmode).at(1) );
   }
 
   Bool_t PFOTools::is_charge_config( ChargeConfig cc, Int_t charge0 , Int_t charge1 )
@@ -431,7 +432,7 @@ namespace QQbarAnalysis
     for( int ijet=0; ijet < 2; ijet++ ){
       for( auto lmode : PFO_mode ){
         if( mode == lmode ) continue;
-        if( LPFO_[mode][ijet].p_mag < LPFO_[lmode][ijet].p_mag ){
+        if( LPFO_[mode].at(ijet).p_mag < LPFO_.at(lmode).at(ijet).p_mag ){
           return false;
         }
       }

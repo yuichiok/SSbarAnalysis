@@ -124,19 +124,20 @@ namespace QQbarAnalysis
 
       // check if jets on both sides are not empty
       CutTriggerMap[i_lmode]["jet_association"] = _eve.eve_valid_lpfo;
-      
+
+
       // Base Selection (mom, tpc_hit, offset)
       Bool_t is_double_quality = true;
       for ( int ijet=0; ijet<2; ijet++ ){
-        if( !pfot.LPFO_Quality_checks(pfot.LPFO_[i_lmode][ijet]) ) is_double_quality = false;
+        if( !pfot.LPFO_Quality_checks(pfot.LPFO_.at(i_lmode).at(ijet)) ) is_double_quality = false;
       }
       CutTriggerMap[i_lmode]["quality"] = is_double_quality;
       
       // SPFO opposite check
       vector<Bool_t> is_SPFO_charge_opposite(2,false);
       for ( int ijet=0; ijet<2; ijet++ ){
-        for ( auto iSPFO : pfot.SPFOs_[i_lmode][ijet] ){
-          Bool_t charge_opposite = iSPFO.pfo_charge * pfot.LPFO_[i_lmode][ijet].pfo_charge < 0;
+        for ( auto iSPFO : pfot.SPFOs_.at(i_lmode).at(ijet) ){
+          Bool_t charge_opposite = iSPFO.pfo_charge * pfot.LPFO_.at(i_lmode).at(ijet).pfo_charge < 0;
           Bool_t momentum_above  = iSPFO.p_mag > 10;
           if( charge_opposite && momentum_above ) is_SPFO_charge_opposite.at(ijet) = true;
         }
@@ -144,7 +145,7 @@ namespace QQbarAnalysis
       CutTriggerMap[i_lmode]["SPFO"] = std::none_of(is_SPFO_charge_opposite.begin(), is_SPFO_charge_opposite.end(), [](bool v) { return v; });
 
       // Charge opposite check
-      CutTriggerMap[i_lmode]["charge"] = pfot.is_charge_config(pfot.kOpposite,pfot.LPFO_[i_lmode][0].pfo_charge,pfot.LPFO_[i_lmode][1].pfo_charge);
+      CutTriggerMap[i_lmode]["charge"] = pfot.is_charge_config(pfot.kOpposite,pfot.LPFO_.at(i_lmode).at(0).pfo_charge,pfot.LPFO_.at(i_lmode).at(1).pfo_charge);
 
       // Particle ID both sides
       CutTriggerMap[i_lmode]["PID"]    = pfot.is_PID_config( i_lmode );
@@ -867,40 +868,40 @@ namespace QQbarAnalysis
     unordered_map< TString, vector<Bool_t> > is_pass;
     for( auto i_lmode : _pt.PFO_mode ){
       for( auto icut : cut_names ){
-        if( icut != "charge" ) is_pass[i_lmode].push_back(cuts[i_lmode][icut]);
+        if( icut != "charge" ) is_pass.at(i_lmode).push_back(cuts.at(i_lmode).at(icut));
       }
     }
 
     for( auto i_lmode : _pt.PFO_mode ){
 
-      Bool_t isPass = std::all_of(is_pass[i_lmode].begin(), is_pass[i_lmode].end(), [](bool v) { return v; });
+      Bool_t isPass = std::all_of(is_pass.at(i_lmode).begin(), is_pass.at(i_lmode).end(), [](bool v) { return v; });
 
       if( isPass ){
 
-        Int_t ineg             = pfot.LPFO_[i_lmode][0].pfo_charge > 0 ;
-        PFO_Info LPFO          = pfot.LPFO_[i_lmode][ineg];
-        PFO_Info LPFO_opposite = pfot.LPFO_[i_lmode][1-ineg];
+        Int_t ineg             = pfot.LPFO_.at(i_lmode).at(0).pfo_charge > 0 ;
+        PFO_Info LPFO          = pfot.LPFO_.at(i_lmode).at(ineg);
+        PFO_Info LPFO_opposite = pfot.LPFO_.at(i_lmode).at(1-ineg);
 
-        if( cuts[i_lmode]["charge"] ){
+        if( cuts.at(i_lmode).at("charge") ){
 
-          _hm.h1_cos[i_lmode]["cos"]->Fill( LPFO.cos );
-          _hm.h1_cos[i_lmode]["qcos"]->Fill( LPFO.qcos );
-          _hm.h1_cos[i_lmode]["acc_cos"]->Fill( LPFO.qcos );
+          _hm.h1_cos.at(i_lmode).at("cos")->Fill( LPFO.cos );
+          _hm.h1_cos.at(i_lmode).at("qcos")->Fill( LPFO.qcos );
+          _hm.h1_cos.at(i_lmode).at("acc_cos")->Fill( LPFO.qcos );
 
           Float_t scos = abs(LPFO.cos) * sgn( -_mc.mc_quark_charge[0] ) * mct.mc_quark[0].cos / abs(mct.mc_quark[0].cos);
-          _hm.h1_cos[i_lmode]["scos"]->Fill( scos );
+          _hm.h1_cos.at(i_lmode).at("scos")->Fill( scos );
 
           auto it = _pt.PFO_type_map.find(LPFO.pfo_pdgcheat);
           if( it != _pt.PFO_type_map.end() ){
             TString type = it->second;
-            _hm.h2_dEdx[i_lmode][type]["dEdx_p"]->Fill( LPFO.p_mag, LPFO.pfo_dedx );
-            _hm.h2_dEdx[i_lmode][type]["dEdx_dist_cos"]->Fill( LPFO.p_mag, pfot.Get_dEdx_dist(LPFO, i_lmode) );
+            _hm.h2_dEdx.at(i_lmode).at(type).at("dEdx_p")->Fill( LPFO.p_mag, LPFO.pfo_dedx );
+            _hm.h2_dEdx.at(i_lmode).at(type).at("dEdx_dist_cos")->Fill( LPFO.p_mag, pfot.Get_dEdx_dist(LPFO, i_lmode) );
           }
 
         }else{
 
-          _hm.h1_cos[i_lmode]["rej_cos"]->Fill( LPFO.cos );
-          _hm.h1_cos[i_lmode]["rej_cos"]->Fill( -LPFO_opposite.cos );
+          _hm.h1_cos.at(i_lmode).at("rej_cos")->Fill( LPFO.cos );
+          _hm.h1_cos.at(i_lmode).at("rej_cos")->Fill( -LPFO_opposite.cos );
 
         } // charge consistency check
 
