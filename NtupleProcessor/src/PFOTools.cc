@@ -78,6 +78,8 @@ namespace QQbarAnalysis
                           data->pfo_piddedx_k_dedxdist[ipfo],
                           data->pfo_piddedx_p_dedxdist[ipfo]);
 
+      if( no_match01 || single_track || dEdx_dist_bad ) continue;
+
       VectorTools vt(data->pfo_px[ipfo], data->pfo_py[ipfo], data->pfo_pz[ipfo], data->pfo_E[ipfo]);
 
       // Initialize & categorize PFO variables with different jets
@@ -175,69 +177,69 @@ namespace QQbarAnalysis
       PFO.cos           = std::cos(PFO.vt.v3().Theta());
       PFO.qcos          = (PFO.pfo_charge < 0) ? PFO.cos : -PFO.cos;
 
+      Valid_PFOs.push_back(PFO);
       PFO_jet[ijet].push_back(PFO);
       if( abs(PFO.pfo_pdgcheat) == 321 ) PFO_cheat_Ks[ijet].push_back(PFO);
       if( abs(PFO.pfo_pdgcheat) == 211 ) PFO_cheat_Pis[ijet].push_back(PFO);
-      if( !(no_match01 || single_track || dEdx_dist_bad) ){
-        Valid_PFOs.push_back(PFO);
-      }
 
     }
 
-    for (int ijet=0; ijet < 2; ijet++){
-      LPFO[ijet]        = GetSortedJet(ijet).at(0);
-      LPFO_["K"][ijet]  = Get_Particle_LPFO(ijet,kKaon);
-      LPFO_["Pi"][ijet] = Get_Particle_LPFO(ijet,kPion);
+    if( is_jet_mult_non0() ){
+      for (int ijet=0; ijet < 2; ijet++){
+        LPFO[ijet]        = GetSortedJet(ijet).at(0);
+        LPFO_["K"][ijet]  = Get_Particle_LPFO(ijet,kKaon);
+        LPFO_["Pi"][ijet] = Get_Particle_LPFO(ijet,kPion);
 
-      KLPFO[ijet]       = Get_Particle_LPFO(ijet,kKaon);
-      PiLPFO[ijet]      = Get_Particle_LPFO(ijet,kPion);
+        KLPFO[ijet]       = Get_Particle_LPFO(ijet,kKaon);
+        PiLPFO[ijet]      = Get_Particle_LPFO(ijet,kPion);
 
-      // Reconstructed PFO
-      if( PFO_jet[ijet].size() > 1 ){
-        SPFOs[ijet] = GetSortedJet(ijet);
-        // SPFOs[ijet].erase(SPFOs[ijet].begin());
-        pop_front(SPFOs[ijet]); // faster algorithm wise?
+        // Reconstructed PFO
+        if( PFO_jet[ijet].size() > 1 ){
+          SPFOs[ijet] = GetSortedJet(ijet);
+          // SPFOs[ijet].erase(SPFOs[ijet].begin());
+          pop_front(SPFOs[ijet]); // faster algorithm wise?
 
-        std::copy_if(SPFOs[ijet].begin(), SPFOs[ijet].end(), std::back_inserter(SPFOs_["K"][ijet]), [](PFO_Info iPFO) {
-            return isKaon(iPFO);
-        });
+          std::copy_if(SPFOs[ijet].begin(), SPFOs[ijet].end(), std::back_inserter(SPFOs_["K"][ijet]), [](PFO_Info iPFO) {
+              return isKaon(iPFO);
+          });
 
-        std::copy_if(SPFOs[ijet].begin(), SPFOs[ijet].end(), std::back_inserter(SPFOs_["Pi"][ijet]), [](PFO_Info iPFO) {
-            return isPion(iPFO);
-        });
+          std::copy_if(SPFOs[ijet].begin(), SPFOs[ijet].end(), std::back_inserter(SPFOs_["Pi"][ijet]), [](PFO_Info iPFO) {
+              return isPion(iPFO);
+          });
 
-        // delete here afterwards
+          // delete here afterwards
 
-        std::copy_if(SPFOs[ijet].begin(), SPFOs[ijet].end(), std::back_inserter(SPFOs_K[ijet]), [](PFO_Info iPFO) {
-            return isKaon(iPFO);
-        });
+          std::copy_if(SPFOs[ijet].begin(), SPFOs[ijet].end(), std::back_inserter(SPFOs_K[ijet]), [](PFO_Info iPFO) {
+              return isKaon(iPFO);
+          });
 
-        std::copy_if(SPFOs[ijet].begin(), SPFOs[ijet].end(), std::back_inserter(SPFOs_Pi[ijet]), [](PFO_Info iPFO) {
-            return isPion(iPFO);
-        });
+          std::copy_if(SPFOs[ijet].begin(), SPFOs[ijet].end(), std::back_inserter(SPFOs_Pi[ijet]), [](PFO_Info iPFO) {
+              return isPion(iPFO);
+          });
 
-        //////
+          //////
 
-      }
-
-      // Cheated PFO
-      if( PFO_cheat_Ks[0].size() && PFO_cheat_Ks[1].size() ){
-        cheat_KLPFO[ijet] = SortJet(PFO_cheat_Ks[ijet]).at(0);
-        if( PFO_cheat_Ks[ijet].size() > 1 ){
-          SPFOs_cheat_K[ijet] = PFO_cheat_Ks[ijet];
-          pop_front(SPFOs_cheat_K[ijet]);
         }
-      }
 
-      if( PFO_cheat_Pis[0].size() && PFO_cheat_Pis[1].size() ){
-        cheat_PiLPFO[ijet] = SortJet(PFO_cheat_Pis[ijet]).at(0);
-        if( PFO_cheat_Pis[ijet].size() > 1 ){
-          SPFOs_cheat_Pi[ijet] = PFO_cheat_Pis[ijet];
-          pop_front(SPFOs_cheat_Pi[ijet]);
+        // Cheated PFO
+        if( PFO_cheat_Ks[0].size() && PFO_cheat_Ks[1].size() ){
+          cheat_KLPFO[ijet] = SortJet(PFO_cheat_Ks[ijet]).at(0);
+          if( PFO_cheat_Ks[ijet].size() > 1 ){
+            SPFOs_cheat_K[ijet] = PFO_cheat_Ks[ijet];
+            pop_front(SPFOs_cheat_K[ijet]);
+          }
         }
-      }
 
-    } // end jet loop
+        if( PFO_cheat_Pis[0].size() && PFO_cheat_Pis[1].size() ){
+          cheat_PiLPFO[ijet] = SortJet(PFO_cheat_Pis[ijet]).at(0);
+          if( PFO_cheat_Pis[ijet].size() > 1 ){
+            SPFOs_cheat_Pi[ijet] = PFO_cheat_Pis[ijet];
+            pop_front(SPFOs_cheat_Pi[ijet]);
+          }
+        }
+
+      } // end jet loop
+    }
 
   }
 
@@ -340,6 +342,14 @@ namespace QQbarAnalysis
   Bool_t PFOTools::is_PID_config( TString lmode )
   {
     return is_PID( lmode, LPFO_.at(lmode).at(0) ) && is_PID( lmode, LPFO_.at(lmode).at(1) );
+  }
+
+  Bool_t PFOTools::is_jet_mult_non0()
+  {
+    for ( auto iPFO_jet : PFO_jet ) {
+        if( !iPFO_jet.size() ) return false;
+    }
+    return true;
   }
 
   Bool_t PFOTools::is_charge_config( ChargeConfig cc, Int_t charge0 , Int_t charge1 )

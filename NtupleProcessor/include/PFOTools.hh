@@ -48,6 +48,7 @@ namespace QQbarAnalysis
 
     // LPFO checks
       virtual Bool_t           is_PID_config    ( TString lmode );
+      virtual Bool_t           is_jet_mult_non0 ();
       virtual Bool_t           is_charge_config ( ChargeConfig cc, Int_t charge0, Int_t charge1 );
 
       virtual Bool_t           LPFO_Quality_checks   ( PFO_Info iPFO );
