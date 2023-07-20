@@ -110,24 +110,9 @@ namespace QQbarAnalysis
     vector<Bool_t> CutTrigger[3];    
     unordered_map< TString, unordered_map<TString, Bool_t> > CutTriggerMap; // [particle][cutname]
 
-    for (auto i_lmode : _pt.PFO_mode){
+    for( const auto &[i_lmode, val_LPFO]: pfot.LPFO_ ){
 
-      unordered_map<int, PFO_Info> LPFOs = pfot.LPFO_.at(i_lmode);
-
-      // check single track
-      CutTriggerMap[i_lmode]["single_track"] = LPFOs.at(0).pfo_ntracks == 1 && LPFOs.at(1).pfo_ntracks == 1;
-
-      // check dEdx dist default value problem
-      CutTriggerMap[i_lmode]["dEdx_dist"] = pfot.is_dEdxdist_bad( LPFOs.at(0).pfo_piddedx_e_dedxdist,
-                                                                  LPFOs.at(0).pfo_piddedx_mu_dedxdist,
-                                                                  LPFOs.at(0).pfo_piddedx_pi_dedxdist,
-                                                                  LPFOs.at(0).pfo_piddedx_k_dedxdist,
-                                                                  LPFOs.at(0).pfo_piddedx_pi_dedxdist) &&
-                                            pfot.is_dEdxdist_bad( LPFOs.at(1).pfo_piddedx_e_dedxdist,
-                                                                  LPFOs.at(1).pfo_piddedx_mu_dedxdist,
-                                                                  LPFOs.at(1).pfo_piddedx_pi_dedxdist,
-                                                                  LPFOs.at(1).pfo_piddedx_k_dedxdist,
-                                                                  LPFOs.at(1).pfo_piddedx_pi_dedxdist);
+      unordered_map<int, PFO_Info> LPFOs = val_LPFO;
 
       // check momentum
       CutTriggerMap[i_lmode]["momentum"] = pfot.is_momentum( LPFOs.at(0), _anCfg.LPFO_p_min, _anCfg.LPFO_p_max ) &&
@@ -146,7 +131,7 @@ namespace QQbarAnalysis
       for ( int ijet=0; ijet<2; ijet++ ){
         if( pfot.PFO_jet[ijet].size() > 1 ){
           for ( auto iSPFO : pfot.SPFOs_.at(i_lmode).at(ijet) ){
-            Bool_t charge_opposite = iSPFO.pfo_charge * pfot.LPFO_.at(i_lmode).at(ijet).pfo_charge < 0;
+            Bool_t charge_opposite = iSPFO.pfo_charge * LPFOs.at(ijet).pfo_charge < 0;
             Bool_t momentum_above  = iSPFO.p_mag > 10;
             if( charge_opposite && momentum_above ) is_SPFO_charge_opposite.at(ijet) = true;
           }
@@ -155,7 +140,7 @@ namespace QQbarAnalysis
       CutTriggerMap[i_lmode]["SPFO"] = std::none_of(is_SPFO_charge_opposite.begin(), is_SPFO_charge_opposite.end(), [](bool v) { return v; });
 
       // Charge opposite check
-      CutTriggerMap[i_lmode]["charge"] = pfot.is_charge_config(pfot.kOpposite,pfot.LPFO_.at(i_lmode).at(0).pfo_charge,pfot.LPFO_.at(i_lmode).at(1).pfo_charge);
+      CutTriggerMap[i_lmode]["charge"] = pfot.is_charge_config(pfot.kOpposite,LPFOs.at(0).pfo_charge,LPFOs.at(1).pfo_charge);
 
       // Particle ID both sides
       CutTriggerMap[i_lmode]["PID"]    = pfot.is_PID_config( i_lmode );
@@ -850,21 +835,23 @@ namespace QQbarAnalysis
   void EventAnalyzer::ProcessDoubleTag(PFOTools pfot, PFOTools mct, unordered_map< TString, unordered_map<TString, Bool_t> > cuts)
   {
     unordered_map< TString, vector<Bool_t> > is_pass;
-    for( auto i_lmode : _pt.PFO_mode ){
-      for ( const auto &[key, cut_val]: cuts.at(i_lmode) ) {
-        if( key != "charge" ) is_pass[i_lmode].push_back(cut_val);
+    for( const auto &[i_lmode, cuts_for_lmode] : cuts ){
+      for ( const auto &[cut_name, cut_val] : cuts_for_lmode ) {
+        if( cut_name != "charge" ) is_pass[i_lmode].push_back(cut_val);
       }
     }
 
-    for( auto i_lmode : _pt.PFO_mode ){
+    for( const auto &[i_lmode, val_LPFO] : pfot.LPFO_ ){
 
       Bool_t isPass = std::all_of(is_pass.at(i_lmode).begin(), is_pass.at(i_lmode).end(), [](bool v) { return v; });
 
       if( isPass ){
 
-        Int_t ineg             = pfot.LPFO_.at(i_lmode).at(0).pfo_charge > 0 ;
-        PFO_Info LPFO          = pfot.LPFO_.at(i_lmode).at(ineg);
-        PFO_Info LPFO_opposite = pfot.LPFO_.at(i_lmode).at(1-ineg);
+        cout << "map pass " << i_lmode << "\n";
+
+        Int_t ineg             = val_LPFO.at(0).pfo_charge > 0 ;
+        PFO_Info LPFO          = val_LPFO.at(ineg);
+        PFO_Info LPFO_opposite = val_LPFO.at(1-ineg);
 
         if( cuts.at(i_lmode).at("charge") ){
 
@@ -921,6 +908,11 @@ namespace QQbarAnalysis
 
     // Reco K_K
 
+    for (auto icut : cuts[kKaon]){
+      cout << icut << " ";
+    }
+    cout << pfot.is_ss() << " " << double_tag[kKaon] << "\n";
+
     if ( LPFO_checks[kKaon] && pfot.is_ss() && double_tag[kKaon] == K_K ){
 
       Int_t ineg = -1;
@@ -932,6 +924,8 @@ namespace QQbarAnalysis
       }
 
       if(sign_check[kKaon]){
+
+        cout << "no map pass K\n";
 
         Float_t gen_reco_K_sep_cos  = VectorTools::GetCosBetween(pfot.KLPFO[ineg].vt.v3(), mct.mc_quark[0].vt.v3());
 
@@ -1017,6 +1011,8 @@ namespace QQbarAnalysis
       }
 
       if(sign_check[kPion]){
+
+        cout << "no map pass K\n";
 
         Float_t gen_reco_Pi_sep_cos  = VectorTools::GetCosBetween(pfot.PiLPFO[ineg].vt.v3(), mct.mc_quark[0].vt.v3());
         Float_t vtx_endpt = sqrt(pfot.PiLPFO[ineg].pfo_endpt[0] * pfot.PiLPFO[ineg].pfo_endpt[0] + pfot.PiLPFO[ineg].pfo_endpt[1] * pfot.PiLPFO[ineg].pfo_endpt[1] + pfot.PiLPFO[ineg].pfo_endpt[2] * pfot.PiLPFO[ineg].pfo_endpt[2]);
