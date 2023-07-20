@@ -847,8 +847,6 @@ namespace QQbarAnalysis
 
       if( isPass ){
 
-        cout << "map pass " << i_lmode << "\n";
-
         Int_t ineg             = val_LPFO.at(0).pfo_charge > 0 ;
         PFO_Info LPFO          = val_LPFO.at(ineg);
         PFO_Info LPFO_opposite = val_LPFO.at(1-ineg);
@@ -908,11 +906,6 @@ namespace QQbarAnalysis
 
     // Reco K_K
 
-    for (auto icut : cuts[kKaon]){
-      cout << icut << " ";
-    }
-    cout << pfot.is_ss() << " " << double_tag[kKaon] << "\n";
-
     if ( LPFO_checks[kKaon] && pfot.is_ss() && double_tag[kKaon] == K_K ){
 
       Int_t ineg = -1;
@@ -924,8 +917,6 @@ namespace QQbarAnalysis
       }
 
       if(sign_check[kKaon]){
-
-        cout << "no map pass K\n";
 
         Float_t gen_reco_K_sep_cos  = VectorTools::GetCosBetween(pfot.KLPFO[ineg].vt.v3(), mct.mc_quark[0].vt.v3());
 
@@ -1011,8 +1002,6 @@ namespace QQbarAnalysis
       }
 
       if(sign_check[kPion]){
-
-        cout << "no map pass K\n";
 
         Float_t gen_reco_Pi_sep_cos  = VectorTools::GetCosBetween(pfot.PiLPFO[ineg].vt.v3(), mct.mc_quark[0].vt.v3());
         Float_t vtx_endpt = sqrt(pfot.PiLPFO[ineg].pfo_endpt[0] * pfot.PiLPFO[ineg].pfo_endpt[0] + pfot.PiLPFO[ineg].pfo_endpt[1] * pfot.PiLPFO[ineg].pfo_endpt[1] + pfot.PiLPFO[ineg].pfo_endpt[2] * pfot.PiLPFO[ineg].pfo_endpt[2]);

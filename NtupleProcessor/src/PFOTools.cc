@@ -66,10 +66,10 @@ namespace QQbarAnalysis
     for (int ipfo=0; ipfo < data->pfo_n; ipfo++)
     {
       // Make sure PFO belongs to either jet0 or jet 1
-      Bool_t no_match01 = !(data->pfo_match[ipfo] == 0 || data->pfo_match[ipfo] == 1);
+      Bool_t no_match01 = (data->pfo_match[ipfo] != 0 && data->pfo_match[ipfo] != 1);
 
       // Make suer PFO has only one reconstructed track to avoid (lambda/sigma)
-      Bool_t single_track = (data->pfo_ntracks[ipfo] == 1);
+      Bool_t mult_track = (data->pfo_ntracks[ipfo] != 1);
 
       // if dEdx dist is 0
       Bool_t dEdx_dist_bad = is_dEdxdist_bad(data->pfo_piddedx_e_dedxdist[ipfo],
@@ -78,7 +78,7 @@ namespace QQbarAnalysis
                           data->pfo_piddedx_k_dedxdist[ipfo],
                           data->pfo_piddedx_p_dedxdist[ipfo]);
 
-      if( no_match01 || single_track || dEdx_dist_bad ) continue;
+      if( no_match01 || mult_track || dEdx_dist_bad ) continue;
 
       VectorTools vt(data->pfo_px[ipfo], data->pfo_py[ipfo], data->pfo_pz[ipfo], data->pfo_E[ipfo]);
 
@@ -420,15 +420,15 @@ namespace QQbarAnalysis
 
   Bool_t PFOTools::is_high_LPFO( TString mode )
   {
+    vector<Bool_t> check;
+    check.reserve(2);
     for( int ijet=0; ijet < 2; ijet++ ){
       for( auto lmode : PFO_mode ){
         if( mode == lmode ) continue;
-        if( LPFO_[mode].at(ijet).p_mag < LPFO_.at(lmode).at(ijet).p_mag ){
-          return false;
-        }
+        check.emplace_back( LPFO_.at(mode).at(ijet).p_mag > LPFO_.at(lmode).at(ijet).p_mag );
       }
     }
-    return true;
+    return std::all_of(check.begin(), check.end(), [](bool v) { return v; });
   }
 
   Bool_t PFOTools::is_ss()
