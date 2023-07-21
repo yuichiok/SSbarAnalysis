@@ -205,7 +205,7 @@ namespace QQbarAnalysis
       vector<TString> hdEdx_name = {"dEdx_p","dEdx_cos","dEdx_dist_cos"};
       for( auto i_lmode : _pt.PFO_mode ){
         for( auto i_type : _pt.PFO_type ){
-          h2_dEdx[i_lmode][i_type]["dEdx_p"]   = new TH2F("h2_" + i_lmode + "_" + i_type + "_dEdx_p",";p (GeV);#frac{dE}{dx}",nbins_p,bins_p,nbins_dEdx,bins_dEdx);
+          h2_dEdx[i_lmode][i_type]["dEdx_p"]        = new TH2F("h2_" + i_lmode + "_" + i_type + "_dEdx_p",";p (GeV);#frac{dE}{dx}",nbins_p,bins_p,nbins_dEdx,bins_dEdx);
           h2_dEdx[i_lmode][i_type]["dEdx_dist_cos"] = new TH2F("h2_" + i_lmode + "_" + i_type + "_dEdx_dist_cos",";cos#theta;#frac{dE}{dx}",nbins_cos,cos_min,cos_max,nbins_dEdx_dist,dEdx_dist_min,dEdx_dist_max);
         }
       }
@@ -242,9 +242,25 @@ namespace QQbarAnalysis
 
     for (int ih=0; ih < Last_h2_dEdx_nomap; ih++) {
       for (int jh=0; jh < Last_particle_List; jh++) {
-        hList2_dEdx->Add(h2_dEdx_nomap[ih][jh]);
+        hList2_dEdx_nomap->Add(h2_dEdx_nomap[ih][jh]);
       }
     }
+
+    // Use unordered_map
+    for ( const auto &[i_lmode, hists] : h1_cos ){
+      for ( const auto &[icut, hist] : hists ){
+        hList1_cos->Add(hist);
+      }
+    }
+
+    for ( const auto &[i_lmode, type_hists] : h2_dEdx ){
+      for ( const auto &[i_type, hists] : type_hists ){
+        for ( const auto &[icut, hist] : hists ){
+          hList2_dEdx->Add(hist);
+        }
+      }
+    }
+
   }
 
   void HistManager::WriteLists( TFile * output)
@@ -269,6 +285,17 @@ namespace QQbarAnalysis
     TDirectory * d_jet = output->mkdir("jet");
       d_jet->cd();
       hList2_jet->Write();
+      output->cd();
+
+    TDirectory * d_dEdx_nomap = output->mkdir("dEdx_nomap");
+      d_dEdx_nomap->cd();
+      hList2_dEdx_nomap->Write();
+      output->cd();
+
+    // Use unordered_map
+    TDirectory * d_cos = output->mkdir("cos");
+      d_cos->cd();
+      hList1_cos->Write();
       output->cd();
 
     TDirectory * d_dEdx = output->mkdir("dEdx");

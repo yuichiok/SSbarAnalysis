@@ -199,6 +199,9 @@ namespace QQbarAnalysis
       TList* hList1_particle_ratio = new TList();
       TList* hList2                = new TList();
       TList* hList2_jet            = new TList();
+      TList* hList2_dEdx_nomap     = new TList();
+
+      TList* hList1_cos            = new TList();
       TList* hList2_dEdx           = new TList();
 
     // PFO Tools
