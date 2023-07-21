@@ -87,7 +87,7 @@ TH1F * CorrectHist( TH1F * h_reco, vector<Float_t> p_vec)
 {
   const Int_t nbins = h_reco->GetNbinsX();
 
-  TH1F *corrected = new TH1F("corrected", "corrected", 100,-1,1);
+  TH1F *corrected = new TH1F("corrected", "corrected", nbins,-1,1);
   corrected->Sumw2();
   for (int i = 1; i < nbins / 2 + 1; i++)
   {
@@ -151,6 +151,8 @@ TH1F * CorrectHist( TH1F * h_reco, vector<Float_t> p_vec)
 }
 
 void cos_analysis() {
+
+    TGaxis::SetMaxDigits(3);
     TFile* file_ss = new TFile("../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.ss.PFOp5.yevhenii.all.root");
     TH1F* h_full_ss = (TH1F*)file_ss->Get("/cos_theta/cos_theta");
     TH1F* h_acc_ss = (TH1F*)file_ss->Get("/cos_theta/acc_cos_theta");
@@ -196,7 +198,7 @@ void cos_analysis() {
     h_ss->SetFillStyle(3001);
     h_ss->SetLineColor(kBlue);
     h_ss->SetLineWidth(1);
-    h_acc_ss->GetYaxis()->SetRangeUser(0,9000);
+    h_acc_ss->GetYaxis()->SetRangeUser(0,1E4);
     h_acc_ss->SetFillColor(kRed);
     h_acc_ss->SetFillStyle(3001);
     h_acc_ss->SetLineColor(kRed);
@@ -221,7 +223,7 @@ void cos_analysis() {
     h_cc->SetFillStyle(3001);
     h_cc->SetLineColor(kBlue);
     h_cc->SetLineWidth(1);
-    h_acc_cc->GetYaxis()->SetRangeUser(0,9000);
+    h_acc_cc->GetYaxis()->SetRangeUser(0,1E4);
     h_acc_cc->SetFillColor(kRed);
     h_acc_cc->SetFillStyle(3001);
     h_acc_cc->SetLineColor(kRed);
