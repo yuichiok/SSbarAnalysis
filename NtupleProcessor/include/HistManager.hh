@@ -101,20 +101,6 @@ namespace QQbarAnalysis
       };
       TH1F * h1_pq[Last_h1_pq];
 
-      enum h1_particle_ratio_index {
-        K_rate_gen,
-        pi_rate_gen,
-        p_rate_gen,
-
-        K_rate_reco,
-        pi_rate_reco,
-        p_rate_reco,
-
-        dummy_particle_ratio,
-        Last_h1_dummy_particle_ratio = dummy_particle_ratio
-      };
-      TH1F * h1_particle_ratio[Last_h1_dummy_particle_ratio];
-
     // h2 hist
       enum h2_index {
 
@@ -145,20 +131,6 @@ namespace QQbarAnalysis
         Last_dummy_h2_jet = dummy_h2_jet
       };
       TH2F * h2_jet[Last_dummy_h2_jet];
-
-      enum h2_particle_ratio_cos_index {
-        K_rate_cos_gen,
-        pi_rate_cos_gen,
-        p_rate_cos_gen,
-
-        K_rate_cos_reco,
-        pi_rate_cos_reco,
-        p_rate_cos_reco,
-
-        dummy_particle_ratio_cos,
-        Last_h2_dummy_particle_ratio_cos = dummy_particle_ratio_cos
-      };
-      TH2F * h2_particle_ratio_cos[Last_h2_dummy_particle_ratio_cos];
 
       enum h2_dEdx_nomap_index {
 

@@ -431,21 +431,6 @@ namespace QQbarAnalysis
 
     }
 
-
-    // Fill Event by Event hists
-    Float_t * particle_ratios_reco = Particle_Ratios( h_n_reco_particles, 0 );
-    Float_t * particle_ratios_gen  = Particle_Ratios( h_n_gen_particles, 1 );
-
-    _hm.h1_particle_ratio[_hm.K_rate_reco]->Fill(particle_ratios_reco[0]);
-    _hm.h1_particle_ratio[_hm.pi_rate_reco]->Fill(particle_ratios_reco[1]);
-    _hm.h1_particle_ratio[_hm.p_rate_reco]->Fill(particle_ratios_reco[2]);
-
-    _hm.h1_particle_ratio[_hm.K_rate_gen]->Fill(particle_ratios_gen[0]);
-    _hm.h1_particle_ratio[_hm.pi_rate_gen]->Fill(particle_ratios_gen[1]);
-    _hm.h1_particle_ratio[_hm.p_rate_gen]->Fill(particle_ratios_gen[2]);
-
-
-
     _hm.h2[_hm.nK_gen_reco]->Fill(n_reco_particles[0],n_gen_particles[0]);
     _hm.h2[_hm.npi_gen_reco]->Fill(n_reco_particles[1],n_gen_particles[1]);
     _hm.h2[_hm.np_gen_reco]->Fill(n_reco_particles[2],n_gen_particles[2]);
@@ -456,7 +441,7 @@ namespace QQbarAnalysis
         if( pfot.isKaon(iLPFO) ) _hm.h1[_hm.lpfo_reco_K_mom]->Fill(iLPFO.p_mag);
       }
 
-      for (int i=0; i<2; i++){
+      for (int i=0; i<2; i++){ 
         if( abs(_stats_lpfo.lpfo_pdgcheat[i]) == 321 ) _hm.h1[_hm.lpfo_gen_K_mom]->Fill(pfot.KLPFO[i].p_mag);
       }
     }
@@ -733,68 +718,6 @@ namespace QQbarAnalysis
       default:
         break;
     }
-  }
-
-  Float_t *EventAnalyzer::Particle_Ratios( TH1F *h_n_particles[], Int_t mode )
-  {
-    Int_t N_Particles[3]  = {0};
-    Int_t N_sum = 0;
-    for ( int i=0; i < 3; i++){
-      N_Particles[i] = h_n_particles[i]->GetEntries();
-      N_sum += N_Particles[i];
-    }
-
-    TH1F *h_sum = (TH1F*) h_n_particles[0]->Clone();
-    h_sum->Add(h_n_particles[1]);
-    h_sum->Add(h_n_particles[2]);
-
-
-    // cos theta ratio
-    for ( int i=0; i < 3; i++){
-      TH1F *h_div = (TH1F*) h_n_particles[i]->Clone();
-      h_div->Divide(h_sum);
-
-      for ( int ibin=1; ibin <= h_div->GetNbinsX(); ibin++ ){
-        Float_t eff = h_div->GetBinContent(ibin);
-        Float_t cos = h_div->GetXaxis()->GetBinCenter(ibin);
-
-        switch (i) {
-          case 0:
-            if(mode==0) _hm.h2_particle_ratio_cos[_hm.K_rate_cos_reco]->Fill(cos,eff);
-            if(mode==1) _hm.h2_particle_ratio_cos[_hm.K_rate_cos_gen]->Fill(cos,eff);
-            break;
-          case 1:
-            if(mode==0) _hm.h2_particle_ratio_cos[_hm.pi_rate_cos_reco]->Fill(cos,eff);
-            if(mode==1) _hm.h2_particle_ratio_cos[_hm.pi_rate_cos_gen]->Fill(cos,eff);
-            break;
-          case 2:
-            if(mode==0) _hm.h2_particle_ratio_cos[_hm.p_rate_cos_reco]->Fill(cos,eff);
-            if(mode==1) _hm.h2_particle_ratio_cos[_hm.p_rate_cos_gen]->Fill(cos,eff);
-            break;
-
-          default:
-            break;
-        }
-
-      }
-
-      delete h_div;
-
-    }
-
-    delete h_sum;
-
-    // overall ratio
-    static Float_t ratio_arr[3]  = {-1,-1,-1};
-    static Float_t ratio_arr0[3] = {-1,-1,-1};
-
-    if( N_sum == 0 ) return ratio_arr0;
-    for( int i=0; i<3; i++ ){
-      ratio_arr[i] = (Float_t) N_Particles[i] / (Float_t) N_sum;
-    }
-
-    return ratio_arr;
-
   }
 
   void EventAnalyzer::PolarAngleGen(PFOTools mct)

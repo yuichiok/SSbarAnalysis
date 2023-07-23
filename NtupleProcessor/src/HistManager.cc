@@ -132,19 +132,6 @@ namespace QQbarAnalysis
       h1_pq[acc_PiPi]      = new TH1F("h_acc_PiPi_cos",";Accepted Pi^{+}Pi^{-} cos#theta;N_{acc}",nbins_cos,-1,1);
       h1_pq[rej_PiPi]      = new TH1F("h_rej_PiPi_cos",";Rejected Pi^{+}Pi^{-} cos#theta;N_{rej}",nbins_cos,-1,1);
 
-    // particle ratio
-    /*
-    ratio [acc,rej][K,Pi,p,e,mu]
-    */
-
-      h1_particle_ratio[K_rate_gen]  = new TH1F("h_K_rate_gen",";Ratio of Kaons / Event (gen);Entries",11,0,1.1);
-      h1_particle_ratio[pi_rate_gen] = new TH1F("h_pi_rate_gen",";Ratio of Pions / Event (gen);Entries",11,0,1.1);
-      h1_particle_ratio[p_rate_gen]  = new TH1F("h_p_rate_gen",";Ratio of Protons / Event (gen);Entries",11,0,1.1);
-
-      h1_particle_ratio[K_rate_reco]  = new TH1F("h_K_rate_reco",";Ratio of Kaons / Event (reco);Entries",11,0,1.1);
-      h1_particle_ratio[pi_rate_reco] = new TH1F("h_pi_rate_reco",";Ratio of Pions / Event (reco);Entries",11,0,1.1);
-      h1_particle_ratio[p_rate_reco]  = new TH1F("h_p_rate_reco",";Ratio of Protons / Event (reco);Entries",11,0,1.1);
-
 
     //////////////////
     //     TH2F     //
@@ -174,15 +161,6 @@ namespace QQbarAnalysis
     // jet
       h2_jet[jet_mult_cos]         = new TH2F("h2_jet_mult_cos" ,";cos#theta;NPFOs/jet",nbins_cos,-1,1,100,0,100);
       h2_jet[jet_mult_cos_noISR]   = new TH2F("h2_jet_mult_cos_noISR" ,";cos#theta;NPFOs/jet",nbins_cos,-1,1,100,0,100);
-
-    // particle ratio
-      h2_particle_ratio_cos[K_rate_cos_gen]   = new TH2F("h2_K_rate_cos_gen",";qcos#theta;Ratio of Kaons / Event (gen)",40,-1,1,11,0,1.1);
-      h2_particle_ratio_cos[pi_rate_cos_gen]  = new TH2F("h2_pi_rate_cos_gen",";qcos#theta;Ratio of Pions / Event (gen)",40,-1,1,11,0,1.1);
-      h2_particle_ratio_cos[p_rate_cos_gen]   = new TH2F("h2_p_rate_cos_gen",";qcos#theta;Ratio of Protons / Event (gen)",40,-1,1,11,0,1.1);
-
-      h2_particle_ratio_cos[K_rate_cos_reco]  = new TH2F("h2_K_rate_cos_reco",";qcos#theta;Ratio of Kaons / Event (reco)",40,-1,1,11,0,1.1);
-      h2_particle_ratio_cos[pi_rate_cos_reco] = new TH2F("h2_pi_rate_cos_reco",";qcos#theta;Ratio of Pions / Event (reco)",40,-1,1,11,0,1.1);
-      h2_particle_ratio_cos[p_rate_cos_reco]  = new TH2F("h2_p_rate_cos_reco",";qcos#theta;Ratio of Protons / Event (reco)",40,-1,1,11,0,1.1);
 
     // dEd information
 
@@ -224,10 +202,6 @@ namespace QQbarAnalysis
       hList1_pq->Add(ih);
     }
 
-    for (auto ih : h1_particle_ratio) {
-      hList1_particle_ratio->Add(ih);
-    }
-
     for (auto ih : h2) {
       hList2->Add(ih);
     }
@@ -236,10 +210,6 @@ namespace QQbarAnalysis
       hList2_jet->Add(ih);
     }
     
-    for (auto ih : h2_particle_ratio_cos) {
-      hList1_particle_ratio->Add(ih);
-    }
-
     for (int ih=0; ih < Last_h2_dEdx_nomap; ih++) {
       for (int jh=0; jh < Last_particle_List; jh++) {
         hList2_dEdx_nomap->Add(h2_dEdx_nomap[ih][jh]);

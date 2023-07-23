@@ -65,7 +65,6 @@ namespace QQbarAnalysis
       Int_t           *Gen_Reco_Stats_Cheat( PFOTools mct, PFOTools pfot, SelectID pid , Float_t cos_min, Float_t cos_max );
 
       void             Count_Particle( PFO_Info ipfo, Int_t pdg, TH1F *h_n_reco, TH1F *h_n_gen );
-      Float_t         *Particle_Ratios( TH1F *h_n_particles[], Int_t mode );
 
     // Histogram extractor
       void             PolarAngleGen( PFOTools mct );
