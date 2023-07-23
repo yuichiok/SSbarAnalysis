@@ -220,14 +220,10 @@ namespace QQbarAnalysis
       Float_t cos_min    = xaxis_K->GetBinLowEdge(ibin);
       Float_t cos_max    = cos_min + bin_width;
       Int_t   *dN_Ks     = Gen_Reco_Stats_Stable( mct, pfot, kKaon, cos_min, cos_max );
-      Float_t *dSPs      = Get_Stable_Purity(dN_Ks);
 
       _hm.h1[_hm.gen_N_K_cos]->Fill( bin_center ,dN_Ks[0]);
       _hm.h1[_hm.reco_N_K_cos]->Fill( bin_center ,dN_Ks[1]);
       _hm.h1[_hm.N_K_corr_cos]->Fill( bin_center ,dN_Ks[2]);
-
-      _hm.h2[_hm.stable_K_cos]->Fill( bin_center ,dSPs[0]);
-      _hm.h2[_hm.purity_K_cos]->Fill( bin_center ,dSPs[1]);
     }
 
     // Pion Efficiency
@@ -239,14 +235,10 @@ namespace QQbarAnalysis
       Float_t cos_min    = xaxis_Pi->GetBinLowEdge(ibin);
       Float_t cos_max    = cos_min + bin_width;
       Int_t   *dN_Pis    = Gen_Reco_Stats_Stable( mct, pfot, kPion, cos_min, cos_max );
-      Float_t *dSP_Pis   = Get_Stable_Purity(dN_Pis);
 
       _hm.h1[_hm.gen_N_Pi_cos]->Fill( bin_center ,dN_Pis[0]);
       _hm.h1[_hm.reco_N_Pi_cos]->Fill( bin_center ,dN_Pis[1]);
       _hm.h1[_hm.N_Pi_corr_cos]->Fill( bin_center ,dN_Pis[2]);
-
-      _hm.h2[_hm.stable_Pi_cos]->Fill( bin_center ,dSP_Pis[0]);
-      _hm.h2[_hm.purity_Pi_cos]->Fill( bin_center ,dSP_Pis[1]);
     }
 
     // Fill Hists can make another class called histogram extractor?
@@ -721,17 +713,6 @@ namespace QQbarAnalysis
     N_array[2] = N_K_corr;
 
     return N_array;
-
-  }
-
-  Float_t *EventAnalyzer::Get_Stable_Purity( Int_t *N_Ks )
-  {
-    // 0: N Gen Kaon, 1: N PFO Kaon, 2: N Correct Kaon
-    static Float_t SP_array[2] = {-1,-1};
-    if( N_Ks[0] )  SP_array[0] = (Float_t) N_Ks[2] / (Float_t) N_Ks[0];
-    if( N_Ks[1] )  SP_array[1] = (Float_t) N_Ks[2] / (Float_t) N_Ks[1];
-
-    return SP_array;
 
   }
 
