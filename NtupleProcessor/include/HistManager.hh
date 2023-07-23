@@ -132,36 +132,6 @@ namespace QQbarAnalysis
       };
       TH2F * h2_jet[Last_dummy_h2_jet];
 
-      enum h2_dEdx_nomap_index {
-
-        // dEdx vs p
-        gen_ipart_dEdx_p,
-
-        // KID
-        gen_ipart_reco_K_dEdx_p,
-        gen_ipart_KdEdx_dist_cos,
-        gen_ipart_reco_K_KdEdx_dist_cos,
-
-        // PiID
-        gen_ipart_reco_Pi_dEdx_p,
-        gen_ipart_PidEdx_dist_cos,
-        gen_ipart_reco_Pi_PidEdx_dist_cos,
-
-        dummy_dEdx,
-        Last_h2_dEdx_nomap = dummy_dEdx
-      };
-      TString particle_list[5] = {"K", "pi", "p", "e", "mu"};
-      enum particle_List_index {
-        kKaon,
-        kPion,
-        kProton,
-        kElectron,
-        kMuon,
-        dummy_particle_List,
-        Last_particle_List = dummy_particle_List
-      };
-      TH2F * h2_dEdx_nomap[Last_h2_dEdx_nomap][Last_particle_List];
-
       unordered_map< TString, unordered_map< TString, unordered_map< TString, TH2F* > > > h2_dEdx; // [LPFO][TruthID][hist]
 
     private:
@@ -171,7 +141,6 @@ namespace QQbarAnalysis
       TList* hList1_particle_ratio = new TList();
       TList* hList2                = new TList();
       TList* hList2_jet            = new TList();
-      TList* hList2_dEdx_nomap     = new TList();
 
       TList* hList1_cos            = new TList();
       TList* hList2_dEdx           = new TList();

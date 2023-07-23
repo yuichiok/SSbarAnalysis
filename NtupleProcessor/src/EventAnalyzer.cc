@@ -248,6 +248,9 @@ namespace QQbarAnalysis
     ProcessDoubleTag(pfot,mct,CutTriggerMap);
     ProcessDoubleTag(pfot,mct,CutTrigger,dEdx_pdg_match);
 
+
+
+
     // Fill PFO
 
     // Initialize counters
@@ -266,48 +269,6 @@ namespace QQbarAnalysis
 
     std::vector<PFO_Info> PFO_Collection = pfot.Valid_PFOs;
     _data.n_valid_pfo = PFO_Collection.size();
-
-    for ( long unsigned int i=0; i < PFO_Collection.size(); i++ )
-    {
-      PFO_Info ipfo = PFO_Collection.at(i);
-
-      Count_Particle(ipfo,321,h_n_reco_particles[0],h_n_gen_particles[0]);
-      Count_Particle(ipfo,211,h_n_reco_particles[1],h_n_gen_particles[1]);
-      Count_Particle(ipfo,2212,h_n_reco_particles[2],h_n_gen_particles[2]);
-
-      // cheat
-      switch ( abs(ipfo.pfo_pdgcheat) ) {
-        case 321:
-          _hm.h2_dEdx_nomap[_hm.gen_ipart_dEdx_p][kKaon]->Fill(ipfo.p_mag,ipfo.pfo_dedx);
-          _hm.h2_dEdx_nomap[_hm.gen_ipart_KdEdx_dist_cos][kKaon]->Fill(ipfo.cos,ipfo.pfo_piddedx_k_dedxdist);
-          _hm.h2_dEdx_nomap[_hm.gen_ipart_PidEdx_dist_cos][kKaon]->Fill(ipfo.cos,ipfo.pfo_piddedx_pi_dedxdist);
-          break;
-        case 211:
-          _hm.h2_dEdx_nomap[_hm.gen_ipart_dEdx_p][kPion]->Fill(ipfo.p_mag,ipfo.pfo_dedx);
-          _hm.h2_dEdx_nomap[_hm.gen_ipart_KdEdx_dist_cos][kPion]->Fill(ipfo.cos,ipfo.pfo_piddedx_k_dedxdist);
-          _hm.h2_dEdx_nomap[_hm.gen_ipart_PidEdx_dist_cos][kPion]->Fill(ipfo.cos,ipfo.pfo_piddedx_pi_dedxdist);
-          break;
-        case 2212:
-          _hm.h2_dEdx_nomap[_hm.gen_ipart_dEdx_p][kProton]->Fill(ipfo.p_mag,ipfo.pfo_dedx);
-          _hm.h2_dEdx_nomap[_hm.gen_ipart_KdEdx_dist_cos][kProton]->Fill(ipfo.cos,ipfo.pfo_piddedx_k_dedxdist);
-          _hm.h2_dEdx_nomap[_hm.gen_ipart_PidEdx_dist_cos][kProton]->Fill(ipfo.cos,ipfo.pfo_piddedx_pi_dedxdist);
-          break;
-        case 11:
-          _hm.h2_dEdx_nomap[_hm.gen_ipart_dEdx_p][kElectron]->Fill(ipfo.p_mag,ipfo.pfo_dedx);
-          _hm.h2_dEdx_nomap[_hm.gen_ipart_KdEdx_dist_cos][kElectron]->Fill(ipfo.cos,ipfo.pfo_piddedx_k_dedxdist);
-          _hm.h2_dEdx_nomap[_hm.gen_ipart_PidEdx_dist_cos][kElectron]->Fill(ipfo.cos,ipfo.pfo_piddedx_pi_dedxdist);
-          break;
-        case 13:
-          _hm.h2_dEdx_nomap[_hm.gen_ipart_dEdx_p][kMuon]->Fill(ipfo.p_mag,ipfo.pfo_dedx);
-          _hm.h2_dEdx_nomap[_hm.gen_ipart_KdEdx_dist_cos][kMuon]->Fill(ipfo.cos,ipfo.pfo_piddedx_k_dedxdist);
-          _hm.h2_dEdx_nomap[_hm.gen_ipart_PidEdx_dist_cos][kMuon]->Fill(ipfo.cos,ipfo.pfo_piddedx_pi_dedxdist);
-          break;
-        default:
-          break;
-      }
-
-    }
-
 
     // Access cheated Kaon information
     if( pfot.PFO_cheat_Ks[0].size() && pfot.PFO_cheat_Ks[1].size() ){
@@ -639,87 +600,6 @@ namespace QQbarAnalysis
 
   }
 
-  Int_t *EventAnalyzer::Gen_Reco_Stats_Cheat( PFOTools mct, PFOTools pfot, SelectID pid, Float_t cos_min, Float_t cos_max )
-  {
-    std::vector<PFO_Info> PFO_Collection;
-    std::vector<PFO_Info> jet[2] = { pfot.GetJet(0), pfot.GetJet(1) };
-
-    PFO_Collection.reserve( jet[0].size() + jet[1].size() );
-    PFO_Collection.insert( PFO_Collection.begin(), jet[0].begin(), jet[0].end() );
-    PFO_Collection.insert( PFO_Collection.end(), jet[1].begin(), jet[1].end() );
-
-    Float_t p_min = _anCfg.PFO_p_min;
-
-    std::vector<PFO_Info> PFO_Hadron_Collection;
-    for ( auto iPFO : PFO_Collection ){
-      Bool_t cos_range = (cos_min < iPFO.cos && iPFO.cos < cos_max );
-      Bool_t p_range   = p_min < iPFO.p_mag;
-      if( PFOTools::isKaon(iPFO) && cos_range && p_range ) PFO_Hadron_Collection.push_back(iPFO);
-    }
-
-    std::vector<PFO_Info> PFO_Cheat_K_Collection;
-    for ( auto iPFO : PFO_Collection ){
-      Bool_t cos_range = (cos_min < iPFO.cos && iPFO.cos < cos_max );
-      Bool_t p_range   = p_min < iPFO.p_mag;
-      Bool_t k_cheat   = ( abs(iPFO.pfo_pdgcheat) == 321);
-      if( k_cheat && cos_range && p_range ) PFO_Cheat_K_Collection.push_back(iPFO);
-    }
-
-    Int_t N_K_corr  = 0;
-
-    // Float_t cos_r = 0.02;
-    Float_t cos_r = 0.37;
-    std::vector<PFO_Info> PFO_Hadron_Remain = PFO_Hadron_Collection;
-
-    for ( auto igen : PFO_Cheat_K_Collection ){
-      Float_t min_cos_diff   = 1000.0;
-      Int_t   i_min_cos_diff = -1;
-
-      Int_t counter = 0;
-      for ( auto iremain : PFO_Hadron_Remain ){
-        Float_t cos_diff = 1.0 - VectorTools::GetCosBetween( igen.vt.v3(), iremain.vt.v3() );
-        if( cos_diff < min_cos_diff ) {
-          min_cos_diff = cos_diff;
-          i_min_cos_diff = counter;
-        }
-        counter++;
-      }
-
-      if( min_cos_diff < cos_r ) {
-        N_K_corr++;
-        PFO_Hadron_Remain.erase( PFO_Hadron_Remain.begin() + i_min_cos_diff );
-      }
-
-    }
-
-    static Int_t N_array[3] = {0};
-    N_array[0] = PFO_Cheat_K_Collection.size();
-    N_array[1] = PFO_Hadron_Collection.size();
-    N_array[2] = N_K_corr;
-
-    return N_array;
-
-  }
-
-  void EventAnalyzer::Count_Particle( PFO_Info ipfo, Int_t pdg, TH1F *h_n_reco, TH1F *h_n_gen )
-  {
-    if ( abs(ipfo.pfo_pdgcheat) == pdg ) h_n_gen->Fill(ipfo.qcos);
-
-    switch ( pdg ){
-      case 321:
-        if ( PFOTools::isKaon(ipfo) ) h_n_reco->Fill(ipfo.qcos);
-        break;
-      case 211:
-        if ( PFOTools::isPion(ipfo) ) h_n_reco->Fill(ipfo.qcos);
-        break;
-      case 2212:
-        if ( PFOTools::isProton(ipfo) ) h_n_reco->Fill(ipfo.qcos);
-        break;
-      default:
-        break;
-    }
-  }
-
   void EventAnalyzer::PolarAngleGen(PFOTools mct)
   {
     // Gen QQbar
@@ -830,38 +710,6 @@ namespace QQbarAnalysis
         _hm.h1[_hm.reco_K_mom]->Fill( pfot.KLPFO[ineg].p_mag );
         _hm.h1[_hm.gen_reco_K_sep_cos]->Fill( gen_reco_K_sep_cos );
 
-        // cheat
-        switch ( abs(pfot.KLPFO[ineg].pfo_pdgcheat) ) {
-          case 321:
-            _hm.h2_dEdx_nomap[_hm.gen_ipart_reco_K_dEdx_p][kKaon]->Fill(pfot.KLPFO[ineg].p_mag,pfot.KLPFO[ineg].pfo_dedx);
-            _hm.h2_dEdx_nomap[_hm.gen_ipart_reco_K_KdEdx_dist_cos][kKaon]->Fill(pfot.KLPFO[ineg].cos,pfot.KLPFO[ineg].pfo_piddedx_k_dedxdist);
-            _hm.h1[_hm.reco_K_pdgcheat]->Fill( 1 );
-            break;
-          case 211:
-            _hm.h2_dEdx_nomap[_hm.gen_ipart_reco_K_dEdx_p][kPion]->Fill(pfot.KLPFO[ineg].p_mag,pfot.KLPFO[ineg].pfo_dedx);
-            _hm.h2_dEdx_nomap[_hm.gen_ipart_reco_K_KdEdx_dist_cos][kPion]->Fill(pfot.KLPFO[ineg].cos,pfot.KLPFO[ineg].pfo_piddedx_k_dedxdist);
-            _hm.h1[_hm.reco_K_pdgcheat]->Fill( 0 );
-            break;
-          case 2212:
-            _hm.h2_dEdx_nomap[_hm.gen_ipart_reco_K_dEdx_p][kProton]->Fill(pfot.KLPFO[ineg].p_mag,pfot.KLPFO[ineg].pfo_dedx);
-            _hm.h2_dEdx_nomap[_hm.gen_ipart_reco_K_KdEdx_dist_cos][kProton]->Fill(pfot.KLPFO[ineg].cos,pfot.KLPFO[ineg].pfo_piddedx_k_dedxdist);
-            _hm.h1[_hm.reco_K_pdgcheat]->Fill( 2 );
-            break;
-          case 11:
-            _hm.h2_dEdx_nomap[_hm.gen_ipart_reco_K_dEdx_p][kElectron]->Fill(pfot.KLPFO[ineg].p_mag,pfot.KLPFO[ineg].pfo_dedx);
-            _hm.h2_dEdx_nomap[_hm.gen_ipart_reco_K_KdEdx_dist_cos][kElectron]->Fill(pfot.KLPFO[ineg].cos,pfot.KLPFO[ineg].pfo_piddedx_k_dedxdist);
-            _hm.h1[_hm.reco_K_pdgcheat]->Fill( 3 );
-            break;
-          case 13:
-            _hm.h2_dEdx_nomap[_hm.gen_ipart_reco_K_dEdx_p][kMuon]->Fill(pfot.KLPFO[ineg].p_mag,pfot.KLPFO[ineg].pfo_dedx);
-            _hm.h2_dEdx_nomap[_hm.gen_ipart_reco_K_KdEdx_dist_cos][kMuon]->Fill(pfot.KLPFO[ineg].cos,pfot.KLPFO[ineg].pfo_piddedx_k_dedxdist);
-            _hm.h1[_hm.reco_K_pdgcheat]->Fill( 4 );
-            break;
-          default:
-            _hm.h1[_hm.reco_K_pdgcheat]->Fill( 5 );
-            break;
-        }
-
         switch ( abs(pfot.KLPFO[1-ineg].pfo_pdgcheat) ) {
           case 321:
             _hm.h1[_hm.reco_K_pdgcheat]->Fill( 1 );
@@ -927,38 +775,6 @@ namespace QQbarAnalysis
         _hm.h1[_hm.reco_Pi_scos]->Fill( abs(pfot.PiLPFO[ineg].cos) * sgn( -_mc.mc_quark_charge[1] ) * mct.mc_quark[1].cos / abs(mct.mc_quark[1].cos) );
         _hm.h1[_hm.reco_Pi_mom]->Fill( pfot.PiLPFO[ineg].p_mag );
         _hm.h1[_hm.gen_reco_Pi_sep_cos]->Fill( gen_reco_Pi_sep_cos );
-
-        // cheat
-        switch ( abs(pfot.PiLPFO[ineg].pfo_pdgcheat) ) {
-          case 321:
-            _hm.h2_dEdx_nomap[_hm.gen_ipart_reco_Pi_dEdx_p][kKaon]->Fill(pfot.PiLPFO[ineg].p_mag,pfot.PiLPFO[ineg].pfo_dedx);
-            _hm.h2_dEdx_nomap[_hm.gen_ipart_reco_Pi_PidEdx_dist_cos][kKaon]->Fill(pfot.PiLPFO[ineg].cos,pfot.PiLPFO[ineg].pfo_piddedx_pi_dedxdist);
-            _hm.h1[_hm.reco_Pi_pdgcheat]->Fill( 1 );
-            break;
-          case 211:
-            _hm.h2_dEdx_nomap[_hm.gen_ipart_reco_Pi_dEdx_p][kPion]->Fill(pfot.PiLPFO[ineg].p_mag,pfot.PiLPFO[ineg].pfo_dedx);
-            _hm.h2_dEdx_nomap[_hm.gen_ipart_reco_Pi_PidEdx_dist_cos][kPion]->Fill(pfot.PiLPFO[ineg].cos,pfot.PiLPFO[ineg].pfo_piddedx_pi_dedxdist);
-            _hm.h1[_hm.reco_Pi_pdgcheat]->Fill( 0 );
-            break;
-          case 2212:
-            _hm.h2_dEdx_nomap[_hm.gen_ipart_reco_Pi_dEdx_p][kProton]->Fill(pfot.PiLPFO[ineg].p_mag,pfot.PiLPFO[ineg].pfo_dedx);
-            _hm.h2_dEdx_nomap[_hm.gen_ipart_reco_Pi_PidEdx_dist_cos][kProton]->Fill(pfot.PiLPFO[ineg].cos,pfot.KLPFO[ineg].pfo_piddedx_pi_dedxdist);
-            _hm.h1[_hm.reco_Pi_pdgcheat]->Fill( 2 );
-            break;
-          case 11:
-            _hm.h2_dEdx_nomap[_hm.gen_ipart_reco_Pi_dEdx_p][kElectron]->Fill(pfot.PiLPFO[ineg].p_mag,pfot.PiLPFO[ineg].pfo_dedx);
-            _hm.h2_dEdx_nomap[_hm.gen_ipart_reco_Pi_PidEdx_dist_cos][kElectron]->Fill(pfot.PiLPFO[ineg].cos,pfot.PiLPFO[ineg].pfo_piddedx_pi_dedxdist);
-            _hm.h1[_hm.reco_Pi_pdgcheat]->Fill( 3 );
-            break;
-          case 13:
-            _hm.h2_dEdx_nomap[_hm.gen_ipart_reco_Pi_dEdx_p][kMuon]->Fill(pfot.PiLPFO[ineg].p_mag,pfot.PiLPFO[ineg].pfo_dedx);
-            _hm.h2_dEdx_nomap[_hm.gen_ipart_reco_Pi_PidEdx_dist_cos][kMuon]->Fill(pfot.PiLPFO[ineg].cos,pfot.PiLPFO[ineg].pfo_piddedx_pi_dedxdist);
-            _hm.h1[_hm.reco_Pi_pdgcheat]->Fill( 4 );
-            break;
-          default:
-            _hm.h1[_hm.reco_Pi_pdgcheat]->Fill( 5 );
-            break;
-        }
 
         switch ( abs(pfot.PiLPFO[1-ineg].pfo_pdgcheat) ) {
           case 321:
