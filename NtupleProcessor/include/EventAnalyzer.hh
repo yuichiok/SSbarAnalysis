@@ -65,7 +65,6 @@ namespace QQbarAnalysis
 
     // Histogram extractor
       void             PolarAngleGen( PFOTools mct );
-      void             ProcessDoubleTag( PFOTools pfot, PFOTools mct, vector<Bool_t> cuts[3], PDGConfig double_tag[3]);
       void             ProcessDoubleTag( PFOTools pfot, PFOTools mct, unordered_map< TString, unordered_map<TString, Bool_t> > cuts );
 
       void             Jet_sum_n_acol();

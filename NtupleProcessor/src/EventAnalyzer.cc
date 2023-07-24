@@ -98,7 +98,6 @@ namespace QQbarAnalysis
     // Selections //
     ////////////////
 
-    vector<Bool_t> CutTrigger[3];    
     unordered_map< TString, unordered_map<TString, Bool_t> > CutTriggerMap; // [particle][cutname]
 
     for( const auto &[i_lmode, val_LPFO]: pfot.LPFO_ ){
@@ -141,65 +140,8 @@ namespace QQbarAnalysis
 
     }
 
-///////////////////////////////////////////
-    // Valid LPFO
-    CutTrigger[kKaon].push_back(_eve.eve_valid_lpfo);
-    CutTrigger[kPion].push_back(_eve.eve_valid_lpfo);
-
-    // Base Selection (mom, tpc_hit, offset)
-    Bool_t LPFO_double_quality[3]    = {true,true,true};
-    for ( int i=0; i<2; i++ ){
-      if( !pfot.LPFO_Quality_checks(pfot.KLPFO[i]) )  LPFO_double_quality[kKaon] = false;
-      if( !pfot.LPFO_Quality_checks(pfot.PiLPFO[i]) ) LPFO_double_quality[kPion] = false;
-    }
-    CutTrigger[kKaon].push_back(LPFO_double_quality[kKaon]);
-    CutTrigger[kPion].push_back(LPFO_double_quality[kPion]);
-
-    // SPFO opposite check
-    Bool_t is_gluon[3][2] = {0};
-    Bool_t is_there_a_gluon[3] = {false};
-    for ( int ijet=0; ijet<2; ijet++){
-
-      for ( auto iSPFO_K : pfot.SPFOs_K[ijet] ){
-        Bool_t charge_opposite = iSPFO_K.pfo_charge * pfot.KLPFO[ijet].pfo_charge < 0;
-        Bool_t momentum_above  = iSPFO_K.p_mag > 10;
-        if( charge_opposite && momentum_above ) is_gluon[kKaon][ijet] = true;
-      }
-
-      for ( auto iSPFO_Pi : pfot.SPFOs_Pi[ijet] ){
-        Bool_t charge_opposite = iSPFO_Pi.pfo_charge * pfot.PiLPFO[ijet].pfo_charge < 0;
-        Bool_t momentum_above  = iSPFO_Pi.p_mag > 10;
-        if( charge_opposite && momentum_above ) is_gluon[kPion][ijet] = true;
-      }
-
-    }
-
-    for ( int i=0; i<2; i++ ){
-      if( is_gluon[kKaon][i] ) is_there_a_gluon[kKaon] = true;
-      if( is_gluon[kPion][i] ) is_there_a_gluon[kPion] = true;
-    }
-    CutTrigger[kKaon].push_back( !is_there_a_gluon[kKaon] );
-    CutTrigger[kPion].push_back( !is_there_a_gluon[kPion] );
-
-    // dEdx dist PDG check
-    PDGConfig dEdx_pdg_match[3] = {noKPi, noKPi, noKPi};
-    
-    if ( pfot.isKaon(pfot.KLPFO[0])  && pfot.isKaon(pfot.KLPFO[1])  ) { dEdx_pdg_match[kKaon] = K_K; }
-    if ( pfot.isPion(pfot.PiLPFO[0]) && pfot.isPion(pfot.PiLPFO[1]) ) { dEdx_pdg_match[kPion] = Pi_Pi; }
-
-    // charge config check
-    Bool_t charge_check[3] = {false};
-
-    if( dEdx_pdg_match[kKaon] == K_K ){
-      charge_check[kKaon] = pfot.is_charge_config(pfot.kOpposite,pfot.KLPFO[0].pfo_charge,pfot.KLPFO[1].pfo_charge);
-    }
-    if( dEdx_pdg_match[kPion] == Pi_Pi ){
-      charge_check[kPion] = pfot.is_charge_config(pfot.kOpposite,pfot.PiLPFO[0].pfo_charge,pfot.PiLPFO[1].pfo_charge);
-    }
-
-    CutTrigger[kKaon].push_back(charge_check[kKaon]);
-    CutTrigger[kPion].push_back(charge_check[kPion]);
-///////////////////////////////////////////
+    //Double Tagging
+    ProcessDoubleTag(pfot,mct,CutTriggerMap);
 
     // Try Stability and Purity Calculation here.
     // Kaon Efficiency
@@ -231,13 +173,6 @@ namespace QQbarAnalysis
       _hm.h1[_hm.reco_N_Pi_cos]->Fill( bin_center ,dN_Pis[1]);
       _hm.h1[_hm.N_Pi_corr_cos]->Fill( bin_center ,dN_Pis[2]);
     }
-
-    // Fill Hists can make another class called histogram extractor?
-    // CutTrigger = [ Valid_LPFO, Quality, Not_Gluon_K, charge_check ]
-    //                          * Quality = {momentum, tpc hits, offset}
-
-    ProcessDoubleTag(pfot,mct,CutTriggerMap);
-    ProcessDoubleTag(pfot,mct,CutTrigger,dEdx_pdg_match);
 
 
     ClearStructs();
@@ -490,84 +425,6 @@ namespace QQbarAnalysis
       } // LPFO event selection
 
     } // LPFO mode loop
-
-  }
-
-  void EventAnalyzer::ProcessDoubleTag(PFOTools pfot, PFOTools mct, vector<Bool_t> cuts[3], PDGConfig double_tag[3])
-  {
-    Bool_t LPFO_checks[3] = {true,true,true};
-
-    for (int i=0; i<3; i++ ){
-
-      if ( cuts[i].empty() ) continue;
-
-      for (int j=0; j< cuts[i].size()-1; j++){
-
-        if (!cuts[i].at(j)){
-          LPFO_checks[i] = false;
-          break;
-        }
-
-      }
-    }
-
-    Bool_t sign_check[3] = {false, false, false};
-    for (int i=0; i<3; i++ ){
-      if ( cuts[i].empty() ) continue;
-      sign_check[i] = cuts[i].back();
-    }
-
-    // Reco K_K
-
-    if ( LPFO_checks[kKaon] && pfot.is_ss() && double_tag[kKaon] == K_K ){
-
-      Int_t ineg = -1;
-
-      if( pfot.KLPFO[0].pfo_charge < 0 ){
-        ineg = 0;
-      }else{
-        ineg = 1;
-      }
-
-      if(sign_check[kKaon]){
-
-        Float_t gen_reco_K_sep_cos  = VectorTools::GetCosBetween(pfot.KLPFO[ineg].vt.v3(), mct.mc_quark[0].vt.v3());
-
-        _hm.h1[_hm.reco_K_cos]->Fill( pfot.KLPFO[ineg].cos );
-        _hm.h1[_hm.reco_K_qcos]->Fill( pfot.KLPFO[ineg].qcos );
-        _hm.h1[_hm.reco_K_scos]->Fill( abs(pfot.KLPFO[ineg].cos) * sgn( -_mc.mc_quark_charge[0] ) * mct.mc_quark[0].cos / abs(mct.mc_quark[0].cos) );
-        _hm.h1[_hm.reco_K_mom]->Fill( pfot.KLPFO[ineg].p_mag );
-        _hm.h1[_hm.gen_reco_K_sep_cos]->Fill( gen_reco_K_sep_cos );
-
-      }
-
-    }
-
-    // case Pi_Pi:
-    if ( LPFO_checks[kPion] && pfot.is_uu_dd() && double_tag[kPion] == Pi_Pi ){
-
-      Int_t ineg = -1;
-
-      if( pfot.PiLPFO[0].pfo_charge < 0 ){
-        ineg = 0;
-      }else{
-        ineg = 1;
-      }
-
-      if(sign_check[kPion]){
-
-        Float_t gen_reco_Pi_sep_cos  = VectorTools::GetCosBetween(pfot.PiLPFO[ineg].vt.v3(), mct.mc_quark[0].vt.v3());
-        Float_t vtx_endpt = sqrt(pfot.PiLPFO[ineg].pfo_endpt[0] * pfot.PiLPFO[ineg].pfo_endpt[0] + pfot.PiLPFO[ineg].pfo_endpt[1] * pfot.PiLPFO[ineg].pfo_endpt[1] + pfot.PiLPFO[ineg].pfo_endpt[2] * pfot.PiLPFO[ineg].pfo_endpt[2]);
-
-        _hm.h1[_hm.reco_Pi_cos]->Fill( pfot.PiLPFO[ineg].cos );
-        _hm.h1[_hm.reco_Pi_qcos]->Fill( pfot.PiLPFO[ineg].qcos );
-        _hm.h1[_hm.reco_Pi_scos]->Fill( abs(pfot.PiLPFO[ineg].cos) * sgn( -_mc.mc_quark_charge[1] ) * mct.mc_quark[1].cos / abs(mct.mc_quark[1].cos) );
-        _hm.h1[_hm.reco_Pi_mom]->Fill( pfot.PiLPFO[ineg].p_mag );
-        _hm.h1[_hm.gen_reco_Pi_sep_cos]->Fill( gen_reco_Pi_sep_cos );
-
-      }
-
-    }
 
   }
 

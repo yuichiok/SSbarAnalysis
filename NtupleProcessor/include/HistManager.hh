@@ -35,18 +35,6 @@ namespace QQbarAnalysis
         gen_K_cos,
         gen_K_qcos,
 
-        reco_K_cos,
-        reco_K_qcos,
-        reco_K_scos,
-        reco_K_mom,
-        gen_reco_K_sep_cos,
-
-        reco_Pi_cos,
-        reco_Pi_qcos,
-        reco_Pi_scos,
-        reco_Pi_mom,
-        gen_reco_Pi_sep_cos,
-
         gen_N_K_cos,
         reco_N_K_cos,
         N_K_corr_cos,
