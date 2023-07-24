@@ -100,7 +100,7 @@ namespace QQbarAnalysis
 
     unordered_map< TString, unordered_map<TString, Bool_t> > CutTriggerMap; // [particle][cutname]
 
-    for( const auto &[i_lmode, val_LPFO]: pfot.LPFO_ ){
+    for( const auto &[i_lmode, val_LPFO]: pfot.LPFO ){
 
       unordered_map<int, PFO_Info> LPFOs = val_LPFO;
 
@@ -389,7 +389,7 @@ namespace QQbarAnalysis
       }
     }
 
-    for( const auto &[i_lmode, val_LPFO] : pfot.LPFO_ ){
+    for( const auto &[i_lmode, val_LPFO] : pfot.LPFO ){
 
       Bool_t isPass = std::all_of(is_pass.at(i_lmode).begin(), is_pass.at(i_lmode).end(), [](bool v) { return v; });
 

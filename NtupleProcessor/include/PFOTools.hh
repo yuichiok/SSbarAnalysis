@@ -58,8 +58,6 @@ namespace QQbarAnalysis
       virtual Bool_t           is_offset_small       ( PFO_Info iPFO, Int_t MAX_OFFSET );
       virtual Bool_t           is_dEdxdist_bad       ( Float_t e_dist, Float_t mu_dist, Float_t pi_dist, Float_t k_dist, Float_t p_dist );
       virtual Bool_t           is_high_LPFO          ( TString mode );
-      virtual Bool_t           is_ss                 ();
-      virtual Bool_t           is_uu_dd              ();
 
     // MC gen info
       MC_Info    mc_quark[2];
@@ -72,18 +70,13 @@ namespace QQbarAnalysis
       vector<PFO_Info> Valid_PFOs;
 
     // Leading/Sub-Leading PFOs
-      PFO_Info LPFO[2];
-      unordered_map< TString, unordered_map<int, PFO_Info> > LPFO_;
+      unordered_map< TString, unordered_map<int, PFO_Info> > LPFO;
       unordered_map< TString, unordered_map<int, vector<PFO_Info> > > SPFOs_;
 
-      PFO_Info KLPFO[2];
-      PFO_Info PiLPFO[2];
       PFO_Info cheat_KLPFO[2];
       PFO_Info cheat_PiLPFO[2];
       vector<PFO_Info> SPFOs[2];
-      vector<PFO_Info> SPFOs_K[2];
       vector<PFO_Info> SPFOs_cheat_K[2];
-      vector<PFO_Info> SPFOs_Pi[2];
       vector<PFO_Info> SPFOs_cheat_Pi[2];
 
     // PFO modes and types

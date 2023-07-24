@@ -186,12 +186,9 @@ namespace QQbarAnalysis
 
     if( is_jet_mult_non0() ){
       for (int ijet=0; ijet < 2; ijet++){
-        LPFO[ijet]        = GetSortedJet(ijet).at(0);
-        LPFO_["K"][ijet]  = Get_Particle_LPFO(ijet,kKaon);
-        LPFO_["Pi"][ijet] = Get_Particle_LPFO(ijet,kPion);
 
-        KLPFO[ijet]       = Get_Particle_LPFO(ijet,kKaon);
-        PiLPFO[ijet]      = Get_Particle_LPFO(ijet,kPion);
+        LPFO["K"][ijet]  = Get_Particle_LPFO(ijet,kKaon);
+        LPFO["Pi"][ijet] = Get_Particle_LPFO(ijet,kPion);
 
         // Reconstructed PFO
         if( PFO_jet[ijet].size() > 1 ){
@@ -206,18 +203,6 @@ namespace QQbarAnalysis
           std::copy_if(SPFOs[ijet].begin(), SPFOs[ijet].end(), std::back_inserter(SPFOs_["Pi"][ijet]), [](PFO_Info iPFO) {
               return isPion(iPFO);
           });
-
-          // delete here afterwards
-
-          std::copy_if(SPFOs[ijet].begin(), SPFOs[ijet].end(), std::back_inserter(SPFOs_K[ijet]), [](PFO_Info iPFO) {
-              return isKaon(iPFO);
-          });
-
-          std::copy_if(SPFOs[ijet].begin(), SPFOs[ijet].end(), std::back_inserter(SPFOs_Pi[ijet]), [](PFO_Info iPFO) {
-              return isPion(iPFO);
-          });
-
-          //////
 
         }
 
@@ -341,7 +326,7 @@ namespace QQbarAnalysis
 
   Bool_t PFOTools::is_PID_config( TString lmode )
   {
-    return is_PID( lmode, LPFO_.at(lmode).at(0) ) && is_PID( lmode, LPFO_.at(lmode).at(1) );
+    return is_PID( lmode, LPFO.at(lmode).at(0) ) && is_PID( lmode, LPFO.at(lmode).at(1) );
   }
 
   Bool_t PFOTools::is_jet_mult_non0()
@@ -355,7 +340,6 @@ namespace QQbarAnalysis
   Bool_t PFOTools::is_charge_config( ChargeConfig cc, Int_t charge0 , Int_t charge1 )
   {
 
-    // Int_t charge_config = LPFO[0].pfo_charge * LPFO[1].pfo_charge;
     Int_t charge_config = charge0 * charge1;
 
     switch (cc)
@@ -410,11 +394,11 @@ namespace QQbarAnalysis
 
   Bool_t PFOTools::is_dEdxdist_bad( Float_t e_dist, Float_t mu_dist, Float_t pi_dist, Float_t k_dist, Float_t p_dist )
   {
-    if( !e_dist ) return 1;
-    if( !mu_dist ) return 1;
-    if( !pi_dist ) return 1;
-    if( !k_dist ) return 1;
-    if( !p_dist ) return 1;
+    if( !e_dist )   return 1;
+    if( !mu_dist )  return 1;
+    if( !pi_dist )  return 1;
+    if( !k_dist )   return 1;
+    if( !p_dist )   return 1;
     return 0;
   }
 
@@ -425,30 +409,10 @@ namespace QQbarAnalysis
     for( int ijet=0; ijet < 2; ijet++ ){
       for( auto lmode : PFO_mode ){
         if( mode == lmode ) continue;
-        check.emplace_back( LPFO_.at(mode).at(ijet).p_mag > LPFO_.at(lmode).at(ijet).p_mag );
+        check.emplace_back( LPFO.at(mode).at(ijet).p_mag > LPFO.at(lmode).at(ijet).p_mag );
       }
     }
     return std::all_of(check.begin(), check.end(), [](bool v) { return v; });
   }
 
-  Bool_t PFOTools::is_ss()
-  {
-    if ( KLPFO[0].p_mag > PiLPFO[0].p_mag &&
-        KLPFO[1].p_mag > PiLPFO[1].p_mag ){
-          return true;
-    }else{
-      return false;
-    }
-    
-  }
-
-  Bool_t PFOTools::is_uu_dd()
-  {
-    if ( PiLPFO[0].p_mag > KLPFO[0].p_mag &&
-        PiLPFO[1].p_mag > KLPFO[1].p_mag ){
-          return true;
-    }else{
-      return false;
-    }
-  }
 }
