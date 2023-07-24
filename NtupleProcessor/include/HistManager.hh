@@ -35,17 +35,10 @@ namespace QQbarAnalysis
         gen_K_cos,
         gen_K_qcos,
 
-        cheat_K_cos,
-        cheat_K_qcos,
-
-        cheat_Pi_cos,
-        cheat_Pi_qcos,
-
         reco_K_cos,
         reco_K_qcos,
         reco_K_scos,
         reco_K_mom,
-        reco_K_pdgcheat,
         gen_reco_K_sep_cos,
         jet_reco_K_sep_cos,
 
@@ -53,24 +46,11 @@ namespace QQbarAnalysis
         reco_Pi_qcos,
         reco_Pi_scos,
         reco_Pi_mom,
-        reco_Pi_pdgcheat,
         gen_reco_Pi_sep_cos,
         jet_reco_Pi_sep_cos,
 
-        good_reco_Pi_endpt,
-        good_reco_Pi_tpchits,
-        good_reco_Pi_pidedx_dist,
-        good_reco_Pi_kdedx_dist,
-        bad_reco_Pi_endpt,
-        bad_reco_Pi_tpchits,
-        bad_reco_Pi_pidedx_dist,
-        bad_reco_Pi_kdedx_dist,
-
         reco_sum_jetE,
         reco_jet_sep,
-
-        lpfo_gen_K_mom,
-        lpfo_reco_K_mom,
 
         gen_N_K_cos,
         reco_N_K_cos,
@@ -106,10 +86,6 @@ namespace QQbarAnalysis
 
         gen_K_p_cos,
         reco_K_p_cos,
-
-        nK_gen_reco,
-        npi_gen_reco,
-        np_gen_reco,
 
         stable_K_cos,
         purity_K_cos,

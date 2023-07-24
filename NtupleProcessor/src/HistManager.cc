@@ -66,44 +66,23 @@ namespace QQbarAnalysis
       h1[gen_K_cos]       = new TH1F("h_gen_K_cos","; Generated Kaon cos#theta; Entries",nbins_cos,-1,1);
       h1[gen_K_qcos]      = new TH1F("h_gen_K_qcos","; Generated Kaon qcos#theta; Entries",nbins_cos,-1,1);
       
-      h1[cheat_K_cos]     = new TH1F("h_cheat_K_cos",";LPFO Kaon cos#theta; Entries",nbins_cos,-1,1);
-      h1[cheat_K_qcos]    = new TH1F("h_cheat_K_qcos",";LPFO Kaon cos#theta; Entries",nbins_cos,-1,1);
-
-      h1[cheat_Pi_cos]    = new TH1F("h_cheat_Pi_cos",";LPFO Pion cos#theta; Entries",nbins_cos,-1,1);
-      h1[cheat_Pi_qcos]   = new TH1F("h_cheat_Pi_qcos",";LPFO Pion cos#theta; Entries",nbins_cos,-1,1);
-
       h1[reco_K_cos]      = new TH1F("h_reco_K_cos",";LPFO Kaon cos#theta; Entries",nbins_cos,-1,1);
       h1[reco_K_qcos]     = new TH1F("h_reco_K_qcos",";LPFO Kaon cos#theta; Entries",nbins_cos,-1,1);
       h1[reco_K_scos]     = new TH1F("h_reco_K_scos",";LPFO Kaon cos#theta; Entries",nbins_cos,-1,1);
       h1[reco_K_mom]      = new TH1F("h_reco_K_mom",";LPFO Kaon momentum (GeV); Entries",140,10,150);
-      h1[reco_K_pdgcheat] = new TH1F("h_reco_K_pdgcheat",";LPFO Kaon pdgcheat (Pion, Kaon, Proton, others); Entries",6,-0.5,5.5);
       h1[gen_reco_K_sep_cos] = new TH1F("h_gen_reco_K_sep_cos",";Kaon cos#theta_{gen-LPFOK}; Entries",nbins_cos,-1,1);
       h1[jet_reco_K_sep_cos] = new TH1F("h_jet_reco_K_sep_cos",";Kaon cos#theta_{jet-LPFOK}; Entries",nbins_cos,-1,1);
-
-      h1[good_reco_Pi_endpt]       = new TH1F("h_good_reco_Pi_endpt",";vtx endpt (good); Entries",1000,2000,4000);
-      h1[good_reco_Pi_tpchits]     = new TH1F("h_good_reco_Pi_tpchits",";TPC nhits (good); Entries",221,0,221);
-      h1[good_reco_Pi_pidedx_dist] = new TH1F("h_good_reco_Pi_pidedx_dist",";#pi #frac{dE}{dx} dist (good); Entries",100,-20,20);
-      h1[good_reco_Pi_kdedx_dist]  = new TH1F("h_good_reco_Pi_kdedx_dist",";K #frac{dE}{dx} dist (good); Entries",100,-20,20);
-
-      h1[bad_reco_Pi_endpt]       = new TH1F("h_bad_reco_Pi_endpt",";vtx endpt (bad); Entries",1000,2000,4000);
-      h1[bad_reco_Pi_tpchits]     = new TH1F("h_bad_reco_Pi_tpchits",";TPC nhits (bad); Entries",221,0,221);
-      h1[bad_reco_Pi_pidedx_dist] = new TH1F("h_bad_reco_Pi_pidedx_dist",";#pi #frac{dE}{dx} dist (bad); Entries",100,-20,20);
-      h1[bad_reco_Pi_kdedx_dist]  = new TH1F("h_bad_reco_Pi_kdedx_dist",";K #frac{dE}{dx} dist (bad); Entries",100,-20,20);
 
       h1[reco_Pi_cos]      = new TH1F("h_reco_Pi_cos",";LPFO Pion cos#theta; Entries",nbins_cos,-1,1);
       h1[reco_Pi_qcos]     = new TH1F("h_reco_Pi_qcos",";LPFO Pion cos#theta; Entries",nbins_cos,-1,1);
       h1[reco_Pi_scos]     = new TH1F("h_reco_Pi_scos",";LPFO Pion cos#theta; Entries",nbins_cos,-1,1);
       h1[reco_Pi_mom]      = new TH1F("h_reco_Pi_mom",";LPFO Pion momentum (GeV); Entries",140,10,150);
-      h1[reco_Pi_pdgcheat] = new TH1F("h_reco_Pi_pdgcheat",";LPFO Pion pdgcheat (Pion, Kaon, Proton, others); Entries",6,-0.5,5.5);
       h1[gen_reco_Pi_sep_cos] = new TH1F("h_gen_reco_Pi_sep_cos",";cos#theta_{gen-LPFOPi}; Entries",nbins_cos,-1,1);
       h1[jet_reco_Pi_sep_cos] = new TH1F("h_jet_reco_Pi_sep_cos",";cos#theta_{jet-LPFOPi}; Entries",nbins_cos,-1,1);
 
     // ISR parameters
       h1[reco_sum_jetE]   = new TH1F("h_reco_sum_jetE", ";Visible Energy (GeV);", 100, 0, 300);
       h1[reco_jet_sep]    = new TH1F("h_reco_jet_sep", ";Jet sep |cos#theta|;", 100, 0, 1);
-
-      h1[lpfo_gen_K_mom]  = new TH1F("h_lpfo_gen_K_mom","; Leading Gen Kaon momentum (GeV); Entries",100,0,100);
-      h1[lpfo_reco_K_mom] = new TH1F("h_lpfo_reco_K_mom","; Leading Reco Kaon momentum (GeV); Entries",100,0,100);
 
     // Number of Gen Reco Kaons & Pions
     /*
@@ -147,10 +126,6 @@ namespace QQbarAnalysis
 
       h2[gen_K_p_cos]  = new TH2F("h2_gen_K_p_cos" ,";cos#theta;p (GeV)",nbins_cos,-1,1,100,0,60);
       h2[reco_K_p_cos] = new TH2F("h2_reco_K_p_cos",";cos#theta;p (GeV)",nbins_cos,-1,1,100,0,60);
-
-      h2[nK_gen_reco]  = new TH2F("h2_nK_gen_reco" ,";N Kaons (Reco);N Kaons (Gen)",   50,0,50,50,0,50);
-      h2[npi_gen_reco] = new TH2F("h2_npi_gen_reco",";N Pions (Reco);N Pions (Gen)",   50,0,50,50,0,50);
-      h2[np_gen_reco]  = new TH2F("h2_np_gen_reco",";N Protons (Reco);N Protons (Gen)",50,0,50,50,0,50);
       
       h2[stable_K_cos]   = new TH2F("h2_stable_K_cos",";cos#theta;Stability",nbins_cos,-1,1,50,0,1);
       h2[purity_K_cos]   = new TH2F("h2_purity_K_cos",";cos#theta;Purity",   nbins_cos,-1,1,50,0,1);

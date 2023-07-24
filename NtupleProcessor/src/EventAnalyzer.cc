@@ -249,169 +249,7 @@ namespace QQbarAnalysis
     ProcessDoubleTag(pfot,mct,CutTrigger,dEdx_pdg_match);
 
 
-
-
-    // Fill PFO
-
-    // Initialize counters
-    Int_t n_reco_particles[3] = {0};
-    Int_t n_gen_particles[3]  = {0};
-
-    TH1F * h_n_reco_particles[3];
-    for (int i=0; i < 3; i++){
-      h_n_reco_particles[i] = new TH1F(TString::Format("h_n_reco_particles%d",i),TString::Format("h_n_reco_particles%d",i),40,-1,1);
-    }
-
-    TH1F * h_n_gen_particles[3];
-    for (int i=0; i < 3; i++){
-      h_n_gen_particles[i] = new TH1F(TString::Format("h_n_gen_particles%d",i),TString::Format("h_n_gen_particles%d",i),40,-1,1);
-    }
-
-    std::vector<PFO_Info> PFO_Collection = pfot.Valid_PFOs;
-    _data.n_valid_pfo = PFO_Collection.size();
-
-    // Access cheated Kaon information
-    if( pfot.PFO_cheat_Ks[0].size() && pfot.PFO_cheat_Ks[1].size() ){
-
-      vector<Bool_t> Cheat_K_CutTrigger;
-      // quality check
-      Bool_t cheat_K_double_quality    = true;
-      for ( auto iLPFO : pfot.cheat_KLPFO ){
-        if( !pfot.LPFO_Quality_checks(iLPFO) ){
-          cheat_K_double_quality = false;
-          break;
-        }
-      }
-      Cheat_K_CutTrigger.push_back(cheat_K_double_quality);
-
-      // SPFO opposite check
-      Bool_t is_cheat_gluon_K[2] = {0};
-      Bool_t is_there_a_cheat_gluon_K = false;
-      for ( int ijet=0; ijet<2; ijet++){
-        if( pfot.SPFOs_cheat_K[ijet].size() ){
-          for ( auto iSPFO_K : pfot.SPFOs_cheat_K[ijet] ){
-            Bool_t charge_opposite = iSPFO_K.pfo_pdgcheat * pfot.cheat_KLPFO[ijet].pfo_pdgcheat < 0;
-            Bool_t momentum_above  = iSPFO_K.p_mag > 10;
-            if( charge_opposite && momentum_above ) is_cheat_gluon_K[ijet] = true;
-          }
-        }
-      }
-      for ( auto ibool : is_cheat_gluon_K ){
-        if( ibool ) is_there_a_cheat_gluon_K = true;
-      }
-      Cheat_K_CutTrigger.push_back(!is_there_a_cheat_gluon_K);
-
-      // charge check
-      Bool_t cheat_K_charge_check = pfot.is_charge_config(pfot.kOpposite,pfot.cheat_KLPFO[0].pfo_pdgcheat,pfot.cheat_KLPFO[1].pfo_pdgcheat);
-      Cheat_K_CutTrigger.push_back(cheat_K_charge_check);
-
-      Bool_t cheat_K_all_checks = true;
-      for (auto ibool : Cheat_K_CutTrigger){
-        if (!ibool) {
-          cheat_K_all_checks = false;
-          break;
-        }
-      }
-
-      if ( cheat_K_all_checks ){
-
-        Int_t ineg = -1;
-
-        if( pfot.cheat_KLPFO[0].pfo_pdgcheat < 0 ){
-          ineg = 0;
-        }else{
-          ineg = 1;
-        }
-
-        Float_t cheat_gen_angle = abs(pfot.cheat_KLPFO[ineg].cos) * sgn( -_mc.mc_quark_charge[0] ) * mct.mc_quark[0].cos / abs(mct.mc_quark[0].cos);
-        _hm.h1[_hm.cheat_K_cos]->Fill(pfot.cheat_KLPFO[ineg].cos);
-        _hm.h1[_hm.cheat_K_qcos]->Fill(cheat_gen_angle);
-
-      }
-
-    }
-
-    // Access cheated Pion information
-    if( pfot.PFO_cheat_Pis[0].size() && pfot.PFO_cheat_Pis[1].size() ){
-
-      vector<Bool_t> Cheat_Pi_CutTrigger;
-      // quality check
-      Bool_t cheat_Pi_double_quality    = true;
-      for ( auto iLPFO : pfot.cheat_PiLPFO ){
-        if( !pfot.LPFO_Quality_checks(iLPFO) ){
-          cheat_Pi_double_quality = false;
-          break;
-        }
-      }
-      Cheat_Pi_CutTrigger.push_back(cheat_Pi_double_quality);
-
-      // SPFO opposite check
-      Bool_t is_cheat_gluon_Pi[2] = {0};
-      Bool_t is_there_a_cheat_gluon_Pi = false;
-      for ( int ijet=0; ijet<2; ijet++){
-        if( pfot.SPFOs_cheat_Pi[ijet].size() ){
-          for ( auto iSPFO_Pi : pfot.SPFOs_cheat_Pi[ijet] ){
-            Bool_t charge_opposite = iSPFO_Pi.pfo_pdgcheat * pfot.cheat_PiLPFO[ijet].pfo_pdgcheat < 0;
-            Bool_t momentum_above  = iSPFO_Pi.p_mag > 10;
-            if( charge_opposite && momentum_above ) is_cheat_gluon_Pi[ijet] = true;
-          }
-        }
-      }
-      for ( auto ibool : is_cheat_gluon_Pi ){
-        if( ibool ) is_there_a_cheat_gluon_Pi = true;
-      }
-      Cheat_Pi_CutTrigger.push_back(!is_there_a_cheat_gluon_Pi);
-
-      // charge check
-      Bool_t cheat_Pi_charge_check = pfot.is_charge_config(pfot.kOpposite,pfot.cheat_PiLPFO[0].pfo_pdgcheat,pfot.cheat_PiLPFO[1].pfo_pdgcheat);
-      Cheat_Pi_CutTrigger.push_back(cheat_Pi_charge_check);
-
-      Bool_t cheat_Pi_all_checks = true;
-      for (auto ibool : Cheat_Pi_CutTrigger){
-        if (!ibool) {
-          cheat_Pi_all_checks = false;
-          break;
-        }
-      }
-
-      if ( cheat_Pi_all_checks ){
-
-        Int_t ineg = -1;
-
-        if( pfot.cheat_PiLPFO[0].pfo_pdgcheat < 0 ){
-          ineg = 0;
-        }else{
-          ineg = 1;
-        }
-
-        Float_t cheat_gen_angle = abs(pfot.cheat_PiLPFO[ineg].cos) * sgn( -_mc.mc_quark_charge[1] ) * mct.mc_quark[1].cos / abs(mct.mc_quark[1].cos);
-        _hm.h1[_hm.cheat_Pi_cos]->Fill(pfot.cheat_PiLPFO[ineg].cos);
-        _hm.h1[_hm.cheat_Pi_qcos]->Fill(cheat_gen_angle);
-
-      }
-
-    }
-
-    _hm.h2[_hm.nK_gen_reco]->Fill(n_reco_particles[0],n_gen_particles[0]);
-    _hm.h2[_hm.npi_gen_reco]->Fill(n_reco_particles[1],n_gen_particles[1]);
-    _hm.h2[_hm.np_gen_reco]->Fill(n_reco_particles[2],n_gen_particles[2]);
-
-    if(_eve.eve_valid_lpfo){
-
-      for (auto iLPFO : pfot.KLPFO){
-        if( pfot.isKaon(iLPFO) ) _hm.h1[_hm.lpfo_reco_K_mom]->Fill(iLPFO.p_mag);
-      }
-
-      for (int i=0; i<2; i++){ 
-        if( abs(_stats_lpfo.lpfo_pdgcheat[i]) == 321 ) _hm.h1[_hm.lpfo_gen_K_mom]->Fill(pfot.KLPFO[i].p_mag);
-      }
-    }
-
     ClearStructs();
-    for (int i=0; i < 3; i++){
-      delete h_n_reco_particles[i];
-      delete h_n_gen_particles[i];
-    }
 
   }
 
@@ -710,27 +548,6 @@ namespace QQbarAnalysis
         _hm.h1[_hm.reco_K_mom]->Fill( pfot.KLPFO[ineg].p_mag );
         _hm.h1[_hm.gen_reco_K_sep_cos]->Fill( gen_reco_K_sep_cos );
 
-        switch ( abs(pfot.KLPFO[1-ineg].pfo_pdgcheat) ) {
-          case 321:
-            _hm.h1[_hm.reco_K_pdgcheat]->Fill( 1 );
-            break;
-          case 211:
-            _hm.h1[_hm.reco_K_pdgcheat]->Fill( 0 );
-            break;
-          case 2212:
-            _hm.h1[_hm.reco_K_pdgcheat]->Fill( 2 );
-            break;
-          case 11:
-            _hm.h1[_hm.reco_K_pdgcheat]->Fill( 3 );
-            break;
-          case 13:
-            _hm.h1[_hm.reco_K_pdgcheat]->Fill( 4 );
-            break;
-          default:
-            _hm.h1[_hm.reco_K_pdgcheat]->Fill( 5 );
-            break;
-        }
-
         _hm.h1_pq[_hm.acc_KK]->Fill( pfot.KLPFO[ineg].qcos );
 
       }else{
@@ -758,44 +575,11 @@ namespace QQbarAnalysis
         Float_t gen_reco_Pi_sep_cos  = VectorTools::GetCosBetween(pfot.PiLPFO[ineg].vt.v3(), mct.mc_quark[0].vt.v3());
         Float_t vtx_endpt = sqrt(pfot.PiLPFO[ineg].pfo_endpt[0] * pfot.PiLPFO[ineg].pfo_endpt[0] + pfot.PiLPFO[ineg].pfo_endpt[1] * pfot.PiLPFO[ineg].pfo_endpt[1] + pfot.PiLPFO[ineg].pfo_endpt[2] * pfot.PiLPFO[ineg].pfo_endpt[2]);
 
-        if( gen_reco_Pi_sep_cos > 0 ){
-          _hm.h1[_hm.good_reco_Pi_endpt]->Fill( vtx_endpt );
-          _hm.h1[_hm.good_reco_Pi_tpchits]->Fill( pfot.PiLPFO[ineg].pfo_tpc_hits );
-          _hm.h1[_hm.good_reco_Pi_pidedx_dist]->Fill( pfot.PiLPFO[ineg].pfo_piddedx_pi_dedxdist );
-          _hm.h1[_hm.good_reco_Pi_kdedx_dist]->Fill( pfot.PiLPFO[ineg].pfo_piddedx_k_dedxdist );
-        }else{
-          _hm.h1[_hm.bad_reco_Pi_endpt]->Fill( vtx_endpt );
-          _hm.h1[_hm.bad_reco_Pi_tpchits]->Fill( pfot.PiLPFO[ineg].pfo_tpc_hits );
-          _hm.h1[_hm.bad_reco_Pi_pidedx_dist]->Fill( pfot.PiLPFO[ineg].pfo_piddedx_pi_dedxdist );
-          _hm.h1[_hm.bad_reco_Pi_kdedx_dist]->Fill( pfot.PiLPFO[ineg].pfo_piddedx_k_dedxdist );
-        }
-
         _hm.h1[_hm.reco_Pi_cos]->Fill( pfot.PiLPFO[ineg].cos );
         _hm.h1[_hm.reco_Pi_qcos]->Fill( pfot.PiLPFO[ineg].qcos );
         _hm.h1[_hm.reco_Pi_scos]->Fill( abs(pfot.PiLPFO[ineg].cos) * sgn( -_mc.mc_quark_charge[1] ) * mct.mc_quark[1].cos / abs(mct.mc_quark[1].cos) );
         _hm.h1[_hm.reco_Pi_mom]->Fill( pfot.PiLPFO[ineg].p_mag );
         _hm.h1[_hm.gen_reco_Pi_sep_cos]->Fill( gen_reco_Pi_sep_cos );
-
-        switch ( abs(pfot.PiLPFO[1-ineg].pfo_pdgcheat) ) {
-          case 321:
-            _hm.h1[_hm.reco_Pi_pdgcheat]->Fill( 1 );
-            break;
-          case 211:
-            _hm.h1[_hm.reco_Pi_pdgcheat]->Fill( 0 );
-            break;
-          case 2212:
-            _hm.h1[_hm.reco_Pi_pdgcheat]->Fill( 2 );
-            break;
-          case 11:
-            _hm.h1[_hm.reco_Pi_pdgcheat]->Fill( 3 );
-            break;
-          case 13:
-            _hm.h1[_hm.reco_Pi_pdgcheat]->Fill( 4 );
-            break;
-          default:
-            _hm.h1[_hm.reco_Pi_pdgcheat]->Fill( 5 );
-            break;
-        }
 
         _hm.h1_pq[_hm.acc_PiPi]->Fill( pfot.PiLPFO[ineg].qcos );
 
