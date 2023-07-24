@@ -94,15 +94,6 @@ namespace QQbarAnalysis
     ientry = entry;
     // cout << "evt: " << entry << endl;
 
-    // jet info
-    VectorTools jetvt[2];
-    for (int i=0; i<2; i++){
-      jetvt[i].SetCoordinates(_jet.jet_px[i],_jet.jet_py[i],_jet.jet_pz[i],_jet.jet_E[i]);
-    }
-    Float_t jet_cos[2]  = { std::cos( jetvt[0].v3().theta() ), std::cos( jetvt[1].v3().theta() ) };
-    _hm.h2_jet[_hm.jet_mult_cos_noISR]->Fill( jet_cos[0], _jet.jet_npfo[0] );
-    _hm.h2_jet[_hm.jet_mult_cos_noISR]->Fill( jet_cos[1], _jet.jet_npfo[1] );
-
     ////////////////
     // Selections //
     ////////////////
@@ -628,12 +619,6 @@ namespace QQbarAnalysis
     _data.sum_jet_E = _jet.jet_E[0] + _jet.jet_E[1];
     _data.jet_acol  = cosacol;
     _data.jet_theta_diff = std::abs( jetvt[0].v3().theta() - jetvt[1].v3().theta() );
-
-    _hm.h1[_hm.reco_sum_jetE]->Fill( _data.sum_jet_E );
-    _hm.h1[_hm.reco_jet_sep]->Fill( _data.jet_acol );
-
-    _hm.h2_jet[_hm.jet_mult_cos]->Fill( jet_cos[0], _jet.jet_npfo[0] );
-    _hm.h2_jet[_hm.jet_mult_cos]->Fill( jet_cos[1], _jet.jet_npfo[1] );
 
   }
 }

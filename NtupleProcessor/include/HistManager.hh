@@ -40,17 +40,12 @@ namespace QQbarAnalysis
         reco_K_scos,
         reco_K_mom,
         gen_reco_K_sep_cos,
-        jet_reco_K_sep_cos,
 
         reco_Pi_cos,
         reco_Pi_qcos,
         reco_Pi_scos,
         reco_Pi_mom,
         gen_reco_Pi_sep_cos,
-        jet_reco_Pi_sep_cos,
-
-        reco_sum_jetE,
-        reco_jet_sep,
 
         gen_N_K_cos,
         reco_N_K_cos,
@@ -98,25 +93,13 @@ namespace QQbarAnalysis
       };
       TH2F * h2[Last_h2];
 
-      enum h2_jet_index {
-
-        jet_mult_cos,
-        jet_mult_cos_noISR,
-
-        dummy_h2_jet,
-        Last_dummy_h2_jet = dummy_h2_jet
-      };
-      TH2F * h2_jet[Last_dummy_h2_jet];
-
       unordered_map< TString, unordered_map< TString, unordered_map< TString, TH2F* > > > h2_dEdx; // [LPFO][TruthID][hist]
 
     private:
     // Lists
       TList* hList1                = new TList();
       TList* hList1_pq             = new TList();
-      TList* hList1_particle_ratio = new TList();
       TList* hList2                = new TList();
-      TList* hList2_jet            = new TList();
 
       TList* hList1_cos            = new TList();
       TList* hList2_dEdx           = new TList();

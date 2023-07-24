@@ -71,18 +71,12 @@ namespace QQbarAnalysis
       h1[reco_K_scos]     = new TH1F("h_reco_K_scos",";LPFO Kaon cos#theta; Entries",nbins_cos,-1,1);
       h1[reco_K_mom]      = new TH1F("h_reco_K_mom",";LPFO Kaon momentum (GeV); Entries",140,10,150);
       h1[gen_reco_K_sep_cos] = new TH1F("h_gen_reco_K_sep_cos",";Kaon cos#theta_{gen-LPFOK}; Entries",nbins_cos,-1,1);
-      h1[jet_reco_K_sep_cos] = new TH1F("h_jet_reco_K_sep_cos",";Kaon cos#theta_{jet-LPFOK}; Entries",nbins_cos,-1,1);
 
       h1[reco_Pi_cos]      = new TH1F("h_reco_Pi_cos",";LPFO Pion cos#theta; Entries",nbins_cos,-1,1);
       h1[reco_Pi_qcos]     = new TH1F("h_reco_Pi_qcos",";LPFO Pion cos#theta; Entries",nbins_cos,-1,1);
       h1[reco_Pi_scos]     = new TH1F("h_reco_Pi_scos",";LPFO Pion cos#theta; Entries",nbins_cos,-1,1);
       h1[reco_Pi_mom]      = new TH1F("h_reco_Pi_mom",";LPFO Pion momentum (GeV); Entries",140,10,150);
       h1[gen_reco_Pi_sep_cos] = new TH1F("h_gen_reco_Pi_sep_cos",";cos#theta_{gen-LPFOPi}; Entries",nbins_cos,-1,1);
-      h1[jet_reco_Pi_sep_cos] = new TH1F("h_jet_reco_Pi_sep_cos",";cos#theta_{jet-LPFOPi}; Entries",nbins_cos,-1,1);
-
-    // ISR parameters
-      h1[reco_sum_jetE]   = new TH1F("h_reco_sum_jetE", ";Visible Energy (GeV);", 100, 0, 300);
-      h1[reco_jet_sep]    = new TH1F("h_reco_jet_sep", ";Jet sep |cos#theta|;", 100, 0, 1);
 
     // Number of Gen Reco Kaons & Pions
     /*
@@ -133,10 +127,6 @@ namespace QQbarAnalysis
       h2[stable_Pi_cos]   = new TH2F("h2_stable_Pi_cos",";cos#theta;Stability",nbins_cos,-1,1,50,0,1);
       h2[purity_Pi_cos]   = new TH2F("h2_purity_Pi_cos",";cos#theta;Purity",   nbins_cos,-1,1,50,0,1);
 
-    // jet
-      h2_jet[jet_mult_cos]         = new TH2F("h2_jet_mult_cos" ,";cos#theta;NPFOs/jet",nbins_cos,-1,1,100,0,100);
-      h2_jet[jet_mult_cos_noISR]   = new TH2F("h2_jet_mult_cos_noISR" ,";cos#theta;NPFOs/jet",nbins_cos,-1,1,100,0,100);
-
     // dEdx
       vector<TString> hdEdx_name = {"dEdx_p","dEdx_cos","dEdx_dist_cos"};
       for( auto i_lmode : _pt.PFO_mode ){
@@ -164,10 +154,6 @@ namespace QQbarAnalysis
       hList2->Add(ih);
     }
     
-    for (auto ih : h2_jet) {
-      hList2_jet->Add(ih);
-    }
-
     // Use unordered_map
     for ( const auto &[i_lmode, hists] : h1_cos ){
       for ( const auto &[icut, hist] : hists ){
@@ -197,16 +183,6 @@ namespace QQbarAnalysis
     TDirectory * d_pq = output->mkdir("pq");
       d_pq->cd();
       hList1_pq->Write();
-      output->cd();
-
-    TDirectory * d_particle_ratio = output->mkdir("particle_ratio");
-      d_particle_ratio->cd();
-      hList1_particle_ratio->Write();
-      output->cd();
-
-    TDirectory * d_jet = output->mkdir("jet");
-      d_jet->cd();
-      hList2_jet->Write();
       output->cd();
 
     // Use unordered_map
