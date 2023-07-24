@@ -36,18 +36,6 @@ namespace QQbarAnalysis
     //     TH1F     //
     //////////////////
 
-    /* 
-    cos [gen,reco,cheat][q,K,Pi]
-    qcos[gen,reco,cheat][q,K,Pi]
-    scos        [K,Pi]
-    mom         [K,Pi]
-    pdgcheat    [K,Pi]
-    endpt       [K,Pi][good,bad]
-    tpchits     [K,Pi][good,bad]
-    pidedx_dist [K,Pi][good,bad]
-    kdedx_dist  [K,Pi][good,bad]
-    */
-
     // Mapping
     vector<TString> hcos_name = {"cos","qcos","scos","acc_cos","rej_cos"};
     for( auto i_lmode : _pt.PFO_mode ){
@@ -56,6 +44,15 @@ namespace QQbarAnalysis
         h1_cos[i_lmode][iname] = new TH1F(hname,iname + ";cos#theta;Entries",nbins_cos,cos_min,cos_max);
       }
     }
+
+    vector<TString> hres_name = {"gen_N_cos","reco_N_cos","N_corr_cos"};
+    for( auto i_lmode : _pt.PFO_mode ){
+      for( auto iname : hres_name){
+        TString hname = "h_" + i_lmode + "_" + iname;
+        h1_resolution[i_lmode][iname] = new TH1F(hname,iname + ";cos#theta;Entries",nbins_cos,cos_min,cos_max);
+      }
+    }
+
 
 
     // Original
@@ -90,21 +87,6 @@ namespace QQbarAnalysis
       h1[gen_N_Pi_cos]     = new TH1F("h_gen_N_Pi_cos",";cos#theta;Generated N Pions", nbins_cos,-1,1);
       h1[reco_N_Pi_cos]    = new TH1F("h_reco_N_Pi_cos",";cos#theta;Reconstructed N Pions", nbins_cos,-1,1);
       h1[N_Pi_corr_cos]    = new TH1F("h_N_Pi_corr_cos",";cos#theta;Correctly Reconstructed N Pions", nbins_cos,-1,1);
-
-
-    // pq method
-    /*
-    pq [K,Pi][acc,rej]
-    */
-
-      //KID
-      h1_pq[acc_KK]      = new TH1F("h_acc_KK_cos",";Accepted K^{+}K^{-} cos#theta;N_{acc}",nbins_cos,-1,1);
-      h1_pq[rej_KK]      = new TH1F("h_rej_KK_cos",";Rejected K^{+}K^{-} cos#theta;N_{rej}",nbins_cos,-1,1);
-      
-      //PiID
-      h1_pq[acc_PiPi]      = new TH1F("h_acc_PiPi_cos",";Accepted Pi^{+}Pi^{-} cos#theta;N_{acc}",nbins_cos,-1,1);
-      h1_pq[rej_PiPi]      = new TH1F("h_rej_PiPi_cos",";Rejected Pi^{+}Pi^{-} cos#theta;N_{rej}",nbins_cos,-1,1);
-
 
     //////////////////
     //     TH2F     //
@@ -146,10 +128,6 @@ namespace QQbarAnalysis
       hList1->Add(ih);
     }
 
-    for (auto ih : h1_pq) {
-      hList1_pq->Add(ih);
-    }
-
     for (auto ih : h2) {
       hList2->Add(ih);
     }
@@ -158,6 +136,12 @@ namespace QQbarAnalysis
     for ( const auto &[i_lmode, hists] : h1_cos ){
       for ( const auto &[icut, hist] : hists ){
         hList1_cos->Add(hist);
+      }
+    }
+
+    for ( const auto &[i_lmode, hists] : h1_resolution ){
+      for ( const auto &[icut, hist] : hists ){
+        hList1_resolution->Add(hist);
       }
     }
 
@@ -180,15 +164,15 @@ namespace QQbarAnalysis
     hList1->Write();
     hList2->Write();
 
-    TDirectory * d_pq = output->mkdir("pq");
-      d_pq->cd();
-      hList1_pq->Write();
-      output->cd();
-
     // Use unordered_map
     TDirectory * d_cos = output->mkdir("cos");
       d_cos->cd();
       hList1_cos->Write();
+      output->cd();
+
+    TDirectory * d_resolution = output->mkdir("resolution");
+      d_resolution->cd();
+      hList1_resolution->Write();
       output->cd();
 
     TDirectory * d_dEdx = output->mkdir("dEdx");

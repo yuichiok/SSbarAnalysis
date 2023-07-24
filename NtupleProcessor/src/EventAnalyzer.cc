@@ -539,13 +539,6 @@ namespace QQbarAnalysis
         _hm.h1[_hm.reco_K_mom]->Fill( pfot.KLPFO[ineg].p_mag );
         _hm.h1[_hm.gen_reco_K_sep_cos]->Fill( gen_reco_K_sep_cos );
 
-        _hm.h1_pq[_hm.acc_KK]->Fill( pfot.KLPFO[ineg].qcos );
-
-      }else{
-
-        _hm.h1_pq[_hm.rej_KK]->Fill( pfot.KLPFO[ineg].cos );
-        _hm.h1_pq[_hm.rej_KK]->Fill( -pfot.KLPFO[1-ineg].cos );
-      
       }
 
     }
@@ -572,37 +565,8 @@ namespace QQbarAnalysis
         _hm.h1[_hm.reco_Pi_mom]->Fill( pfot.PiLPFO[ineg].p_mag );
         _hm.h1[_hm.gen_reco_Pi_sep_cos]->Fill( gen_reco_Pi_sep_cos );
 
-        _hm.h1_pq[_hm.acc_PiPi]->Fill( pfot.PiLPFO[ineg].qcos );
-
-      }else{
-
-        _hm.h1_pq[_hm.rej_PiPi]->Fill( pfot.PiLPFO[ineg].cos );
-        _hm.h1_pq[_hm.rej_PiPi]->Fill( -pfot.PiLPFO[1-ineg].cos );
-      
       }
 
-    }
-
-  }
-
-  void EventAnalyzer::PolarAngle_acc_rej(PFOTools pfot, vector<Bool_t> cuts, Bool_t ss_config)
-  {
-    if (cuts.size()!=4) return;
-
-    // LPFO present, PFO Quality Good
-    for (int icut=0; icut < 3; icut++){
-      if (!cuts.at(icut)) return;
-    }
-
-    // K_K config
-    if(!ss_config) return;
-
-    // Last element of cuts vector is charge comparison
-    if(cuts.back()){
-      _hm.h1_pq[_hm.acc_KK]->Fill( pfot.KLPFO[0].qcos );
-    }else{
-      _hm.h1_pq[_hm.rej_KK]->Fill( pfot.KLPFO[0].cos );
-      _hm.h1_pq[_hm.rej_KK]->Fill( -pfot.KLPFO[0].cos );
     }
 
   }

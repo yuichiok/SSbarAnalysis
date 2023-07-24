@@ -60,21 +60,8 @@ namespace QQbarAnalysis
       };
       TH1F * h1[Last_h1];
 
-      unordered_map< TString, unordered_map< TString, TH1F* > > h1_cos; // [LPFO][hist]
-
-      enum h1_pq_index {
-        // KID
-        acc_KK,
-        rej_KK,
-
-        // PiID
-        acc_PiPi,
-        rej_PiPi,
-
-        dummy_pq,
-        Last_h1_pq = dummy_pq
-      };
-      TH1F * h1_pq[Last_h1_pq];
+      unordered_map< TString, unordered_map< TString, TH1F* > > h1_cos;        // [LPFO][hist]
+      unordered_map< TString, unordered_map< TString, TH1F* > > h1_resolution; // [LPFO][hist]
 
     // h2 hist
       enum h2_index {
@@ -98,10 +85,10 @@ namespace QQbarAnalysis
     private:
     // Lists
       TList* hList1                = new TList();
-      TList* hList1_pq             = new TList();
       TList* hList2                = new TList();
 
       TList* hList1_cos            = new TList();
+      TList* hList1_resolution     = new TList();
       TList* hList2_dEdx           = new TList();
 
     // PFO Tools
