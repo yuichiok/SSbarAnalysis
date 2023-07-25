@@ -62,6 +62,7 @@ namespace QQbarAnalysis
 
     // Gadgets
       Int_t           *Gen_Reco_Stats_Stable( PFOTools mct, PFOTools pfot, SelectID pid , Float_t cos_min, Float_t cos_max );
+      Bool_t           is_high_LPFO( PFOTools pfot, TString lmode );
 
     // Histogram extractor
       void             PolarAngleGen( PFOTools mct );
@@ -81,6 +82,8 @@ namespace QQbarAnalysis
     private:
 
       Int_t ientry = -1;
+
+      Int_t _check_pt = 0;
 
       MC_QQbar      _mc      ;
       Jet_QQbar     _jet     ;

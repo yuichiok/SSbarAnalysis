@@ -184,25 +184,35 @@ namespace QQbarAnalysis
 
     }
 
+    for (int ijet=0; ijet < 2; ijet++){
+      
+      // sort jet
+      PFO_sorted_jet[ijet] = SortJet(PFO_jet[ijet]);
+      LPFO.push_back(PFO_sorted_jet[ijet].at(0));
+      
+      // get subjet
+      for ( auto i_lmode : PFO_mode ){
+        PFO_subjet[i_lmode][ijet] = GetSubjet(ijet, i_lmode);
+      }
+
+    }
+
+    /*
     if( is_jet_mult_non0() ){
       for (int ijet=0; ijet < 2; ijet++){
 
-        LPFO["K"][ijet]  = Get_Particle_LPFO(ijet,kKaon);
-        LPFO["Pi"][ijet] = Get_Particle_LPFO(ijet,kPion);
+        for ( auto i_lmode : PFO_mode ){
 
-        // Reconstructed PFO
-        if( PFO_jet[ijet].size() > 1 ){
-          SPFOs[ijet] = GetSortedJet(ijet);
-          // SPFOs[ijet].erase(SPFOs[ijet].begin());
-          pop_front(SPFOs[ijet]); // faster algorithm wise?
+          vector<PFO_Info> subjet = PFO_subjet.at(i_lmode).at(ijet);
 
-          std::copy_if(SPFOs[ijet].begin(), SPFOs[ijet].end(), std::back_inserter(SPFOs_["K"][ijet]), [](PFO_Info iPFO) {
-              return isKaon(iPFO);
-          });
-
-          std::copy_if(SPFOs[ijet].begin(), SPFOs[ijet].end(), std::back_inserter(SPFOs_["Pi"][ijet]), [](PFO_Info iPFO) {
-              return isPion(iPFO);
-          });
+          // SPFO
+          if( subjet.size() > 1 ){
+            vector<PFO_Info> tmp_SPFO = subjet;
+            pop_front(tmp_SPFO);
+            std::copy_if(SPFOs[ijet].begin(), SPFOs[ijet].end(), std::back_inserter(SPFOs[i_lmode][ijet]), [&](TString i_lmode, PFO_Info iPFO) {
+                return is_PID( i_lmode, iPFO );
+            });
+          }
 
         }
 
@@ -225,6 +235,7 @@ namespace QQbarAnalysis
 
       } // end jet loop
     }
+    */
 
   }
 
@@ -246,30 +257,13 @@ namespace QQbarAnalysis
       return sorted_jet;
   }
 
-  PFO_Info PFOTools::Get_Particle_LPFO( int ijet, ParticleID pdg )
+  vector<PFO_Info> PFOTools::GetSubjet( int ijet, TString lmode )
   {
-      vector<PFO_Info> sorted_jet = GetSortedJet(ijet);
-      for ( auto iPFO : sorted_jet ) {
-
-        switch ( pdg )
-        {
-          case kKaon:
-            if ( isKaon(iPFO) ) return iPFO;
-            break;
-          case kPion:
-            if ( isPion(iPFO) ) return iPFO;
-            break;
-          case kProton:
-            if ( isProton(iPFO) ) return iPFO;
-            break;
-          
-          default:
-            break;
-        }
-
-      }
-
-      return sorted_jet.at(0);
+    vector<PFO_Info> subjet;
+    for ( const auto iPFO : PFO_sorted_jet[ijet] ){
+      if( is_PID( lmode, iPFO ) ) subjet.push_back( iPFO );
+    }
+    return subjet;
   }
 
   Int_t PFOTools::Get_dEdx_dist_PID( Float_t kdEdx_dist, Float_t pidEdx_dist, Float_t pdEdx_dist )
@@ -324,11 +318,6 @@ namespace QQbarAnalysis
     else                    { return false; }
   }
 
-  Bool_t PFOTools::is_PID_config( TString lmode )
-  {
-    return is_PID( lmode, LPFO.at(lmode).at(0) ) && is_PID( lmode, LPFO.at(lmode).at(1) );
-  }
-
   Bool_t PFOTools::is_jet_mult_non0()
   {
     for ( auto iPFO_jet : PFO_jet ) {
@@ -361,22 +350,6 @@ namespace QQbarAnalysis
 
   }
 
-  Bool_t PFOTools::LPFO_Quality_checks( PFO_Info iPFO )
-  {
-    vector<Bool_t> CutTrigger;
-
-    CutTrigger.push_back( is_momentum( iPFO, _anCfg.LPFO_p_min, _anCfg.LPFO_p_max ) );  // MIN/MAX momentum check
-    CutTrigger.push_back( is_tpc_hits( iPFO, _anCfg.PFO_TPCHits_min ) );                // Number of TPC hit check
-    CutTrigger.push_back( is_offset_small( iPFO, _anCfg.PFO_offset_max ) );             // Offset distance check
-    
-    for (auto trigger : CutTrigger ){
-      if (!trigger) { return false; }
-    }
-
-    return true;
-
-  }
-
   Bool_t PFOTools::is_momentum( PFO_Info iPFO, Float_t MINP_CUT, Float_t MAXP_CUT )
   {
     return ( MINP_CUT < iPFO.p_mag && iPFO.p_mag < MAXP_CUT);
@@ -400,19 +373,6 @@ namespace QQbarAnalysis
     if( !k_dist )   return 1;
     if( !p_dist )   return 1;
     return 0;
-  }
-
-  Bool_t PFOTools::is_high_LPFO( TString mode )
-  {
-    vector<Bool_t> check;
-    check.reserve(2);
-    for( int ijet=0; ijet < 2; ijet++ ){
-      for( auto lmode : PFO_mode ){
-        if( mode == lmode ) continue;
-        check.emplace_back( LPFO.at(mode).at(ijet).p_mag > LPFO.at(lmode).at(ijet).p_mag );
-      }
-    }
-    return std::all_of(check.begin(), check.end(), [](bool v) { return v; });
   }
 
 }
