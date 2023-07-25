@@ -92,7 +92,7 @@ namespace QQbarAnalysis
     PFOTools pfot( &_mc, &_pfo, _config );
 
     ientry = entry;
-    cout << "evt: " << entry << endl;
+    // cout << "evt: " << entry << endl;
 
     ////////////////
     // Selections //
@@ -144,9 +144,7 @@ namespace QQbarAnalysis
     }
 
     //Double Tagging
-    cout << "debug: " << _check_pt++ << "\n";
     ProcessDoubleTag(pfot,mct,CutTriggerMap);
-    cout << "debug: " << _check_pt++ << "\n";
 
 /*
     // Try Stability and Purity Calculation here.
