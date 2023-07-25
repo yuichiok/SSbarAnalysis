@@ -188,7 +188,7 @@ namespace QQbarAnalysis
       
       // sort jet
       PFO_sorted_jet[ijet] = SortJet(PFO_jet[ijet]);
-      LPFO.push_back(PFO_sorted_jet[ijet].at(0));
+      if( PFO_sorted_jet[ijet].size() ) LPFO.push_back(PFO_sorted_jet[ijet].at(0));
       
       // get subjet
       for ( auto i_lmode : PFO_mode ){
