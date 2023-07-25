@@ -58,6 +58,18 @@ class HistManager
       z0_sigma_K_reco_garbage,
       z0_sigma_z0_K_reco_garbage,
 
+      z0_sin_theta_K_reco_primary,
+      z0_sigma_sin_theta_K_reco_primary,
+      z0_sigma_z0_sin_theta_K_reco_primary,
+
+      d0_K_reco_primary_initial,
+      d0_sigma_K_reco_primary_initial,
+      d0_sigma_d0_K_reco_primary_initial,
+
+      d0_K_reco_secondary_initial,
+      d0_sigma_K_reco_secondary_initial,
+      d0_sigma_d0_K_reco_secondary_initial,
+
       cuts,
       ctag_final,
 

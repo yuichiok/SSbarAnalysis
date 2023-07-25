@@ -16,31 +16,31 @@ void HistManager::InitializeHists()
 
   // Own
 
-    h1_K_reco[d0_K_reco_primary] = new TH1F("d0_K_reco_primary"  ,"Reconstructed primary K;d_0, [mm];",2000,0,2);
+    h1_K_reco[d0_K_reco_primary] = new TH1F("d0_K_reco_primary"  ,"Reconstructed primary K;d_0, [mm];",10000,0,2);
     h1_K_reco[d0_sigma_K_reco_primary] = new TH1F("d0_sigma_K_reco_primary"  ,"Reconstructed primary K;#sigma(d_0), [mm];",1000,0,0.1);
     h1_K_reco[d0_sigma_d0_K_reco_primary] = new TH1F("d0_sigma_d0_K_reco_primary"  ,"Reconstructed primary K;#frac{d0}{#sigma(d0)};",1000,0,100);
 
-    h1_K_reco[z0_K_reco_primary] = new TH1F("z0_K_reco_primary"  ,"Reconstructed primary K;z_0, [mm];",2000,0,2);
+    h1_K_reco[z0_K_reco_primary] = new TH1F("z0_K_reco_primary"  ,"Reconstructed primary K;z_0, [mm];",10000,0,2);
     h1_K_reco[z0_sigma_K_reco_primary] = new TH1F("z0_sigma_K_reco_primary"  ,"Reconstructed primary K;#sigma(z_0), [mm];",1000,0,0.1);
     h1_K_reco[z0_sigma_z0_K_reco_primary] = new TH1F("z0_sigma_z0_K_reco_primary"  ,"Reconstructed primary K;#frac{z0}{#sigma(z0)};",1000,0,100);
 
-    h1_K_reco[d0_K_reco_secondary] = new TH1F("d0_K_reco_secondary"  ,"Reconstructed secondary K;d_0, [mm];",2000,0,2);
+    h1_K_reco[d0_K_reco_secondary] = new TH1F("d0_K_reco_secondary"  ,"Reconstructed secondary K;d_0, [mm];",10000,0,2);
     h1_K_reco[d0_sigma_K_reco_secondary] = new TH1F("d0_sigma_K_reco_secondary"  ,"Reconstructed secondary K;#sigma(d_0), [mm];",1000,0,0.1);
     h1_K_reco[d0_sigma_d0_K_reco_secondary] = new TH1F("d0_sigma_d0_K_reco_secondary"  ,"Reconstructed secondary K;#frac{d0}{#sigma(d0)};",1000,0,100);
 
-    h1_K_reco[z0_K_reco_secondary] = new TH1F("z0_K_reco_secondary"  ,"Reconstructed secondary K;z_0, [um];",2000,0,2);
+    h1_K_reco[z0_K_reco_secondary] = new TH1F("z0_K_reco_secondary"  ,"Reconstructed secondary K;z_0, [um];",10000,0,2);
     h1_K_reco[z0_sigma_K_reco_secondary] = new TH1F("z0_sigma_K_reco_secondary"  ,"Reconstructed secondary K;#sigma(z_0), [mm];",1000,0,0.1);
     h1_K_reco[z0_sigma_z0_K_reco_secondary] = new TH1F("z0_sigma_z0_K_reco_secondary"  ,"Reconstructed secondary K;#frac{z0}{#sigma(z0)};",1000,0,100);
 
-    h1_K_reco[d0_K_reco_pseudo] = new TH1F("d0_K_reco_pseudo"  ,"Reconstructed pseudo K;d_0, [mm];",2000,0,2);
+    h1_K_reco[d0_K_reco_pseudo] = new TH1F("d0_K_reco_pseudo"  ,"Reconstructed pseudo K;d_0, [mm];",10000,0,2);
     h1_K_reco[d0_sigma_K_reco_pseudo] = new TH1F("d0_sigma_K_reco_pseudo"  ,"Reconstructed pseudo K;#sigma(d_0), [mm];",1000,0,0.1);
     h1_K_reco[d0_sigma_d0_K_reco_pseudo] = new TH1F("d0_sigma_d0_K_reco_pseudo"  ,"Reconstructed pseudo K;#frac{d0}{#sigma(d0)};",1000,0,100);
 
-    h1_K_reco[z0_K_reco_pseudo] = new TH1F("z0_K_reco_pseudo"  ,"Reconstructed pseudo K;z_0, [um];",2000,0,2);
+    h1_K_reco[z0_K_reco_pseudo] = new TH1F("z0_K_reco_pseudo"  ,"Reconstructed pseudo K;z_0, [um];",10000,0,2);
     h1_K_reco[z0_sigma_K_reco_pseudo] = new TH1F("z0_sigma_K_reco_pseudo"  ,"Reconstructed pseudo K;#sigma(z_0), [mm];",1000,0,0.1);
     h1_K_reco[z0_sigma_z0_K_reco_pseudo] = new TH1F("z0_sigma_z0_K_reco_pseudo"  ,"Reconstructed pseudo K;#frac{z0}{#sigma(z0)};",1000,0,100);
 
-    h1_K_reco[d0_K_reco_garbage] = new TH1F("d0_K_reco_garbage"  ,"Reconstructed garbage K;d_0, [mm];",2000,0,2);
+    h1_K_reco[d0_K_reco_garbage] = new TH1F("d0_K_reco_garbage"  ,"Reconstructed garbage K;d_0, [mm];",10000,0,2);
     h1_K_reco[d0_sigma_K_reco_garbage] = new TH1F("d0_sigma_K_reco_garbage"  ,"Reconstructed garbage K;#sigma(d_0), [mm];",1000,0,0.1);
     h1_K_reco[d0_sigma_d0_K_reco_garbage] = new TH1F("d0_sigma_d0_K_reco_garbage"  ,"Reconstructed garbage K;#frac{d0}{#sigma(d0)};",1000,0,100);
 
@@ -48,12 +48,26 @@ void HistManager::InitializeHists()
     h1_K_reco[z0_sigma_K_reco_garbage] = new TH1F("z0_sigma_K_reco_garbage"  ,"Reconstructed garbage K;#sigma(z_0), [mm];",1000,0,0.1);
     h1_K_reco[z0_sigma_z0_K_reco_garbage] = new TH1F("z0_sigma_z0_K_reco_garbage"  ,"Reconstructed garbage K;#frac{z0}{#sigma(z0)};",1000,0,100);
 
+    h1_K_reco[z0_sin_theta_K_reco_primary] = new TH1F("z0_sin_theta_K_reco_primary"  ,"Reconstructed primary K;|z0|#timessin(#theta);",10000,0,2);
+    h1_K_reco[z0_sigma_sin_theta_K_reco_primary] = new TH1F("z0_sigma_sin_theta_K_reco_primary"  ,"Reconstructed primary K;|#sigma(z_0)|#timessin(#theta);",1000,0,0.1);
+    h1_K_reco[z0_sigma_z0_sin_theta_K_reco_primary] = new TH1F("z0_sigma_z0_sin_theta_K_reco_primary"  ,"Reconstructed primary K;|#frac{z0}{#sigma(z0)}|#timessin(#theta);",1000,0,100);
+
+    h1_K_reco[d0_K_reco_primary_initial] = new TH1F("d0_K_reco_primary_initial"  ,"Reconstructed primary K;d_0, [mm];",10000,0,2);
+    h1_K_reco[d0_sigma_K_reco_primary_initial] = new TH1F("d0_sigma_K_reco_primary_initial"  ,"Reconstructed primary K;#sigma(d_0), [mm];",1000,0,0.1);
+    h1_K_reco[d0_sigma_d0_K_reco_primary_initial] = new TH1F("d0_sigma_d0_K_reco_primary_initial"  ,"Reconstructed primary K;#frac{d0}{#sigma(d0)};",1000,0,100);
+
+    h1_K_reco[d0_K_reco_secondary_initial] = new TH1F("d0_K_reco_secondary_initial"  ,"Reconstructed secondary K;d_0, [mm];",10000,0,2);
+    h1_K_reco[d0_sigma_K_reco_secondary_initial] = new TH1F("d0_sigma_K_reco_secondary_initial"  ,"Reconstructed secondary K;#sigma(d_0), [mm];",1000,0,0.1);
+    h1_K_reco[d0_sigma_d0_K_reco_secondary_initial] = new TH1F("d0_sigma_d0_K_reco_secondary_initial"  ,"Reconstructed secondary K;#frac{d0}{#sigma(d0)};",1000,0,100);
+
+
     h1_K_reco[cuts] = new TH1F("cuts"  ,"Cuts stages",10,0,10);
     h1_K_reco[cuts]->GetXaxis()->SetBinLabel(1,"No cuts");
-    h1_K_reco[cuts]->GetXaxis()->SetBinLabel(2,"LPFO_checks && double_tag && is_ss");
-    h1_K_reco[cuts]->GetXaxis()->SetBinLabel(3,"sign_check");
-    h1_K_reco[cuts]->GetXaxis()->SetBinLabel(4,"P");
-    h1_K_reco[cuts]->GetXaxis()->SetBinLabel(5,"S");
+    h1_K_reco[cuts]->GetXaxis()->SetBinLabel(2,"ctag");
+    h1_K_reco[cuts]->GetXaxis()->SetBinLabel(3,"LPFO_checks && double_tag && is_ss");
+    h1_K_reco[cuts]->GetXaxis()->SetBinLabel(4,"sign_check");
+    h1_K_reco[cuts]->GetXaxis()->SetBinLabel(5,"P");
+    h1_K_reco[cuts]->GetXaxis()->SetBinLabel(6,"S");
     
     h1_K_reco[ctag_final] = new TH1F("ctag_final"  ,"Ctag after cuts",100,0,1);
 
