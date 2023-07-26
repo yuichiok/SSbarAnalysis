@@ -59,6 +59,7 @@ namespace QQbarAnalysis
       };
       TH1F * h1[Last_h1];
 
+      vector<TString> hcos_name = {"cos","qcos","scos","acc_cos","rej_cos"};
       unordered_map< TString, unordered_map< TString, TH1F* > > h1_cos;        // [LPFO][hist]
 
       vector<TString> hres_name = {"gen_N_cos","reco_N_cos","N_corr_cos"};
@@ -66,28 +67,12 @@ namespace QQbarAnalysis
 
 
     // h2 hist
-      enum h2_index {
-
-        gen_K_p_cos,
-        reco_K_p_cos,
-
-        stable_K_cos,
-        purity_K_cos,
-
-        stable_Pi_cos,
-        purity_Pi_cos,
-
-        dummy_h2,
-        Last_h2 = dummy_h2
-      };
-      TH2F * h2[Last_h2];
-
+      vector<TString> hdEdx_name = {"dEdx_p","dEdx_cos","dEdx_dist_cos"};
       unordered_map< TString, unordered_map< TString, unordered_map< TString, TH2F* > > > h2_dEdx; // [LPFO][TruthID][hist]
 
     private:
     // Lists
       TList* hList1                = new TList();
-      TList* hList2                = new TList();
 
       TList* hList1_cos            = new TList();
       TList* hList1_resolution     = new TList();

@@ -26,7 +26,6 @@ namespace QQbarAnalysis
     //////////////////
 
     // Mapping
-    vector<TString> hcos_name = {"cos","qcos","scos","acc_cos","rej_cos"};
     for( auto i_lmode : _pt.PFO_mode ){
       for( auto iname : hcos_name){
         TString hname = "h_" + i_lmode + "_" + iname;
@@ -65,26 +64,8 @@ namespace QQbarAnalysis
     //////////////////
     //     TH2F     //
     //////////////////
-    /*
-    mom_cos [gen,reco][K,Pi]
-    count_gen_reco [K,Pi]
-    SP        [K,Pi][stability,purity]
-    ratio_cos [K,pi,p,e,mu]
-    dEdx_p        [K,Pi][K,Pi,p,e,mu]
-    dEdx_dist_cos  [K,Pi][K,Pi][K,Pi,p,e,mu]
-    */
-
-      h2[gen_K_p_cos]  = new TH2F("h2_gen_K_p_cos" ,";cos#theta;p (GeV)",nbins_cos,-1,1,100,0,60);
-      h2[reco_K_p_cos] = new TH2F("h2_reco_K_p_cos",";cos#theta;p (GeV)",nbins_cos,-1,1,100,0,60);
-      
-      h2[stable_K_cos]   = new TH2F("h2_stable_K_cos",";cos#theta;Stability",nbins_cos,-1,1,50,0,1);
-      h2[purity_K_cos]   = new TH2F("h2_purity_K_cos",";cos#theta;Purity",   nbins_cos,-1,1,50,0,1);
-
-      h2[stable_Pi_cos]   = new TH2F("h2_stable_Pi_cos",";cos#theta;Stability",nbins_cos,-1,1,50,0,1);
-      h2[purity_Pi_cos]   = new TH2F("h2_purity_Pi_cos",";cos#theta;Purity",   nbins_cos,-1,1,50,0,1);
 
     // dEdx
-      vector<TString> hdEdx_name = {"dEdx_p","dEdx_cos","dEdx_dist_cos"};
       for( auto i_lmode : _pt.PFO_mode ){
         for( auto i_type : _pt.PFO_type ){
           h2_dEdx[i_lmode][i_type]["dEdx_p"]        = new TH2F("h2_" + i_lmode + "_" + i_type + "_dEdx_p",";p (GeV);#frac{dE}{dx}",nbins_p,bins_p,nbins_dEdx,bins_dEdx);
@@ -100,10 +81,6 @@ namespace QQbarAnalysis
   {
     for (auto ih : h1) {
       hList1->Add(ih);
-    }
-
-    for (auto ih : h2) {
-      hList2->Add(ih);
     }
     
     // Use unordered_map
@@ -136,7 +113,6 @@ namespace QQbarAnalysis
 
     // Write histogram lists
     hList1->Write();
-    hList2->Write();
 
     // Use unordered_map
     TDirectory * d_cos = output->mkdir("cos");
