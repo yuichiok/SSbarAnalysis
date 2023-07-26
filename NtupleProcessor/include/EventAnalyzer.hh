@@ -61,7 +61,8 @@ namespace QQbarAnalysis
       virtual Bool_t   Notify();
 
     // Gadgets
-      Int_t           *Gen_Reco_Stats_Stable( PFOTools mct, PFOTools pfot, SelectID pid , Float_t cos_min, Float_t cos_max );
+      void             ResolutionAnalysis( PFOTools pfot, PFOTools mct );
+      unordered_map<TString, Int_t> Gen_Reco_Stats_Stable( PFOTools pfot, PFOTools mct, TString lmode , Float_t cos_min, Float_t cos_max );
       Bool_t           is_high_LPFO( PFOTools pfot, TString lmode );
 
     // Histogram extractor

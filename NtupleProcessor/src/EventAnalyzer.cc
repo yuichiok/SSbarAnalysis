@@ -150,38 +150,8 @@ namespace QQbarAnalysis
     //Double Tagging
     ProcessDoubleTag(pfot,mct,CutTriggerMap);
 
-/*
-    // Try Stability and Purity Calculation here.
-    // Kaon Efficiency
-    Int_t nbins_cos_K = _hm.h2[_hm.stable_K_cos]->GetNbinsX();
-    TAxis *xaxis_K    = _hm.h2[_hm.stable_K_cos]->GetXaxis();
-    for ( int ibin=1; ibin<=nbins_cos_K; ibin++ ){
-      Float_t bin_center = xaxis_K->GetBinCenter(ibin);
-      Float_t bin_width  = xaxis_K->GetBinWidth(ibin);
-      Float_t cos_min    = xaxis_K->GetBinLowEdge(ibin);
-      Float_t cos_max    = cos_min + bin_width;
-      Int_t   *dN_Ks     = Gen_Reco_Stats_Stable( mct, pfot, kKaon, cos_min, cos_max );
-
-      _hm.h1[_hm.gen_N_K_cos]->Fill( bin_center ,dN_Ks[0]);
-      _hm.h1[_hm.reco_N_K_cos]->Fill( bin_center ,dN_Ks[1]);
-      _hm.h1[_hm.N_K_corr_cos]->Fill( bin_center ,dN_Ks[2]);
-    }
-
-    // Pion Efficiency
-    Int_t nbins_cos_Pi = _hm.h2[_hm.stable_Pi_cos]->GetNbinsX();
-    TAxis *xaxis_Pi    = _hm.h2[_hm.stable_Pi_cos]->GetXaxis();
-    for ( int ibin=1; ibin<=nbins_cos_K; ibin++ ){
-      Float_t bin_center = xaxis_Pi->GetBinCenter(ibin);
-      Float_t bin_width  = xaxis_Pi->GetBinWidth(ibin);
-      Float_t cos_min    = xaxis_Pi->GetBinLowEdge(ibin);
-      Float_t cos_max    = cos_min + bin_width;
-      Int_t   *dN_Pis    = Gen_Reco_Stats_Stable( mct, pfot, kPion, cos_min, cos_max );
-
-      _hm.h1[_hm.gen_N_Pi_cos]->Fill( bin_center ,dN_Pis[0]);
-      _hm.h1[_hm.reco_N_Pi_cos]->Fill( bin_center ,dN_Pis[1]);
-      _hm.h1[_hm.N_Pi_corr_cos]->Fill( bin_center ,dN_Pis[2]);
-    }
-*/
+    // Resolution Analysis
+    ResolutionAnalysis(pfot,mct);
 
     ClearStructs();
 
@@ -304,7 +274,26 @@ namespace QQbarAnalysis
     return kTRUE;
   }
 
-  Int_t *EventAnalyzer::Gen_Reco_Stats_Stable( PFOTools mct, PFOTools pfot, SelectID pid, Float_t cos_min, Float_t cos_max )
+  void EventAnalyzer::ResolutionAnalysis( PFOTools pfot, PFOTools mct )
+  {
+    for( auto i_lmode : pfot.PFO_mode ){
+      Int_t nbins_cos = _hm.nbins_cos;
+      TAxis *xaxis    = _hm.h1_resolution.at(i_lmode).at("gen_N_cos")->GetXaxis();
+      for ( int ibin=1; ibin<=nbins_cos; ibin++ ){
+        Float_t bin_center = xaxis->GetBinCenter(ibin);
+        Float_t bin_width  = xaxis->GetBinWidth(ibin);
+        Float_t cos_min    = xaxis->GetBinLowEdge(ibin);
+        Float_t cos_max    = cos_min + bin_width;
+        unordered_map<TString, Int_t> N_particles = Gen_Reco_Stats_Stable( mct, pfot, i_lmode, cos_min, cos_max );
+
+        for( auto iname : _hm.hres_name ){
+          _hm.h1_resolution.at(i_lmode).at(iname)->Fill( bin_center ,N_particles.at(iname));
+        }
+      }
+    }
+  }
+
+  unordered_map<TString, Int_t> EventAnalyzer::Gen_Reco_Stats_Stable( PFOTools pfot, PFOTools mct, TString lmode, Float_t cos_min, Float_t cos_max )
   {
     std::vector<PFO_Info> PFO_Collection = pfot.Valid_PFOs;
 
@@ -319,26 +308,13 @@ namespace QQbarAnalysis
       
       if ( !is_cos_p ) continue;
 
-      switch ( pid ) {
-        case kKaon:
-          if( PFOTools::isKaon(iPFO) )        PFO_Hadron_Collection.push_back(iPFO);
-          if( abs(iPFO.pfo_pdgcheat) == 321 ) Gen_Hadron_Collection.push_back(iPFO);
-          break;
-
-        case kPion:
-          if( PFOTools::isPion(iPFO) )        PFO_Hadron_Collection.push_back(iPFO);
-          if( abs(iPFO.pfo_pdgcheat) == 211 ) Gen_Hadron_Collection.push_back(iPFO);
-          break;
-
-        default:
-          break;
-      }
+      if( pfot.is_PID(lmode,iPFO) )                                   PFO_Hadron_Collection.push_back(iPFO);
+      if( abs(iPFO.pfo_pdgcheat) == pfot.PFO_type_map_rev.at(lmode) ) Gen_Hadron_Collection.push_back(iPFO);
 
     }
 
     Int_t N_K_corr  = 0;
 
-    // Float_t cos_r = 0.02;
     Float_t cos_r = 0.37;
     std::vector<PFO_Info> PFO_Hadron_Remain = PFO_Hadron_Collection;
 
@@ -364,12 +340,12 @@ namespace QQbarAnalysis
 
     }
 
-    static Int_t N_array[3] = {0};
-    N_array[0] = Gen_Hadron_Collection.size();
-    N_array[1] = PFO_Hadron_Collection.size();
-    N_array[2] = N_K_corr;
+    unordered_map<TString, Int_t> N_map;
+    N_map[_hm.hres_name.at(0)] = Gen_Hadron_Collection.size();
+    N_map[_hm.hres_name.at(1)] = PFO_Hadron_Collection.size();
+    N_map[_hm.hres_name.at(2)] = N_K_corr;
 
-    return N_array;
+    return N_map;
 
   }
 
