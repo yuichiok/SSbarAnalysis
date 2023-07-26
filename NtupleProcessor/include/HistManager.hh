@@ -26,6 +26,17 @@ namespace QQbarAnalysis
       virtual void Hist2List();
       virtual void WriteLists( TFile * output );
 
+    // Variables
+      Int_t   nbins_cos = 100;
+      Float_t cos_min = -1.0, cos_max = 1.0;
+
+      Float_t bins_dEdx[200];
+      Int_t nbins_dEdx=199;
+
+      Float_t nbins_dEdx_dist = 100;
+      Float_t dEdx_dist_min = -20.0, dEdx_dist_max = 20.0;
+
+
     // Declear histograms
     // h1 hist
       enum h1_index {
@@ -49,7 +60,10 @@ namespace QQbarAnalysis
       TH1F * h1[Last_h1];
 
       unordered_map< TString, unordered_map< TString, TH1F* > > h1_cos;        // [LPFO][hist]
+
+      vector<TString> hres_name = {"gen_N_cos","reco_N_cos","N_corr_cos"};
       unordered_map< TString, unordered_map< TString, TH1F* > > h1_resolution; // [LPFO][hist]
+
 
     // h2 hist
       enum h2_index {
