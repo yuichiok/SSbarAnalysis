@@ -1,13 +1,14 @@
 #ifndef GUARD_FileSelector_h
 #define GUARD_FileSelector_h
 
+#include "MapTString.hh"
+
 #include <iostream>
 #include <string>
 #include <TString.h>
 #include <TFile.h> 
 #include <TObjArray.h>
 #include <TObjString.h>
-#include <map>
 
 class FileSelector
 {

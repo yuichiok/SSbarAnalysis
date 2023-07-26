@@ -11,10 +11,12 @@ TreeReader.cpp
 
 using std::cout;   using std::endl;
 
-TreeReader::TreeReader() {}
-
-void TreeReader::InitializeMCReadTree(TTree *_hTree, MC_QQbar & _data, Branch_QQbar & _branch)
+namespace QQbarAnalysis
 {
+  TreeReader::TreeReader() {}
+
+  void TreeReader::InitializeMCReadTree(TTree *_hTree, MC_QQbar & _data, Branch_QQbar & _branch)
+  {
     _hTree->SetBranchAddress("mc_quark_E", _data.mc_quark_E, &_branch.b_mc_quark_E);
     _hTree->SetBranchAddress("mc_quark_px", _data.mc_quark_px, &_branch.b_mc_quark_px);
     _hTree->SetBranchAddress("mc_quark_py", _data.mc_quark_py, &_branch.b_mc_quark_py);
@@ -63,10 +65,10 @@ void TreeReader::InitializeMCReadTree(TTree *_hTree, MC_QQbar & _data, Branch_QQ
     _hTree->SetBranchAddress("mc_stable_jet_px", _data.mc_stable_jet_px, &_branch.b_mc_stable_jet_px);
     _hTree->SetBranchAddress("mc_stable_jet_py", _data.mc_stable_jet_py, &_branch.b_mc_stable_jet_py);
     _hTree->SetBranchAddress("mc_stable_jet_pz", _data.mc_stable_jet_pz, &_branch.b_mc_stable_jet_pz);
-}
+  }
 
-void TreeReader::InitializeJetReadTree(TTree *_hTree, Jet_QQbar & _data, Branch_QQbar & _branch)
-{
+  void TreeReader::InitializeJetReadTree(TTree *_hTree, Jet_QQbar & _data, Branch_QQbar & _branch)
+  {
     _hTree->SetBranchAddress("truejet_E", _data.truejet_E, &_branch.b_truejet_E);
     _hTree->SetBranchAddress("truejet_px", _data.truejet_px, &_branch.b_truejet_px);
     _hTree->SetBranchAddress("truejet_py", _data.truejet_py, &_branch.b_truejet_py);
@@ -93,17 +95,17 @@ void TreeReader::InitializeJetReadTree(TTree *_hTree, Jet_QQbar & _data, Branch_
     _hTree->SetBranchAddress("principle_thrust_axis", _data.principle_thrust_axis, &_branch.b_principle_thrust_axis);
     _hTree->SetBranchAddress("sphericity", &_data.sphericity, &_branch.b_sphericity);
     _hTree->SetBranchAddress("sphericity_tensor", _data.sphericity_tensor, &_branch.b_sphericity_tensor);
-}
+  }
 
-void TreeReader::InitializeVTXReadTree(TTree *_hTree, VTX_QQbar & _data, Branch_QQbar & _branch)
-{
+  void TreeReader::InitializeVTXReadTree(TTree *_hTree, VTX_QQbar & _data, Branch_QQbar & _branch)
+  {
     _hTree->SetBranchAddress("nvtx", &_data.nvtx, &_branch.b_nvtx);
     _hTree->SetBranchAddress("vtx_d0", _data.vtx_d0, &_branch.b_vtx_d0);
     _hTree->SetBranchAddress("vtx_z0", _data.vtx_z0, &_branch.b_vtx_z0);
-}
+  }
 
-void TreeReader::InitializePFOReadTree(TTree *_hTree, PFO_QQbar & _data, Branch_QQbar & _branch)
-{
+  void TreeReader::InitializePFOReadTree(TTree *_hTree, PFO_QQbar & _data, Branch_QQbar & _branch)
+  {
     _hTree->SetBranchAddress("pfo_n", &_data.pfo_n, &_branch.b_pfo_n);
     _hTree->SetBranchAddress("pfo_match", _data.pfo_match, &_branch.b_pfo_match);
     _hTree->SetBranchAddress("pfo_truejet_pdg", _data.pfo_truejet_pdg, &_branch.b_pfo_truejet_pdg);
@@ -184,4 +186,5 @@ void TreeReader::InitializePFOReadTree(TTree *_hTree, PFO_QQbar & _data, Branch_
     _hTree->SetBranchAddress("pfo_pidtof_closestfit_beta_50ps", _data.pfo_pidtof_closestfit_beta_50ps, &_branch.b_pfo_pidtof_closestfit_beta_50ps);
     _hTree->SetBranchAddress("pfo_pidtof_closestfit_beta_100ps", _data.pfo_pidtof_closestfit_beta_100ps, &_branch.b_pfo_pidtof_closestfit_beta_100ps);
 
+  }
 }

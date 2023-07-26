@@ -12,19 +12,21 @@
 #include <TTree.h>
 #include "TreeStructures.hh"
 
-class TreeReader
+namespace QQbarAnalysis
 {
-  public:
-    TreeReader();
-    virtual ~TreeReader() {};
+  class TreeReader
+  {
+    public:
+      TreeReader();
+      virtual ~TreeReader() {};
 
-    void InitializeMCReadTree (TTree *tree, MC_QQbar & _data,  Branch_QQbar & _branch);
-    void InitializeJetReadTree(TTree *tree, Jet_QQbar & _data, Branch_QQbar & _branch);
-    void InitializeVTXReadTree(TTree *tree, VTX_QQbar & _data, Branch_QQbar & _branch);
-    void InitializePFOReadTree(TTree *tree, PFO_QQbar & _data, Branch_QQbar & _branch);
+      void InitializeMCReadTree (TTree *tree, MC_QQbar & _data,  Branch_QQbar & _branch);
+      void InitializeJetReadTree(TTree *tree, Jet_QQbar & _data, Branch_QQbar & _branch);
+      void InitializeVTXReadTree(TTree *tree, VTX_QQbar & _data, Branch_QQbar & _branch);
+      void InitializePFOReadTree(TTree *tree, PFO_QQbar & _data, Branch_QQbar & _branch);
 
-  private: 
+    private: 
 
-};
-
+  };
+}
 #endif
