@@ -81,6 +81,7 @@ namespace QQbarAnalysis
       vector<TString> PFO_mode  = {"K","Pi"};
       vector<TString> PFO_type  = {"K","Pi", "p", "e", "mu"};
       unordered_map<Int_t,TString> PFO_type_map = { {321,"K"}, {211,"Pi"}, {2212,"p"}, {11,"e"}, {13,"mu"} };
+      unordered_map<TString, Int_t> PFO_type_map_rev = { {"K",321}, {"Pi",211}, {"p",2212}, {"e",11}, {"mu",13} };
 
 
     private:
