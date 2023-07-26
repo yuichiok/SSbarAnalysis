@@ -4,7 +4,8 @@
 using std::cout; using std::endl;
 using std::vector;
 
-void StylePad(TPad *pad, Float_t t, Float_t b, Float_t r, Float_t l)
+template <class P1>
+void StylePad(P1 *pad, Float_t t, Float_t b, Float_t r, Float_t l)
 {
   pad->SetGrid(1,1);
   if(t) pad->SetTopMargin(t);

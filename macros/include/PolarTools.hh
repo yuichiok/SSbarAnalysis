@@ -4,6 +4,9 @@
 using std::cout; using std::endl;
 using std::vector;
 
+vector<TString> modeLPFO = {"K","Pi"};
+vector<TString> modePID  = {"K","Pi","p","e","mu"};
+
 Float_t bins_cos_fine[] = {-1.0,-0.98,-0.96,-0.94,-0.92,-0.90,-0.88,-0.86,-0.84,-0.82,-0.80,-0.75,-0.70,-0.60,-0.50,-0.40,-0.30,-0.20,-0.10,
                             0.0,0.10,0.20,0.30,0.40,0.50,0.60,0.70,0.75,0.80,0.82,0.84,0.86,0.88,0.90,0.92,0.94,0.96,0.98,1.0};
 // Int_t   nbins_cos = sizeof(bins_cos_fine) / sizeof(Float_t) - 1;
@@ -95,7 +98,8 @@ TH1F * CorrectHist( TH1F * h_reco, vector<Float_t> p_vec)
 {
   const Int_t nbins = h_reco->GetNbinsX();
 
-  TH1F *corrected = new TH1F("corrected", "corrected", 100,-1,1);
+  TString corrected_name = "corrected_" + (TString) h_reco->GetName();
+  TH1F *corrected = new TH1F(corrected_name, corrected_name, 100,-1,1);
   corrected->Sumw2();
   for (int i = 1; i < nbins / 2 + 1; i++)
   {
@@ -149,11 +153,11 @@ TH1F * CorrectHist( TH1F * h_reco, vector<Float_t> p_vec)
 
 }
 
-TH1F * Efficiency_Correction( TH1F * h, TString name, TFile * file )
+TH1F * Efficiency_Correction( TH1F * h, TString LPFO_mode, TFile * file )
 {
-  TH1F *h_gen_N_Pi_cos  = (TH1F*) file->Get("h_gen_N_Pi_cos");
-  TH1F *h_reco_N_Pi_cos = (TH1F*) file->Get("h_reco_N_Pi_cos");
-  TH1F *h_N_Pi_corr_cos = (TH1F*) file->Get("h_N_Pi_corr_cos");
+  TH1F *h_gen_N_Pi_cos  = (TH1F*) file->Get("h_gen_N_" + LPFO_mode + "_cos");
+  TH1F *h_reco_N_Pi_cos = (TH1F*) file->Get("h_reco_N_" + LPFO_mode + "_cos");
+  TH1F *h_N_Pi_corr_cos = (TH1F*) file->Get("h_N_" + LPFO_mode + "_corr_cos");
 
   TH1F *h_stable_cos = (TH1F*) h_N_Pi_corr_cos->Clone();
   TH1F *h_purity_cos = (TH1F*) h_N_Pi_corr_cos->Clone();
