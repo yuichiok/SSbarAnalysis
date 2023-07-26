@@ -11,26 +11,15 @@ using std::cout;   using std::endl;
 
 namespace QQbarAnalysis
 {
-  HistManager::HistManager() {}
+  HistManager::HistManager() {
+    bins_dEdx[0]=0.1;
+    for(int i=1;i<200;i++) bins_dEdx[i]=bins_dEdx[i-1]+0.1/100.;
+  }
 
   void HistManager::InitializeHists()
   {
-    Int_t   nbins_cos = 100;
-    Float_t cos_min = -1.0, cos_max = 1.0;
-    Float_t bins_cos_fine[] = {-1.0,-0.98,-0.96,-0.94,-0.92,-0.90,-0.88,-0.86,-0.84,-0.82,-0.80,-0.75,-0.70,-0.60,-0.50,-0.40,-0.30,-0.20,-0.10,
-                              0.0,0.10,0.20,0.30,0.40,0.50,0.60,0.70,0.75,0.80,0.82,0.84,0.86,0.88,0.90,0.92,0.94,0.96,0.98,1.0};
-    Int_t   nbins_cos_fine = sizeof(bins_cos_fine) / sizeof(Float_t) - 1;
-
     Float_t bins_p[]={0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1,1.1,1.2,1.3,1.4,1.5,1.6,1.7,1.8,1.9,2,2.5,3,4,5,6,7,8,9,10,12,14,16,18,20,24,28,32,36,40,44,48,52,56,60,64,68,72,80,90,100};
     Int_t   nbins_p=sizeof(bins_p)/sizeof(Float_t) - 1;
-
-    Float_t bins_dEdx[200];
-    bins_dEdx[0]=0.1;
-    for(int i=1;i<200;i++) bins_dEdx[i]=bins_dEdx[i-1]+0.1/100.;
-    Int_t nbins_dEdx=199;
-
-    Float_t nbins_dEdx_dist = 100;
-    Float_t dEdx_dist_min = -20.0, dEdx_dist_max = 20.0;
 
     //////////////////
     //     TH1F     //
@@ -45,15 +34,12 @@ namespace QQbarAnalysis
       }
     }
 
-    vector<TString> hres_name = {"gen_N_cos","reco_N_cos","N_corr_cos"};
     for( auto i_lmode : _pt.PFO_mode ){
       for( auto iname : hres_name){
         TString hname = "h_" + i_lmode + "_" + iname;
         h1_resolution[i_lmode][iname] = new TH1F(hname,iname + ";cos#theta;Entries",nbins_cos,cos_min,cos_max);
       }
     }
-
-
 
     // Original
 
