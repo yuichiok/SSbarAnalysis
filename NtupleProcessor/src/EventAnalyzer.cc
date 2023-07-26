@@ -114,43 +114,8 @@ namespace QQbarAnalysis
 
       Bool_t is_LPFO = pfot.PFO_subjet[i_lmode][0].size() == 0 || pfot.PFO_subjet[i_lmode][1].size() == 0;
       if( is_LPFO ) continue;
-      vector<PFO_Info> LPFOs = {pfot.PFO_subjet.at(i_lmode).at(0).at(0), pfot.PFO_subjet.at(i_lmode).at(1).at(0)};
 
-      // check momentum
-      CutTriggerMap[i_lmode]["momentum"] = pfot.is_momentum( LPFOs.at(0), _anCfg.LPFO_p_min, _anCfg.LPFO_p_max ) &&
-                                           pfot.is_momentum( LPFOs.at(1), _anCfg.LPFO_p_min, _anCfg.LPFO_p_max );
-
-      // check tpc hits
-      CutTriggerMap[i_lmode]["tpc_hits"] = pfot.is_tpc_hits( LPFOs.at(0), _anCfg.PFO_TPCHits_min ) &&
-                                           pfot.is_tpc_hits( LPFOs.at(1), _anCfg.PFO_TPCHits_min );
-
-      // check offsets
-      CutTriggerMap[i_lmode]["offset"] = pfot.is_offset_small( LPFOs.at(0), _anCfg.PFO_offset_max ) &&
-                                         pfot.is_offset_small( LPFOs.at(1), _anCfg.PFO_offset_max );
-
-      // check dEdx dist
-      CutTriggerMap[i_lmode]["PID"] = pfot.is_PID( i_lmode, LPFOs.at(0) ) &&
-                                      pfot.is_PID( i_lmode, LPFOs.at(1) );
-      
-      // SPFO opposite check
-      vector<Bool_t> is_SPFO_charge_opposite(2,false);
-      for ( int ijet=0; ijet<2; ijet++ ){
-        vector<PFO_Info> subjet = pfot.PFO_subjet.at(i_lmode).at(ijet);
-        if( subjet.size() == 0 ) continue;
-        for ( auto iSPFO : subjet ){
-          if(iSPFO.ipfo == LPFOs.at(ijet).ipfo) continue;
-          Bool_t charge_opposite = iSPFO.pfo_charge * LPFOs.at(ijet).pfo_charge < 0;
-          Bool_t momentum_above  = iSPFO.p_mag > 10;
-          if( charge_opposite && momentum_above ) is_SPFO_charge_opposite.at(ijet) = true;
-        }
-      }
-      CutTriggerMap[i_lmode]["SPFO"] = std::none_of(is_SPFO_charge_opposite.begin(), is_SPFO_charge_opposite.end(), [](bool v) { return v; });
-
-      // Charge opposite check
-      CutTriggerMap[i_lmode]["charge"] = pfot.is_charge_config(pfot.kOpposite,LPFOs.at(0).pfo_charge,LPFOs.at(1).pfo_charge);
-
-      // Higher LPFO momentum
-      CutTriggerMap[i_lmode]["LPFO_higher_p"] = is_high_LPFO( pfot, i_lmode );
+      CutTriggerMap[i_lmode] = TriggerMap( pfot, i_lmode, pfot.PFO_subjet[i_lmode] );
 
     }
 
@@ -231,6 +196,51 @@ namespace QQbarAnalysis
     return false;
   }
 
+  unordered_map<TString, Bool_t> EventAnalyzer::TriggerMap( PFOTools pfot, TString i_lmode, unordered_map< int, vector<PFO_Info> > subjet_pair )
+  {
+    unordered_map<TString, Bool_t> outMap;
+    vector<PFO_Info> LPFOs = {subjet_pair.at(0).at(0), subjet_pair.at(1).at(0)};
+
+    // check momentum
+    outMap["momentum"] = pfot.is_momentum( LPFOs.at(0), _anCfg.LPFO_p_min, _anCfg.LPFO_p_max ) &&
+                         pfot.is_momentum( LPFOs.at(1), _anCfg.LPFO_p_min, _anCfg.LPFO_p_max );
+
+    // check tpc hits
+    outMap["tpc_hits"] = pfot.is_tpc_hits( LPFOs.at(0), _anCfg.PFO_TPCHits_min ) &&
+                         pfot.is_tpc_hits( LPFOs.at(1), _anCfg.PFO_TPCHits_min );
+
+    // check offsets
+    outMap["offset"] = pfot.is_offset_small( LPFOs.at(0), _anCfg.PFO_offset_max ) &&
+                       pfot.is_offset_small( LPFOs.at(1), _anCfg.PFO_offset_max );
+
+    // check dEdx dist
+    outMap["PID"] = pfot.is_PID( i_lmode, LPFOs.at(0) ) &&
+                    pfot.is_PID( i_lmode, LPFOs.at(1) );
+    
+    // SPFO opposite check
+    vector<Bool_t> is_SPFO_charge_opposite(2,false);
+    for ( int ijet=0; ijet<2; ijet++ ){
+      vector<PFO_Info> subjet = subjet_pair.at(ijet);
+      if( subjet.size() == 0 ) continue;
+      for ( auto iSPFO : subjet ){
+        if(iSPFO.ipfo == LPFOs.at(ijet).ipfo) continue;
+        Bool_t charge_opposite = iSPFO.pfo_charge * LPFOs.at(ijet).pfo_charge < 0;
+        Bool_t momentum_above  = iSPFO.p_mag > 10;
+        if( charge_opposite && momentum_above ) is_SPFO_charge_opposite.at(ijet) = true;
+      }
+    }
+    outMap["SPFO"] = std::none_of(is_SPFO_charge_opposite.begin(), is_SPFO_charge_opposite.end(), [](bool v) { return v; });
+
+    // Charge opposite check
+    outMap["charge"] = pfot.is_charge_config(pfot.kOpposite,LPFOs.at(0).pfo_charge,LPFOs.at(1).pfo_charge);
+
+    // Higher LPFO momentum
+    outMap["LPFO_higher_p"] = is_high_LPFO( pfot, i_lmode );
+
+    return outMap;
+
+  }
+
   Bool_t EventAnalyzer::Cut_ESum ( VectorTools v[2] )
   {
     Float_t SumE = v[0].v4().E() + v[1].v4().E();
@@ -291,7 +301,7 @@ namespace QQbarAnalysis
         Float_t bin_width  = xaxis->GetBinWidth(ibin);
         Float_t cos_min    = xaxis->GetBinLowEdge(ibin);
         Float_t cos_max    = cos_min + bin_width;
-        unordered_map<TString, Int_t> N_particles = Gen_Reco_Stats_Stable( mct, pfot, i_lmode, cos_min, cos_max );
+        unordered_map<TString, Int_t> N_particles = Gen_Reco_Stats_Stable( pfot, mct, i_lmode, cos_min, cos_max );
 
         for( auto iname : _hm.hres_name ){
           _hm.h1_resolution.at(i_lmode).at(iname)->Fill( bin_center ,N_particles.at(iname));
@@ -317,6 +327,7 @@ namespace QQbarAnalysis
 
       if( pfot.is_PID(lmode,iPFO) )                                   PFO_Hadron_Collection.push_back(iPFO);
       if( abs(iPFO.pfo_pdgcheat) == pfot.PFO_type_map_rev.at(lmode) ) Gen_Hadron_Collection.push_back(iPFO);
+
 
     }
 
@@ -346,6 +357,7 @@ namespace QQbarAnalysis
       }
 
     }
+
 
     unordered_map<TString, Int_t> N_map;
     N_map[_hm.hres_name.at(0)] = Gen_Hadron_Collection.size();
@@ -386,7 +398,6 @@ namespace QQbarAnalysis
         if( cut_name != "charge" ) is_pass[i_lmode].push_back(cut_val);
       }
     }
-
 
     // vector<PFO_Info> LPFOs = pfot.LPFO;
     for ( const auto &[i_lmode, cut_vec] : is_pass ){
