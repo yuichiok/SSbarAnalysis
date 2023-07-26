@@ -179,8 +179,11 @@ namespace QQbarAnalysis
 
       Valid_PFOs.push_back(PFO);
       PFO_jet[ijet].push_back(PFO);
-      if( abs(PFO.pfo_pdgcheat) == 321 ) PFO_cheat_Ks[ijet].push_back(PFO);
-      if( abs(PFO.pfo_pdgcheat) == 211 ) PFO_cheat_Pis[ijet].push_back(PFO);
+
+      // Cheated PFO
+      for( auto i_lmode : PFO_mode ){
+        if( abs(PFO.pfo_pdgcheat) == PFO_type_map_rev.at(i_lmode) ) PFO_unsorted_subjet_cheat[i_lmode][ijet].push_back(PFO);
+      }
 
     }
 
@@ -192,50 +195,17 @@ namespace QQbarAnalysis
       
       // get subjet
       for ( auto i_lmode : PFO_mode ){
+        
         PFO_subjet[i_lmode][ijet] = GetSubjet(ijet, i_lmode);
+
+        if( PFO_unsorted_subjet_cheat[i_lmode][ijet].size() ){
+          PFO_subjet_cheat[i_lmode][ijet] = SortJet(PFO_unsorted_subjet_cheat.at(i_lmode).at(ijet));
+        }
       }
 
+      // cheat
+
     }
-
-    /*
-    if( is_jet_mult_non0() ){
-      for (int ijet=0; ijet < 2; ijet++){
-
-        for ( auto i_lmode : PFO_mode ){
-
-          vector<PFO_Info> subjet = PFO_subjet.at(i_lmode).at(ijet);
-
-          // SPFO
-          if( subjet.size() > 1 ){
-            vector<PFO_Info> tmp_SPFO = subjet;
-            pop_front(tmp_SPFO);
-            std::copy_if(SPFOs[ijet].begin(), SPFOs[ijet].end(), std::back_inserter(SPFOs[i_lmode][ijet]), [&](TString i_lmode, PFO_Info iPFO) {
-                return is_PID( i_lmode, iPFO );
-            });
-          }
-
-        }
-
-        // Cheated PFO
-        if( PFO_cheat_Ks[0].size() && PFO_cheat_Ks[1].size() ){
-          cheat_KLPFO[ijet] = SortJet(PFO_cheat_Ks[ijet]).at(0);
-          if( PFO_cheat_Ks[ijet].size() > 1 ){
-            SPFOs_cheat_K[ijet] = PFO_cheat_Ks[ijet];
-            pop_front(SPFOs_cheat_K[ijet]);
-          }
-        }
-
-        if( PFO_cheat_Pis[0].size() && PFO_cheat_Pis[1].size() ){
-          cheat_PiLPFO[ijet] = SortJet(PFO_cheat_Pis[ijet]).at(0);
-          if( PFO_cheat_Pis[ijet].size() > 1 ){
-            SPFOs_cheat_Pi[ijet] = PFO_cheat_Pis[ijet];
-            pop_front(SPFOs_cheat_Pi[ijet]);
-          }
-        }
-
-      } // end jet loop
-    }
-    */
 
   }
 

@@ -86,6 +86,8 @@ namespace QQbarAnalysis
 
     // Gen QQbar
     _hm.h1_gen_cos.at("cos")->Fill(mct.mc_quark[0].cos);
+    _hm.h1_gen_cos.at("cos")->Fill(mct.mc_quark[1].cos);
+
     _hm.h1_gen_cos.at("qcos")->Fill(mct.mc_quark[0].qcos);
 
   }
@@ -110,7 +112,7 @@ namespace QQbarAnalysis
     // vector<PFO_Info> LPFOs = pfot.LPFO;
     for ( const auto i_lmode : _pt.PFO_mode ){
 
-      Bool_t is_LPFO = pfot.PFO_subjet.at(i_lmode).at(0).size() == 0 || pfot.PFO_subjet.at(i_lmode).at(1).size() == 0;
+      Bool_t is_LPFO = pfot.PFO_subjet[i_lmode][0].size() == 0 || pfot.PFO_subjet[i_lmode][1].size() == 0;
       if( is_LPFO ) continue;
       vector<PFO_Info> LPFOs = {pfot.PFO_subjet.at(i_lmode).at(0).at(0), pfot.PFO_subjet.at(i_lmode).at(1).at(0)};
 
@@ -385,25 +387,15 @@ namespace QQbarAnalysis
       }
     }
 
-    // if( ientry == 15164 ){
-    //   for( const auto &[i_lmode, cuts_for_lmode] : cuts ){
-    //     cout << i_lmode << " : ";
-    //     for ( const auto &[cut_name, cut_val] : cuts_for_lmode ) {
-    //       cout << cut_name << " " << cut_val << " | ";
-    //     }
-    //     cout << endl;
-    //   }
-    //   // cout << pfot.PFO_subjet.at("Pi").at(0).at(0).p_mag << " " << pfot.PFO_subjet.at("Pi").at(1).at(0).p_mag << endl;
-    //   cout << pfot.PFO_subjet.at("Pi").at(0).size() << " " << pfot.PFO_subjet.at("Pi").at(1).size() << endl;
-    //   cout << pfot.PFO_subjet.at("K").at(0).size() << " " << pfot.PFO_subjet.at("K").at(1).size() << endl;
-    // }
 
-    vector<PFO_Info> LPFOs = pfot.LPFO;
+    // vector<PFO_Info> LPFOs = pfot.LPFO;
     for ( const auto &[i_lmode, cut_vec] : is_pass ){
 
       Bool_t isPass = std::all_of(cut_vec.begin(), cut_vec.end(), [](bool v) { return v; });
 
       if( isPass ){
+
+        vector<PFO_Info> LPFOs = {pfot.PFO_subjet.at(i_lmode).at(0).at(0), pfot.PFO_subjet.at(i_lmode).at(1).at(0)};
 
         Int_t ineg             = LPFOs.at(0).pfo_charge > 0 ;
         PFO_Info LPFO          = LPFOs.at(ineg);
@@ -412,6 +404,8 @@ namespace QQbarAnalysis
         if( cuts.at(i_lmode).at("charge") ){
 
           _hm.h1_cos.at(i_lmode).at("cos")->Fill( LPFO.cos );
+          _hm.h1_cos.at(i_lmode).at("cos")->Fill( LPFO_opposite.cos );
+
           _hm.h1_cos.at(i_lmode).at("qcos")->Fill( LPFO.qcos );
           _hm.h1_cos.at(i_lmode).at("acc_cos")->Fill( LPFO.qcos );
 
