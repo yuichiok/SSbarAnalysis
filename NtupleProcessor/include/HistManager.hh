@@ -39,25 +39,8 @@ namespace QQbarAnalysis
 
     // Declear histograms
     // h1 hist
-      enum h1_index {
-        gen_q_cos,
-        gen_q_qcos,
-
-        gen_K_cos,
-        gen_K_qcos,
-
-        gen_N_K_cos,
-        reco_N_K_cos,
-        N_K_corr_cos,
-
-        gen_N_Pi_cos,
-        reco_N_Pi_cos,
-        N_Pi_corr_cos,
-
-        dummy_h1,
-        Last_h1 = dummy_h1
-      };
-      TH1F * h1[Last_h1];
+      vector<TString> hcos_gen_name = {"cos","qcos"};
+      unordered_map< TString, TH1F* > h1_gen_cos;        // [hist]
 
       vector<TString> hcos_name = {"cos","qcos","scos","acc_cos","rej_cos"};
       unordered_map< TString, unordered_map< TString, TH1F* > > h1_cos;        // [LPFO][hist]
@@ -72,8 +55,7 @@ namespace QQbarAnalysis
 
     private:
     // Lists
-      TList* hList1                = new TList();
-
+      TList* hList1_gen_cos        = new TList();
       TList* hList1_cos            = new TList();
       TList* hList1_resolution     = new TList();
       TList* hList2_dEdx           = new TList();

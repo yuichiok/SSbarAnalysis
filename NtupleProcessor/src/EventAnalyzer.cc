@@ -82,7 +82,12 @@ namespace QQbarAnalysis
   void EventAnalyzer::AnalyzeGen()
   {
     PFOTools mct( &_mc, _config );
-    PolarAngleGen(mct);
+    PFOTools pfot( &_mc, &_pfo, _config );
+
+    // Gen QQbar
+    _hm.h1_gen_cos.at("cos")->Fill(mct.mc_quark[0].cos);
+    _hm.h1_gen_cos.at("qcos")->Fill(mct.mc_quark[0].qcos);
+
   }
 
   void EventAnalyzer::AnalyzeReco(Long64_t entry)
@@ -368,22 +373,6 @@ namespace QQbarAnalysis
     }
 
     return check == 2;
-
-  }
-
-  void EventAnalyzer::PolarAngleGen(PFOTools mct)
-  {
-    // Gen QQbar
-    _hm.h1[_hm.gen_q_cos]->Fill(mct.mc_quark[0].cos);
-    _hm.h1[_hm.gen_q_qcos]->Fill(mct.mc_quark[0].qcos);
-
-    // Gen K
-    for ( int istable=0; istable < _mc.mc_stable_n; istable++ ){
-      if(abs(_mc.mc_stable_pdg[istable]) == 321) {
-        _hm.h1[_hm.gen_K_cos]->Fill(mct.mc_stable[istable].cos);
-        _hm.h1[_hm.gen_K_qcos]->Fill(mct.mc_stable[istable].qcos);
-      }
-    }
 
   }
 

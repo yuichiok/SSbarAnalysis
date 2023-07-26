@@ -25,7 +25,13 @@ namespace QQbarAnalysis
     //     TH1F     //
     //////////////////
 
-    // Mapping
+    // Gen  histograms
+    for( auto iname : hcos_gen_name){
+      TString hname = "h_" + iname;
+      h1_gen_cos[iname] = new TH1F(hname,iname + ";cos#theta;Entries",nbins_cos,cos_min,cos_max);
+    }
+
+    // Reco histograms
     for( auto i_lmode : _pt.PFO_mode ){
       for( auto iname : hcos_name){
         TString hname = "h_" + i_lmode + "_" + iname;
@@ -38,28 +44,7 @@ namespace QQbarAnalysis
         TString hname = "h_" + i_lmode + "_" + iname;
         h1_resolution[i_lmode][iname] = new TH1F(hname,iname + ";cos#theta;Entries",nbins_cos,cos_min,cos_max);
       }
-    }
-
-    // Original
-
-      h1[gen_q_cos]       = new TH1F("h_gen_q_cos","; Generated q#bar{q} cos#theta; Entries",nbins_cos,-1,1);
-      h1[gen_q_qcos]      = new TH1F("h_gen_q_qcos","; Generated q#bar{q} qcos#theta; Entries",nbins_cos,-1,1);
-
-      h1[gen_K_cos]       = new TH1F("h_gen_K_cos","; Generated Kaon cos#theta; Entries",nbins_cos,-1,1);
-      h1[gen_K_qcos]      = new TH1F("h_gen_K_qcos","; Generated Kaon qcos#theta; Entries",nbins_cos,-1,1);
-      
-    // Number of Gen Reco Kaons & Pions
-    /*
-    SP_count [gen,reco,correct][K,Pi]
-    */
-
-      h1[gen_N_K_cos]     = new TH1F("h_gen_N_K_cos",";cos#theta;Generated N Kaons", nbins_cos,-1,1);
-      h1[reco_N_K_cos]    = new TH1F("h_reco_N_K_cos",";cos#theta;Reconstructed N Kaons", nbins_cos,-1,1);
-      h1[N_K_corr_cos]    = new TH1F("h_N_K_corr_cos",";cos#theta;Correctly Reconstructed N Kaons", nbins_cos,-1,1);
-
-      h1[gen_N_Pi_cos]     = new TH1F("h_gen_N_Pi_cos",";cos#theta;Generated N Pions", nbins_cos,-1,1);
-      h1[reco_N_Pi_cos]    = new TH1F("h_reco_N_Pi_cos",";cos#theta;Reconstructed N Pions", nbins_cos,-1,1);
-      h1[N_Pi_corr_cos]    = new TH1F("h_N_Pi_corr_cos",";cos#theta;Correctly Reconstructed N Pions", nbins_cos,-1,1);
+    }      
 
     //////////////////
     //     TH2F     //
@@ -79,11 +64,10 @@ namespace QQbarAnalysis
 
   void HistManager::Hist2List()
   {
-    for (auto ih : h1) {
-      hList1->Add(ih);
+    for ( const auto &[iname, hist] : h1_gen_cos ){
+      hList1_gen_cos->Add(hist);
     }
-    
-    // Use unordered_map
+
     for ( const auto &[i_lmode, hists] : h1_cos ){
       for ( const auto &[icut, hist] : hists ){
         hList1_cos->Add(hist);
@@ -111,10 +95,12 @@ namespace QQbarAnalysis
     // Focus to this file
     output->cd();
 
-    // Write histogram lists
-    hList1->Write();
-
     // Use unordered_map
+    TDirectory * d_gen = output->mkdir("gen");
+      d_gen->cd();
+      hList1_gen_cos->Write();
+      output->cd();
+
     TDirectory * d_cos = output->mkdir("cos");
       d_cos->cd();
       hList1_cos->Write();
