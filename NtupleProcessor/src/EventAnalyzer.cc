@@ -90,6 +90,21 @@ namespace QQbarAnalysis
 
     _hm.h1_gen_cos.at("qcos")->Fill(mct.mc_quark[0].qcos);
 
+    unordered_map< TString, unordered_map<TString, Bool_t> > CutTriggerMap; // [particle][cutname]
+    for ( const auto i_lmode : _pt.PFO_mode ){
+
+      Bool_t is_LPFO = pfot.PFO_subjet_cheat[i_lmode][0].size() == 0 || pfot.PFO_subjet_cheat[i_lmode][1].size() == 0;
+      if( is_LPFO ) continue;
+
+      CutTriggerMap[i_lmode] = TriggerMap( pfot, i_lmode, pfot.PFO_subjet_cheat[i_lmode] );
+
+    }
+
+    //Double Tagging Efficiency
+    ProcessDoubleTagEfficiency(pfot,mct,CutTriggerMap,"gen");
+
+
+
   }
 
   void EventAnalyzer::AnalyzeReco(Long64_t entry)
@@ -118,6 +133,9 @@ namespace QQbarAnalysis
       CutTriggerMap[i_lmode] = TriggerMap( pfot, i_lmode, pfot.PFO_subjet[i_lmode] );
 
     }
+
+    //Double Tagging Efficiency
+    ProcessDoubleTagEfficiency(pfot,mct,CutTriggerMap,"reco");
 
     //Double Tagging
     ProcessDoubleTag(pfot,mct,CutTriggerMap);
@@ -440,6 +458,28 @@ namespace QQbarAnalysis
       } // LPFO event selection
 
     } // LPFO mode loop
+
+  }
+
+  void EventAnalyzer::ProcessDoubleTagEfficiency(PFOTools pfot, PFOTools mct, unordered_map< TString, unordered_map<TString, Bool_t> > cuts, TString gen_reco)
+  {
+    auto subjet = (gen_reco == "gen") ? pfot.PFO_subjet_cheat : pfot.PFO_subjet;
+
+    for( const auto &[i_lmode, cuts_for_lmode] : cuts ){
+
+      Bool_t isLPFO = subjet[i_lmode][0].size() == 0 || subjet[i_lmode][1].size() == 0;
+      if( isLPFO ) continue;
+      vector<PFO_Info> LPFOs = {subjet[i_lmode][0].at(0), subjet[i_lmode][1].at(0)};
+
+      Bool_t selection = true;
+      for( auto icut_name : _hm.heff_name ){
+        selection = selection && cuts_for_lmode.at(icut_name);
+        if(selection) {
+          _hm.h1_cos_eff.at(gen_reco).at(i_lmode).at(icut_name)->Fill( LPFOs.at(0).cos );
+          _hm.h1_cos_eff.at(gen_reco).at(i_lmode).at(icut_name)->Fill( LPFOs.at(1).cos );
+        }
+      }
+    }
 
   }
 

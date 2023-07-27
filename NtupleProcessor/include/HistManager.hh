@@ -48,6 +48,11 @@ namespace QQbarAnalysis
       vector<TString> hres_name = {"gen_N_cos","reco_N_cos","N_corr_cos"};
       unordered_map< TString, unordered_map< TString, TH1F* > > h1_resolution; // [LPFO][hist]
 
+      // efficiency plots
+      vector<TString> gen_reco  = {"gen","reco"};
+      vector<TString> heff_name = {"LPFO_higher_p", "momentum", "tpc_hits", "offset", "PID", "SPFO", "charge"};
+      // gen
+      unordered_map< TString, unordered_map< TString, unordered_map< TString, TH1F* > > > h1_cos_eff;  // [GenReco][LPFO][hist]
 
     // h2 hist
       vector<TString> hdEdx_name = {"dEdx_p","dEdx_cos","dEdx_dist_cos"};
@@ -58,6 +63,7 @@ namespace QQbarAnalysis
       TList* hList1_gen_cos        = new TList();
       TList* hList1_cos            = new TList();
       TList* hList1_resolution     = new TList();
+      TList* hList1_efficiency     = new TList();
       TList* hList2_dEdx           = new TList();
 
     // PFO Tools

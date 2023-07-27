@@ -44,7 +44,17 @@ namespace QQbarAnalysis
         TString hname = "h_" + i_lmode + "_" + iname;
         h1_resolution[i_lmode][iname] = new TH1F(hname,iname + ";cos#theta;Entries",nbins_cos,cos_min,cos_max);
       }
-    }      
+    }
+
+    // effciency
+    for( auto i_gen_reco : gen_reco ){
+      for( auto i_lmode : _pt.PFO_mode ){
+        for( auto iname : heff_name){
+          TString hname = "h_" + i_gen_reco + "_" + i_lmode + "_" + iname;
+          h1_cos_eff[i_gen_reco][i_lmode][iname]  = new TH1F(hname,iname + ";cos#theta;Entries",nbins_cos,cos_min,cos_max);
+        }
+      }
+    }
 
     //////////////////
     //     TH2F     //
@@ -64,10 +74,12 @@ namespace QQbarAnalysis
 
   void HistManager::Hist2List()
   {
+    // gen
     for ( const auto &[iname, hist] : h1_gen_cos ){
       hList1_gen_cos->Add(hist);
     }
 
+    // reco
     for ( const auto &[i_lmode, hists] : h1_cos ){
       for ( const auto &[icut, hist] : hists ){
         hList1_cos->Add(hist);
@@ -80,6 +92,16 @@ namespace QQbarAnalysis
       }
     }
 
+    // effiency
+    for ( const auto &[i_gen_reco, type_hists] : h1_cos_eff ){
+      for ( const auto &[i_lmode, hists] : type_hists ){
+        for ( const auto &[icut, hist] : hists ){
+          hList1_efficiency->Add(hist);
+        }
+      }
+    }
+
+    // 2D hist
     for ( const auto &[i_lmode, type_hists] : h2_dEdx ){
       for ( const auto &[i_type, hists] : type_hists ){
         for ( const auto &[icut, hist] : hists ){
@@ -109,6 +131,11 @@ namespace QQbarAnalysis
     TDirectory * d_resolution = output->mkdir("resolution");
       d_resolution->cd();
       hList1_resolution->Write();
+      output->cd();
+
+    TDirectory * d_efficiency = output->mkdir("efficiency");
+      d_efficiency->cd();
+      hList1_efficiency->Write();
       output->cd();
 
     TDirectory * d_dEdx = output->mkdir("dEdx");
