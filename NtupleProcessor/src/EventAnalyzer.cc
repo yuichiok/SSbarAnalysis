@@ -96,14 +96,12 @@ namespace QQbarAnalysis
       Bool_t is_LPFO = pfot.PFO_subjet_cheat[i_lmode][0].size() == 0 || pfot.PFO_subjet_cheat[i_lmode][1].size() == 0;
       if( is_LPFO ) continue;
 
-      CutTriggerMap[i_lmode] = TriggerMap( pfot, i_lmode, pfot.PFO_subjet_cheat[i_lmode] );
+      CutTriggerMap[i_lmode] = TriggerMap( pfot, i_lmode, pfot.PFO_subjet_cheat[i_lmode], "gen" );
 
     }
 
     //Double Tagging Efficiency
     ProcessDoubleTagEfficiency(pfot,mct,CutTriggerMap,"gen");
-
-
 
   }
 
@@ -127,10 +125,11 @@ namespace QQbarAnalysis
     // vector<PFO_Info> LPFOs = pfot.LPFO;
     for ( const auto i_lmode : _pt.PFO_mode ){
 
-      Bool_t is_LPFO = pfot.PFO_subjet[i_lmode][0].size() == 0 || pfot.PFO_subjet[i_lmode][1].size() == 0;
+      // Bool_t is_LPFO = pfot.PFO_subjet[i_lmode][0].size() == 0 || pfot.PFO_subjet[i_lmode][1].size() == 0;
+      Bool_t is_LPFO = pfot.PFO_sorted_jet[0].size() == 0 || pfot.PFO_sorted_jet[1].size() == 0;
       if( is_LPFO ) continue;
 
-      CutTriggerMap[i_lmode] = TriggerMap( pfot, i_lmode, pfot.PFO_subjet[i_lmode] );
+      CutTriggerMap[i_lmode] = TriggerMap( pfot, i_lmode, pfot.PFO_sorted_jet, "reco" );
 
     }
 
@@ -214,7 +213,7 @@ namespace QQbarAnalysis
     return false;
   }
 
-  unordered_map<TString, Bool_t> EventAnalyzer::TriggerMap( PFOTools pfot, TString i_lmode, unordered_map< int, vector<PFO_Info> > subjet_pair )
+  unordered_map<TString, Bool_t> EventAnalyzer::TriggerMap( PFOTools pfot, TString i_lmode, unordered_map< int, vector<PFO_Info> > subjet_pair, TString gen_reco )
   {
     unordered_map<TString, Bool_t> outMap;
     vector<PFO_Info> LPFOs = {subjet_pair.at(0).at(0), subjet_pair.at(1).at(0)};
@@ -232,8 +231,13 @@ namespace QQbarAnalysis
                        pfot.is_offset_small( LPFOs.at(1), _anCfg.PFO_offset_max );
 
     // check dEdx dist
-    outMap["PID"] = pfot.is_PID( i_lmode, LPFOs.at(0) ) &&
-                    pfot.is_PID( i_lmode, LPFOs.at(1) );
+    if( gen_reco == "reco" ){
+      outMap["PID"] = pfot.is_PID( i_lmode, LPFOs.at(0) ) &&
+                      pfot.is_PID( i_lmode, LPFOs.at(1) );
+    }else{
+      outMap["PID"] = ( abs(LPFOs.at(0).pfo_pdgcheat) == pfot.PFO_type_map_rev.at(i_lmode) ) &&
+                      ( abs(LPFOs.at(1).pfo_pdgcheat) == pfot.PFO_type_map_rev.at(i_lmode) );
+    }
     
     // SPFO opposite check
     vector<Bool_t> is_SPFO_charge_opposite(2,false);
