@@ -63,7 +63,7 @@ namespace QQbarAnalysis
       vector<PFO_Info> Valid_PFOs;
 
       vector<PFO_Info> PFO_jet[2];
-      vector<PFO_Info> PFO_sorted_jet[2];
+      unordered_map<int, vector<PFO_Info> > PFO_sorted_jet;
       unordered_map< TString, unordered_map<int, vector<PFO_Info> > > PFO_subjet;
       unordered_map< TString, unordered_map<int, vector<PFO_Info> > > PFO_unsorted_subjet_cheat;
       unordered_map< TString, unordered_map<int, vector<PFO_Info> > > PFO_subjet_cheat;
