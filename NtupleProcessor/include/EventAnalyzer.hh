@@ -48,7 +48,7 @@ namespace QQbarAnalysis
       void             CreateFile();
       void             WriteFile();
 
-      void             AnalyzeGen();
+      void             AnalyzeGen( Long64_t entry );
       void             AnalyzeReco( Long64_t entry );
       
       Bool_t           Select( Selector s );          // Evaluates the class' list of event selection criteria

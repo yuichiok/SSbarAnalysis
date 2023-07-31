@@ -65,7 +65,7 @@ namespace QQbarAnalysis
         eAnalyzer.Jet_sum_n_acol();
 
         if( eAnalyzer.Select( EventAnalyzer::kMC ) ){
-          eAnalyzer.AnalyzeGen();
+          eAnalyzer.AnalyzeGen(entry);
         }
         if( eAnalyzer.Select( EventAnalyzer::kReco ) ){
           eAnalyzer.AnalyzeReco(entry);
