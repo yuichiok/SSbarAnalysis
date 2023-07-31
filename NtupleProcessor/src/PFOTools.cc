@@ -59,7 +59,6 @@ namespace QQbarAnalysis
 
   }
 
-
   void PFOTools::InitializePFOTools( MC_QQbar *mc_data, PFO_QQbar *data )
   {
 
