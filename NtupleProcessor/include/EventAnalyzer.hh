@@ -67,8 +67,8 @@ namespace QQbarAnalysis
       Bool_t           is_high_LPFO( PFOTools pfot, TString lmode );
 
     // Histogram extractor
-      void             ProcessDoubleTag( PFOTools pfot, PFOTools mct, unordered_map< TString, unordered_map<TString, Bool_t> > cuts );
-      void             ProcessDoubleTagEfficiency( PFOTools pfot, PFOTools mct, unordered_map< TString, unordered_map<TString, Bool_t> > cuts, TString gen_reco );
+      void             ProcessDoubleTag( PFOTools pfot, PFOTools mct, unordered_map< TString, unordered_map<TString, Bool_t> > cuts, unordered_map< int, vector<PFO_Info> > subjet_pair );
+      void             ProcessDoubleTagEfficiency( PFOTools pfot, PFOTools mct, unordered_map< TString, unordered_map<TString, Bool_t> > cuts, unordered_map< int, vector<PFO_Info> > subjet_pair, TString gen_reco );
 
       void             Jet_sum_n_acol();
 

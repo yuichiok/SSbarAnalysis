@@ -90,18 +90,26 @@ namespace QQbarAnalysis
 
     _hm.h1_gen_cos.at("qcos")->Fill(mct.mc_quark[0].qcos);
 
+    Bool_t is_noJet = pfot.PFO_sorted_jet[0].size() == 0 || pfot.PFO_sorted_jet[1].size() == 0;
+    if( is_noJet ) return;
+    unordered_map< int, vector<PFO_Info> > hadronJet;
+    for ( int ijet = 0; ijet < 2; ijet++ ){
+      for ( const auto& ipfo : pfot.PFO_sorted_jet[ijet] ){
+        if( abs(ipfo.pfo_pdgcheat) != 11 && abs(ipfo.pfo_pdgcheat) != 13 ){
+          hadronJet[ijet].push_back(ipfo);
+        }
+      }
+    }
+
     unordered_map< TString, unordered_map<TString, Bool_t> > CutTriggerMap; // [particle][cutname]
     for ( const auto i_lmode : _pt.PFO_mode ){
 
-      Bool_t is_LPFO = pfot.PFO_subjet_cheat[i_lmode][0].size() == 0 || pfot.PFO_subjet_cheat[i_lmode][1].size() == 0;
-      if( is_LPFO ) continue;
-
-      CutTriggerMap[i_lmode] = TriggerMap( pfot, i_lmode, pfot.PFO_subjet_cheat[i_lmode], "gen" );
+      CutTriggerMap[i_lmode] = TriggerMap( pfot, i_lmode, hadronJet, "gen" );
 
     }
 
     //Double Tagging Efficiency
-    ProcessDoubleTagEfficiency(pfot,mct,CutTriggerMap,"gen");
+    ProcessDoubleTagEfficiency(pfot,mct,CutTriggerMap,hadronJet,"gen");
 
   }
 
@@ -118,26 +126,34 @@ namespace QQbarAnalysis
     // Selections //
     ////////////////
 
-    Bool_t valid_event = pfot.PFO_sorted_jet[0].size() != 0 && pfot.PFO_sorted_jet[1].size() != 0;
-    if( !valid_event ) return;
+    Bool_t is_noJet = pfot.PFO_sorted_jet[0].size() == 0 || pfot.PFO_sorted_jet[1].size() == 0;
+    if( is_noJet ) return;
+
+    unordered_map< int, vector<PFO_Info> > hadronJet;
+    for ( int ijet = 0; ijet < 2; ijet++ ){
+      for ( const auto& ipfo : pfot.PFO_sorted_jet[ijet] ){
+        if( abs(ipfo.pfo_pid) != 11 && abs(ipfo.pfo_pid) != 13 ){
+          hadronJet[ijet].push_back(ipfo);
+        }
+      }
+    }
+    Bool_t is_LPFO_hadron = hadronJet[0].size() == 0 || hadronJet[1].size() == 0;
+    if( is_LPFO_hadron ) return;
+
 
     unordered_map< TString, unordered_map<TString, Bool_t> > CutTriggerMap; // [particle][cutname]
-    // vector<PFO_Info> LPFOs = pfot.LPFO;
     for ( const auto i_lmode : _pt.PFO_mode ){
 
-      // Bool_t is_LPFO = pfot.PFO_subjet[i_lmode][0].size() == 0 || pfot.PFO_subjet[i_lmode][1].size() == 0;
-      Bool_t is_LPFO = pfot.PFO_sorted_jet[0].size() == 0 || pfot.PFO_sorted_jet[1].size() == 0;
-      if( is_LPFO ) continue;
-
-      CutTriggerMap[i_lmode] = TriggerMap( pfot, i_lmode, pfot.PFO_sorted_jet, "reco" );
+      // CutTriggerMap[i_lmode] = TriggerMap( pfot, i_lmode, pfot.PFO_sorted_jet, "reco" );
+      CutTriggerMap[i_lmode] = TriggerMap( pfot, i_lmode, hadronJet, "reco" );
 
     }
 
     //Double Tagging Efficiency
-    ProcessDoubleTagEfficiency(pfot,mct,CutTriggerMap,"reco");
+    ProcessDoubleTagEfficiency(pfot,mct,CutTriggerMap,hadronJet,"reco");
 
     //Double Tagging
-    ProcessDoubleTag(pfot,mct,CutTriggerMap);
+    ProcessDoubleTag(pfot,mct,CutTriggerMap,hadronJet);
 
     // Resolution Analysis
     ResolutionAnalysis(pfot,mct);
@@ -255,9 +271,6 @@ namespace QQbarAnalysis
 
     // Charge opposite check
     outMap["charge"] = pfot.is_charge_config(pfot.kOpposite,LPFOs.at(0).pfo_charge,LPFOs.at(1).pfo_charge);
-
-    // Higher LPFO momentum
-    outMap["LPFO_higher_p"] = is_high_LPFO( pfot, i_lmode );
 
     return outMap;
 
@@ -412,7 +425,7 @@ namespace QQbarAnalysis
 
   }
 
-  void EventAnalyzer::ProcessDoubleTag(PFOTools pfot, PFOTools mct, unordered_map< TString, unordered_map<TString, Bool_t> > cuts)
+  void EventAnalyzer::ProcessDoubleTag(PFOTools pfot, PFOTools mct, unordered_map< TString, unordered_map<TString, Bool_t> > cuts, unordered_map< int, vector<PFO_Info> > subjet_pair)
   {
     unordered_map< TString, vector<Bool_t> > is_pass;
     for( const auto &[i_lmode, cuts_for_lmode] : cuts ){
@@ -428,7 +441,7 @@ namespace QQbarAnalysis
 
       if( isPass ){
 
-        vector<PFO_Info> LPFOs = {pfot.PFO_subjet.at(i_lmode).at(0).at(0), pfot.PFO_subjet.at(i_lmode).at(1).at(0)};
+        vector<PFO_Info> LPFOs = {subjet_pair.at(0).at(0), subjet_pair.at(1).at(0)};
 
         Int_t ineg             = LPFOs.at(0).pfo_charge > 0 ;
         PFO_Info LPFO          = LPFOs.at(ineg);
@@ -465,15 +478,13 @@ namespace QQbarAnalysis
 
   }
 
-  void EventAnalyzer::ProcessDoubleTagEfficiency(PFOTools pfot, PFOTools mct, unordered_map< TString, unordered_map<TString, Bool_t> > cuts, TString gen_reco)
+  void EventAnalyzer::ProcessDoubleTagEfficiency(PFOTools pfot, PFOTools mct, unordered_map< TString, unordered_map<TString, Bool_t> > cuts, unordered_map< int, vector<PFO_Info> > subjet_pair, TString gen_reco)
   {
-    auto subjet = (gen_reco == "gen") ? pfot.PFO_subjet_cheat : pfot.PFO_subjet;
+    Bool_t isLPFO = subjet_pair[0].size() == 0 || subjet_pair[1].size() == 0;
+    if( isLPFO ) return;
+    vector<PFO_Info> LPFOs = {subjet_pair.at(0).at(0), subjet_pair.at(1).at(0)};
 
     for( const auto &[i_lmode, cuts_for_lmode] : cuts ){
-
-      Bool_t isLPFO = subjet[i_lmode][0].size() == 0 || subjet[i_lmode][1].size() == 0;
-      if( isLPFO ) continue;
-      vector<PFO_Info> LPFOs = {subjet[i_lmode][0].at(0), subjet[i_lmode][1].at(0)};
 
       Bool_t selection = true;
       for( auto icut_name : _hm.heff_name ){
