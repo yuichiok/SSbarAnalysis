@@ -120,8 +120,17 @@ void efficiency_cos()
         
         TH1F *h_eff = plotEfficiency(h_num, h_denom);
         
+        TH1F *h_num_norm   = (TH1F*) h_num->Clone();
+        TH1F *h_denom_norm = (TH1F*) h_denom->Clone();
+        Normalize(h_num_norm);
+        Normalize(h_denom_norm);
+
         c_eff_gen_Pi->cd(count);
         h_eff->Draw("h");
+
+        c_cos_gen_Pi->cd(count);
+        h_denom_norm->Draw("h");
+        h_num_norm->Draw("hsame");
 
       }
       
