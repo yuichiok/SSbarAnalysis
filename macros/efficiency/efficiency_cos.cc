@@ -102,28 +102,32 @@ void efficiency_cos()
       }
     }
 
-    for ( auto i_lmode : PFO_mode ){
+
+    int count = 0;
+    TH1F * h_denom;
+    TCanvas *c_eff_gen_Pi = new TCanvas("c_eff_gen_Pi", "c_eff_gen_Pi", 1500,400);
+    c_eff_gen_Pi->Divide(5,1);
+    TCanvas *c_cos_gen_Pi = new TCanvas("c_cos_gen_Pi", "c_cos_gen_Pi", 1500,400);
+    c_cos_gen_Pi->Divide(5,1);
+
+    cout << "=== Gen Pi ===\n";
+    
+    for ( auto ih : heff_name ){
+
+      TH1F * h_num = h1_cos_eff["gen"]["Pi"][ih];
       
-      for ( auto igenreco : gen_reco ){
-
-        bool first = true;
-        TH1F * h_denom;
+      if (count) {
         
-        for ( auto ih : heff_name ){
+        TH1F *h_eff = plotEfficiency(h_num, h_denom);
+        
+        c_eff_gen_Pi->cd(count);
+        h_eff->Draw("h");
 
-          TH1F * h_num = h1_cos_eff[igenreco][i_lmode][ih];
-          if (!first) {
-            TH1F *h_eff = plotEfficiency(h_num, h_denom);
-            int n_num = h_num->GetEntries();
-            int n_denom = h_denom->GetEntries();
-            float eff = (float)n_num / (float)n_denom;
-            cout << i_lmode << "," << igenreco << "," << ih << "," << eff << "\n";
-          }
-          h_denom = h_num;
-          first = false;
-
-        }
       }
+      
+      h_denom = h_num;
+      count++;
+
     }
 
 
