@@ -44,12 +44,14 @@ void Normalize2Gen(TH1F *h, TH1F *h_gen)
   h->Scale( intCosGen / intCosReco );
 }
 
-TCanvas * plotEfficiency(TH1F *h_denom, TH1F *h_num)
+TH1F* plotEfficiency(TH1F *h_num, TH1F *h_denom)
 {
   gStyle->SetOptStat(0);
 
+  TH1F *h_eff = (TH1F*) h_num->Clone();
+  h_eff->Divide(h_denom);
 
-
+  return h_eff;
 }
 
 void SaveHists(TCanvas *c, TH1F *ih)
@@ -88,20 +90,37 @@ void efficiency_cos()
   try
   {
     if (!file->IsOpen()) return;
-    file->cd("efficiency");
+    TString dir_name = "efficiency/";
+
     for ( auto igenreco : gen_reco ){
       for ( auto i_lmode : PFO_mode ){
         for ( auto ih : heff_name ){
           TString hname = "h_" + igenreco + "_" + i_lmode + "_" + ih;
-          TH1F *h = (TH1F*) file->Get(hname);
+          TH1F *h = (TH1F*) file->Get(dir_name + hname);
           h1_cos_eff[igenreco][i_lmode][ih] = h;
         }
       }
     }
 
     for ( auto i_lmode : PFO_mode ){
+      
       for ( auto igenreco : gen_reco ){
+
+        bool first = true;
+        TH1F * h_denom;
+        
         for ( auto ih : heff_name ){
+
+          TH1F * h_num = h1_cos_eff[igenreco][i_lmode][ih];
+          if (!first) {
+            TH1F *h_eff = plotEfficiency(h_num, h_denom);
+            int n_num = h_num->GetEntries();
+            int n_denom = h_denom->GetEntries();
+            float eff = (float)n_num / (float)n_denom;
+            cout << i_lmode << "," << igenreco << "," << ih << "," << eff << "\n";
+          }
+          h_denom = h_num;
+          first = false;
 
         }
       }
