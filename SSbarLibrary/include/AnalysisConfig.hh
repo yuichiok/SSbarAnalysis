@@ -1,6 +1,9 @@
 #ifndef GUARD_AnalysisConfig_h
 #define GUARD_AnalysisConfig_h
 
+#include "MapTString.hh"
+#include "ConfigReader.hh"
+
 #include <iostream>
 #include <string>
 #include <sstream>
@@ -8,10 +11,8 @@
 #include <boost/property_tree/ini_parser.hpp>
 #include <TString.h>
 #include <TRegexp.h>
-#include <map>
 #include <utility>
 #include <vector>
-#include "ConfigReader.hh"
 
 // class AnalysisConfig : public ConfigReader
 class AnalysisConfig
@@ -29,7 +30,7 @@ class AnalysisConfig
     std::vector<int> gen_quarks;
 
   // PFO cuts
-    int   PFO_TPCHits_max;
+    int   PFO_TPCHits_min;
     float PFO_p_min;
     float PFO_p_max;
     float PFO_offset_max;

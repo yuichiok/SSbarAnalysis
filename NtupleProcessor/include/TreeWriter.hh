@@ -8,33 +8,34 @@
 #ifndef _TreeWriter_hh
 #define _TreeWriter_hh
 
-class TreeWriter 
+namespace QQbarAnalysis
 {
-  public:
-    //
-    //	Constants
-    //
-    
-    //
-    //	Constructors
-    //
-    TreeWriter ();
-    virtual ~TreeWriter () {};
-    //
-    //	Methods
-    //
-    
-    void InitializeDataTree( TTree * tree, Tree_Data & data);
-    void WriteLPFO_Info( PFOTools pt, PFO_QQbar *pqq, TreeVariables *data );
+  class TreeWriter 
+  {
+    public:
+      //
+      //	Constants
+      //
+      
+      //
+      //	Constructors
+      //
+      TreeWriter ();
+      virtual ~TreeWriter () {};
+      //
+      //	Methods
+      //
+      
+      void InitializeDataTree( TTree * tree, Tree_Data & data);
 
-  private:
-    //
-    //	Data
-    //
-    
-    //
-    //	Private methods
-    //
-};
-
+    private:
+      //
+      //	Data
+      //
+      
+      //
+      //	Private methods
+      //
+  };
+}
 #endif

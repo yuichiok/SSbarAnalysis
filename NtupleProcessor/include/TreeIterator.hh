@@ -9,54 +9,57 @@
  Takes input variables (datasets, configurations, etc) and sets up the
  appropriate classes to handle each portion of the analysis process.
 ------------------------------------------------------------------------------*/
-#include <map>
+#include "MapTString.hh"
+#include "EventAnalyzer.hh"
+
 #include <sstream>
 #include <vector>
 #include <TBranch.h>
 #include <TChain.h>
 #include <TSelector.h>
 #include <TTree.h>
-#include "EventAnalyzer.hh"
 
 typedef unsigned long counter;
 
-class TreeIterator : public TSelector
+namespace QQbarAnalysis
 {
-  public:
-    TreeIterator(EventAnalyzer &eh) : eAnalyzer(eh), fChain(0) {}
-    virtual ~TreeIterator(){}
+  class TreeIterator : public TSelector
+  {
+    public:
+      TreeIterator(EventAnalyzer &eh) : eAnalyzer(eh), fChain(0) {}
+      virtual ~TreeIterator(){}
 
-  // Overloaded TSelector Functions
-    virtual Int_t   Version() const { return 2; }
-    virtual void    Begin     (TTree *tree);
-    virtual void    SlaveBegin(TTree *tree);
-    virtual void    Init      (TTree *tree);
-    virtual Bool_t  Notify();
-    virtual Bool_t  Process   (Long64_t entry);
+    // Overloaded TSelector Functions
+      virtual Int_t   Version() const { return 2; }
+      virtual void    Begin     (TTree *tree);
+      virtual void    SlaveBegin(TTree *tree);
+      virtual void    Init      (TTree *tree);
+      virtual Bool_t  Notify();
+      virtual Bool_t  Process   (Long64_t entry);
 
-    virtual Int_t   GetEntry(Long64_t entry, Int_t getall = 0) { return fChain ? fChain->GetTree()->GetEntry(entry, getall) : 0; }
-    virtual void    SetOption(const char *option) { fOption = option; }
-    virtual void    SetObject(TObject *obj)       { fObject = obj;    }
-    virtual void    SetInputList(TList *input)    { fInput  = input;  }
-    virtual TList  *GetOutputList() const         { return fOutput;   }
+      virtual Int_t   GetEntry(Long64_t entry, Int_t getall = 0) { return fChain ? fChain->GetTree()->GetEntry(entry, getall) : 0; }
+      virtual void    SetOption(const char *option) { fOption = option; }
+      virtual void    SetObject(TObject *obj)       { fObject = obj;    }
+      virtual void    SetInputList(TList *input)    { fInput  = input;  }
+      virtual TList  *GetOutputList() const         { return fOutput;   }
 
-    virtual void    SlaveTerminate();
-    virtual void    Terminate();
+      virtual void    SlaveTerminate();
+      virtual void    Terminate();
 
-  // Entry handler & list of Histogram Extractors
-    EventAnalyzer &eAnalyzer;
+    // Entry handler & list of Histogram Extractors
+      EventAnalyzer &eAnalyzer;
 
-  // TTree
-    TTree *fChain;
+    // TTree
+      TTree *fChain;
 
-  // Counters
-    Long64_t nEntries;             // Total number of entries in tree/chain
-    Long64_t finalEntry;           // Index of last entry
-    Long64_t nEntriesProcessed;    // Total number of events processed from chain
+    // Counters
+      Long64_t nEntries;             // Total number of entries in tree/chain
+      Long64_t finalEntry;           // Index of last entry
+      Long64_t nEntriesProcessed;    // Total number of events processed from chain
 
 
-  private: 
+    private: 
 
-};
-
+  };
+}
 #endif

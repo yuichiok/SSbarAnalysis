@@ -52,7 +52,7 @@ int main(int argc, char* argv[])
               "  Processing Begun: " << ts_mainBegin << "\n"
               "\n";
 
-      NtupleProcessor ntplproc(argv[1],anconfig,"",-1);
+      QQbarAnalysis::NtupleProcessor ntplproc(argv[1],anconfig,"",-1);
 
     // CLOSING OUTPUT.
       std::string ts_mainEnd = timeStamp();

@@ -1,204 +1,75 @@
 #ifndef GUARD_HistManager_h
 #define GUARD_HistManager_h
 
+#include "PFOTools.hh"
+
 #include <iostream>
-#include <map>
+
 #include <TString.h>
 #include <TH1.h>
 #include <TH2.h>
 #include <TList.h>
-#include <TFile.h> 
+#include <TFile.h>
 
-const int NSLABS = 15;
+using std::unordered_map;
 
-class HistManager
+namespace QQbarAnalysis
 {
-  public:
-    HistManager();
-    ~HistManager(){}
+  class HistManager
+  {
+    public:
+      HistManager();
+      ~HistManager(){}
 
-  // Methods
-    virtual void InitializeHists();
-    virtual void Hist2List();
-    virtual void WriteLists( TFile * output );
+    // Methods
+      virtual void InitializeHists();
+      virtual void Hist2List();
+      virtual void WriteLists( TFile * output );
 
-  // Declear histograms
-  // h1 hist
-    enum h1_index {
-      gen_q_cos,
-      gen_q_qcos,
+    // Variables
+      Int_t   nbins_cos = 100;
+      Float_t cos_min = -1.0, cos_max = 1.0;
 
-      gen_K_cos,
-      gen_K_qcos,
+      Float_t bins_dEdx[200];
+      Int_t nbins_dEdx=199;
 
-      cheat_K_cos,
-      cheat_K_qcos,
-
-      cheat_Pi_cos,
-      cheat_Pi_qcos,
-
-      reco_K_cos,
-      reco_K_qcos,
-      reco_K_scos,
-      reco_K_mom,
-      reco_K_pdgcheat,
-      gen_reco_K_sep_cos,
-      jet_reco_K_sep_cos,
-
-      reco_Pi_cos,
-      reco_Pi_qcos,
-      reco_Pi_scos,
-      reco_Pi_mom,
-      reco_Pi_pdgcheat,
-      gen_reco_Pi_sep_cos,
-      jet_reco_Pi_sep_cos,
-
-      good_reco_Pi_endpt,
-      good_reco_Pi_tpchits,
-      good_reco_Pi_pidedx_dist,
-      good_reco_Pi_kdedx_dist,
-      bad_reco_Pi_endpt,
-      bad_reco_Pi_tpchits,
-      bad_reco_Pi_pidedx_dist,
-      bad_reco_Pi_kdedx_dist,
-
-      gen_reco_K_sep_mincos,
-
-      reco_sum_jetE,
-      reco_jet_sep,
-
-      lpfo_gen_K_mom,
-      lpfo_reco_K_mom,
-
-      gen_N_K_cos,
-      reco_N_K_cos,
-      N_K_corr_cos,
-
-      gen_N_K_cos2,
-      reco_N_K_cos2,
-      N_K_corr_cos2,
-
-      dummy_h1,
-      Last_h1 = dummy_h1
-    };
-    TH1F * h1[Last_h1];
-
-    enum h1_pq_index {
-      // KID
-      acc_KK,
-      rej_KK,
-
-      // PiID
-      acc_PiPi,
-      rej_PiPi,
-
-      dummy_pq,
-      Last_h1_pq = dummy_pq
-    };
-    TH1F * h1_pq[Last_h1_pq];
-
-    enum h1_particle_ratio_index {
-      K_rate_gen,
-      pi_rate_gen,
-      p_rate_gen,
-
-      K_rate_reco,
-      pi_rate_reco,
-      p_rate_reco,
-
-      dummy_particle_ratio,
-      Last_h1_dummy_particle_ratio = dummy_particle_ratio
-    };
-    TH1F * h1_particle_ratio[Last_h1_dummy_particle_ratio];
-
-  // h2 hist
-    enum h2_index {
-
-      gen_K_p_cos,
-      reco_K_p_cos,
-
-      nK_gen_reco,
-      npi_gen_reco,
-      np_gen_reco,
-
-      stable_cos,
-      purity_cos,
-
-      dummy_h2,
-      Last_h2 = dummy_h2
-    };
-    TH2F * h2[Last_h2];
-
-    enum h2_jet_index {
-
-      jet_mult_cos,
-      jet_mult_cos_noISR,
-
-      dummy_h2_jet,
-      Last_dummy_h2_jet = dummy_h2_jet
-    };
-    TH2F * h2_jet[Last_dummy_h2_jet];
-
-    enum h2_particle_ratio_cos_index {
-      K_rate_cos_gen,
-      pi_rate_cos_gen,
-      p_rate_cos_gen,
-
-      K_rate_cos_reco,
-      pi_rate_cos_reco,
-      p_rate_cos_reco,
-
-      dummy_particle_ratio_cos,
-      Last_h2_dummy_particle_ratio_cos = dummy_particle_ratio_cos
-    };
-    TH2F * h2_particle_ratio_cos[Last_h2_dummy_particle_ratio_cos];
-
-    enum h2_dEdx_index {
-
-      gen_K_dEdx_p,
-      gen_pi_dEdx_p,
-      gen_p_dEdx_p,
-
-      // KID
-      gen_K_reco_K_dEdx_p,
-      gen_pi_reco_K_dEdx_p,
-      gen_p_reco_K_dEdx_p,
-
-      gen_K_KdEdx_dist_cos,
-      gen_pi_KdEdx_dist_cos,
-      gen_p_KdEdx_dist_cos,
-
-      gen_K_reco_K_KdEdx_dist_cos,
-      gen_pi_reco_K_KdEdx_dist_cos,
-      gen_p_reco_K_KdEdx_dist_cos,
-
-      // PiID
-      gen_K_reco_Pi_dEdx_p,
-      gen_pi_reco_Pi_dEdx_p,
-      gen_p_reco_Pi_dEdx_p,
-
-      gen_K_PidEdx_dist_cos,
-      gen_pi_PidEdx_dist_cos,
-      gen_p_PidEdx_dist_cos,
-
-      gen_K_reco_Pi_PidEdx_dist_cos,
-      gen_pi_reco_Pi_PidEdx_dist_cos,
-      gen_p_reco_Pi_PidEdx_dist_cos,
+      Float_t nbins_dEdx_dist = 100;
+      Float_t dEdx_dist_min = -20.0, dEdx_dist_max = 20.0;
 
 
-      dummy_dEdx,
-      Last_h2_dEdx = dummy_dEdx
-    };
-    TH2F * h2_dEdx[Last_h2_dEdx];
+    // Declear histograms
+    // h1 hist
+      vector<TString> hcos_gen_name = {"cos","qcos"};
+      unordered_map< TString, TH1F* > h1_gen_cos;        // [hist]
 
-  private:
-    TList* hList1                = new TList();
-    TList* hList1_pq             = new TList();
-    TList* hList1_particle_ratio = new TList();
-    TList* hList2                = new TList();
-    TList* hList2_jet            = new TList();
-    TList* hList2_dEdx           = new TList();
+      vector<TString> hcos_name = {"cos","qcos","scos","acc_cos","rej_cos"};
+      unordered_map< TString, unordered_map< TString, TH1F* > > h1_cos;        // [LPFO][hist]
 
-};
+      vector<TString> hres_name = {"gen_N_cos","reco_N_cos","N_corr_cos"};
+      unordered_map< TString, unordered_map< TString, TH1F* > > h1_resolution; // [LPFO][hist]
 
+      // efficiency plots
+      vector<TString> gen_reco  = {"gen","reco"};
+      // vector<TString> heff_name = {"momentum", "tpc_hits", "offset", "PID", "SPFO", "LPFO_higher_p", "charge"};
+      vector<TString> heff_name = {"momentum", "tpc_hits", "offset", "PID", "SPFO", "charge"};
+      // gen
+      unordered_map< TString, unordered_map< TString, unordered_map< TString, TH1F* > > > h1_cos_eff;  // [GenReco][LPFO][hist]
+
+    // h2 hist
+      vector<TString> hdEdx_name = {"dEdx_p","dEdx_cos","dEdx_dist_cos"};
+      unordered_map< TString, unordered_map< TString, unordered_map< TString, TH2F* > > > h2_dEdx; // [LPFO][TruthID][hist]
+
+    private:
+    // Lists
+      TList* hList1_gen_cos        = new TList();
+      TList* hList1_cos            = new TList();
+      TList* hList1_resolution     = new TList();
+      TList* hList1_efficiency     = new TList();
+      TList* hList2_dEdx           = new TList();
+
+    // PFO Tools
+      PFOTools _pt;
+
+  };
+}
 #endif
