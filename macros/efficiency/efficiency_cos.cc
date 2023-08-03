@@ -9,7 +9,7 @@
 using std::cout; using std::endl;
 using std::vector; using std::unordered_map;
 
-TString prod_mode = "ud";
+TString prod_mode = "dd";
 TString LPFO_mode = "Pi";
 
 void BinNormal(TH1F *h)
@@ -109,8 +109,6 @@ void efficiency_cos()
     c_eff_gen_Pi->Divide(5,1);
     TCanvas *c_cos_gen_Pi = new TCanvas("c_cos_gen_Pi", "c_cos_gen_Pi", 1500,400);
     c_cos_gen_Pi->Divide(5,1);
-
-    cout << "=== Gen Pi ===\n";
     
     for ( auto ih : heff_name ){
 
