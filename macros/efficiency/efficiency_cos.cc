@@ -9,7 +9,7 @@
 using std::cout; using std::endl;
 using std::vector; using std::unordered_map;
 
-TString prod_mode = "dd";
+TString prod_mode = "uu";
 TString LPFO_mode = "Pi";
 
 void BinNormal(TH1F *h)
@@ -50,6 +50,7 @@ TH1F* plotEfficiency(TH1F *h_num, TH1F *h_denom)
 
   TH1F *h_eff = (TH1F*) h_num->Clone();
   h_eff->Divide(h_denom);
+  h_eff->GetYaxis()->SetRangeUser(0,1);
 
   return h_eff;
 }
@@ -112,11 +113,12 @@ void efficiency_cos()
     
     for ( auto ih : heff_name ){
 
-      TH1F * h_num = h1_cos_eff["gen"]["Pi"][ih];
+      TH1F * h_num = h1_cos_eff["reco"]["Pi"][ih];
       
       if (count) {
         
         TH1F *h_eff = plotEfficiency(h_num, h_denom);
+        TString hname = "after " + ih + " selection";
         
         TH1F *h_num_norm   = (TH1F*) h_num->Clone();
         TH1F *h_denom_norm = (TH1F*) h_denom->Clone();
@@ -124,9 +126,13 @@ void efficiency_cos()
         Normalize(h_denom_norm);
 
         c_eff_gen_Pi->cd(count);
+        StylePad(gPad,0,0,0.17,0.1);
+        StyleHist(h_eff,kBlue);
+        h_eff->SetTitle(hname);
         h_eff->Draw("h");
 
         c_cos_gen_Pi->cd(count);
+        h_denom_norm->SetTitle(hname);
         h_denom_norm->Draw("h");
         h_num_norm->Draw("hsame");
 
