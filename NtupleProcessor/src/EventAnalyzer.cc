@@ -466,9 +466,10 @@ namespace QQbarAnalysis
           Float_t scos = abs(LPFO.cos) * sgn( -_mc.mc_quark_charge[0] ) * mct.mc_quark[0].cos / abs(mct.mc_quark[0].cos);
           _hm.h1_cos.at(i_lmode).at("scos")->Fill( scos );
 
-          auto it = _pt.PFO_type_map.find(LPFO.pfo_pdgcheat);
-          if( it != _pt.PFO_type_map.end() ){
-            TString type = it->second;
+          if( _pt.PFO_type_map.find(abs(LPFO.pfo_pdgcheat)) != _pt.PFO_type_map.end() ){
+
+            TString type = _pt.PFO_type_map.at(abs(LPFO.pfo_pdgcheat));
+
             _hm.h2_dEdx.at(i_lmode).at(type).at("dEdx_p")->Fill( LPFO.p_mag, LPFO.pfo_dedx );
             _hm.h2_dEdx.at(i_lmode).at(type).at("dEdx_dist_cos")->Fill( LPFO.p_mag, pfot.Get_dEdx_dist(LPFO, i_lmode) );
           }
