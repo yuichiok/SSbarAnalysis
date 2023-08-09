@@ -1,4 +1,5 @@
 #include <iostream>
+
 #include <TString.h>
 #include <TH1.h>
 #include <TH2.h>
@@ -52,6 +53,10 @@ namespace QQbarAnalysis
         for( auto iname : heff_name){
           TString hname = "h_" + i_gen_reco + "_" + i_lmode + "_" + iname;
           h1_cos_eff[i_gen_reco][i_lmode][iname]  = new TH1F(hname,iname + ";cos#theta;Entries",nbins_cos,cos_min,cos_max);
+          for( auto i_type : _pt.PFO_type ){
+            TString hname_dedx_dist = "h_" + i_gen_reco + "_" + i_lmode + "_" + i_type + "_" + iname;
+            h2_dEdx_dist_cos_eff[i_gen_reco][i_lmode][i_type][iname] = new TH2F(hname_dedx_dist,iname + ";cos#theta;#frac{dE}{dx} distance",nbins_cos,cos_min,cos_max,nbins_dEdx_dist,dEdx_dist_min,dEdx_dist_max);
+          }
         }
       }
     }
@@ -68,11 +73,22 @@ namespace QQbarAnalysis
         }
       }
 
-      Hist2List();
+      CreateLists();
 
   }
 
-  void HistManager::Hist2List()
+  template <typename Key, typename Value>
+  void HistManager::recursiveIterate(TList *list, const unordered_map<Key, Value>& map) {
+    for (const auto &[key, val] : map) {
+      if constexpr ( std::is_same_v<Value, TH1F*> || std::is_same_v<Value, TH2F*> ) {
+        list->Add(val);
+      } else if constexpr ( std::is_same_v<Value, unordered_map<Key, typename Value::mapped_type>> ) {
+        recursiveIterate(list,val);
+      }
+    }
+  }
+
+  void HistManager::CreateLists()
   {
     // gen
     for ( const auto &[iname, hist] : h1_gen_cos ){
@@ -100,6 +116,7 @@ namespace QQbarAnalysis
         }
       }
     }
+    recursiveIterate( hList2_efficiency, h2_dEdx_dist_cos_eff );
 
     // 2D hist
     for ( const auto &[i_lmode, type_hists] : h2_dEdx ){
@@ -136,7 +153,10 @@ namespace QQbarAnalysis
     TDirectory * d_efficiency = output->mkdir("efficiency");
       d_efficiency->cd();
       hList1_efficiency->Write();
-      output->cd();
+      TDirectory * d_efficiency_dEdx_dist_cos = d_efficiency->mkdir("dEdx_dist_cos");
+        d_efficiency_dEdx_dist_cos->cd();
+        hList2_efficiency->Write();
+        output->cd();
 
     TDirectory * d_dEdx = output->mkdir("dEdx");
       d_dEdx->cd();
