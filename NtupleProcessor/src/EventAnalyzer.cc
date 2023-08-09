@@ -499,11 +499,25 @@ namespace QQbarAnalysis
 
       Bool_t selection = true;
       for( auto icut_name : _hm.heff_name ){
+
         selection = selection && cuts_for_lmode.at(icut_name);
+        
         if(selection) {
-          _hm.h1_cos_eff.at(gen_reco).at(i_lmode).at(icut_name)->Fill( LPFOs.at(0).cos );
-          _hm.h1_cos_eff.at(gen_reco).at(i_lmode).at(icut_name)->Fill( LPFOs.at(1).cos );
+
+          for(auto iLPFO : LPFOs){
+            
+            _hm.h1_cos_eff.at(gen_reco).at(i_lmode).at(icut_name)->Fill( iLPFO.cos );
+
+            // plot dEdx dist vs cos
+            if( _pt.PFO_type_map.find(abs(iLPFO.pfo_pdgcheat)) != _pt.PFO_type_map.end() ){
+              TString type = _pt.PFO_type_map.at(abs(iLPFO.pfo_pdgcheat));
+              _hm.h2_dEdx_dist_cos_eff.at(gen_reco).at(i_lmode).at(type).at(icut_name)->Fill( iLPFO.cos, pfot.Get_dEdx_dist(iLPFO, i_lmode) );
+            }
+
+          }
+
         }
+
       }
     }
 

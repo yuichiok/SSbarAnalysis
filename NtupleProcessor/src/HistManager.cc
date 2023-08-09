@@ -50,7 +50,7 @@ namespace QQbarAnalysis
           TString hname = "h_" + i_gen_reco + "_" + i_lmode + "_" + iname;
           h1_cos_eff[i_gen_reco][i_lmode][iname]  = new TH1F(hname,iname + ";cos#theta;Entries",nbins_cos,cos_min,cos_max);
           for( auto i_type : _pt.PFO_type ){
-            TString hname_dedx_dist = "h_" + i_gen_reco + "_" + i_lmode + "_" + i_type + "_" + iname;
+            TString hname_dedx_dist = "h2_" + i_gen_reco + "_" + i_lmode + "_" + i_type + "_" + iname;
             h2_dEdx_dist_cos_eff[i_gen_reco][i_lmode][i_type][iname] = new TH2F(hname_dedx_dist,iname + ";cos#theta;#frac{dE}{dx} distance",nbins_cos,cos_min,cos_max,nbins_dEdx_dist,dEdx_dist_min,dEdx_dist_max);
           }
         }
