@@ -22,10 +22,6 @@ namespace QQbarAnalysis
     Float_t bins_p[]={0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1,1.1,1.2,1.3,1.4,1.5,1.6,1.7,1.8,1.9,2,2.5,3,4,5,6,7,8,9,10,12,14,16,18,20,24,28,32,36,40,44,48,52,56,60,64,68,72,80,90,100};
     Int_t   nbins_p=sizeof(bins_p)/sizeof(Float_t) - 1;
 
-    //////////////////
-    //     TH1F     //
-    //////////////////
-
     // Gen  histograms
     for( auto iname : hcos_gen_name){
       TString hname = "h_" + iname;
@@ -61,19 +57,15 @@ namespace QQbarAnalysis
       }
     }
 
-    //////////////////
-    //     TH2F     //
-    //////////////////
-
     // dEdx
-      for( auto i_lmode : _pt.PFO_mode ){
-        for( auto i_type : _pt.PFO_type ){
-          h2_dEdx[i_lmode][i_type]["dEdx_p"]        = new TH2F("h2_" + i_lmode + "_" + i_type + "_dEdx_p",";p (GeV);#frac{dE}{dx}",nbins_p,bins_p,nbins_dEdx,bins_dEdx);
-          h2_dEdx[i_lmode][i_type]["dEdx_dist_cos"] = new TH2F("h2_" + i_lmode + "_" + i_type + "_dEdx_dist_cos",";cos#theta;#frac{dE}{dx} distance",nbins_cos,cos_min,cos_max,nbins_dEdx_dist,dEdx_dist_min,dEdx_dist_max);
-        }
+    for( auto i_lmode : _pt.PFO_mode ){
+      for( auto i_type : _pt.PFO_type ){
+        h2_dEdx[i_lmode][i_type]["dEdx_p"]        = new TH2F("h2_" + i_lmode + "_" + i_type + "_dEdx_p",";p (GeV);#frac{dE}{dx}",nbins_p,bins_p,nbins_dEdx,bins_dEdx);
+        h2_dEdx[i_lmode][i_type]["dEdx_dist_cos"] = new TH2F("h2_" + i_lmode + "_" + i_type + "_dEdx_dist_cos",";cos#theta;#frac{dE}{dx} distance",nbins_cos,cos_min,cos_max,nbins_dEdx_dist,dEdx_dist_min,dEdx_dist_max);
       }
+    }
 
-      CreateLists();
+    CreateLists();
 
   }
 
@@ -91,41 +83,15 @@ namespace QQbarAnalysis
   void HistManager::CreateLists()
   {
     // gen
-    for ( const auto &[iname, hist] : h1_gen_cos ){
-      hList1_gen_cos->Add(hist);
-    }
-
+    recursiveIterate( hList1_gen_cos, h1_gen_cos );
     // reco
-    for ( const auto &[i_lmode, hists] : h1_cos ){
-      for ( const auto &[icut, hist] : hists ){
-        hList1_cos->Add(hist);
-      }
-    }
-
-    for ( const auto &[i_lmode, hists] : h1_resolution ){
-      for ( const auto &[icut, hist] : hists ){
-        hList1_resolution->Add(hist);
-      }
-    }
-
-    // effiency
-    for ( const auto &[i_gen_reco, type_hists] : h1_cos_eff ){
-      for ( const auto &[i_lmode, hists] : type_hists ){
-        for ( const auto &[icut, hist] : hists ){
-          hList1_efficiency->Add(hist);
-        }
-      }
-    }
+    recursiveIterate( hList1_cos, h1_cos );
+    recursiveIterate( hList1_resolution, h1_resolution );
+    // efficiency
+    recursiveIterate( hList1_efficiency, h1_cos_eff );
     recursiveIterate( hList2_efficiency, h2_dEdx_dist_cos_eff );
-
     // 2D hist
-    for ( const auto &[i_lmode, type_hists] : h2_dEdx ){
-      for ( const auto &[i_type, hists] : type_hists ){
-        for ( const auto &[icut, hist] : hists ){
-          hList2_dEdx->Add(hist);
-        }
-      }
-    }
+    recursiveIterate( hList2_dEdx, h2_dEdx );   
 
   }
 
