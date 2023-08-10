@@ -15,6 +15,17 @@ const TString LPFO_mode = "Pi";
 const vector<TString> PFO_mode  = {"K","Pi"};
 const vector<TString> PFO_type  = {"K","Pi", "p", "e", "mu"};
 
+TH1F* plotEfficiency(TH1F *h_num, TH1F *h_denom)
+{
+  gStyle->SetOptStat(0);
+
+  TH1F *h_eff = (TH1F*) h_num->Clone();
+  h_eff->Divide(h_denom);
+  h_eff->GetYaxis()->SetRangeUser(0,1);
+
+  return h_eff;
+}
+
 void dedxDistCosProjType(TFile *file)
 {
   vector<TString> gen_reco  = {"gen","reco"};
@@ -34,6 +45,50 @@ void dedxDistCosProjType(TFile *file)
     }
   }
 
+  TCanvas *c_type_dedx_dist_cos_type = new TCanvas("c_type_dedx_dist_cos_type", "c_type_dedx_dist_cos_type", 1500,1000);
+  c_type_dedx_dist_cos_type->Divide(heff_name.size(),PFO_type.size());
+
+  TCanvas *c_type_dedx_dist_cos_proj_type = new TCanvas("c_type_dedx_dist_cos_proj_type", "c_type_dedx_dist_cos_proj_type", 1500,1000);
+  c_type_dedx_dist_cos_proj_type->Divide(heff_name.size(),PFO_type.size());
+
+  TCanvas *c_type_dedx_dist_cos_proj_efficiency_type = new TCanvas("c_type_dedx_dist_cos_proj_efficiency_type", "c_type_dedx_dist_cos_proj_efficiency_type", 1500,1000);
+  c_type_dedx_dist_cos_proj_efficiency_type->Divide(heff_name.size(),PFO_type.size());
+
+  int count = 0;
+  for ( auto itype : PFO_type ){
+    TH1F *h_denom = nullptr;
+    for ( auto iname : heff_name ){
+      
+      count++;
+
+      TString hTitle = itype + " | " + iname;
+      TH2F *h_dedx_dist_cos = h2_dEdx_dist_cos_eff.at("reco").at(LPFO_mode).at(itype).at(iname);
+      TH1F *h_dedx_dist_cos_proj = (TH1F*) h_dedx_dist_cos->ProjectionX();
+
+      h_dedx_dist_cos->SetTitle(hTitle);
+      h_dedx_dist_cos_proj->SetTitle(hTitle);
+
+      c_type_dedx_dist_cos_type->cd(count);
+      h_dedx_dist_cos->Draw("colz");
+      
+      c_type_dedx_dist_cos_proj_type->cd(count);
+      StyleHist(h_dedx_dist_cos_proj,kBlue);
+      h_dedx_dist_cos_proj->Draw("h");
+
+      TH1F *h_efficiency;
+      if(h_denom){
+        h_efficiency = plotEfficiency(h_dedx_dist_cos_proj, h_denom);
+        h_denom = (TH1F*) h_dedx_dist_cos_proj->Clone();
+        c_type_dedx_dist_cos_proj_efficiency_type->cd(count);
+        StyleHist(h_efficiency,kBlue);
+        h_efficiency->Draw("h");
+      }else{
+        h_denom = (TH1F*) h_dedx_dist_cos_proj->Clone();        
+      }
+
+    }
+
+  }
 
 }
 
