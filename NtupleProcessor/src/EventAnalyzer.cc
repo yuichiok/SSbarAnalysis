@@ -105,8 +105,8 @@ namespace QQbarAnalysis
         }
       }
     }
-    Bool_t is_LPFO_hadron = hadronJet[0].size() == 0 || hadronJet[1].size() == 0;
-    if( is_LPFO_hadron ) return;
+    Bool_t is_noLPFO_hadron = hadronJet[0].size() == 0 || hadronJet[1].size() == 0;
+    if( is_noLPFO_hadron ) return;
 
     unordered_map< TString, unordered_map<TString, Bool_t> > CutTriggerMap; // [particle][cutname]
     for ( const auto i_lmode : _pt.PFO_mode ){
@@ -146,8 +146,8 @@ namespace QQbarAnalysis
         }
       }
     }
-    Bool_t is_LPFO_hadron = hadronJet[0].size() == 0 || hadronJet[1].size() == 0;
-    if( is_LPFO_hadron ) return;
+    Bool_t is_noLPFO_hadron = hadronJet[0].size() == 0 || hadronJet[1].size() == 0;
+    if( is_noLPFO_hadron ) return;
 
     unordered_map< TString, unordered_map<TString, Bool_t> > CutTriggerMap; // [particle][cutname]
     for ( const auto i_lmode : _pt.PFO_mode ){
