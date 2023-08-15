@@ -511,7 +511,9 @@ namespace QQbarAnalysis
             // plot dEdx dist vs cos
             if( _pt.PFO_type_map.find(abs(iLPFO.pfo_pdgcheat)) != _pt.PFO_type_map.end() ){
               TString type = _pt.PFO_type_map.at(abs(iLPFO.pfo_pdgcheat));
-              _hm.h2_dEdx_dist_cos_eff.at(gen_reco).at(i_lmode).at(type).at(icut_name)->Fill( iLPFO.cos, pfot.Get_dEdx_dist(iLPFO, i_lmode) );
+              _hm.h2_dEdx_eff.at(gen_reco).at(i_lmode).at(type).at(icut_name).at("dEdx_dist_cos")->Fill( iLPFO.cos, pfot.Get_dEdx_dist(iLPFO, i_lmode) );
+              _hm.h2_dEdx_eff.at(gen_reco).at(i_lmode).at(type).at(icut_name).at("dEdx_error_cos")->Fill( iLPFO.cos, iLPFO.pfo_dedxerror );
+              _hm.h2_dEdx_eff.at(gen_reco).at(i_lmode).at(type).at(icut_name).at("dEdx_p")->Fill( iLPFO.p_mag, iLPFO.pfo_dedx );
             }
 
           }

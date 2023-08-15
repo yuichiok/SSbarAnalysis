@@ -51,7 +51,9 @@ namespace QQbarAnalysis
           h1_cos_eff[i_gen_reco][i_lmode][iname]  = new TH1F(hname,iname + ";cos#theta;Entries",nbins_cos,cos_min,cos_max);
           for( auto i_type : _pt.PFO_type ){
             TString hname_dedx_dist = "h2_" + i_gen_reco + "_" + i_lmode + "_" + i_type + "_" + iname;
-            h2_dEdx_dist_cos_eff[i_gen_reco][i_lmode][i_type][iname] = new TH2F(hname_dedx_dist,iname + ";cos#theta;#frac{dE}{dx} distance",nbins_cos,cos_min,cos_max,nbins_dEdx_dist,dEdx_dist_min,dEdx_dist_max);
+            h2_dEdx_eff[i_gen_reco][i_lmode][i_type][iname]["dEdx_dist_cos"]  = new TH2F(hname_dedx_dist + "_dEdx_dist_cos",";cos#theta;#frac{dE}{dx} distance",nbins_cos,cos_min,cos_max,nbins_dEdx_dist,dEdx_dist_min,dEdx_dist_max);
+            h2_dEdx_eff[i_gen_reco][i_lmode][i_type][iname]["dEdx_error_cos"] = new TH2F(hname_dedx_dist + "_dEdx_error_cos",";cos#theta;#frac{dE}{dx} error",nbins_cos,cos_min,cos_max,nbins_dEdx_dist,0.0001,0.005);
+            h2_dEdx_eff[i_gen_reco][i_lmode][i_type][iname]["dEdx_p"]         = new TH2F(hname_dedx_dist + "_dEdx_p",";p (GeV);#frac{dE}{dx}",nbins_p,bins_p,nbins_dEdx,bins_dEdx);
           }
         }
       }
@@ -89,7 +91,7 @@ namespace QQbarAnalysis
     recursiveIterate( hList1_resolution, h1_resolution );
     // efficiency
     recursiveIterate( hList1_efficiency, h1_cos_eff );
-    recursiveIterate( hList2_efficiency, h2_dEdx_dist_cos_eff );
+    recursiveIterate( hList2_efficiency, h2_dEdx_eff );
     // 2D hist
     recursiveIterate( hList2_dEdx, h2_dEdx );   
 
@@ -119,7 +121,7 @@ namespace QQbarAnalysis
     TDirectory * d_efficiency = output->mkdir("efficiency");
       d_efficiency->cd();
       hList1_efficiency->Write();
-      TDirectory * d_efficiency_dEdx_dist_cos = d_efficiency->mkdir("dEdx_dist_cos");
+      TDirectory * d_efficiency_dEdx_dist_cos = d_efficiency->mkdir("dEdx");
         d_efficiency_dEdx_dist_cos->cd();
         hList2_efficiency->Write();
         output->cd();
