@@ -105,8 +105,8 @@ namespace QQbarAnalysis
         }
       }
     }
-    Bool_t is_LPFO_hadron = hadronJet[0].size() == 0 || hadronJet[1].size() == 0;
-    if( is_LPFO_hadron ) return;
+    Bool_t is_noLPFO_hadron = hadronJet[0].size() == 0 || hadronJet[1].size() == 0;
+    if( is_noLPFO_hadron ) return;
 
     unordered_map< TString, unordered_map<TString, Bool_t> > CutTriggerMap; // [particle][cutname]
     for ( const auto i_lmode : _pt.PFO_mode ){
@@ -146,8 +146,8 @@ namespace QQbarAnalysis
         }
       }
     }
-    Bool_t is_LPFO_hadron = hadronJet[0].size() == 0 || hadronJet[1].size() == 0;
-    if( is_LPFO_hadron ) return;
+    Bool_t is_noLPFO_hadron = hadronJet[0].size() == 0 || hadronJet[1].size() == 0;
+    if( is_noLPFO_hadron ) return;
 
     unordered_map< TString, unordered_map<TString, Bool_t> > CutTriggerMap; // [particle][cutname]
     for ( const auto i_lmode : _pt.PFO_mode ){
@@ -466,11 +466,14 @@ namespace QQbarAnalysis
           Float_t scos = abs(LPFO.cos) * sgn( -_mc.mc_quark_charge[0] ) * mct.mc_quark[0].cos / abs(mct.mc_quark[0].cos);
           _hm.h1_cos.at(i_lmode).at("scos")->Fill( scos );
 
-          auto it = _pt.PFO_type_map.find(LPFO.pfo_pdgcheat);
-          if( it != _pt.PFO_type_map.end() ){
-            TString type = it->second;
+          if( _pt.PFO_type_map.find(abs(LPFO.pfo_pdgcheat)) != _pt.PFO_type_map.end() ){
+
+            TString type = _pt.PFO_type_map.at(abs(LPFO.pfo_pdgcheat));
+
             _hm.h2_dEdx.at(i_lmode).at(type).at("dEdx_p")->Fill( LPFO.p_mag, LPFO.pfo_dedx );
-            _hm.h2_dEdx.at(i_lmode).at(type).at("dEdx_dist_cos")->Fill( LPFO.p_mag, pfot.Get_dEdx_dist(LPFO, i_lmode) );
+
+            _hm.h2_dEdx.at(i_lmode).at(type).at("dEdx_dist_cos")->Fill( LPFO.cos, pfot.Get_dEdx_dist(LPFO, i_lmode) );
+            _hm.h2_dEdx.at(i_lmode).at(type).at("dEdx_dist_cos")->Fill( LPFO_opposite.cos, pfot.Get_dEdx_dist(LPFO, i_lmode) );
           }
 
         }else{
@@ -496,11 +499,27 @@ namespace QQbarAnalysis
 
       Bool_t selection = true;
       for( auto icut_name : _hm.heff_name ){
+
         selection = selection && cuts_for_lmode.at(icut_name);
+        
         if(selection) {
-          _hm.h1_cos_eff.at(gen_reco).at(i_lmode).at(icut_name)->Fill( LPFOs.at(0).cos );
-          _hm.h1_cos_eff.at(gen_reco).at(i_lmode).at(icut_name)->Fill( LPFOs.at(1).cos );
+
+          for(auto iLPFO : LPFOs){
+            
+            _hm.h1_cos_eff.at(gen_reco).at(i_lmode).at(icut_name)->Fill( iLPFO.cos );
+
+            // plot dEdx dist vs cos
+            if( _pt.PFO_type_map.find(abs(iLPFO.pfo_pdgcheat)) != _pt.PFO_type_map.end() ){
+              TString type = _pt.PFO_type_map.at(abs(iLPFO.pfo_pdgcheat));
+              _hm.h2_dEdx_eff.at(gen_reco).at(i_lmode).at(type).at(icut_name).at("dEdx_dist_cos")->Fill( iLPFO.cos, pfot.Get_dEdx_dist(iLPFO, i_lmode) );
+              _hm.h2_dEdx_eff.at(gen_reco).at(i_lmode).at(type).at(icut_name).at("dEdx_error_cos")->Fill( iLPFO.cos, iLPFO.pfo_dedxerror );
+              _hm.h2_dEdx_eff.at(gen_reco).at(i_lmode).at(type).at(icut_name).at("dEdx_p")->Fill( iLPFO.p_mag, iLPFO.pfo_dedx );
+            }
+
+          }
+
         }
+
       }
     }
 

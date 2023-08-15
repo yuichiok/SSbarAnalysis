@@ -163,7 +163,6 @@ TH1F * Efficiency_Correction( TH1F * h, TString LPFO_mode, TFile * file )
   TH1F *h_reco_N_Pi_cos = (TH1F*) file->Get("resolution/h_" + LPFO_mode + "_reco_N_cos");
   TH1F *h_N_Pi_corr_cos = (TH1F*) file->Get("resolution/h_" + LPFO_mode + "_N_corr_cos");
 
-
   TH1F *h_stable_cos = (TH1F*) h_N_Pi_corr_cos->Clone();
   TH1F *h_purity_cos = (TH1F*) h_N_Pi_corr_cos->Clone();
   h_stable_cos->Divide(h_gen_N_Pi_cos);
