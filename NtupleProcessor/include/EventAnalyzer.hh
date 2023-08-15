@@ -48,12 +48,13 @@ namespace QQbarAnalysis
       void             CreateFile();
       void             WriteFile();
 
-      void             AnalyzeGen();
+      void             AnalyzeGen( Long64_t entry );
       void             AnalyzeReco( Long64_t entry );
       
       Bool_t           Select( Selector s );          // Evaluates the class' list of event selection criteria
       Bool_t           GenPairPicker( Float_t mc_particle, std::vector<int> input_gen );
 
+      unordered_map<TString, Bool_t> TriggerMap( PFOTools pfot, TString lmode, unordered_map< int, vector<PFO_Info> > subjet_pair, TString gen_reco );
       Bool_t           Cut_ESum( VectorTools v[2] );
       Bool_t           Cut_ACol( VectorTools v[2] );
       Bool_t           Cut_ISR ( VectorTools v[2] );
@@ -66,8 +67,8 @@ namespace QQbarAnalysis
       Bool_t           is_high_LPFO( PFOTools pfot, TString lmode );
 
     // Histogram extractor
-      void             PolarAngleGen( PFOTools mct );
-      void             ProcessDoubleTag( PFOTools pfot, PFOTools mct, unordered_map< TString, unordered_map<TString, Bool_t> > cuts );
+      void             ProcessDoubleTag( PFOTools pfot, PFOTools mct, unordered_map< TString, unordered_map<TString, Bool_t> > cuts, unordered_map< int, vector<PFO_Info> > subjet_pair );
+      void             ProcessDoubleTagEfficiency( PFOTools pfot, PFOTools mct, unordered_map< TString, unordered_map<TString, Bool_t> > cuts, unordered_map< int, vector<PFO_Info> > subjet_pair, TString gen_reco );
 
       void             Jet_sum_n_acol();
 

@@ -23,7 +23,9 @@ namespace QQbarAnalysis
 
     // Methods
       virtual void InitializeHists();
-      virtual void Hist2List();
+      template <typename Key, typename Value>
+      void recursiveIterate(TList *list, const unordered_map<Key, Value>& map);
+      virtual void CreateLists();
       virtual void WriteLists( TFile * output );
 
     // Variables
@@ -48,6 +50,12 @@ namespace QQbarAnalysis
       vector<TString> hres_name = {"gen_N_cos","reco_N_cos","N_corr_cos"};
       unordered_map< TString, unordered_map< TString, TH1F* > > h1_resolution; // [LPFO][hist]
 
+      // efficiency plots
+      vector<TString> gen_reco  = {"gen","reco"};
+      vector<TString> heff_name = {"momentum", "tpc_hits", "offset", "PID", "SPFO", "charge"};
+      vector<TString> heff_dedx_name = {"dEdx_p","dEdx_error_cos","dEdx_dist_cos"};
+      unordered_map< TString, unordered_map< TString, unordered_map< TString, TH1F* > > > h1_cos_eff;  // [GenReco][LPFO][cut]
+      unordered_map< TString, unordered_map< TString, unordered_map< TString, unordered_map< TString, unordered_map< TString, TH2F* > > > > > h2_dEdx_eff;  // [GenReco][LPFO][TruthID][cut][hist]
 
     // h2 hist
       vector<TString> hdEdx_name = {"dEdx_p","dEdx_cos","dEdx_dist_cos"};
@@ -58,6 +66,8 @@ namespace QQbarAnalysis
       TList* hList1_gen_cos        = new TList();
       TList* hList1_cos            = new TList();
       TList* hList1_resolution     = new TList();
+      TList* hList1_efficiency     = new TList();
+      TList* hList2_efficiency     = new TList();
       TList* hList2_dEdx           = new TList();
 
     // PFO Tools

@@ -60,22 +60,15 @@ namespace QQbarAnalysis
       MC_Info    mc_stable[1000];
 
     // List of PFOs in jets
-      vector<PFO_Info> PFO_jet[2];
-      vector<PFO_Info> PFO_sorted_jet[2];
-      unordered_map< TString, unordered_map<int, vector<PFO_Info> > > PFO_subjet;
-      vector<PFO_Info> PFO_cheat_Ks[2];
-      vector<PFO_Info> PFO_cheat_Pis[2];
       vector<PFO_Info> Valid_PFOs;
 
-    // Leading/Sub-Leading PFOs
-      // unordered_map< TString, unordered_map<int, PFO_Info> > LPFO;
-      vector<PFO_Info> LPFO;
-      unordered_map< TString, unordered_map<int, vector<PFO_Info> > > SPFOs;
-      
-      PFO_Info cheat_KLPFO[2];
-      PFO_Info cheat_PiLPFO[2];
-      vector<PFO_Info> SPFOs_cheat_K[2];
-      vector<PFO_Info> SPFOs_cheat_Pi[2];
+      vector<PFO_Info> PFO_jet[2];
+      unordered_map<int, vector<PFO_Info> > PFO_sorted_jet;
+      unordered_map< TString, unordered_map<int, vector<PFO_Info> > > PFO_subjet;
+      unordered_map< TString, unordered_map<int, vector<PFO_Info> > > PFO_unsorted_subjet_cheat;
+      unordered_map< TString, unordered_map<int, vector<PFO_Info> > > PFO_subjet_cheat;
+
+      vector<PFO_Info> LPFO;      
 
     // PFO modes and types
       vector<TString> PFO_mode  = {"K","Pi"};
