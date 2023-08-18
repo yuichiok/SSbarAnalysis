@@ -29,40 +29,45 @@ TH1F* plotEfficiency(TH1F *h_num, TH1F *h_denom)
 void dedxDistCosProjType(TFile *file)
 {
   vector<TString> gen_reco  = {"gen","reco"};
-  vector<TString> heff_name = {"momentum", "tpc_hits", "offset", "PID", "SPFO", "charge"};
-  unordered_map< TString, unordered_map< TString, unordered_map< TString, unordered_map< TString, TH2F* > > > > h2_dEdx_dist_cos_eff;  // [GenReco][LPFO][TruthID][hist]
-  TString dir_name = "efficiency/dEdx_dist_cos/";
+  vector<TString> cut_name = {"momentum", "tpc_hits", "offset", "PID", "SPFO", "charge"};
+  vector<TString> heff_dedx_name = {"dEdx_p","dEdx_error_cos","dEdx_dist_cos"};
+  unordered_map< TString, unordered_map< TString, unordered_map< TString, unordered_map< TString, unordered_map< TString, TH2F* > > > > > h2_dEdx_eff;  // [GenReco][LPFO][TruthID][cut][hist]
+  TString dir_name = "efficiency/dEdx/";
 
   for ( auto igen_reco : gen_reco ){
     for ( auto imode : PFO_mode ){
       for ( auto itype : PFO_type ){
-        for ( auto ih : heff_name ){
-          TString hname = "h2_" + igen_reco + "_" + imode + "_" + itype + "_" + ih;
-          TH2F *h = (TH2F*) file->Get(dir_name + hname);
-          h2_dEdx_dist_cos_eff[igen_reco][imode][itype][ih] = h;
+        for ( auto icut : cut_name ){
+          for ( auto ihist : heff_dedx_name ){
+            TString hname = "h2_" + igen_reco + "_" + imode + "_" + itype + "_" + icut + "_" + ihist;
+            TH2F *h = (TH2F*) file->Get(dir_name + hname);
+            h2_dEdx_eff[igen_reco][imode][itype][icut][ihist] = h;
+          }
         }
       }
     }
   }
 
   TCanvas *c_type_dedx_dist_cos_type = new TCanvas("c_type_dedx_dist_cos_type", "c_type_dedx_dist_cos_type", 1500,1000);
-  c_type_dedx_dist_cos_type->Divide(heff_name.size(),PFO_type.size());
+  c_type_dedx_dist_cos_type->Divide(cut_name.size(),PFO_type.size());
 
   TCanvas *c_type_dedx_dist_cos_proj_type = new TCanvas("c_type_dedx_dist_cos_proj_type", "c_type_dedx_dist_cos_proj_type", 1500,1000);
-  c_type_dedx_dist_cos_proj_type->Divide(heff_name.size(),PFO_type.size());
+  c_type_dedx_dist_cos_proj_type->Divide(cut_name.size(),PFO_type.size());
 
   TCanvas *c_type_dedx_dist_cos_proj_efficiency_type = new TCanvas("c_type_dedx_dist_cos_proj_efficiency_type", "c_type_dedx_dist_cos_proj_efficiency_type", 1500,1000);
-  c_type_dedx_dist_cos_proj_efficiency_type->Divide(heff_name.size(),PFO_type.size());
+  c_type_dedx_dist_cos_proj_efficiency_type->Divide(cut_name.size(),PFO_type.size());
+
+  TH1F *PiID_eff;
 
   int count = 0;
   for ( auto itype : PFO_type ){
     TH1F *h_denom = nullptr;
-    for ( auto iname : heff_name ){
+    for ( auto iname : cut_name ){
       
       count++;
 
       TString hTitle = itype + " | " + iname;
-      TH2F *h_dedx_dist_cos = h2_dEdx_dist_cos_eff.at("reco").at(LPFO_mode).at(itype).at(iname);
+      TH2F *h_dedx_dist_cos = h2_dEdx_eff.at("reco").at(LPFO_mode).at(itype).at(iname).at("dEdx_dist_cos");
       TH1F *h_dedx_dist_cos_proj = (TH1F*) h_dedx_dist_cos->ProjectionX();
 
       h_dedx_dist_cos->SetTitle(hTitle);
@@ -82,6 +87,9 @@ void dedxDistCosProjType(TFile *file)
         c_type_dedx_dist_cos_proj_efficiency_type->cd(count);
         StyleHist(h_efficiency,kBlue);
         h_efficiency->Draw("h");
+        if(itype == "Pi" && iname == "PID"){
+          PiID_eff = (TH1F*) h_efficiency->Clone();
+        }
       }else{
         h_denom = (TH1F*) h_dedx_dist_cos_proj->Clone();        
       }
@@ -89,6 +97,23 @@ void dedxDistCosProjType(TFile *file)
     }
 
   }
+
+  TCanvas *c_type_dedx_dist_cos_proj_efficiency_type_PiID = new TCanvas("c_type_dedx_dist_cos_proj_efficiency_type_PiID", "c_type_dedx_dist_cos_proj_efficiency_type_PiID", 500,500);
+  c_type_dedx_dist_cos_proj_efficiency_type_PiID->cd();
+  StyleHist(PiID_eff,kBlue);
+  TF1 *fit_pol8 = new TF1("fit_pol8","pol8",-0.9,0.9);
+  PiID_eff->Fit(fit_pol8,"R");
+  PiID_eff->Draw("h");
+  Double_t pars[9];
+  fit_pol8->GetParameters(&pars[0]);
+  cout << pars[0] << "," << pars[1] << "," << pars[2] << "," << pars[3] << "," << pars[4] << "," << pars[5] << "," << pars[6] << "," << pars[7] << "," << pars[8] << endl;
+
+  TF1 *pol_correction = new TF1("pol_correction","-2*(1.6 - pol8)",-0.9,0.9);
+  pol_correction->SetParameters(pars);
+  TCanvas *c_type_dedx_dist_cos_proj_efficiency_type_PiID_correction = new TCanvas("c_type_dedx_dist_cos_proj_efficiency_type_PiID_correction", "c_type_dedx_dist_cos_proj_efficiency_type_PiID_correction", 500,500);
+  c_type_dedx_dist_cos_proj_efficiency_type_PiID_correction->cd();
+  pol_correction->Draw();
+  cout << pol_correction->Eval(0.5) << endl;
 
 }
 
@@ -100,10 +125,10 @@ void dedxDistCosProj(TFile *file)
 
   for ( auto imode : PFO_mode ){
     for ( auto itype : PFO_type ){
-      for ( auto ih : hdEdx_name ){
-        TString hname = "h2_" + imode + "_" + itype + "_" + ih;
+      for ( auto icut : hdEdx_name ){
+        TString hname = "h2_" + imode + "_" + itype + "_" + icut;
         TH2F *h = (TH2F*) file->Get(dir_name + hname);
-        h2_dEdx[imode][itype][ih] = h;
+        h2_dEdx[imode][itype][icut] = h;
       }
     }
   }
@@ -136,7 +161,9 @@ void dedx()
   TGaxis::SetMaxDigits(3);
   gStyle->SetOptStat(0);
 
-  TFile *file = new TFile("../../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR." + prod_mode + ".KPiLPFO.distPi0.PFOp15.LPFOp15_pNaN.tpc0.mix_uds.check2.hists.all.root","READ");
+  // TFile *file = new TFile("../../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR." + prod_mode + ".KPiLPFO.distPi0.PFOp15.LPFOp15_pNaN.tpc0.mix_uds.check2.hists.all.root","READ");
+  // TFile *file = new TFile("../../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR." + prod_mode + ".KPiLPFO.distPi0.PFOp15.LPFOp15_pNaN.tpc0.mix_uds.correctDist.all.root","READ");
+  TFile *file = new TFile("../../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR." + prod_mode + ".KPiLPFO.distPi0.PFOp15.LPFOp15_pNaN.tpc0.mix_uds.varCut2.correctDist.all.root","READ");
   if (!file->IsOpen()) return;
 
   // dedxDistCosProj(file);
