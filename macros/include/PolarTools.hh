@@ -155,13 +155,31 @@ TH1F * CorrectHist( TH1F * h_reco, vector<Float_t> p_vec)
 
 TH1F * efficiencyCorrection( TH1F * h, TString LPFO_mode, TFile * file )
 {
+  TString dirName = "efficiency/dEdx_dist_cos/";
+  TH2F *h2_reco_offset = (TH2F*) file->Get(dirName + "h2_reco_" + LPFO_mode + "_" + LPFO_mode + "_offset");
+  TH2F *h2_reco_PID    = (TH2F*) file->Get(dirName + "h2_reco_" + LPFO_mode + "_" + LPFO_mode + "_PID");
+
+  TH1F *h_reco_offset = (TH1F*) h2_reco_offset->ProjectionX();
+  TH1F *h_reco_PID    = (TH1F*) h2_reco_PID->ProjectionX();
+
+  TH1F *h_eff = (TH1F*) h_reco_PID->Clone();
+  h_eff->Divide(h_reco_offset);
+
+  TH1F *h_eff_corr = (TH1F*) h->Clone();
+  h_eff_corr->Divide(h_eff);
+
+  return h_eff_corr;
 }
 
 TH1F * resolutionCorrection( TH1F * h, TString LPFO_mode, TFile * file )
 {
-  TH1F *h_gen_N_Pi_cos  = (TH1F*) file->Get("h_gen_N_" + LPFO_mode + "_cos");
-  TH1F *h_reco_N_Pi_cos = (TH1F*) file->Get("h_reco_N_" + LPFO_mode + "_cos");
-  TH1F *h_N_Pi_corr_cos = (TH1F*) file->Get("h_N_" + LPFO_mode + "_corr_cos");
+  // TH1F *h_gen_N_Pi_cos  = (TH1F*) file->Get("h_gen_N_" + LPFO_mode + "_cos");
+  // TH1F *h_reco_N_Pi_cos = (TH1F*) file->Get("h_reco_N_" + LPFO_mode + "_cos");
+  // TH1F *h_N_Pi_corr_cos = (TH1F*) file->Get("h_N_" + LPFO_mode + "_corr_cos");
+
+  TH1F *h_gen_N_Pi_cos  = (TH1F*) file->Get("resolution/h_" + LPFO_mode + "_gen_N_cos");
+  TH1F *h_reco_N_Pi_cos = (TH1F*) file->Get("resolution/h_" + LPFO_mode + "_reco_N_cos");
+  TH1F *h_N_Pi_corr_cos = (TH1F*) file->Get("resolution/h_" + LPFO_mode + "_N_corr_cos");
 
   TH1F *h_stable_cos = (TH1F*) h_N_Pi_corr_cos->Clone();
   TH1F *h_purity_cos = (TH1F*) h_N_Pi_corr_cos->Clone();
