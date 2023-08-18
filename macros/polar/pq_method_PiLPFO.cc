@@ -59,8 +59,8 @@ void main_pq(TFile *file)
   TH1F *h_reco_Pi_qcos_eff_corr;
   if (isEffCorr)
   {
-    h_reco_Pi_scos_eff_corr = Efficiency_Correction(h_reco_Pi_scos,"Pi",file);
-    h_reco_Pi_qcos_eff_corr = Efficiency_Correction(h_reco_Pi_qcos,"Pi",file);
+    h_reco_Pi_scos_eff_corr = resolutionCorrection(h_reco_Pi_scos,"Pi",file);
+    h_reco_Pi_qcos_eff_corr = resolutionCorrection(h_reco_Pi_qcos,"Pi",file);
   }else{
     h_reco_Pi_scos_eff_corr = (TH1F*) h_reco_Pi_scos->Clone();
     h_reco_Pi_qcos_eff_corr = (TH1F*) h_reco_Pi_qcos->Clone();
@@ -70,8 +70,8 @@ void main_pq(TFile *file)
   TH1F *h_rej_PiPi_cos_eff_corr;
   if (isEffCorr)
   {
-    h_acc_PiPi_cos_eff_corr = Efficiency_Correction(h_acc_PiPi_cos,"Pi",file);
-    h_rej_PiPi_cos_eff_corr = Efficiency_Correction(h_rej_PiPi_cos,"Pi",file);
+    h_acc_PiPi_cos_eff_corr = resolutionCorrection(h_acc_PiPi_cos,"Pi",file);
+    h_rej_PiPi_cos_eff_corr = resolutionCorrection(h_rej_PiPi_cos,"Pi",file);
   }else{
     h_acc_PiPi_cos_eff_corr = (TH1F*) h_acc_PiPi_cos->Clone();
     h_rej_PiPi_cos_eff_corr = (TH1F*) h_rej_PiPi_cos->Clone();
@@ -225,7 +225,7 @@ void pq_method_PiLPFO()
 {
   try
   {
-    TFile *file = new TFile("../../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR." + prod_mode + ".KPiLPFO.distPi0.PFOp15.LPFOp15_pNaN.tpc0.mix_uds.check1.hists.all.root","READ");
+    TFile *file = new TFile("../../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR." + prod_mode + ".KPiLPFO.distPi0.PFOp15.LPFOp15_pNaN.tpc0.mix_uds.check2.hists.all.root","READ");
     if (!file->IsOpen()) return;
 
     main_pq(file);

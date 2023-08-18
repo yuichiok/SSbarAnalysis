@@ -53,12 +53,12 @@ void single_mix( TFile *files[] )
   cout << "NReco ud 15th bin = " << NReco_ud_15 << " (uu+dd = " << NReco_uu_15 + NReco_dd_15 << ")" << endl;
 
   // efficiency correction
-  TH1F *h_reco_uu_Pi_qcos_eff_corr  = Efficiency_Correction(h_reco_uu_Pi_qcos,"qcos_corr",files[kUU]);
-  TH1F *h_reco_dd_Pi_qcos_eff_corr  = Efficiency_Correction(h_reco_dd_Pi_qcos,"qcos_corr",files[kDD]);
+  TH1F *h_reco_uu_Pi_qcos_eff_corr  = resolutionCorrection(h_reco_uu_Pi_qcos,"qcos_corr",files[kUU]);
+  TH1F *h_reco_dd_Pi_qcos_eff_corr  = resolutionCorrection(h_reco_dd_Pi_qcos,"qcos_corr",files[kDD]);
   
-  TH1F *h_reco_ud_Pi_scos_eff_corr  = Efficiency_Correction(h_reco_ud_Pi_scos,"scos_corr",files[kUD]);
-  TH1F *h_reco_ud_Pi_qcos_eff_corr  = Efficiency_Correction(h_reco_ud_Pi_qcos,"qcos_corr",files[kUD]);
-  TH1F *h_cheat_ud_Pi_qcos_eff_corr = Efficiency_Correction(h_cheat_ud_Pi_qcos,"cheat_qcos_corr",files[kUD]);
+  TH1F *h_reco_ud_Pi_scos_eff_corr  = resolutionCorrection(h_reco_ud_Pi_scos,"scos_corr",files[kUD]);
+  TH1F *h_reco_ud_Pi_qcos_eff_corr  = resolutionCorrection(h_reco_ud_Pi_qcos,"qcos_corr",files[kUD]);
+  TH1F *h_cheat_ud_Pi_qcos_eff_corr = resolutionCorrection(h_cheat_ud_Pi_qcos,"cheat_qcos_corr",files[kUD]);
   // TH1F *h_reco_ud_Pi_scos_eff_corr = (TH1F*) h_reco_ud_Pi_scos->Clone();
   // TH1F *h_reco_ud_Pi_qcos_eff_corr = (TH1F*) h_reco_ud_Pi_qcos->Clone();
 
@@ -74,8 +74,8 @@ void single_mix( TFile *files[] )
   TH1F *h_acc_PiPi_cos  = (TH1F*) files[kUD]->Get("pq/h_acc_PiPi_cos");
   TH1F *h_rej_PiPi_cos  = (TH1F*) files[kUD]->Get("pq/h_rej_PiPi_cos");
 
-  TH1F *h_acc_PiPi_cos_eff_corr = Efficiency_Correction(h_acc_PiPi_cos,"acc_corr",files[kUD]);
-  TH1F *h_rej_PiPi_cos_eff_corr = Efficiency_Correction(h_rej_PiPi_cos,"rej_corr",files[kUD]);
+  TH1F *h_acc_PiPi_cos_eff_corr = resolutionCorrection(h_acc_PiPi_cos,"acc_corr",files[kUD]);
+  TH1F *h_rej_PiPi_cos_eff_corr = resolutionCorrection(h_rej_PiPi_cos,"rej_corr",files[kUD]);
   // TH1F *h_acc_PiPi_cos_eff_corr = (TH1F*) h_acc_PiPi_cos->Clone();
   // TH1F *h_rej_PiPi_cos_eff_corr = (TH1F*) h_rej_PiPi_cos->Clone();
 

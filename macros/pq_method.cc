@@ -200,7 +200,7 @@ TH1F * CorrectHist( TH1F * h_reco, vector<Float_t> p_vec)
 
 }
 
-TH1F * Efficiency_Correction( TH1F * h, TString name, TFile * file )
+TH1F * resolutionCorrection( TH1F * h, TString name, TFile * file )
 {
   TH1F *h_gen_q_qcos  = (TH1F*) file->Get("h_gen_K_cos");
   TH1F *h_reco_K_qcos = (TH1F*) file->Get("h_reco_K_cos");
