@@ -206,6 +206,8 @@ namespace QQbarAnalysis
 
     }
 
+    fCorrection->SetParameters(pars);
+
   }
 
   vector<PFO_Info> PFOTools::SortJet( vector<PFO_Info> jet )
@@ -267,6 +269,13 @@ namespace QQbarAnalysis
   {
     return iPFO.dEdx_dist_pdg == 211;
     // return (iPFO.dEdx_dist_pdg == 211) && (0 < iPFO.pfo_piddedx_pi_dedxdist);
+
+    // if(abs(iPFO.cos)>0.9) return (iPFO.dEdx_dist_pdg == 211);
+    // else{
+    //   Double_t correction = fCorrection->Eval(iPFO.cos);
+    //   return (iPFO.pfo_piddedx_pi_dedxdist > correction);
+    // }
+
   }
 
   Bool_t PFOTools::isProton( PFO_Info iPFO )

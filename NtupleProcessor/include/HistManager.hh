@@ -52,7 +52,7 @@ namespace QQbarAnalysis
 
       // efficiency plots
       vector<TString> gen_reco  = {"gen","reco"};
-      vector<TString> heff_name = {"momentum", "tpc_hits", "offset", "PID", "SPFO", "charge"};
+      vector<TString> heff_name = {"nocut","momentum", "tpc_hits", "offset", "PID", "SPFO", "charge"};
       vector<TString> heff_dedx_name = {"dEdx_p","dEdx_error_cos","dEdx_dist_cos"};
       unordered_map< TString, unordered_map< TString, unordered_map< TString, TH1F* > > > h1_cos_eff;  // [GenReco][LPFO][cut]
       unordered_map< TString, unordered_map< TString, unordered_map< TString, unordered_map< TString, unordered_map< TString, TH2F* > > > > > h2_dEdx_eff;  // [GenReco][LPFO][TruthID][cut][hist]

@@ -242,6 +242,9 @@ namespace QQbarAnalysis
     unordered_map<TString, Bool_t> outMap;
     vector<PFO_Info> LPFOs = {subjet_pair.at(0).at(0), subjet_pair.at(1).at(0)};
 
+    // base
+    outMap["nocut"] = true;
+
     // check momentum
     outMap["momentum"] = pfot.is_momentum( LPFOs.at(0), _anCfg.LPFO_p_min, _anCfg.LPFO_p_max ) &&
                          pfot.is_momentum( LPFOs.at(1), _anCfg.LPFO_p_min, _anCfg.LPFO_p_max );
