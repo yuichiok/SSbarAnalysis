@@ -15,6 +15,8 @@ const TString LPFO_mode = "Pi";
 const vector<TString> PFO_mode  = {"K","Pi"};
 const vector<TString> PFO_type  = {"K","Pi", "p", "e", "mu"};
 
+TFile *file = new TFile("../../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR." + prod_mode + ".KPiLPFO.distPi0.PFOp15.LPFOp15_pNaN.tpc0.mix_uds.correctDist.all.root","READ");
+
 TH1F* plotEfficiency(TH1F *h_num, TH1F *h_denom)
 {
   gStyle->SetOptStat(0);
@@ -26,7 +28,7 @@ TH1F* plotEfficiency(TH1F *h_num, TH1F *h_denom)
   return h_eff;
 }
 
-void dedxDistCosProjType(TFile *file)
+void dedxDistCosProjType()
 {
   vector<TString> gen_reco  = {"gen","reco"};
   vector<TString> cut_name = {"momentum", "tpc_hits", "offset", "PID", "SPFO", "charge"};
@@ -115,9 +117,28 @@ void dedxDistCosProjType(TFile *file)
   pol_correction->Draw();
   cout << pol_correction->Eval(0.5) << endl;
 
+  TH1F *hK_offset  = (TH1F*) h2_dEdx_eff.at("reco").at(LPFO_mode).at("K").at("offset").at("dEdx_dist_cos")->ProjectionX();
+  TH1F *hPi_offset = (TH1F*) h2_dEdx_eff.at("reco").at(LPFO_mode).at("Pi").at("offset").at("dEdx_dist_cos")->ProjectionX();
+  TH1F *hK_PID  = (TH1F*) h2_dEdx_eff.at("reco").at(LPFO_mode).at("K").at("PID").at("dEdx_dist_cos")->ProjectionX();
+  TH1F *hPi_PID = (TH1F*) h2_dEdx_eff.at("reco").at(LPFO_mode).at("Pi").at("PID").at("dEdx_dist_cos")->ProjectionX();
+
+  hK_offset->Sumw2();
+  hPi_offset->Sumw2();
+  hK_PID->Sumw2();
+  hPi_PID->Sumw2();
+  
+  hK_offset->Add(hPi_offset);
+  hK_PID->Add(hPi_PID);  
+
+  hK_PID->Divide(hK_offset);
+
+  TCanvas *c_type_dedx_dist_cos_proj_efficiency_type_PiID_stack = new TCanvas("c_type_dedx_dist_cos_proj_efficiency_type_PiID_stack", "c_type_dedx_dist_cos_proj_efficiency_type_PiID_stack", 500,500);
+  c_type_dedx_dist_cos_proj_efficiency_type_PiID_stack->cd();
+  hK_PID->Draw("h");
+
 }
 
-void dedxDistCosProj(TFile *file)
+void dedxDistCosProj()
 {
   vector<TString> hdEdx_name = {"dEdx_p","dEdx_cos","dEdx_dist_cos"};
   unordered_map< TString, unordered_map< TString, unordered_map< TString, TH2F* > > > h2_dEdx; // [LPFO][TruthID][hist]
@@ -161,13 +182,10 @@ void dedx()
   TGaxis::SetMaxDigits(3);
   gStyle->SetOptStat(0);
 
-  // TFile *file = new TFile("../../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR." + prod_mode + ".KPiLPFO.distPi0.PFOp15.LPFOp15_pNaN.tpc0.mix_uds.check2.hists.all.root","READ");
-  // TFile *file = new TFile("../../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR." + prod_mode + ".KPiLPFO.distPi0.PFOp15.LPFOp15_pNaN.tpc0.mix_uds.correctDist.all.root","READ");
-  TFile *file = new TFile("../../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR." + prod_mode + ".KPiLPFO.distPi0.PFOp15.LPFOp15_pNaN.tpc0.mix_uds.varCut2.correctDist.all.root","READ");
   if (!file->IsOpen()) return;
 
-  // dedxDistCosProj(file);
-  dedxDistCosProjType(file);
+  // dedxDistCosProj();
+  dedxDistCosProjType();
 
 
 }
