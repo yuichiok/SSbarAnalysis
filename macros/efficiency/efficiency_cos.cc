@@ -12,6 +12,8 @@ using std::vector; using std::unordered_map;
 TString prod_mode = "uu";
 TString LPFO_mode = "Pi";
 
+TFile *file = new TFile("../../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR." + prod_mode + ".KPiLPFO.distPi0.PFOp15.LPFOp15_pNaN.tpc0.mix_uds.correctDist.all.root","READ");
+
 void BinNormal(TH1F *h)
 {
   const Int_t nbins = h->GetNbinsX();
@@ -80,9 +82,6 @@ void PrintEfficiency(TFile *file, vector<TH1F*> hvec)
 void efficiency_cos()
 {
   TGaxis::SetMaxDigits(3);
-
-  // TFile *file = new TFile("../../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR." + prod_mode + ".KPiLPFO.distPi0.PFOp15.LPFOp15_pNaN.tpc0.mix_uds.check2.hists.all.root","READ");
-  TFile *file = new TFile("../../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR." + prod_mode + ".KPiLPFO.distPi0.PFOp15.LPFOp15_pNaN.tpc0.mix_uds.correctDist.all.root","READ");
 
   vector<TString> gen_reco  = {"gen","reco"};
   vector<TString> PFO_mode  = {"K","Pi"};
