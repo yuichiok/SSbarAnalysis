@@ -7,8 +7,10 @@
 using std::cout; using std::endl;
 using std::vector; using std::unordered_map;
 
-TString prod_mode = "uu";
+TString prod_mode = "dd";
 TString LPFO_mode = "Pi";
+
+TFile *file = new TFile("../../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR." + prod_mode + ".KPiLPFO.PFOp15.LPFOp15_pNaN.tpc0.mix_uds.correctDist.all.root","READ");
 
 void BinNormal(TH1F *h)
 {
@@ -34,13 +36,13 @@ void Normalize(TH1F *h)
 
 void Normalize2Gen(TH1F *h, TH1F *h_gen)
 {
-	double intCosReco = h->Integral(20,80);
-	double intCosGen  = h_gen->Integral(20,80);
+	double intCosReco = h->Integral(20,30);
+	double intCosGen  = h_gen->Integral(20,30);
   h->Scale( intCosGen / intCosReco );
 }
 
 
-void main_pq(TFile *file)
+void main_pq()
 {
   gStyle->SetOptStat(0);
 
@@ -59,8 +61,13 @@ void main_pq(TFile *file)
   TH1F *h_reco_Pi_qcos_eff_corr;
   if (isEffCorr)
   {
-    h_reco_Pi_scos_eff_corr = resolutionCorrection(h_reco_Pi_scos,"Pi",file);
-    h_reco_Pi_qcos_eff_corr = resolutionCorrection(h_reco_Pi_qcos,"Pi",file);
+    // h_reco_Pi_scos_eff_corr = resolutionCorrection(h_reco_Pi_scos,"Pi",file);
+    // h_reco_Pi_qcos_eff_corr = resolutionCorrection(h_reco_Pi_qcos,"Pi",file);
+    TH1F* h_reco_Pi_scos_eff = efficiencyCorrection(h_reco_Pi_scos,"Pi",file);
+    TH1F* h_reco_Pi_qcos_eff = efficiencyCorrection(h_reco_Pi_qcos,"Pi",file);
+    h_reco_Pi_scos_eff_corr = resolutionCorrection(h_reco_Pi_scos_eff,"Pi",file);
+    h_reco_Pi_qcos_eff_corr = resolutionCorrection(h_reco_Pi_qcos_eff,"Pi",file);
+
   }else{
     h_reco_Pi_scos_eff_corr = (TH1F*) h_reco_Pi_scos->Clone();
     h_reco_Pi_qcos_eff_corr = (TH1F*) h_reco_Pi_qcos->Clone();
@@ -70,8 +77,12 @@ void main_pq(TFile *file)
   TH1F *h_rej_PiPi_cos_eff_corr;
   if (isEffCorr)
   {
-    h_acc_PiPi_cos_eff_corr = resolutionCorrection(h_acc_PiPi_cos,"Pi",file);
-    h_rej_PiPi_cos_eff_corr = resolutionCorrection(h_rej_PiPi_cos,"Pi",file);
+    // h_acc_PiPi_cos_eff_corr = resolutionCorrection(h_acc_PiPi_cos,"Pi",file);
+    // h_rej_PiPi_cos_eff_corr = resolutionCorrection(h_rej_PiPi_cos,"Pi",file);
+    TH1F* h_acc_PiPi_cos_eff = efficiencyCorrection(h_acc_PiPi_cos,"Pi",file);
+    TH1F* h_rej_PiPi_cos_eff = efficiencyCorrection(h_rej_PiPi_cos,"Pi",file);
+    h_acc_PiPi_cos_eff_corr = resolutionCorrection(h_acc_PiPi_cos_eff,"Pi",file);
+    h_rej_PiPi_cos_eff_corr = resolutionCorrection(h_rej_PiPi_cos_eff,"Pi",file);
   }else{
     h_acc_PiPi_cos_eff_corr = (TH1F*) h_acc_PiPi_cos->Clone();
     h_rej_PiPi_cos_eff_corr = (TH1F*) h_rej_PiPi_cos->Clone();
@@ -104,6 +115,7 @@ void main_pq(TFile *file)
   StyleHist(h_reco_Pi_pq_cos,kBlue);
 
   Normalize2Gen(h_gen_q_qcos,h_reco_Pi_scos_eff_corr);
+  // Normalize2Gen(h_gen_q_qcos,h_reco_Pi_pq_cos);
 
   // Fitting
   TF1 * f_gen = new TF1("f_gen","[0]*(1+x*x)+[1]*x",-0.8,0.8);
@@ -225,10 +237,9 @@ void pq_method_PiLPFO()
 {
   try
   {
-    TFile *file = new TFile("../../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR." + prod_mode + ".KPiLPFO.distPi0.PFOp15.LPFOp15_pNaN.tpc0.mix_uds.check2.hists.all.root","READ");
     if (!file->IsOpen()) return;
 
-    main_pq(file);
+    main_pq();
 
   }
   catch(const std::exception& e)
