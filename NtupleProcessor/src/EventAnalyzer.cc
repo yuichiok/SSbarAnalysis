@@ -475,8 +475,11 @@ namespace QQbarAnalysis
 
             _hm.h2_dEdx.at(i_lmode).at(type).at("dEdx_p")->Fill( LPFO.p_mag, LPFO.pfo_dedx );
 
+            _hm.h2_dEdx.at(i_lmode).at(type).at("dEdx_cos")->Fill( LPFO.cos, LPFO.pfo_dedx );
+            _hm.h2_dEdx.at(i_lmode).at(type).at("dEdx_cos")->Fill( LPFO_opposite.cos, LPFO_opposite.pfo_dedx );
+
             _hm.h2_dEdx.at(i_lmode).at(type).at("dEdx_dist_cos")->Fill( LPFO.cos, pfot.Get_dEdx_dist(LPFO, i_lmode) );
-            _hm.h2_dEdx.at(i_lmode).at(type).at("dEdx_dist_cos")->Fill( LPFO_opposite.cos, pfot.Get_dEdx_dist(LPFO, i_lmode) );
+            _hm.h2_dEdx.at(i_lmode).at(type).at("dEdx_dist_cos")->Fill( LPFO_opposite.cos, pfot.Get_dEdx_dist(LPFO_opposite, i_lmode) );
           }
 
         }else{
@@ -516,6 +519,7 @@ namespace QQbarAnalysis
               TString type = _pt.PFO_type_map.at(abs(iLPFO.pfo_pdgcheat));
               _hm.h2_dEdx_eff.at(gen_reco).at(i_lmode).at(type).at(icut_name).at("dEdx_dist_cos")->Fill( iLPFO.cos, pfot.Get_dEdx_dist(iLPFO, i_lmode) );
               _hm.h2_dEdx_eff.at(gen_reco).at(i_lmode).at(type).at(icut_name).at("dEdx_error_cos")->Fill( iLPFO.cos, iLPFO.pfo_dedxerror );
+              _hm.h2_dEdx_eff.at(gen_reco).at(i_lmode).at(type).at(icut_name).at("dEdx_cos")->Fill( iLPFO.cos, iLPFO.pfo_dedx );
               _hm.h2_dEdx_eff.at(gen_reco).at(i_lmode).at(type).at(icut_name).at("dEdx_p")->Fill( iLPFO.p_mag, iLPFO.pfo_dedx );
             }
 
