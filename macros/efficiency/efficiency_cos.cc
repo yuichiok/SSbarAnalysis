@@ -9,10 +9,10 @@
 using std::cout; using std::endl;
 using std::vector; using std::unordered_map;
 
-TString prod_mode = "uu";
+TString prod_mode = "ud";
 TString LPFO_mode = "Pi";
 
-TFile *file = new TFile("../../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR." + prod_mode + ".KPiLPFO.distPi0.PFOp15.LPFOp15_pNaN.tpc0.mix_uds.correctDist.all.root","READ");
+TFile *file = new TFile("../../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR." + prod_mode + ".KPiLPFO.PFOp15.LPFOp15_pNaN.tpc0.mix_uds.correctDist.all.root","READ");
 
 void BinNormal(TH1F *h)
 {
@@ -85,7 +85,7 @@ void efficiency_cos()
 
   vector<TString> gen_reco  = {"gen","reco"};
   vector<TString> PFO_mode  = {"K","Pi"};
-  vector<TString> heff_name = {"momentum", "tpc_hits", "offset", "PID", "SPFO", "charge"};
+  vector<TString> heff_name = {"nocut","momentum", "tpc_hits", "offset", "PID", "SPFO", "charge"};
   unordered_map< TString, unordered_map< TString, unordered_map< TString, TH1F* > > > h1_cos_eff;  // [GenReco][LPFO][hist]
 
   try
@@ -106,10 +106,10 @@ void efficiency_cos()
 
     int count = 0;
     TH1F * h_denom;
-    TCanvas *c_eff_gen_Pi = new TCanvas("c_eff_gen_Pi", "c_eff_gen_Pi", 1500,400);
-    c_eff_gen_Pi->Divide(5,1);
-    TCanvas *c_cos_gen_Pi = new TCanvas("c_cos_gen_Pi", "c_cos_gen_Pi", 1500,400);
-    c_cos_gen_Pi->Divide(5,1);
+    TCanvas *c_eff_Pi = new TCanvas("c_eff_Pi", "c_eff_Pi", 1500,400);
+    c_eff_Pi->Divide(heff_name.size()-1,1);
+    TCanvas *c_cos_Pi = new TCanvas("c_cos_Pi", "c_cos_Pi", 1500,400);
+    c_cos_Pi->Divide(heff_name.size()-1,1);
     
     for ( auto ih : heff_name ){
 
@@ -125,13 +125,13 @@ void efficiency_cos()
         Normalize(h_num_norm);
         Normalize(h_denom_norm);
 
-        c_eff_gen_Pi->cd(count);
+        c_eff_Pi->cd(count);
         StylePad(gPad,0,0,0.17,0.1);
         StyleHist(h_eff,kBlue);
         h_eff->SetTitle(hname);
         h_eff->Draw("h");
 
-        c_cos_gen_Pi->cd(count);
+        c_cos_Pi->cd(count);
         h_denom_norm->SetTitle(hname);
         h_denom_norm->Draw("h");
         h_num_norm->Draw("hsame");
