@@ -15,6 +15,21 @@ Int_t   nbins_cos = 100;
 Float_t bins_cos_fine_half[] = {0.0,0.10,0.20,0.30,0.40,0.50,0.60,0.70,0.75,0.80,0.82,0.84,0.86,0.88,0.90,0.92,0.94,0.96,0.98,1.0};
 Int_t   nbins_cos_half = sizeof(bins_cos_fine_half) / sizeof(Float_t) - 1;
 
+TString getProductionMode( TFile *file )
+{
+  TString file_name = file->GetName();
+  TObjArray *tx = file_name.Tokenize(".");
+  TString prod_mode;
+  for ( auto i : *tx ) {
+    TString channel = ((TObjString *)(i))->String();
+    if(channel=="uu" || channel=="dd" || channel=="ud"){
+      prod_mode = channel;
+      break;
+    }
+  }
+  return prod_mode;
+}
+
 vector<Float_t> GetP( TH1F * h_accepted, TH1F * h_rejected )
 {
   const Int_t nbins = h_accepted->GetNbinsX();
@@ -94,11 +109,11 @@ vector<Float_t> GetP( TH1F * h_accepted, TH1F * h_rejected )
 
 }
 
-TH1F * CorrectHist( TH1F * h_reco, vector<Float_t> p_vec)
+TH1F * CorrectHist( TString prodMode, TH1F * h_reco, vector<Float_t> p_vec)
 {
   const Int_t nbins = h_reco->GetNbinsX();
 
-  TString corrected_name = "corrected_" + (TString) h_reco->GetName();
+  TString corrected_name = "corrected_" + (TString) h_reco->GetName() + "_" + prodMode;
   TH1F *corrected = new TH1F(corrected_name, corrected_name, 100,-1,1);
   corrected->Sumw2();
   for (int i = 1; i < nbins / 2 + 1; i++)
@@ -155,14 +170,15 @@ TH1F * CorrectHist( TH1F * h_reco, vector<Float_t> p_vec)
 
 TH1F * efficiencyCorrection( TH1F * h, TString LPFO_mode, TFile * file )
 {
-  TString dirName = "efficiency/dEdx_dist_cos/";
-  TH2F *h2_reco_offset = (TH2F*) file->Get(dirName + "h2_reco_" + LPFO_mode + "_" + LPFO_mode + "_offset");
-  TH2F *h2_reco_PID    = (TH2F*) file->Get(dirName + "h2_reco_" + LPFO_mode + "_" + LPFO_mode + "_PID");
+  TString dirName = "efficiency/dEdx/";
+  TH2F *h2_reco_offset = (TH2F*) file->Get(dirName + "h2_reco_" + LPFO_mode + "_" + LPFO_mode + "_momentum_dEdx_dist_cos");
+  TH2F *h2_reco_PID    = (TH2F*) file->Get(dirName + "h2_reco_" + LPFO_mode + "_" + LPFO_mode + "_SPFO_dEdx_dist_cos");
 
   TH1F *h_reco_offset = (TH1F*) h2_reco_offset->ProjectionX();
   TH1F *h_reco_PID    = (TH1F*) h2_reco_PID->ProjectionX();
 
   TH1F *h_eff = (TH1F*) h_reco_PID->Clone();
+  h_eff->Sumw2();
   h_eff->Divide(h_reco_offset);
 
   TH1F *h_eff_corr = (TH1F*) h->Clone();
