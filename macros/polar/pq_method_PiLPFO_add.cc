@@ -37,8 +37,8 @@ void Normalize(TH1F *h)
 
 void Normalize2Gen(TH1F *h, TH1F *h_gen)
 {
-	double intCosReco = h->Integral(20,30);
-	double intCosGen  = h_gen->Integral(20,30);
+	double intCosReco = h->Integral(20,80);
+	double intCosGen  = h_gen->Integral(20,80);
   h->Scale( intCosGen / intCosReco );
 }
 
@@ -167,9 +167,11 @@ void pq_method_PiLPFO_add()
 
     cts_reco->cd();
     ts_reco->Draw("h");
+    ts_reco->Draw("h nostack same");
 
     cts_gen->cd();
     ts_gen->Draw("h");
+    ts_gen->Draw("h nostack same");
 
     TH1F *h_reco = (TH1F*) hmap.at("uu").at("reco")->Clone();
     h_reco->Add(hmap.at("dd").at("reco"));
@@ -199,14 +201,14 @@ void pq_method_PiLPFO_add()
     TCanvas *cTotal = new TCanvas("cTotal","cTotal",800,800);
     TPad *pad1 = new TPad("pad1","pad1",0,0,1,1);
     StylePad(pad1,0,0.15,0,0.17);
-    h_gen->GetYaxis()->SetRangeUser(0,285E3);
+    h_gen->GetYaxis()->SetRangeUser(0,600E3);
     h_gen->Draw("h");
     h_reco->Draw("same");
     f_reco->Draw("same");
     f_gen->Draw("same");
 
     // Draw polar angle fit ratio
-    TCanvas  *c_ratio = new TCanvas("c_ratio","c_ratio",800,800);
+    TCanvas  *c_ratio_fit = new TCanvas("c_ratio_fit","c_ratio_fit",800,900);
     TH1F *h_reco_Pi_pq_cos_subhist = new TH1F("h_reco_Pi_pq_cos_subhist",";LPFO Pion cos#theta; Entries",90,-fitRange,fitRange);
     for ( int ibin=1; ibin<=h_reco_Pi_pq_cos_subhist->GetNbinsX(); ibin++ )
     {
@@ -220,7 +222,8 @@ void pq_method_PiLPFO_add()
     f_reco_ratio->SetParNames("S","A");
     h_reco_Pi_pq_cos_subhist->Fit("f_reco_ratio");
     cout << "Reco Chi2 / ndf = " << f_reco_ratio->GetChisquare() << " / " << f_reco_ratio->GetNDF() << endl;
-    c_ratio->Clear();
+    h_reco_Pi_pq_cos_subhist->GetYaxis()->SetRangeUser(0,600E3);
+    c_ratio_fit->Clear();
 
     auto trp = new TRatioPlot(h_reco_Pi_pq_cos_subhist);
     trp->SetGraphDrawOpt("P");
@@ -229,6 +232,7 @@ void pq_method_PiLPFO_add()
     trp->GetLowerRefYaxis()->SetTitle("Ratio");
     trp->GetLowerRefGraph()->SetMinimum(-4);
     trp->GetLowerRefGraph()->SetMaximum(4);
+    trp->GetLowerRefYaxis()->SetLabelSize(0.02);
 
     trp->GetUpperPad()->cd();
     TLegend *leg_trp = new TLegend(0.3,0.7,0.7,0.85);
@@ -237,6 +241,30 @@ void pq_method_PiLPFO_add()
     leg_trp->AddEntry(h_reco_Pi_pq_cos_subhist,"Reconstructed #pi^{-} (corrected)","p");
     leg_trp->AddEntry(f_reco_ratio,"#frac{d#sigma}{dcos#theta} fit for LPFO","l");
     leg_trp->Draw();
+
+
+    // Draw polar angle reco/gen ratio
+    TCanvas  *c_ratio_genreco = new TCanvas("c_ratio_genreco","c_ratio_genreco",800,900);
+    TH1F *rGen  = (TH1F*) h_gen->Clone();
+    TH1F *rReco = (TH1F*) h_reco->Clone();
+    rReco->GetYaxis()->SetRangeUser(0,600E3);
+
+    auto trp_genreco = new TRatioPlot(rReco,rGen);
+    trp_genreco->SetGraphDrawOpt("P");
+    trp_genreco->SetSeparationMargin(0.0);
+    trp_genreco->Draw();
+    trp_genreco->GetLowerRefYaxis()->SetTitle("Ratio");
+    trp_genreco->GetLowerRefGraph()->SetMinimum(0.5);
+    trp_genreco->GetLowerRefGraph()->SetMaximum(1.5);
+    trp_genreco->GetLowerRefYaxis()->SetLabelSize(0.02);
+
+    trp_genreco->GetUpperPad()->cd();
+    TLegend *leg_trp_genreco = new TLegend(0.3,0.7,0.7,0.85);
+    leg_trp_genreco->SetMargin(0.4);
+    leg_trp_genreco->SetLineColor(0);
+    leg_trp_genreco->AddEntry(rReco,"Reconstructed #pi^{-}","l");
+    leg_trp_genreco->AddEntry(rGen,"Generated #pi^{-}","l");
+    leg_trp_genreco->Draw();
 
 
   }
