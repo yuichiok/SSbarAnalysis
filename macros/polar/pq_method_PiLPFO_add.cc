@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 
+#include "../../SSbarLibrary/include/MapTString.hh"
 #include "../include/Styles.hh"
 #include "../include/PolarTools.hh"
 
@@ -39,8 +40,7 @@ void Normalize2Gen(TH1F *h, TH1F *h_gen)
   h->Scale( intCosGen / intCosReco );
 }
 
-
-void main_pq(TFile* file)
+unordered_map<TString, TH1F*> main_pq(TFile* file, Float_t &ratio)
 {
   gStyle->SetOptStat(0);
 
@@ -50,6 +50,12 @@ void main_pq(TFile* file)
   TH1F *h_gen_q_qcos    = (TH1F*) file->Get("gen/h_qcos");
   TH1F *h_reco_Pi_scos  = (TH1F*) file->Get("cos/h_Pi_scos");
   TH1F *h_reco_Pi_qcos  = (TH1F*) file->Get("cos/h_Pi_qcos");
+
+  cout << prodMode << " reco entry = " << h_reco_Pi_qcos->GetEntries() << endl;
+  cout << prodMode << " gen entry  = " << h_gen_q_qcos->GetEntries() << endl;
+  cout << prodMode << " reco eff   = " << (float)h_reco_Pi_qcos->GetEntries() / (float)h_gen_q_qcos->GetEntries() << endl;
+  
+  ratio = (Float_t) h_reco_Pi_qcos->GetEntries() / (Float_t) h_gen_q_qcos->GetEntries();
 
   // used for pq correction
   TH1F *h_acc_PiPi_cos  = (TH1F*) file->Get("cos/h_Pi_acc_cos");
@@ -61,8 +67,6 @@ void main_pq(TFile* file)
   TH1F *h_reco_Pi_qcos_eff_corr;
   if (isEffCorr)
   {
-    // h_reco_Pi_scos_eff_corr = resolutionCorrection(h_reco_Pi_scos,"Pi",file);
-    // h_reco_Pi_qcos_eff_corr = resolutionCorrection(h_reco_Pi_qcos,"Pi",file);
     TH1F* h_reco_Pi_scos_eff = efficiencyCorrection(h_reco_Pi_scos,"Pi",file);
     TH1F* h_reco_Pi_qcos_eff = efficiencyCorrection(h_reco_Pi_qcos,"Pi",file);
     h_reco_Pi_scos_eff_corr = resolutionCorrection(h_reco_Pi_scos_eff,"Pi",file);
@@ -77,8 +81,6 @@ void main_pq(TFile* file)
   TH1F *h_rej_PiPi_cos_eff_corr;
   if (isEffCorr)
   {
-    // h_acc_PiPi_cos_eff_corr = resolutionCorrection(h_acc_PiPi_cos,"Pi",file);
-    // h_rej_PiPi_cos_eff_corr = resolutionCorrection(h_rej_PiPi_cos,"Pi",file);
     TH1F* h_acc_PiPi_cos_eff = efficiencyCorrection(h_acc_PiPi_cos,"Pi",file);
     TH1F* h_rej_PiPi_cos_eff = efficiencyCorrection(h_rej_PiPi_cos,"Pi",file);
     h_acc_PiPi_cos_eff_corr = resolutionCorrection(h_acc_PiPi_cos_eff,"Pi",file);
@@ -89,14 +91,6 @@ void main_pq(TFile* file)
   }
 
   StyleHist(h_gen_q_qcos,kGreen+1);
-  h_gen_q_qcos->SetFillStyle(0);
-  h_gen_q_qcos->SetLineStyle(2);
-
-  StyleHist(h_reco_Pi_scos_eff_corr,kBlack);
-  h_reco_Pi_scos_eff_corr->SetFillStyle(0);
-  StyleHist(h_reco_Pi_qcos_eff_corr,kRed+2);
-  StyleHist(h_acc_PiPi_cos_eff_corr,kRed+2);
-  StyleHist(h_rej_PiPi_cos_eff_corr,kBlue+2);
 
   const Int_t nbins = h_reco_Pi_scos_eff_corr->GetNbinsX();
 
@@ -116,9 +110,6 @@ void main_pq(TFile* file)
   TH1F *h_reco_Pi_pq_cos = CorrectHist(prodMode, h_reco_Pi_qcos_eff_corr, p_vec);
   StyleHist(h_reco_Pi_pq_cos,kBlue);
 
-  Normalize2Gen(h_gen_q_qcos,h_reco_Pi_scos_eff_corr);
-  // Normalize2Gen(h_gen_q_qcos,h_reco_Pi_pq_cos);
-
   // Fitting
   TF1 * f_gen = new TF1("f_gen","[0]*(1+x*x)+[1]*x",-0.8,0.8);
   f_gen->SetParNames("S","A");
@@ -129,6 +120,13 @@ void main_pq(TFile* file)
   f_reco->SetParNames("S","A");
   h_reco_Pi_pq_cos->Fit("f_reco","MNRS");
   cout << "Reco Chi2 / ndf = " << f_reco->GetChisquare() << " / " << f_reco->GetNDF() << endl;
+
+  // output
+  unordered_map<TString, TH1F*> hmap;
+  hmap["gen"] = h_gen_q_qcos;
+  hmap["reco"] = h_reco_Pi_pq_cos;
+
+  return hmap;
 
 
 }
@@ -141,8 +139,50 @@ void pq_method_PiLPFO_add()
     TFile *ddFile = new TFile("../../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.dd.KPiLPFO.PFOp15.LPFOp15_pNaN.tpc0.mix_uds.correctDist.all.root","READ");
     if (!uuFile->IsOpen() || !ddFile->IsOpen()) return;
 
-    main_pq(uuFile);
-    main_pq(ddFile);
+    Float_t dd_ratio;
+    Float_t uu_ratio;
+
+    unordered_map<TString, TH1F*> hmap_uu = main_pq(uuFile, uu_ratio);
+    unordered_map<TString, TH1F*> hmap_dd = main_pq(ddFile, dd_ratio);
+
+    cout << "uu ratio = " << uu_ratio << endl;
+    cout << "dd ratio = " << dd_ratio << endl;
+    cout << "weight   = " << dd_ratio / uu_ratio << endl;
+
+    hmap_dd.at("gen")->Scale( dd_ratio / uu_ratio );
+
+    TCanvas *cts_reco = new TCanvas("cts_reco","cts_reco",800,800);
+    TCanvas *cts_gen  = new TCanvas("cts_gen ","cts_gen ",800,800);
+
+    THStack *ts_reco = new THStack("ts_reco","ts_reco");
+    ts_reco->Add(hmap_uu.at("reco"));
+    ts_reco->Add(hmap_dd.at("reco"));
+
+    THStack *ts_gen = new THStack("ts_gen","ts_gen");
+    ts_gen->Add(hmap_uu.at("gen"));
+    ts_gen->Add(hmap_dd.at("gen"));
+
+    cts_reco->cd();
+    ts_reco->Draw("h");
+
+    cts_gen->cd();
+    ts_gen->Draw("h");
+
+    TH1F *h_reco = (TH1F*) hmap_uu.at("reco")->Clone();
+    h_reco->Add(hmap_dd.at("reco"));
+    StyleHist(h_reco,kBlue);
+    
+    TH1F *h_gen = (TH1F*) hmap_uu.at("gen")->Clone();
+    h_gen->Add(hmap_dd.at("gen"));
+    StyleHist(h_gen,kGreen+1);
+
+    TCanvas *cTotal = new TCanvas("cTotal","cTotal",800,800);
+    Normalize2Gen(h_gen,h_reco);
+    h_gen->Draw("h");
+    h_reco->Draw("h same");
+
+
+
 
   }
   catch(const std::exception& e)
