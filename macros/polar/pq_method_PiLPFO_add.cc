@@ -11,6 +11,8 @@ using std::vector; using std::unordered_map;
 TString prod_mode = "ud";
 TString LPFO_mode = "Pi";
 
+Float_t fitRange = 0.9;
+
 void BinNormal(TH1F *h)
 {
   const Int_t nbins = h->GetNbinsX();
@@ -111,12 +113,12 @@ unordered_map<TString, TH1F*> main_pq(TFile* file, Float_t &ratio)
   StyleHist(h_reco_Pi_pq_cos,kBlue);
 
   // Fitting
-  TF1 * f_gen = new TF1("f_gen","[0]*(1+x*x)+[1]*x",-0.8,0.8);
+  TF1 * f_gen = new TF1("f_gen","[0]*(1+x*x)+[1]*x",-fitRange,fitRange);
   f_gen->SetParNames("S","A");
   h_gen_q_qcos->Fit("f_gen","MNRS");
   cout << "Gen Chi2 / ndf = " << f_gen->GetChisquare() << " / " << f_gen->GetNDF() << endl;
 
-  TF1 * f_reco = new TF1("f_reco","[0]*(1+x*x)+[1]*x",-0.8,0.8);
+  TF1 * f_reco = new TF1("f_reco","[0]*(1+x*x)+[1]*x",-fitRange,fitRange);
   f_reco->SetParNames("S","A");
   h_reco_Pi_pq_cos->Fit("f_reco","MNRS");
   cout << "Reco Chi2 / ndf = " << f_reco->GetChisquare() << " / " << f_reco->GetNDF() << endl;
@@ -142,25 +144,26 @@ void pq_method_PiLPFO_add()
     Float_t dd_ratio;
     Float_t uu_ratio;
 
-    unordered_map<TString, TH1F*> hmap_uu = main_pq(uuFile, uu_ratio);
-    unordered_map<TString, TH1F*> hmap_dd = main_pq(ddFile, dd_ratio);
+    unordered_map<TString, unordered_map<TString, TH1F*>> hmap; // [ud][reco/gen]
+    hmap["uu"] = main_pq(uuFile, uu_ratio);
+    hmap["dd"] = main_pq(ddFile, dd_ratio);
 
     cout << "uu ratio = " << uu_ratio << endl;
     cout << "dd ratio = " << dd_ratio << endl;
     cout << "weight   = " << dd_ratio / uu_ratio << endl;
 
-    hmap_dd.at("gen")->Scale( dd_ratio / uu_ratio );
+    hmap.at("dd").at("gen")->Scale( dd_ratio / uu_ratio );
 
     TCanvas *cts_reco = new TCanvas("cts_reco","cts_reco",800,800);
     TCanvas *cts_gen  = new TCanvas("cts_gen ","cts_gen ",800,800);
 
     THStack *ts_reco = new THStack("ts_reco","ts_reco");
-    ts_reco->Add(hmap_uu.at("reco"));
-    ts_reco->Add(hmap_dd.at("reco"));
+    ts_reco->Add(hmap.at("uu").at("reco"));
+    ts_reco->Add(hmap.at("dd").at("reco"));
 
     THStack *ts_gen = new THStack("ts_gen","ts_gen");
-    ts_gen->Add(hmap_uu.at("gen"));
-    ts_gen->Add(hmap_dd.at("gen"));
+    ts_gen->Add(hmap.at("uu").at("gen"));
+    ts_gen->Add(hmap.at("dd").at("gen"));
 
     cts_reco->cd();
     ts_reco->Draw("h");
@@ -168,20 +171,72 @@ void pq_method_PiLPFO_add()
     cts_gen->cd();
     ts_gen->Draw("h");
 
-    TH1F *h_reco = (TH1F*) hmap_uu.at("reco")->Clone();
-    h_reco->Add(hmap_dd.at("reco"));
+    TH1F *h_reco = (TH1F*) hmap.at("uu").at("reco")->Clone();
+    h_reco->Add(hmap.at("dd").at("reco"));
     StyleHist(h_reco,kBlue);
     
-    TH1F *h_gen = (TH1F*) hmap_uu.at("gen")->Clone();
-    h_gen->Add(hmap_dd.at("gen"));
+    TH1F *h_gen = (TH1F*) hmap.at("uu").at("gen")->Clone();
+    h_gen->Add(hmap.at("dd").at("gen"));
     StyleHist(h_gen,kGreen+1);
 
-    TCanvas *cTotal = new TCanvas("cTotal","cTotal",800,800);
+    // Total plots
     Normalize2Gen(h_gen,h_reco);
+
+    // Fitting
+    TF1 * f_gen = new TF1("f_gen","[0]*(1+x*x)+[1]*x",-fitRange,fitRange);
+    f_gen->SetParNames("S","A");
+    h_gen->Fit("f_gen","MNRS");
+    f_gen->SetLineColor(kGreen+2);
+    f_gen->SetLineStyle(2);
+    cout << "Gen Chi2 / ndf = " << f_gen->GetChisquare() << " / " << f_gen->GetNDF() << endl;
+
+    TF1 * f_reco = new TF1("f_reco","[0]*(1+x*x)+[1]*x",-fitRange,fitRange);
+    f_reco->SetParNames("S","A");
+    h_reco->Fit("f_reco","MNRS");
+    f_reco->SetLineColor(kRed);
+    cout << "Reco Chi2 / ndf = " << f_reco->GetChisquare() << " / " << f_reco->GetNDF() << endl;
+
+    TCanvas *cTotal = new TCanvas("cTotal","cTotal",800,800);
+    TPad *pad1 = new TPad("pad1","pad1",0,0,1,1);
+    StylePad(pad1,0,0.15,0,0.17);
+    h_gen->GetYaxis()->SetRangeUser(0,285E3);
     h_gen->Draw("h");
-    h_reco->Draw("h same");
+    h_reco->Draw("same");
+    f_reco->Draw("same");
+    f_gen->Draw("same");
 
+    // Draw polar angle fit ratio
+    TCanvas  *c_ratio = new TCanvas("c_ratio","c_ratio",800,800);
+    TH1F *h_reco_Pi_pq_cos_subhist = new TH1F("h_reco_Pi_pq_cos_subhist",";LPFO Pion cos#theta; Entries",90,-fitRange,fitRange);
+    for ( int ibin=1; ibin<=h_reco_Pi_pq_cos_subhist->GetNbinsX(); ibin++ )
+    {
+      Int_t recobin = ibin + 5;
+      h_reco_Pi_pq_cos_subhist->SetBinContent(ibin,h_reco->GetBinContent(recobin));
+      h_reco_Pi_pq_cos_subhist->SetBinError(ibin,h_reco->GetBinError(recobin));
+    }
+    h_reco_Pi_pq_cos_subhist->SetMarkerStyle(20);
 
+    TF1 *f_reco_ratio = new TF1("f_reco_ratio","[0]*(1+x*x)+[1]*x",-fitRange,fitRange);
+    f_reco_ratio->SetParNames("S","A");
+    h_reco_Pi_pq_cos_subhist->Fit("f_reco_ratio");
+    cout << "Reco Chi2 / ndf = " << f_reco_ratio->GetChisquare() << " / " << f_reco_ratio->GetNDF() << endl;
+    c_ratio->Clear();
+
+    auto trp = new TRatioPlot(h_reco_Pi_pq_cos_subhist);
+    trp->SetGraphDrawOpt("P");
+    trp->SetSeparationMargin(0.0);
+    trp->Draw();
+    trp->GetLowerRefYaxis()->SetTitle("Ratio");
+    trp->GetLowerRefGraph()->SetMinimum(-4);
+    trp->GetLowerRefGraph()->SetMaximum(4);
+
+    trp->GetUpperPad()->cd();
+    TLegend *leg_trp = new TLegend(0.3,0.7,0.7,0.85);
+    leg_trp->SetMargin(0.4);
+    leg_trp->SetLineColor(0);
+    leg_trp->AddEntry(h_reco_Pi_pq_cos_subhist,"Reconstructed #pi^{-} (corrected)","p");
+    leg_trp->AddEntry(f_reco_ratio,"#frac{d#sigma}{dcos#theta} fit for LPFO","l");
+    leg_trp->Draw();
 
 
   }
