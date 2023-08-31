@@ -154,25 +154,6 @@ void pq_method_PiLPFO_add()
 
     hmap.at("dd").at("gen")->Scale( dd_ratio / uu_ratio );
 
-    TCanvas *cts_reco = new TCanvas("cts_reco","cts_reco",800,800);
-    TCanvas *cts_gen  = new TCanvas("cts_gen ","cts_gen ",800,800);
-
-    THStack *ts_reco = new THStack("ts_reco","ts_reco");
-    ts_reco->Add(hmap.at("uu").at("reco"));
-    ts_reco->Add(hmap.at("dd").at("reco"));
-
-    THStack *ts_gen = new THStack("ts_gen","ts_gen");
-    ts_gen->Add(hmap.at("uu").at("gen"));
-    ts_gen->Add(hmap.at("dd").at("gen"));
-
-    cts_reco->cd();
-    ts_reco->Draw("h");
-    ts_reco->Draw("h nostack same");
-
-    cts_gen->cd();
-    ts_gen->Draw("h");
-    ts_gen->Draw("h nostack same");
-
     TH1F *h_reco = (TH1F*) hmap.at("uu").at("reco")->Clone();
     h_reco->Add(hmap.at("dd").at("reco"));
     StyleHist(h_reco,kBlue);
@@ -181,91 +162,156 @@ void pq_method_PiLPFO_add()
     h_gen->Add(hmap.at("dd").at("gen"));
     StyleHist(h_gen,kGreen+1);
 
+
+    TCanvas *cts_reco = new TCanvas("cts_reco","cts_reco",800,800);
+    TCanvas *cts_gen  = new TCanvas("cts_gen ","cts_gen ",800,800);
+
     // Total plots
-    Normalize2Gen(h_gen,h_reco);
+      // Normalization
+      Normalize2Gen(h_gen,h_reco);
 
-    // Fitting
-    TF1 * f_gen = new TF1("f_gen","[0]*(1+x*x)+[1]*x",-fitRange,fitRange);
-    f_gen->SetParNames("S","A");
-    h_gen->Fit("f_gen","MNRS");
-    f_gen->SetLineColor(kGreen+2);
-    f_gen->SetLineStyle(2);
-    cout << "Gen Chi2 / ndf = " << f_gen->GetChisquare() << " / " << f_gen->GetNDF() << endl;
+      // Fitting
+      TF1 * f_gen = new TF1("f_gen","[0]*(1+x*x)+[1]*x",-fitRange,fitRange);
+      f_gen->SetParNames("S","A");
+      h_gen->Fit("f_gen","MNRS");
+      f_gen->SetLineColor(kGreen+2);
+      f_gen->SetLineStyle(2);
+      cout << "Gen Chi2 / ndf = " << f_gen->GetChisquare() << " / " << f_gen->GetNDF() << endl;
 
-    TF1 * f_reco = new TF1("f_reco","[0]*(1+x*x)+[1]*x",-fitRange,fitRange);
-    f_reco->SetParNames("S","A");
-    h_reco->Fit("f_reco","MNRS");
-    f_reco->SetLineColor(kRed);
-    cout << "Reco Chi2 / ndf = " << f_reco->GetChisquare() << " / " << f_reco->GetNDF() << endl;
+      TF1 * f_reco = new TF1("f_reco","[0]*(1+x*x)+[1]*x",-fitRange,fitRange);
+      f_reco->SetParNames("S","A");
+      h_reco->Fit("f_reco","MNRS");
+      f_reco->SetLineColor(kRed);
+      cout << "Reco Chi2 / ndf = " << f_reco->GetChisquare() << " / " << f_reco->GetNDF() << endl;
 
-    TCanvas *cTotal = new TCanvas("cTotal","cTotal",800,800);
-    TPad *pad1 = new TPad("pad1","pad1",0,0,1,1);
-    StylePad(pad1,0,0.15,0,0.17);
-    h_gen->GetYaxis()->SetRangeUser(0,600E3);
-    h_gen->Draw("h");
-    h_reco->Draw("same");
-    f_reco->Draw("same");
-    f_gen->Draw("same");
+      TCanvas *cTotal = new TCanvas("cTotal","cTotal",800,800);
+      TPad *padTotal = new TPad("padTotal","padTotal",0,0,1,1);
+      StylePad(padTotal,0,0.15,0,0.17);
+      h_gen->GetYaxis()->SetRangeUser(0,600E3);
+      h_gen->SetTitle(";cos#theta;Entries");
+      h_gen->Draw("h");
+      h_reco->Draw("same");
+      f_reco->Draw("same");
+      f_gen->Draw("same");
+
+    // Stack plots
+      // Styling
+      StyleHist(hmap.at("uu").at("reco"),kViolet);
+      StyleHist(hmap.at("dd").at("reco"),kRed);
+
+      cts_reco->cd();
+      TH1F *totalReco = (TH1F*) hmap.at("uu").at("reco")->Clone();
+      totalReco->Add(hmap.at("dd").at("reco"));
+      StyleHist(totalReco,kBlue);
+      totalReco->SetFillStyle(0);
+      TPad *padts_reco = new TPad("padts_reco","padts_reco",0,0,1,1);
+      StylePad(padts_reco,0,0.15,0,0.17);
+      totalReco->GetYaxis()->SetRangeUser(0,600E3);
+      totalReco->SetTitle(";cos#theta;Entries");
+      totalReco->Draw("h");
+      hmap.at("uu").at("reco")->Draw("h same");
+      hmap.at("dd").at("reco")->Draw("h same");
+
+      TLegend *legStackReco = new TLegend(0.3,0.7,0.7,0.85);
+      legStackReco->SetMargin(0.4);
+      legStackReco->SetLineColor(0);
+      legStackReco->AddEntry(totalReco,"Total Reconstructed #pi^{-}","l");
+      legStackReco->AddEntry(hmap.at("uu").at("reco"),"u#bar{u}","l");
+      legStackReco->AddEntry(hmap.at("dd").at("reco"),"d#bar{d}","l");
+      legStackReco->Draw();
+
+
+      cts_gen->cd();
+      TH1F *h_gen_uu = (TH1F*) hmap.at("uu").at("gen")->Clone();
+      TH1F *h_gen_dd = (TH1F*) hmap.at("dd").at("gen")->Clone();
+      TH1F *totalGen = (TH1F*) h_gen_uu->Clone();
+      totalGen->Add(h_gen_dd);
+
+      double intCosReco = totalGen->Integral(20,80);
+      double intCosGen  = h_reco->Integral(20,80);
+      double recogenRatio = intCosGen / intCosReco;
+      h_gen_uu->Scale( recogenRatio );
+      h_gen_dd->Scale( recogenRatio );
+      totalGen->Scale( recogenRatio );
+
+      StyleHist(totalGen,kGreen+1);
+      StyleHist(h_gen_uu,kViolet);
+      StyleHist(h_gen_dd,kRed);
+      totalGen->SetFillStyle(0);
+      TPad *padts_gen = new TPad("padts_gen","padts_gen",0,0,1,1);
+      StylePad(padts_gen,0,0.15,0,0.17);
+      totalGen->GetYaxis()->SetRangeUser(0,600E3);
+      totalGen->SetTitle(";cos#theta;Entries");
+      totalGen->Draw("h");
+      h_gen_uu->Draw("h same");
+      h_gen_dd->Draw("h same");
+
+      TLegend *legStackGen = new TLegend(0.3,0.7,0.7,0.85);
+      legStackGen->SetMargin(0.4);
+      legStackGen->SetLineColor(0);
+      legStackGen->AddEntry(totalGen,"Total Generated #pi^{-}","l");
+      legStackGen->AddEntry(h_gen_uu,"u#bar{u}","l");
+      legStackGen->AddEntry(h_gen_dd,"d#bar{d}","l");
+      legStackGen->Draw();
 
     // Draw polar angle fit ratio
-    TCanvas  *c_ratio_fit = new TCanvas("c_ratio_fit","c_ratio_fit",800,900);
-    TH1F *h_reco_Pi_pq_cos_subhist = new TH1F("h_reco_Pi_pq_cos_subhist",";LPFO Pion cos#theta; Entries",90,-fitRange,fitRange);
-    for ( int ibin=1; ibin<=h_reco_Pi_pq_cos_subhist->GetNbinsX(); ibin++ )
-    {
-      Int_t recobin = ibin + 5;
-      h_reco_Pi_pq_cos_subhist->SetBinContent(ibin,h_reco->GetBinContent(recobin));
-      h_reco_Pi_pq_cos_subhist->SetBinError(ibin,h_reco->GetBinError(recobin));
-    }
-    h_reco_Pi_pq_cos_subhist->SetMarkerStyle(20);
+      TCanvas  *c_ratio_fit = new TCanvas("c_ratio_fit","c_ratio_fit",700,900);
+      TH1F *h_reco_Pi_pq_cos_subhist = new TH1F("h_reco_Pi_pq_cos_subhist",";LPFO Pion cos#theta; Entries",90,-fitRange,fitRange);
+      for ( int ibin=1; ibin<=h_reco_Pi_pq_cos_subhist->GetNbinsX(); ibin++ )
+      {
+        Int_t recobin = ibin + 5;
+        h_reco_Pi_pq_cos_subhist->SetBinContent(ibin,h_reco->GetBinContent(recobin));
+        h_reco_Pi_pq_cos_subhist->SetBinError(ibin,h_reco->GetBinError(recobin));
+      }
+      h_reco_Pi_pq_cos_subhist->SetMarkerStyle(20);
 
-    TF1 *f_reco_ratio = new TF1("f_reco_ratio","[0]*(1+x*x)+[1]*x",-fitRange,fitRange);
-    f_reco_ratio->SetParNames("S","A");
-    h_reco_Pi_pq_cos_subhist->Fit("f_reco_ratio");
-    cout << "Reco Chi2 / ndf = " << f_reco_ratio->GetChisquare() << " / " << f_reco_ratio->GetNDF() << endl;
-    h_reco_Pi_pq_cos_subhist->GetYaxis()->SetRangeUser(0,600E3);
-    c_ratio_fit->Clear();
+      TF1 *f_reco_ratio = new TF1("f_reco_ratio","[0]*(1+x*x)+[1]*x",-fitRange,fitRange);
+      f_reco_ratio->SetParNames("S","A");
+      h_reco_Pi_pq_cos_subhist->Fit("f_reco_ratio");
+      cout << "Reco Chi2 / ndf = " << f_reco_ratio->GetChisquare() << " / " << f_reco_ratio->GetNDF() << endl;
+      h_reco_Pi_pq_cos_subhist->GetYaxis()->SetRangeUser(0,600E3);
+      c_ratio_fit->Clear();
 
-    auto trp = new TRatioPlot(h_reco_Pi_pq_cos_subhist);
-    trp->SetGraphDrawOpt("P");
-    trp->SetSeparationMargin(0.0);
-    trp->Draw();
-    trp->GetLowerRefYaxis()->SetTitle("Ratio");
-    trp->GetLowerRefGraph()->SetMinimum(-4);
-    trp->GetLowerRefGraph()->SetMaximum(4);
-    trp->GetLowerRefYaxis()->SetLabelSize(0.02);
+      auto trp = new TRatioPlot(h_reco_Pi_pq_cos_subhist);
+      trp->SetGraphDrawOpt("P");
+      trp->SetSeparationMargin(0.0);
+      trp->Draw();
+      trp->GetLowerRefYaxis()->SetTitle("Ratio");
+      trp->GetLowerRefGraph()->SetMinimum(-4);
+      trp->GetLowerRefGraph()->SetMaximum(4);
+      trp->GetLowerRefYaxis()->SetLabelSize(0.02);
 
-    trp->GetUpperPad()->cd();
-    TLegend *leg_trp = new TLegend(0.3,0.7,0.7,0.85);
-    leg_trp->SetMargin(0.4);
-    leg_trp->SetLineColor(0);
-    leg_trp->AddEntry(h_reco_Pi_pq_cos_subhist,"Reconstructed #pi^{-} (corrected)","p");
-    leg_trp->AddEntry(f_reco_ratio,"#frac{d#sigma}{dcos#theta} fit for LPFO","l");
-    leg_trp->Draw();
-
+      trp->GetUpperPad()->cd();
+      TLegend *leg_trp = new TLegend(0.3,0.7,0.7,0.85);
+      leg_trp->SetMargin(0.4);
+      leg_trp->SetLineColor(0);
+      leg_trp->AddEntry(h_reco_Pi_pq_cos_subhist,"Reconstructed #pi^{-} (corrected)","p");
+      leg_trp->AddEntry(f_reco_ratio,"#frac{d#sigma}{dcos#theta} fit for LPFO","l");
+      leg_trp->Draw();
 
     // Draw polar angle reco/gen ratio
-    TCanvas  *c_ratio_genreco = new TCanvas("c_ratio_genreco","c_ratio_genreco",800,900);
-    TH1F *rGen  = (TH1F*) h_gen->Clone();
-    TH1F *rReco = (TH1F*) h_reco->Clone();
-    rReco->GetYaxis()->SetRangeUser(0,600E3);
+      TCanvas  *c_ratio_genreco = new TCanvas("c_ratio_genreco","c_ratio_genreco",700,900);
+      TH1F *rGen  = (TH1F*) h_gen->Clone();
+      TH1F *rReco = (TH1F*) h_reco->Clone();
+      rReco->GetYaxis()->SetRangeUser(0,600E3);
+      rReco->SetTitle(";cos#theta;Entries");
 
-    auto trp_genreco = new TRatioPlot(rReco,rGen);
-    trp_genreco->SetGraphDrawOpt("P");
-    trp_genreco->SetSeparationMargin(0.0);
-    trp_genreco->Draw();
-    trp_genreco->GetLowerRefYaxis()->SetTitle("Ratio");
-    trp_genreco->GetLowerRefGraph()->SetMinimum(0.5);
-    trp_genreco->GetLowerRefGraph()->SetMaximum(1.5);
-    trp_genreco->GetLowerRefYaxis()->SetLabelSize(0.02);
+      auto trp_genreco = new TRatioPlot(rReco,rGen);
+      trp_genreco->SetGraphDrawOpt("P");
+      trp_genreco->SetSeparationMargin(0.0);
+      trp_genreco->Draw();
+      trp_genreco->GetLowerRefYaxis()->SetTitle("Data / MC");
+      trp_genreco->GetLowerRefGraph()->SetMinimum(0.5);
+      trp_genreco->GetLowerRefGraph()->SetMaximum(1.5);
+      trp_genreco->GetLowerRefYaxis()->SetLabelSize(0.02);
 
-    trp_genreco->GetUpperPad()->cd();
-    TLegend *leg_trp_genreco = new TLegend(0.3,0.7,0.7,0.85);
-    leg_trp_genreco->SetMargin(0.4);
-    leg_trp_genreco->SetLineColor(0);
-    leg_trp_genreco->AddEntry(rReco,"Reconstructed #pi^{-}","l");
-    leg_trp_genreco->AddEntry(rGen,"Generated #pi^{-}","l");
-    leg_trp_genreco->Draw();
-
+      trp_genreco->GetUpperPad()->cd();
+      TLegend *leg_trp_genreco = new TLegend(0.3,0.7,0.7,0.85);
+      leg_trp_genreco->SetMargin(0.4);
+      leg_trp_genreco->SetLineColor(0);
+      leg_trp_genreco->AddEntry(rReco,"Reconstructed #pi^{-}","l");
+      leg_trp_genreco->AddEntry(rGen,"Generated #pi^{-}","l");
+      leg_trp_genreco->Draw();
 
   }
   catch(const std::exception& e)
