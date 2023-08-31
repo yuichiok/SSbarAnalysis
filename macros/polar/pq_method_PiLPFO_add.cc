@@ -184,6 +184,12 @@ void pq_method_PiLPFO_add()
       f_reco->SetLineColor(kRed);
       cout << "Reco Chi2 / ndf = " << f_reco->GetChisquare() << " / " << f_reco->GetNDF() << endl;
 
+      // output AFB
+      Float_t AFB_gen  = AFB_calculation(f_gen);
+      Float_t AFB_reco = AFB_calculation(f_reco);
+      cout << "Gen  AFB = " << AFB_gen << endl;
+      cout << "Reco AFB = " << AFB_reco << endl;
+
       TCanvas *cTotal = new TCanvas("cTotal","cTotal",800,800);
       TPad *padTotal = new TPad("padTotal","padTotal",0,0,1,1);
       StylePad(padTotal,0,0.15,0,0.17);
@@ -193,6 +199,15 @@ void pq_method_PiLPFO_add()
       h_reco->Draw("same");
       f_reco->Draw("same");
       f_gen->Draw("same");
+
+      TLegend *legTotal = new TLegend(0.3,0.7,0.7,0.85);
+      legTotal->SetMargin(0.4);
+      legTotal->SetLineColor(0);
+      legTotal->AddEntry(h_gen,"Genrated #pi^{-}","f");
+      legTotal->AddEntry(h_reco,"Reconstructed #pi^{-}","lE");
+      legTotal->AddEntry(f_gen,"Generated Fit","l");
+      legTotal->AddEntry(f_reco,"Reconstructed Fit","l");
+      legTotal->Draw();
 
     // Stack plots
       // Styling
