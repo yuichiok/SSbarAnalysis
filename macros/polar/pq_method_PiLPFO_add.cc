@@ -110,6 +110,7 @@ unordered_map<TString, TH1F*> main_pq(TFile* file, Float_t &ratio)
   }
 
   TH1F *h_reco_Pi_pq_cos = CorrectHist(prodMode, h_reco_Pi_qcos_eff_corr, p_vec);
+  // TH1F *h_reco_Pi_pq_cos = (TH1F*) h_reco_Pi_qcos_eff_corr->Clone();
   StyleHist(h_reco_Pi_pq_cos,kBlue);
 
   // Fitting

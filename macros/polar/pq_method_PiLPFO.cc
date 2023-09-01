@@ -7,7 +7,7 @@
 using std::cout; using std::endl;
 using std::vector; using std::unordered_map;
 
-TString prod_mode = "ud";
+TString prod_mode = "dd";
 TString LPFO_mode = "Pi";
 
 TFile *file = new TFile("../../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR." + prod_mode + ".KPiLPFO.PFOp15.LPFOp15_pNaN.tpc0.mix_uds.correctDist.all.root","READ");
@@ -114,6 +114,7 @@ void main_pq()
   }
 
   TH1F *h_reco_Pi_pq_cos = CorrectHist(prodMode, h_reco_Pi_qcos_eff_corr, p_vec);
+  // TH1F *h_reco_Pi_pq_cos = (TH1F*) h_reco_Pi_qcos_eff_corr->Clone();
   StyleHist(h_reco_Pi_pq_cos,kBlue);
 
   Normalize2Gen(h_gen_q_qcos,h_reco_Pi_scos_eff_corr);
