@@ -9,11 +9,13 @@
 using std::cout; using std::endl;
 using std::vector; using std::unordered_map;
 
-const TString prod_mode = "uu";
+const TString prod_mode = "ud";
 const TString LPFO_mode = "Pi";
 
 const vector<TString> PFO_mode  = {"K","Pi"};
 const vector<TString> PFO_type  = {"K","Pi", "p", "e", "mu"};
+
+TFile *file = new TFile("../../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR." + prod_mode + ".KPiLPFO.PFOp15.LPFOp15_pNaN.tpc0.mix_uds.correctDist.all.root","READ");
 
 TH1F* plotEfficiency(TH1F *h_num, TH1F *h_denom)
 {
@@ -26,11 +28,11 @@ TH1F* plotEfficiency(TH1F *h_num, TH1F *h_denom)
   return h_eff;
 }
 
-void dedxDistCosProjType(TFile *file)
+void dedxDistCosProjType()
 {
   vector<TString> gen_reco  = {"gen","reco"};
-  vector<TString> cut_name = {"momentum", "tpc_hits", "offset", "PID", "SPFO", "charge"};
-  vector<TString> heff_dedx_name = {"dEdx_p","dEdx_error_cos","dEdx_dist_cos"};
+  vector<TString> cut_name = {"nocut","momentum", "tpc_hits", "offset", "PID", "SPFO", "charge"};
+  vector<TString> heff_dedx_name = {"dEdx_p","dEdx_cos","dEdx_error_cos","dEdx_dist_cos"};
   unordered_map< TString, unordered_map< TString, unordered_map< TString, unordered_map< TString, unordered_map< TString, TH2F* > > > > > h2_dEdx_eff;  // [GenReco][LPFO][TruthID][cut][hist]
   TString dir_name = "efficiency/dEdx/";
 
@@ -47,6 +49,9 @@ void dedxDistCosProjType(TFile *file)
       }
     }
   }
+
+  TCanvas *c_type_dedx_cos_type = new TCanvas("c_type_dedx_cos_type", "c_type_dedx_cos_type", 1500,1000);
+  c_type_dedx_cos_type->Divide(cut_name.size(),PFO_type.size());
 
   TCanvas *c_type_dedx_dist_cos_type = new TCanvas("c_type_dedx_dist_cos_type", "c_type_dedx_dist_cos_type", 1500,1000);
   c_type_dedx_dist_cos_type->Divide(cut_name.size(),PFO_type.size());
@@ -67,14 +72,20 @@ void dedxDistCosProjType(TFile *file)
       count++;
 
       TString hTitle = itype + " | " + iname;
-      TH2F *h_dedx_dist_cos = h2_dEdx_eff.at("reco").at(LPFO_mode).at(itype).at(iname).at("dEdx_dist_cos");
+      TH2F *h_dedx_cos           = h2_dEdx_eff.at("reco").at(LPFO_mode).at(itype).at(iname).at("dEdx_cos");
+      TH2F *h_dedx_dist_cos      = h2_dEdx_eff.at("reco").at(LPFO_mode).at(itype).at(iname).at("dEdx_dist_cos");
       TH1F *h_dedx_dist_cos_proj = (TH1F*) h_dedx_dist_cos->ProjectionX();
 
       h_dedx_dist_cos->SetTitle(hTitle);
       h_dedx_dist_cos_proj->SetTitle(hTitle);
 
+      c_type_dedx_cos_type->cd(count);
+      h_dedx_cos->Draw("colz");
+      h_dedx_cos->Draw("cont3 same");
+
       c_type_dedx_dist_cos_type->cd(count);
       h_dedx_dist_cos->Draw("colz");
+      h_dedx_dist_cos->Draw("cont3 same");
       
       c_type_dedx_dist_cos_proj_type->cd(count);
       StyleHist(h_dedx_dist_cos_proj,kBlue);
@@ -98,26 +109,9 @@ void dedxDistCosProjType(TFile *file)
 
   }
 
-  TCanvas *c_type_dedx_dist_cos_proj_efficiency_type_PiID = new TCanvas("c_type_dedx_dist_cos_proj_efficiency_type_PiID", "c_type_dedx_dist_cos_proj_efficiency_type_PiID", 500,500);
-  c_type_dedx_dist_cos_proj_efficiency_type_PiID->cd();
-  StyleHist(PiID_eff,kBlue);
-  TF1 *fit_pol8 = new TF1("fit_pol8","pol8",-0.9,0.9);
-  PiID_eff->Fit(fit_pol8,"R");
-  PiID_eff->Draw("h");
-  Double_t pars[9];
-  fit_pol8->GetParameters(&pars[0]);
-  cout << pars[0] << "," << pars[1] << "," << pars[2] << "," << pars[3] << "," << pars[4] << "," << pars[5] << "," << pars[6] << "," << pars[7] << "," << pars[8] << endl;
-
-  TF1 *pol_correction = new TF1("pol_correction","-2*(1.6 - pol8)",-0.9,0.9);
-  pol_correction->SetParameters(pars);
-  TCanvas *c_type_dedx_dist_cos_proj_efficiency_type_PiID_correction = new TCanvas("c_type_dedx_dist_cos_proj_efficiency_type_PiID_correction", "c_type_dedx_dist_cos_proj_efficiency_type_PiID_correction", 500,500);
-  c_type_dedx_dist_cos_proj_efficiency_type_PiID_correction->cd();
-  pol_correction->Draw();
-  cout << pol_correction->Eval(0.5) << endl;
-
 }
 
-void dedxDistCosProj(TFile *file)
+void dedxDistCosProj()
 {
   vector<TString> hdEdx_name = {"dEdx_p","dEdx_cos","dEdx_dist_cos"};
   unordered_map< TString, unordered_map< TString, unordered_map< TString, TH2F* > > > h2_dEdx; // [LPFO][TruthID][hist]
@@ -156,18 +150,49 @@ void dedxDistCosProj(TFile *file)
 
 }
 
+void dedxCos()
+{
+  vector<TString> hdEdx_name = {"dEdx_p","dEdx_cos","dEdx_dist_cos"};
+  unordered_map< TString, unordered_map< TString, unordered_map< TString, TH2F* > > > h2_dEdx; // [LPFO][TruthID][hist]
+  TString dir_name = "dEdx/";
+
+  for ( auto imode : PFO_mode ){
+    for ( auto itype : PFO_type ){
+      for ( auto icut : hdEdx_name ){
+        TString hname = "h2_" + imode + "_" + itype + "_" + icut;
+        TH2F *h = (TH2F*) file->Get(dir_name + hname);
+        h2_dEdx[imode][itype][icut] = h;
+      }
+    }
+  }
+
+  TCanvas *c_type_dedx_cos = new TCanvas("c_type_dedx_cos", "c_type_dedx_cos", 1500,400);
+  c_type_dedx_cos->Divide(5,1);
+
+  int count = 0;
+  for ( auto itype : PFO_type ){
+
+    count++;
+
+    TH2F *h_dedx_cos = h2_dEdx.at(LPFO_mode).at(itype).at("dEdx_cos");
+
+    c_type_dedx_cos->cd(count);
+    h_dedx_cos->Draw("colz");
+
+  }
+
+}
+
 void dedx()
 {
   TGaxis::SetMaxDigits(3);
   gStyle->SetOptStat(0);
 
-  // TFile *file = new TFile("../../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR." + prod_mode + ".KPiLPFO.distPi0.PFOp15.LPFOp15_pNaN.tpc0.mix_uds.check2.hists.all.root","READ");
-  // TFile *file = new TFile("../../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR." + prod_mode + ".KPiLPFO.distPi0.PFOp15.LPFOp15_pNaN.tpc0.mix_uds.correctDist.all.root","READ");
-  TFile *file = new TFile("../../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR." + prod_mode + ".KPiLPFO.distPi0.PFOp15.LPFOp15_pNaN.tpc0.mix_uds.varCut2.correctDist.all.root","READ");
   if (!file->IsOpen()) return;
 
-  // dedxDistCosProj(file);
-  dedxDistCosProjType(file);
+  // dedxDistCosProj();
+  dedxDistCosProjType();
+  // dedxCos();
 
 
 }
