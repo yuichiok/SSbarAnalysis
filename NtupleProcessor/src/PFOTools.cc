@@ -267,8 +267,14 @@ namespace QQbarAnalysis
 
   Bool_t PFOTools::isPion( PFO_Info iPFO )
   {
-    return iPFO.dEdx_dist_pdg == 211;
+    // return iPFO.dEdx_dist_pdg == 211;
     // return (iPFO.dEdx_dist_pdg == 211) && (0 < iPFO.pfo_piddedx_pi_dedxdist);
+    // return (iPFO.dEdx_dist_pdg == 211) && (-2 < iPFO.pfo_piddedx_pi_dedxdist) && (iPFO.pfo_piddedx_pi_dedxdist < 2);
+    Float_t dedx_pi_mean  = 1.82249E-1;
+    Float_t dedx_pi_sigma = 9.60323E-3;
+    Float_t dedx_pi_min   = dedx_pi_mean - dedx_pi_sigma;
+    Float_t dedx_pi_max   = dedx_pi_mean + dedx_pi_sigma;
+    return (dedx_pi_min < iPFO.pfo_piddedx_pi_dedxdist) && (iPFO.pfo_piddedx_pi_dedxdist < dedx_pi_max);
 
     // if(abs(iPFO.cos)>0.9) return (iPFO.dEdx_dist_pdg == 211);
     // else{
