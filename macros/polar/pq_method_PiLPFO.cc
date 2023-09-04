@@ -11,6 +11,7 @@ TString prod_mode = "dd";
 TString LPFO_mode = "Pi";
 
 TFile *file = new TFile("../../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR." + prod_mode + ".KPiLPFO.PFOp15.LPFOp15_pNaN.tpc0.mix_uds.correctDist.all.root","READ");
+enum correctionType {typeEfficiency, typeResolution, typeBoth, typeNone};
 
 void BinNormal(TH1F *h)
 {
@@ -58,37 +59,88 @@ void main_pq()
   TH1F *h_rej_PiPi_cos  = (TH1F*) file->Get("cos/h_Pi_rej_cos");
 
   // efficiency correction
-  Bool_t isEffCorr = true;
+  correctionType corrType = typeBoth;
+  
   TH1F *h_reco_Pi_scos_eff_corr;
   TH1F *h_reco_Pi_qcos_eff_corr;
-  if (isEffCorr)
-  {
-    // h_reco_Pi_scos_eff_corr = resolutionCorrection(h_reco_Pi_scos,"Pi",file);
-    // h_reco_Pi_qcos_eff_corr = resolutionCorrection(h_reco_Pi_qcos,"Pi",file);
-    TH1F* h_reco_Pi_scos_eff = efficiencyCorrection(h_reco_Pi_scos,"Pi",file);
-    TH1F* h_reco_Pi_qcos_eff = efficiencyCorrection(h_reco_Pi_qcos,"Pi",file);
-    h_reco_Pi_scos_eff_corr = resolutionCorrection(h_reco_Pi_scos_eff,"Pi",file);
-    h_reco_Pi_qcos_eff_corr = resolutionCorrection(h_reco_Pi_qcos_eff,"Pi",file);
-
-  }else{
-    h_reco_Pi_scos_eff_corr = (TH1F*) h_reco_Pi_scos->Clone();
-    h_reco_Pi_qcos_eff_corr = (TH1F*) h_reco_Pi_qcos->Clone();
-  }
 
   TH1F *h_acc_PiPi_cos_eff_corr;
   TH1F *h_rej_PiPi_cos_eff_corr;
-  if (isEffCorr)
+
+  switch (corrType)
   {
-    // h_acc_PiPi_cos_eff_corr = resolutionCorrection(h_acc_PiPi_cos,"Pi",file);
-    // h_rej_PiPi_cos_eff_corr = resolutionCorrection(h_rej_PiPi_cos,"Pi",file);
-    TH1F* h_acc_PiPi_cos_eff = efficiencyCorrection(h_acc_PiPi_cos,"Pi",file);
-    TH1F* h_rej_PiPi_cos_eff = efficiencyCorrection(h_rej_PiPi_cos,"Pi",file);
-    h_acc_PiPi_cos_eff_corr = resolutionCorrection(h_acc_PiPi_cos_eff,"Pi",file);
-    h_rej_PiPi_cos_eff_corr = resolutionCorrection(h_rej_PiPi_cos_eff,"Pi",file);
-  }else{
-    h_acc_PiPi_cos_eff_corr = (TH1F*) h_acc_PiPi_cos->Clone();
-    h_rej_PiPi_cos_eff_corr = (TH1F*) h_rej_PiPi_cos->Clone();
+    default:
+      break;
+
+    case typeNone:
+      h_reco_Pi_scos_eff_corr = (TH1F*) h_reco_Pi_scos->Clone();
+      h_reco_Pi_qcos_eff_corr = (TH1F*) h_reco_Pi_qcos->Clone();
+      h_acc_PiPi_cos_eff_corr = (TH1F*) h_acc_PiPi_cos->Clone();
+      h_rej_PiPi_cos_eff_corr = (TH1F*) h_rej_PiPi_cos->Clone();
+      break;    
+
+    case typeEfficiency:
+      h_reco_Pi_scos_eff_corr = efficiencyCorrection(h_reco_Pi_scos,"Pi",file);
+      h_reco_Pi_qcos_eff_corr = efficiencyCorrection(h_reco_Pi_qcos,"Pi",file);
+      h_acc_PiPi_cos_eff_corr = efficiencyCorrection(h_acc_PiPi_cos,"Pi",file);
+      h_rej_PiPi_cos_eff_corr = efficiencyCorrection(h_rej_PiPi_cos,"Pi",file);
+      break;
+    
+    case typeResolution:
+      h_reco_Pi_scos_eff_corr = resolutionCorrection(h_reco_Pi_scos,"Pi",file);
+      h_reco_Pi_qcos_eff_corr = resolutionCorrection(h_reco_Pi_qcos,"Pi",file);
+      h_acc_PiPi_cos_eff_corr = resolutionCorrection(h_acc_PiPi_cos,"Pi",file);
+      h_rej_PiPi_cos_eff_corr = resolutionCorrection(h_rej_PiPi_cos,"Pi",file);
+      break;
+    
+    case typeBoth:
+      TH1F* h_reco_Pi_scos_eff = efficiencyCorrection(h_reco_Pi_scos,"Pi",file);
+      h_reco_Pi_scos_eff_corr = resolutionCorrection(h_reco_Pi_scos_eff,"Pi",file);
+
+      TH1F* h_reco_Pi_qcos_eff = efficiencyCorrection(h_reco_Pi_qcos,"Pi",file);
+      h_reco_Pi_qcos_eff_corr = resolutionCorrection(h_reco_Pi_qcos_eff,"Pi",file);
+
+      TH1F* h_acc_PiPi_cos_eff = efficiencyCorrection(h_acc_PiPi_cos,"Pi",file);
+      h_acc_PiPi_cos_eff_corr = resolutionCorrection(h_acc_PiPi_cos_eff,"Pi",file);
+
+      TH1F* h_rej_PiPi_cos_eff = efficiencyCorrection(h_rej_PiPi_cos,"Pi",file);
+      h_rej_PiPi_cos_eff_corr = resolutionCorrection(h_rej_PiPi_cos_eff,"Pi",file);
+      
+      break;
+
   }
+
+  // if (isEffCorr)
+  // {
+  //   // scos & qcos
+  //   h_reco_Pi_scos_eff_corr = efficiencyCorrection(h_reco_Pi_scos,"Pi",file);
+  //   h_reco_Pi_qcos_eff_corr = efficiencyCorrection(h_reco_Pi_qcos,"Pi",file);
+  //   // h_reco_Pi_scos_eff_corr = resolutionCorrection(h_reco_Pi_scos,"Pi",file);
+  //   // h_reco_Pi_qcos_eff_corr = resolutionCorrection(h_reco_Pi_qcos,"Pi",file);
+
+  //   // TH1F* h_reco_Pi_scos_eff = efficiencyCorrection(h_reco_Pi_scos,"Pi",file);
+  //   // TH1F* h_reco_Pi_qcos_eff = efficiencyCorrection(h_reco_Pi_qcos,"Pi",file);
+  //   // h_reco_Pi_scos_eff_corr = resolutionCorrection(h_reco_Pi_scos_eff,"Pi",file);
+  //   // h_reco_Pi_qcos_eff_corr = resolutionCorrection(h_reco_Pi_qcos_eff,"Pi",file);
+
+  //   // acc & rej
+  //   h_acc_PiPi_cos_eff_corr = efficiencyCorrection(h_acc_PiPi_cos,"Pi",file);
+  //   h_rej_PiPi_cos_eff_corr = efficiencyCorrection(h_rej_PiPi_cos,"Pi",file);
+  //   // h_acc_PiPi_cos_eff_corr = resolutionCorrection(h_acc_PiPi_cos,"Pi",file);
+  //   // h_rej_PiPi_cos_eff_corr = resolutionCorrection(h_rej_PiPi_cos,"Pi",file);
+
+  //   // TH1F* h_acc_PiPi_cos_eff = efficiencyCorrection(h_acc_PiPi_cos,"Pi",file);
+  //   // TH1F* h_rej_PiPi_cos_eff = efficiencyCorrection(h_rej_PiPi_cos,"Pi",file);
+  //   // h_acc_PiPi_cos_eff_corr = resolutionCorrection(h_acc_PiPi_cos_eff,"Pi",file);
+  //   // h_rej_PiPi_cos_eff_corr = resolutionCorrection(h_rej_PiPi_cos_eff,"Pi",file);
+
+  // }else{
+  //   h_reco_Pi_scos_eff_corr = (TH1F*) h_reco_Pi_scos->Clone();
+  //   h_reco_Pi_qcos_eff_corr = (TH1F*) h_reco_Pi_qcos->Clone();
+
+  //   h_acc_PiPi_cos_eff_corr = (TH1F*) h_acc_PiPi_cos->Clone();
+  //   h_rej_PiPi_cos_eff_corr = (TH1F*) h_rej_PiPi_cos->Clone();
+  // }
 
   StyleHist(h_gen_q_qcos,kGreen+1);
   h_gen_q_qcos->SetFillStyle(0);
