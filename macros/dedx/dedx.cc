@@ -53,6 +53,9 @@ void dedxDistCosProjType()
   TCanvas *c_type_dedx_cos_type = new TCanvas("c_type_dedx_cos_type", "c_type_dedx_cos_type", 1500,1000);
   c_type_dedx_cos_type->Divide(cut_name.size(),PFO_type.size());
 
+  TCanvas *c_type_dedx_p_type = new TCanvas("c_type_dedx_p_type", "c_type_dedx_p_type", 1500,1000);
+  c_type_dedx_p_type->Divide(cut_name.size(),PFO_type.size());
+
   TCanvas *c_type_dedx_dist_cos_type = new TCanvas("c_type_dedx_dist_cos_type", "c_type_dedx_dist_cos_type", 1500,1000);
   c_type_dedx_dist_cos_type->Divide(cut_name.size(),PFO_type.size());
 
@@ -64,6 +67,8 @@ void dedxDistCosProjType()
 
   TH1F *PiID_eff;
 
+  TPad *p1;
+
   int count = 0;
   for ( auto itype : PFO_type ){
     TH1F *h_denom = nullptr;
@@ -73,6 +78,7 @@ void dedxDistCosProjType()
 
       TString hTitle = itype + " | " + iname;
       TH2F *h_dedx_cos           = h2_dEdx_eff.at("reco").at(LPFO_mode).at(itype).at(iname).at("dEdx_cos");
+      TH2F *h_dedx_p             = h2_dEdx_eff.at("reco").at(LPFO_mode).at(itype).at(iname).at("dEdx_p");
       TH2F *h_dedx_dist_cos      = h2_dEdx_eff.at("reco").at(LPFO_mode).at(itype).at(iname).at("dEdx_dist_cos");
       TH1F *h_dedx_dist_cos_proj = (TH1F*) h_dedx_dist_cos->ProjectionX();
 
@@ -81,11 +87,17 @@ void dedxDistCosProjType()
 
       c_type_dedx_cos_type->cd(count);
       h_dedx_cos->Draw("colz");
-      h_dedx_cos->Draw("cont3 same");
+      // h_dedx_cos->Draw("cont3 same");
+
+      c_type_dedx_p_type->cd(count);
+      p1 = (TPad*)(c_type_dedx_p_type->cd(count));
+      p1->SetLogx();
+      h_dedx_p->GetXaxis()->SetRangeUser(15,100);
+      h_dedx_p->Draw("colz");
 
       c_type_dedx_dist_cos_type->cd(count);
       h_dedx_dist_cos->Draw("colz");
-      h_dedx_dist_cos->Draw("cont3 same");
+      // h_dedx_dist_cos->Draw("cont3 same");
       
       c_type_dedx_dist_cos_proj_type->cd(count);
       StyleHist(h_dedx_dist_cos_proj,kBlue);
