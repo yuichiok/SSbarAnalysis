@@ -118,9 +118,9 @@ TH1F * CorrectHist( TString prodMode, TH1F * h_reco, vector<Float_t> p_vec)
   corrected->Sumw2();
   for (int i = 1; i < nbins / 2 + 1; i++)
   {
-    // float p = p_vec.at(i - 1);
+    float p = p_vec.at(i - 1);
     // float p = 0.82; // good AFB for ud mix
-    float p = 0.73;    // average p for u & d
+    // float p = 0.73;    // average p for u & d
     float q = 1 - p;
     float weight = (p * p + q * q) / (q * q * q * q - p * p * p * p);
 
