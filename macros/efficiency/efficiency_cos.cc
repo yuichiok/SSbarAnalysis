@@ -50,6 +50,12 @@ TH1F* plotEfficiency(TH1F *h_num, TH1F *h_denom)
 {
   gStyle->SetOptStat(0);
 
+  cout << "h_num->GetName() = " << h_num->GetName() << "\n";
+
+  Int_t Nnum = h_num->GetEntries();
+  Int_t Ndenom = h_denom->GetEntries();
+  cout << "Efficiency = " << (Float_t) Nnum / (Float_t) Ndenom  << "\t Nnum = " << Nnum << ", Ndenom = " << Ndenom << "\n";
+
   TH1F *h_eff = (TH1F*) h_num->Clone();
   h_eff->Divide(h_denom);
   h_eff->GetYaxis()->SetRangeUser(0,1);
