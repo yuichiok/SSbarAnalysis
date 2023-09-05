@@ -9,7 +9,7 @@
 using std::cout; using std::endl;
 using std::vector; using std::unordered_map;
 
-const TString prod_mode = "dd";
+const TString prod_mode = "uu";
 const TString LPFO_mode = "Pi";
 
 const vector<TString> PFO_mode  = {"K","Pi"};
@@ -28,13 +28,17 @@ TH1F* plotEfficiency(TH1F *h_num, TH1F *h_denom)
   return h_eff;
 }
 
-void dedxDistCosProjType()
+unordered_map< TString, unordered_map< TString, unordered_map< TString, unordered_map< TString, unordered_map< TString, TH2F* > > > > > h2_dEdx_eff;  // [GenReco][LPFO][TruthID][cut][hist]
+vector<TString> gen_reco  = {"gen","reco"};
+vector<TString> cut_name = {"nocut","momentum", "tpc_hits", "offset", "PID", "SPFO", "charge"};
+vector<TString> heff_dedx_name = {"dEdx_p","dEdx_cos","dEdx_error_cos","dEdx_dist_cos"};
+
+unordered_map< TString, unordered_map< TString, unordered_map< TString, TH2F* > > > h2_dEdx; // [LPFO][TruthID][hist]
+vector<TString> hdEdx_name = {"dEdx_p","dEdx_cos","dEdx_dist_cos"};
+
+void getHistograms()
 {
-  vector<TString> gen_reco  = {"gen","reco"};
-  vector<TString> cut_name = {"nocut","momentum", "tpc_hits", "offset", "PID", "SPFO", "charge"};
-  vector<TString> heff_dedx_name = {"dEdx_p","dEdx_cos","dEdx_error_cos","dEdx_dist_cos"};
-  unordered_map< TString, unordered_map< TString, unordered_map< TString, unordered_map< TString, unordered_map< TString, TH2F* > > > > > h2_dEdx_eff;  // [GenReco][LPFO][TruthID][cut][hist]
-  TString dir_name = "efficiency/dEdx/";
+  TString dir_eff_name = "efficiency/dEdx/";
 
   for ( auto igen_reco : gen_reco ){
     for ( auto imode : PFO_mode ){
@@ -42,7 +46,7 @@ void dedxDistCosProjType()
         for ( auto icut : cut_name ){
           for ( auto ihist : heff_dedx_name ){
             TString hname = "h2_" + igen_reco + "_" + imode + "_" + itype + "_" + icut + "_" + ihist;
-            TH2F *h = (TH2F*) file->Get(dir_name + hname);
+            TH2F *h = (TH2F*) file->Get(dir_eff_name + hname);
             h2_dEdx_eff[igen_reco][imode][itype][icut][ihist] = h;
           }
         }
@@ -50,6 +54,21 @@ void dedxDistCosProjType()
     }
   }
 
+  TString dir_dedx_name = "dEdx/";
+
+  for ( auto imode : PFO_mode ){
+    for ( auto itype : PFO_type ){
+      for ( auto icut : hdEdx_name ){
+        TString hname = "h2_" + imode + "_" + itype + "_" + icut;
+        TH2F *h = (TH2F*) file->Get(dir_dedx_name + hname);
+        h2_dEdx[imode][itype][icut] = h;
+      }
+    }
+  }
+}
+
+void dedxDistCosProjType()
+{
   TCanvas *c_type_dedx_cos_type = new TCanvas("c_type_dedx_cos_type", "c_type_dedx_cos_type", 1500,1000);
   c_type_dedx_cos_type->Divide(cut_name.size(),PFO_type.size());
 
@@ -125,20 +144,6 @@ void dedxDistCosProjType()
 
 void dedxDistCosProj()
 {
-  vector<TString> hdEdx_name = {"dEdx_p","dEdx_cos","dEdx_dist_cos"};
-  unordered_map< TString, unordered_map< TString, unordered_map< TString, TH2F* > > > h2_dEdx; // [LPFO][TruthID][hist]
-  TString dir_name = "dEdx/";
-
-  for ( auto imode : PFO_mode ){
-    for ( auto itype : PFO_type ){
-      for ( auto icut : hdEdx_name ){
-        TString hname = "h2_" + imode + "_" + itype + "_" + icut;
-        TH2F *h = (TH2F*) file->Get(dir_name + hname);
-        h2_dEdx[imode][itype][icut] = h;
-      }
-    }
-  }
-
   TCanvas *c_dedx_dist_cos = new TCanvas("c_dedx_dist_cos", "c_dedx_dist_cos", 500,500);
   TCanvas *c_type_dedx_dist_cos = new TCanvas("c_type_dedx_dist_cos", "c_type_dedx_dist_cos", 1500,400);
   c_type_dedx_dist_cos->Divide(5,1);
@@ -201,6 +206,8 @@ void dedx()
   gStyle->SetOptStat(0);
 
   if (!file->IsOpen()) return;
+
+  getHistograms();
 
   // dedxDistCosProj();
   dedxDistCosProjType();
