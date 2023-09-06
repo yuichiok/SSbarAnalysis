@@ -169,20 +169,6 @@ void dedxDistCosProj()
 
 void dedxCos()
 {
-  vector<TString> hdEdx_name = {"dEdx_p","dEdx_cos","dEdx_dist_cos"};
-  unordered_map< TString, unordered_map< TString, unordered_map< TString, TH2F* > > > h2_dEdx; // [LPFO][TruthID][hist]
-  TString dir_name = "dEdx/";
-
-  for ( auto imode : PFO_mode ){
-    for ( auto itype : PFO_type ){
-      for ( auto icut : hdEdx_name ){
-        TString hname = "h2_" + imode + "_" + itype + "_" + icut;
-        TH2F *h = (TH2F*) file->Get(dir_name + hname);
-        h2_dEdx[imode][itype][icut] = h;
-      }
-    }
-  }
-
   TCanvas *c_type_dedx_cos = new TCanvas("c_type_dedx_cos", "c_type_dedx_cos", 1500,400);
   c_type_dedx_cos->Divide(5,1);
 
@@ -200,12 +186,17 @@ void dedxCos()
 
 }
 
-void dedxPOffsetProjection()
+void dedxOffsetProjection()
 {
+  vector< pair< TString, Color_t > > type_color = {{"Pi",kBlue},{"K",kRed},{"p",kGreen},{"e",kMagenta},{"mu",kCyan}};
+
   TCanvas *c_type_dedx_p = new TCanvas("c_type_dedx_p", "c_type_dedx_p", 800,800);
   TPad *pad_type_dedx_p  = new TPad("pad_type_dedx_p", "pad_type_dedx_p",0,0,1,1);
   StylePad(pad_type_dedx_p,0,0.15,0,0.17);
-  vector< pair< TString, Color_t > > type_color = {{"Pi",kBlue},{"K",kRed},{"p",kGreen},{"e",kMagenta},{"mu",kCyan}};
+
+  TCanvas *c_type_dedx_cos_mean_sigma = new TCanvas("c_type_dedx_cos_mean_sigma", "c_type_dedx_cos_mean_sigma", 800,800);
+  TPad *pad_type_dedx_cos_mean_sigma  = new TPad("pad_type_dedx_cos_mean_sigma", "pad_type_dedx_cos_mean_sigma",0,0,1,1);
+  StylePad(pad_type_dedx_cos_mean_sigma,0,0.15,0,0.17);
 
   // legend
   TLegend *leg = new TLegend(0.62,0.67,0.80,0.83);
@@ -221,9 +212,27 @@ void dedxPOffsetProjection()
     count++;
     TH2F *h_dedx_p   = h2_dEdx_eff.at("reco").at(LPFO_mode).at(itype).at("offset").at("dEdx_p");
     TH2F *h_dedx_cos = h2_dEdx_eff.at("reco").at(LPFO_mode).at(itype).at("offset").at("dEdx_cos");
-    TH1F *h_dedx_p_proj = (TH1F*) h_dedx_p->ProjectionY();
+    TH1F *h_dedx_p_proj   = (TH1F*) h_dedx_p->ProjectionY();
     StyleHist(h_dedx_p_proj,icolor);
     
+    Int_t nbins = h_dedx_cos->GetNbinsX();
+    Float_t tge_cos[nbins], tge_err_cos[nbins];
+    Float_t tge_dedx[nbins], tge_err_dedx[nbins];
+    for( int ibin=1; ibin <= nbins; ibin++ ){
+      TH1D *h_dedx_cos_proj = h_dedx_cos->ProjectionY("h_dedx_cos_proj",ibin,ibin);
+      TF1 *f_dedx_cos = new TF1("f_dedx_cos","gaus",-1,1);
+      h_dedx_cos_proj->Fit(f_dedx_cos,"Q");
+      Float_t cos  = h_dedx_cos->GetXaxis()->GetBinCenter(ibin);
+      Float_t binw = h_dedx_cos->GetXaxis()->GetBinWidth(ibin);
+      Float_t mean_dedx  = f_dedx_cos->GetParameter(1);
+      Float_t sigma_dedx = f_dedx_cos->GetParameter(2);
+
+      tge_cos[ibin-1]  = cos;
+      tge_dedx[ibin-1] = mean_dedx;
+      tge_err_cos[ibin-1]  = binw/2.;
+      tge_err_dedx[ibin-1] = sigma_dedx;
+    }
+
     pad_type_dedx_p->cd();
     if(count){
       h_dedx_p_proj->Draw("hsame");
@@ -232,6 +241,26 @@ void dedxPOffsetProjection()
       h_dedx_p_proj->Draw("h");
     }
     leg->AddEntry(h_dedx_p_proj,itype,"l");
+
+    if(itype == "Pi"){
+      pad_type_dedx_cos_mean_sigma->cd();
+      TGraphErrors *tge_dedx_cos = new TGraphErrors(nbins,tge_cos,tge_dedx,tge_err_cos,tge_err_dedx);
+      tge_dedx_cos->SetMarkerStyle(20);
+      tge_dedx_cos->SetMarkerColor(icolor);
+      tge_dedx_cos->SetLineColor(icolor);
+      if(count){
+        tge_dedx_cos->Draw("psame");
+      }else{
+        tge_dedx_cos->SetTitle(";cos#theta;dE/dx");
+        tge_dedx_cos->Draw("ap");
+      }
+
+      cout << nbins << endl;
+
+      for ( auto ix : tge_cos ){
+        cout << ix << endl;
+      }
+    }
 
   }
 
@@ -251,7 +280,8 @@ void dedx()
   // dedxDistCosProj();
   // dedxDistCosProjType();
   // dedxCos();
-  dedxPOffsetProjection();
+  dedxOffsetProjection();
+  // dedxOffsetMeanSigma();
 
 
 }
