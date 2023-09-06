@@ -200,6 +200,45 @@ void dedxCos()
 
 }
 
+void dedxPOffsetProjection()
+{
+  TCanvas *c_type_dedx_p = new TCanvas("c_type_dedx_p", "c_type_dedx_p", 800,800);
+  TPad *pad_type_dedx_p  = new TPad("pad_type_dedx_p", "pad_type_dedx_p",0,0,1,1);
+  StylePad(pad_type_dedx_p,0,0.15,0,0.17);
+  vector< pair< TString, Color_t > > type_color = {{"Pi",kBlue},{"K",kRed},{"p",kGreen},{"e",kMagenta},{"mu",kCyan}};
+
+  // legend
+  TLegend *leg = new TLegend(0.62,0.67,0.80,0.83);
+  leg->SetLineColor(0);
+  leg->SetMargin(0.8);
+
+  Int_t count = 0;
+  for ( const auto ipair : type_color ){
+
+    TString itype  = ipair.first;
+    Color_t icolor = ipair.second;
+
+    count++;
+    TH2F *h_dedx_p   = h2_dEdx_eff.at("reco").at(LPFO_mode).at(itype).at("offset").at("dEdx_p");
+    TH2F *h_dedx_cos = h2_dEdx_eff.at("reco").at(LPFO_mode).at(itype).at("offset").at("dEdx_cos");
+    TH1F *h_dedx_p_proj = (TH1F*) h_dedx_p->ProjectionY();
+    StyleHist(h_dedx_p_proj,icolor);
+    
+    pad_type_dedx_p->cd();
+    if(count){
+      h_dedx_p_proj->Draw("hsame");
+    }else{
+      h_dedx_p_proj->SetTitle(";dE/dx;Entries");
+      h_dedx_p_proj->Draw("h");
+    }
+    leg->AddEntry(h_dedx_p_proj,itype,"l");
+
+  }
+
+  leg->Draw();
+
+}
+
 void dedx()
 {
   TGaxis::SetMaxDigits(3);
@@ -210,8 +249,9 @@ void dedx()
   getHistograms();
 
   // dedxDistCosProj();
-  dedxDistCosProjType();
+  // dedxDistCosProjType();
   // dedxCos();
+  dedxPOffsetProjection();
 
 
 }
