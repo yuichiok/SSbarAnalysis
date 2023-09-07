@@ -38,7 +38,6 @@ namespace QQbarAnalysis
 
       virtual vector<PFO_Info>  GetJet            ( int ijet );
       virtual vector<PFO_Info>  GetSortedJet      ( int ijet );
-      virtual vector<PFO_Info>  GetSubjet         ( int ijet, TString lmode );
       virtual Int_t             Get_dEdx_dist_PID ( Float_t kdEdx_dist, Float_t pidEdx_dist, Float_t pdEdx_dist );
       virtual Float_t           Get_dEdx_dist     ( PFO_Info iPFO, TString particle );
       virtual Bool_t            isKaon            ( PFO_Info iPFO );
@@ -65,9 +64,6 @@ namespace QQbarAnalysis
 
       vector<PFO_Info> PFO_jet[2];
       unordered_map<int, vector<PFO_Info> > PFO_sorted_jet;
-      unordered_map< TString, unordered_map<int, vector<PFO_Info> > > PFO_subjet;
-      unordered_map< TString, unordered_map<int, vector<PFO_Info> > > PFO_unsorted_subjet_cheat;
-      unordered_map< TString, unordered_map<int, vector<PFO_Info> > > PFO_subjet_cheat;
 
       vector<PFO_Info> LPFO;      
 

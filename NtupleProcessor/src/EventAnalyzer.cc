@@ -414,28 +414,6 @@ namespace QQbarAnalysis
 
   }
 
-  Bool_t EventAnalyzer::is_high_LPFO( PFOTools pfot, TString lmode )
-  {
-    TString other_mode = (lmode == "K") ? "Pi" : "K";
-
-    Int_t check = 0;
-    for ( int ijet=0; ijet<2; ijet++ ){
-      vector<PFO_Info> subjet_lmode = pfot.PFO_subjet.at(lmode).at(ijet);
-      vector<PFO_Info> subjet_other = pfot.PFO_subjet.at(other_mode).at(ijet);
-      if( subjet_lmode.size() == 0 || subjet_other.size() == 0 ){
-        check++;
-        continue;
-      }
-
-      PFO_Info LPFO_lmode = subjet_lmode.at(0);
-      PFO_Info LPFO_other = subjet_other.at(0);
-      if( LPFO_lmode.p_mag > LPFO_other.p_mag ) check++;
-    }
-
-    return check == 2;
-
-  }
-
   void EventAnalyzer::ProcessDoubleTag(PFOTools pfot, PFOTools mct, unordered_map< TString, unordered_map<TString, Bool_t> > cuts, unordered_map< int, vector<PFO_Info> > subjet_pair)
   {
     unordered_map< TString, vector<Bool_t> > is_pass;

@@ -64,7 +64,6 @@ namespace QQbarAnalysis
     // Gadgets
       void             ResolutionAnalysis( PFOTools pfot, PFOTools mct );
       unordered_map<TString, Int_t> Gen_Reco_Stats_Stable( PFOTools pfot, PFOTools mct, TString lmode , Float_t cos_min, Float_t cos_max );
-      Bool_t           is_high_LPFO( PFOTools pfot, TString lmode );
 
     // Histogram extractor
       void             ProcessDoubleTag( PFOTools pfot, PFOTools mct, unordered_map< TString, unordered_map<TString, Bool_t> > cuts, unordered_map< int, vector<PFO_Info> > subjet_pair );

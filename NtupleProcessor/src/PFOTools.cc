@@ -179,11 +179,6 @@ namespace QQbarAnalysis
       Valid_PFOs.push_back(PFO);
       PFO_jet[ijet].push_back(PFO);
 
-      // Cheated PFO
-      for( auto i_lmode : PFO_mode ){
-        if( abs(PFO.pfo_pdgcheat) == PFO_type_map_rev.at(i_lmode) ) PFO_unsorted_subjet_cheat[i_lmode][ijet].push_back(PFO);
-      }
-
     }
 
     for (int ijet=0; ijet < 2; ijet++){
@@ -191,18 +186,6 @@ namespace QQbarAnalysis
       // sort jet
       PFO_sorted_jet[ijet] = SortJet(PFO_jet[ijet]);
       if( PFO_sorted_jet[ijet].size() ) LPFO.push_back(PFO_sorted_jet[ijet].at(0));
-      
-      // get subjet
-      for ( auto i_lmode : PFO_mode ){
-        
-        PFO_subjet[i_lmode][ijet] = GetSubjet(ijet, i_lmode);
-
-        if( PFO_unsorted_subjet_cheat[i_lmode][ijet].size() ){
-          PFO_subjet_cheat[i_lmode][ijet] = SortJet(PFO_unsorted_subjet_cheat.at(i_lmode).at(ijet));
-        }
-      }
-
-      // cheat
 
     }
 
@@ -226,15 +209,6 @@ namespace QQbarAnalysis
       vector<PFO_Info> sorted_jet = PFO_jet[ijet];
       sorted_jet = SortJet( sorted_jet );
       return sorted_jet;
-  }
-
-  vector<PFO_Info> PFOTools::GetSubjet( int ijet, TString lmode )
-  {
-    vector<PFO_Info> subjet;
-    for ( const auto iPFO : PFO_sorted_jet[ijet] ){
-      if( is_PID( lmode, iPFO ) ) subjet.push_back( iPFO );
-    }
-    return subjet;
   }
 
   Int_t PFOTools::Get_dEdx_dist_PID( Float_t kdEdx_dist, Float_t pidEdx_dist, Float_t pdEdx_dist )
