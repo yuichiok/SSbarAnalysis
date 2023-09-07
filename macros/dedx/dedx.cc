@@ -7,13 +7,16 @@
 #include "../include/PolarTools.hh"
 
 using std::cout; using std::endl;
-using std::vector; using std::unordered_map;
+using std::vector;
+using std::unordered_map;
+using std::pair;
 
 const TString prod_mode = "uu";
 const TString LPFO_mode = "Pi";
 
 const vector<TString> PFO_mode  = {"K","Pi"};
 const vector<TString> PFO_type  = {"K","Pi", "p", "e", "mu"};
+vector< pair< TString, Color_t > > type_color = {{"Pi",kBlue},{"K",kRed},{"p",kGreen},{"e",kMagenta},{"mu",kCyan}};
 
 TFile *file = new TFile("../../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR." + prod_mode + ".KPiLPFO.dedxPi.PFOp15.LPFOp15_pNaN.tpc0.mix_uds.correctDist.all.root","READ");
 
@@ -188,15 +191,9 @@ void dedxCos()
 
 void dedxOffsetProjection()
 {
-  vector< pair< TString, Color_t > > type_color = {{"Pi",kBlue},{"K",kRed},{"p",kGreen},{"e",kMagenta},{"mu",kCyan}};
-
   TCanvas *c_type_dedx_p = new TCanvas("c_type_dedx_p", "c_type_dedx_p", 800,800);
   TPad *pad_type_dedx_p  = new TPad("pad_type_dedx_p", "pad_type_dedx_p",0,0,1,1);
   StylePad(pad_type_dedx_p,0,0.15,0,0.17);
-
-  TCanvas *c_type_dedx_cos_mean_sigma = new TCanvas("c_type_dedx_cos_mean_sigma", "c_type_dedx_cos_mean_sigma", 800,800);
-  TPad *pad_type_dedx_cos_mean_sigma  = new TPad("pad_type_dedx_cos_mean_sigma", "pad_type_dedx_cos_mean_sigma",0,0,1,1);
-  StylePad(pad_type_dedx_cos_mean_sigma,0,0.15,0,0.17);
 
   // legend
   TLegend *leg = new TLegend(0.62,0.67,0.80,0.83);
@@ -224,52 +221,55 @@ void dedxOffsetProjection()
     }
     leg->AddEntry(h_dedx_p_proj,itype,"l");
 
-
-    if(itype == "Pi"){
-      Int_t nbins = h_dedx_cos->GetNbinsX();
-      Float_t tge_cos[nbins], tge_err_cos[nbins];
-      Float_t tge_dedx[nbins], tge_err_dedx[nbins];
-      for( int ibin=1; ibin <= nbins; ibin++ ){
-        TH1F *h_dedx_cos_proj = (TH1F*) h_dedx_cos->ProjectionY("h_dedx_cos_proj",ibin,ibin);
-        TF1 *f_dedx_cos = new TF1("f_dedx_cos","gaus",0.1,0.3);
-        h_dedx_cos_proj->Fit(f_dedx_cos,"MNRS");
-        Float_t cos  = h_dedx_cos->GetXaxis()->GetBinCenter(ibin);
-        Float_t binw = h_dedx_cos->GetXaxis()->GetBinWidth(ibin);
-        Float_t mean_dedx  = f_dedx_cos->GetParameter(1);
-        Float_t sigma_dedx = f_dedx_cos->GetParameter(2);
-
-        tge_cos[ibin-1]  = cos;
-        tge_dedx[ibin-1] = mean_dedx;
-        tge_err_cos[ibin-1]  = binw/2.;
-        tge_err_dedx[ibin-1] = sigma_dedx;
-      }
-
-      pad_type_dedx_cos_mean_sigma->cd();
-      TGraphErrors *tge_dedx_cos = new TGraphErrors(nbins,tge_cos,tge_dedx,tge_err_cos,tge_err_dedx);
-      tge_dedx_cos->SetMarkerStyle(20);
-      tge_dedx_cos->SetMarkerColor(icolor);
-      tge_dedx_cos->SetLineColor(icolor);
-      tge_dedx_cos->SetTitle(";cos#theta;dE/dx");
-      tge_dedx_cos->Draw("ap");
-
-    }
-
-    // pad_type_dedx_cos_mean_sigma->cd();
-    // TGraphErrors *tge_dedx_cos = new TGraphErrors(nbins,tge_cos,tge_dedx,tge_err_cos,tge_err_dedx);
-    // tge_dedx_cos->SetMarkerStyle(20);
-    // tge_dedx_cos->SetMarkerColor(icolor);
-    // tge_dedx_cos->SetLineColor(icolor);
-    // if(count){
-    //   tge_dedx_cos->Draw("psame");
-    // }else{
-    //   tge_dedx_cos->SetTitle(";cos#theta;dE/dx");
-    //   tge_dedx_cos->Draw("ap");
-    // }
-
   }
 
   pad_type_dedx_p->cd();
   leg->Draw();
+
+}
+
+void dedxOffsetMeanSigma()
+{
+  unordered_map<TString, TGraphErrors*> type_tge; // [type]
+
+  for ( const auto ipair : type_color ){
+
+    TString itype  = ipair.first;
+    Color_t icolor = ipair.second;
+
+    TH2F *h_dedx_cos = h2_dEdx_eff.at("reco").at(LPFO_mode).at(itype).at("offset").at("dEdx_cos");
+
+    Int_t nbins = h_dedx_cos->GetNbinsX();
+    Float_t tge_cos[nbins], tge_err_cos[nbins];
+    Float_t tge_dedx[nbins], tge_err_dedx[nbins];
+    for( int ibin=1; ibin <= nbins; ibin++ ){
+      TH1F *h_dedx_cos_proj = (TH1F*) h_dedx_cos->ProjectionY("h_dedx_cos_proj",ibin,ibin);
+      TF1 *f_dedx_cos = new TF1("f_dedx_cos","gaus",0.1,0.3);
+      h_dedx_cos_proj->Fit(f_dedx_cos,"MNRSQ");
+      Float_t cos  = h_dedx_cos->GetXaxis()->GetBinCenter(ibin);
+      Float_t binw = h_dedx_cos->GetXaxis()->GetBinWidth(ibin);
+      Float_t mean_dedx  = f_dedx_cos->GetParameter(1);
+      Float_t sigma_dedx = f_dedx_cos->GetParameter(2);
+
+      tge_cos[ibin-1]  = cos;
+      tge_dedx[ibin-1] = mean_dedx;
+      tge_err_cos[ibin-1]  = binw/2.;
+      tge_err_dedx[ibin-1] = sigma_dedx;
+    }
+
+    if(itype == "Pi" || itype == "K" || itype == "p"){
+      type_tge[itype] = new TGraphErrors(nbins,tge_cos,tge_dedx,tge_err_cos,tge_err_dedx);
+      type_tge[itype]->SetName(itype);
+      type_tge[itype]->SetTitle(itype+" dE/dx Projection;cos#theta;dE/dx");
+    }
+
+  }
+
+  TFile *fout = new TFile("dedxOffsetMeanSigma.root","RECREATE");
+  for ( const auto &[itype, tge] : type_tge ){
+    tge->Write();
+  }
+  fout->Close();
 
 }
 
@@ -283,10 +283,10 @@ void dedx()
   getHistograms();
 
   // dedxDistCosProj();
-  dedxDistCosProjType();
+  // dedxDistCosProjType();
   // dedxCos();
-  dedxOffsetProjection();
-  // dedxOffsetMeanSigma();
+  // dedxOffsetProjection();
+  dedxOffsetMeanSigma();
 
 
 }
