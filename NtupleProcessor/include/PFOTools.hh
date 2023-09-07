@@ -14,6 +14,7 @@
 #include <TFile.h>
 #include <TTree.h>
 #include <TF1.h>
+#include <TGraphErrors.h>
 
 #include <vector>
 
@@ -40,11 +41,12 @@ namespace QQbarAnalysis
       virtual vector<PFO_Info>  GetSortedJet      ( int ijet );
       virtual Int_t             Get_dEdx_dist_PID ( Float_t kdEdx_dist, Float_t pidEdx_dist, Float_t pdEdx_dist );
       virtual Float_t           Get_dEdx_dist     ( PFO_Info iPFO, TString particle );
-      virtual Bool_t            isKaon            ( PFO_Info iPFO );
-      virtual Bool_t            isPion            ( PFO_Info iPFO );
-      virtual Bool_t            isProton          ( PFO_Info iPFO );
+      virtual vector<Float_t>   get_dedxRange     ( TGraphErrors* gdedx, Float_t cos );
+      virtual Bool_t            isKaon            ( PFO_Info iPFO, TGraphErrors* gdedx );
+      virtual Bool_t            isPion            ( PFO_Info iPFO, TGraphErrors* gdedx );
+      virtual Bool_t            isProton          ( PFO_Info iPFO, TGraphErrors* gdedx );
       virtual Bool_t            is_cheatNoOthers  ( PFO_Info iPFO );
-      virtual Bool_t            is_PID            ( TString lmode, PFO_Info iPFO );
+      virtual Bool_t            is_PID            ( TString lmode, PFO_Info iPFO, unordered_map< TString, TGraphErrors*> gdedx );
 
     // LPFO checks
       virtual Bool_t           is_jet_mult_non0 ();
@@ -81,7 +83,6 @@ namespace QQbarAnalysis
 
       TF1 *fCorrection = new TF1("fCorrection","-2*(1.6 - pol8)",-1,1);
       Double_t pars[9] = {0.599455,-0.000377453,-0.120892,0.00118809,0.82,-0.000671831,-1.72613,-0.000781913,1.04};
-
 
       AnalysisConfig _anCfg;
 

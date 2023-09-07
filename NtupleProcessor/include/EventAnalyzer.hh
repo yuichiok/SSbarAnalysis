@@ -22,6 +22,7 @@
 #include <TROOT.h>
 #include <TChain.h>
 #include <TFile.h>
+#include <TGraphErrors.h>
 
 #include <vector>
 #include <fstream>
@@ -44,6 +45,7 @@ namespace QQbarAnalysis
     // methods
       Bool_t           InitReadTree( TTree* ); // Maps class variables to an input TTree.
       void             InitHists();
+      void             InitWeights();
       
       void             CreateFile();
       void             WriteFile();
@@ -112,6 +114,9 @@ namespace QQbarAnalysis
       AnalysisConfig _anCfg;
       TString       _config;
 
+      unordered_map< TString, TGraphErrors* > _gdedx;
+      TGraphErrors * _gdedxPi;
+      TGraphErrors * _gdedxK;
 
   };
 }

@@ -62,6 +62,15 @@ namespace QQbarAnalysis
     return true;
   }
 
+  void EventAnalyzer::InitWeights()
+  {
+    TFile *f = TFile::Open("/home/ilc/yokugawa/SSbarAnalysis/rootfiles/weight/dedxOffsetMeanSigma.root","READ");
+    if(!f) cout << "NtupleProcessor: ERROR: Unable to open file " << endl;
+    TString modes[3] = {"Pi","K","P"};
+    for ( auto imode : modes ) _gdedx[imode] = (TGraphErrors*)f->Get(imode);
+    f->Close();
+  }
+
   void EventAnalyzer::CreateFile()
   {
     // Write Tree
@@ -259,8 +268,8 @@ namespace QQbarAnalysis
 
     // check dEdx dist
     if( gen_reco == "reco" ){
-      outMap["PID"] = pfot.is_PID( i_lmode, LPFOs.at(0) ) &&
-                      pfot.is_PID( i_lmode, LPFOs.at(1) );
+      outMap["PID"] = pfot.is_PID( i_lmode, LPFOs.at(0), _gdedx ) &&
+                      pfot.is_PID( i_lmode, LPFOs.at(1), _gdedx );
     }else{
       outMap["PID"] = ( abs(LPFOs.at(0).pfo_pdgcheat) == pfot.PFO_type_map_rev.at(i_lmode) ) &&
                       ( abs(LPFOs.at(1).pfo_pdgcheat) == pfot.PFO_type_map_rev.at(i_lmode) );
@@ -371,7 +380,7 @@ namespace QQbarAnalysis
       
       if ( !is_cos_p ) continue;
 
-      if( pfot.is_PID(lmode,iPFO) )                                   PFO_Hadron_Collection.push_back(iPFO);
+      if( pfot.is_PID(lmode,iPFO,_gdedx) )                            PFO_Hadron_Collection.push_back(iPFO);
       if( abs(iPFO.pfo_pdgcheat) == pfot.PFO_type_map_rev.at(lmode) ) Gen_Hadron_Collection.push_back(iPFO);
 
 

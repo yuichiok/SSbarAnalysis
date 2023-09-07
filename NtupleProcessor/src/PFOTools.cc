@@ -8,6 +8,7 @@ PFOTools.cpp
 #include <algorithm>
 #include <TString.h>
 #include <TFile.h> 
+#include <TH1F.h>
 
 #include "PFOTools.hh"
 #include "VectorTools.hh"
@@ -234,34 +235,41 @@ namespace QQbarAnalysis
     else {return -1000;}
   }
 
-  Bool_t PFOTools::isKaon( PFO_Info iPFO )
+  vector<Float_t> PFOTools::get_dedxRange( TGraphErrors *gdedx, Float_t cos )
   {
-      return iPFO.dEdx_dist_pdg == 321;
+    TH1F template_cos_hist("template_cos_hist","template_cos_hist",100,-1,1);
+    Float_t dedx_mean  = gdedx->Eval(cos);
+    Float_t dedx_sigma = gdedx->GetErrorY(template_cos_hist.FindBin(cos));
+    Float_t dedx_min   = dedx_mean - dedx_sigma;
+    Float_t dedx_max   = dedx_mean + dedx_sigma;
+    return {dedx_min, dedx_max};
   }
 
-  Bool_t PFOTools::isPion( PFO_Info iPFO )
+  Bool_t PFOTools::isKaon( PFO_Info iPFO, TGraphErrors *gdedx )
+  {
+    // return iPFO.dEdx_dist_pdg == 321;
+
+    vector<Float_t> dedxRange = get_dedxRange(gdedx, iPFO.cos);
+    return (dedxRange.at(0) < iPFO.pfo_dedx) && (iPFO.pfo_dedx < dedxRange.at(1));
+  }
+
+  Bool_t PFOTools::isPion( PFO_Info iPFO, TGraphErrors *gdedx )
   {
     // return iPFO.dEdx_dist_pdg == 211;
     // return (iPFO.dEdx_dist_pdg == 211) && (0 < iPFO.pfo_piddedx_pi_dedxdist);
     // return (iPFO.dEdx_dist_pdg == 211) && (-2 < iPFO.pfo_piddedx_pi_dedxdist) && (iPFO.pfo_piddedx_pi_dedxdist < 2);
 
-    Float_t dedx_pi_mean  = 1.82249E-1;
-    Float_t dedx_pi_sigma = 9.60323E-3;
-    Float_t dedx_pi_min   = dedx_pi_mean - dedx_pi_sigma;
-    Float_t dedx_pi_max   = dedx_pi_mean + dedx_pi_sigma;
-    return (dedx_pi_min < iPFO.pfo_dedx) && (iPFO.pfo_dedx < dedx_pi_max);
-
-    // if(abs(iPFO.cos)>0.9) return (iPFO.dEdx_dist_pdg == 211);
-    // else{
-    //   Double_t correction = fCorrection->Eval(iPFO.cos);
-    //   return (iPFO.pfo_piddedx_pi_dedxdist > correction);
-    // }
+    vector<Float_t> dedxRange = get_dedxRange(gdedx, iPFO.cos);
+    return (dedxRange.at(0) < iPFO.pfo_dedx) && (iPFO.pfo_dedx < dedxRange.at(1));
 
   }
 
-  Bool_t PFOTools::isProton( PFO_Info iPFO )
+  Bool_t PFOTools::isProton( PFO_Info iPFO, TGraphErrors *gdedx )
   {
-    return iPFO.dEdx_dist_pdg == 2212;
+    // return iPFO.dEdx_dist_pdg == 2212;
+
+    vector<Float_t> dedxRange = get_dedxRange(gdedx, iPFO.cos);
+    return (dedxRange.at(0) < iPFO.pfo_dedx) && (iPFO.pfo_dedx < dedxRange.at(1));
   }
 
   Bool_t PFOTools::is_cheatNoOthers( PFO_Info iPFO )
@@ -269,11 +277,11 @@ namespace QQbarAnalysis
     return (abs(iPFO.pfo_pdgcheat) != 11) && (abs(iPFO.pfo_pdgcheat) != 13);
   }
 
-  Bool_t PFOTools::is_PID( TString lmode, PFO_Info iPFO )
+  Bool_t PFOTools::is_PID( TString lmode, PFO_Info iPFO, unordered_map<TString, TGraphErrors*> gdedx )
   {
-    if     ( lmode == "K"  ){ return isKaon(iPFO);   }
-    else if( lmode == "Pi" ){ return isPion(iPFO);   }
-    else if( lmode == "p"  ){ return isProton(iPFO); }
+    if     ( lmode == "K"  ){ return isKaon(iPFO, gdedx[lmode]);   }
+    else if( lmode == "Pi" ){ return isPion(iPFO, gdedx[lmode]);   }
+    else if( lmode == "p"  ){ return isProton(iPFO, gdedx[lmode]); }
     else                    { return false; }
   }
 
