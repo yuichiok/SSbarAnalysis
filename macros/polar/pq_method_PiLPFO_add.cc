@@ -153,7 +153,8 @@ void pq_method_PiLPFO_add()
     cout << "dd ratio = " << dd_ratio << endl;
     cout << "weight   = " << dd_ratio / uu_ratio << endl;
 
-    hmap.at("dd").at("gen")->Scale( dd_ratio / uu_ratio );
+    // hmap.at("dd").at("gen")->Scale( dd_ratio / uu_ratio );
+    hmap.at("dd").at("gen")->Scale( 0.9 );
 
     TH1F *h_reco = (TH1F*) hmap.at("uu").at("reco")->Clone();
     h_reco->Add(hmap.at("dd").at("reco"));
@@ -272,7 +273,8 @@ void pq_method_PiLPFO_add()
 
     // Draw polar angle fit ratio
       TCanvas  *c_ratio_fit = new TCanvas("c_ratio_fit","c_ratio_fit",700,900);
-      TH1F *h_reco_Pi_pq_cos_subhist = new TH1F("h_reco_Pi_pq_cos_subhist",";LPFO Pion cos#theta; Entries",80,-fitRange,fitRange);
+      // Int_t binFitRange = fitRange * h_reco->GetNbinsX();
+      TH1F *h_reco_Pi_pq_cos_subhist = new TH1F("h_reco_Pi_pq_cos_subhist",";LPFO Pion cos#theta; Entries",90,-fitRange,fitRange);
       for ( int ibin=1; ibin<=h_reco_Pi_pq_cos_subhist->GetNbinsX(); ibin++ )
       {
         Int_t recobin = ibin + 5;
