@@ -3,11 +3,11 @@ import sys
 import subprocess
 
 # udsProcess
-udsProcess = "uu"
+udsProcess = "dd"
 
 # chiral
-# chiral = "eLpR"
-chiral = "eRpL"
+chiral = "eLpR"
+# chiral = "eRpL"
 
 # processID
 chiral_node = ""
@@ -35,5 +35,6 @@ for processID in processIDs:
 # subprocess.run(f"rm -rf {indir}",shell=True)
 # subprocess.run(f"mkdir -p {indir}",shell=True)
 
-print(f"hadd -f -j 8 {outdir}/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.{chiral_node}.{udsProcess}.KPiLPFO.dedxPi.PFOp15.LPFOp15_pNaN.tpc0.mix_uds.correctDist.all.root {stagedir}/stage_*.root")
-subprocess.run(f"hadd -f -j 8 {outdir}/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.{chiral_node}.{udsProcess}.KPiLPFO.dedxPi.PFOp15.LPFOp15_pNaN.tpc0.mix_uds.correctDist.all.root {stagedir}/stage_*.root",shell=True)
+haddCommand = f"hadd -f -j 8 {outdir}/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.{chiral_node}.{udsProcess}.KPiLPFO.dedxPi.PFOp15.LPFOp15_pNaN.tpc0.mix_uds.correctDist.all.root {stagedir}/stage_*.root"
+print(haddCommand)
+subprocess.run(haddCommand,shell=True)
