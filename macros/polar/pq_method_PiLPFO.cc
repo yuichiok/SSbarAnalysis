@@ -7,8 +7,8 @@
 using std::cout; using std::endl;
 using std::vector; using std::unordered_map;
 
-TString prod_mode = "dd";
-TString chiral     = "eL.pR";
+TString prod_mode = "uu";
+TString chiral    = "eL.pR";
 TString LPFO_mode = "Pi";
 
 TFile *file = new TFile("../../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h." + chiral + "." + prod_mode + ".KPiLPFO.dedxPi.PFOp15.LPFOp15_pNaN.tpc0.mix_uds.correctDist.all.root","READ");
