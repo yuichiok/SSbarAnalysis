@@ -11,14 +11,15 @@ using std::vector;
 using std::unordered_map;
 using std::pair;
 
-const TString prod_mode = "uu";
-const TString LPFO_mode = "Pi";
+TString prod_mode = "dd";
+TString chiral    = "eR.pL";
+TString LPFO_mode = "Pi";
+
+TFile *file = new TFile("../../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h." + chiral + "." + prod_mode + ".KPiLPFO.dedxPi.PFOp15.LPFOp15_pNaN.tpc0.mix_uds.correctDist.all.root","READ");
 
 const vector<TString> PFO_mode  = {"K","Pi"};
 const vector<TString> PFO_type  = {"K","Pi", "p", "e", "mu"};
 vector< pair< TString, Color_t > > type_color = {{"Pi",kBlue},{"K",kRed},{"p",kGreen},{"e",kMagenta},{"mu",kCyan}};
-
-TFile *file = new TFile("../../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR." + prod_mode + ".KPiLPFO.dedxPi.PFOp15.LPFOp15_pNaN.tpc0.mix_uds.correctDist.all.root","READ");
 
 TH1F* plotEfficiency(TH1F *h_num, TH1F *h_denom)
 {
@@ -283,10 +284,10 @@ void dedx()
   getHistograms();
 
   // dedxDistCosProj();
-  // dedxDistCosProjType();
+  dedxDistCosProjType();
   // dedxCos();
   // dedxOffsetProjection();
-  dedxOffsetMeanSigma();
+  // dedxOffsetMeanSigma();
 
 
 }
