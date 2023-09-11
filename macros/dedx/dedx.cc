@@ -20,6 +20,7 @@ TFile *file = new TFile("../../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E
 const vector<TString> PFO_mode  = {"K","Pi"};
 const vector<TString> PFO_type  = {"K","Pi", "p", "e", "mu"};
 vector< pair< TString, Color_t > > type_color = {{"Pi",kBlue},{"K",kRed},{"p",kGreen+1},{"e",kMagenta},{"mu",kCyan}};
+unordered_map<TString, Color_t> type_color_map = {{"Pi",kBlue},{"K",kRed},{"p",kGreen+1},{"e",kMagenta},{"mu",kCyan}};
 
 TH1F* plotEfficiency(TH1F *h_num, TH1F *h_denom)
 {
@@ -69,6 +70,32 @@ void getHistograms()
       }
     }
   }
+}
+
+void dedxP()
+{
+  TCanvas *c_dedx_p_type = new TCanvas("c_dedx_p_type", "c_dedx_p_type", 800,800);
+  TPad *pad_dedx_p_type  = new TPad("pad_dedx_p_type", "pad_dedx_p_type",0,0,1,1);
+  StylePad(pad_dedx_p_type,0,0.15,0,0.17);
+
+  int count = 0;
+  for ( auto itype : PFO_type ){
+
+    TH2F *h_dedx_p = h2_dEdx_eff.at("reco").at(LPFO_mode).at(itype).at("nocut").at("dEdx_p");
+    h_dedx_p->SetFillColor(type_color_map[itype]);
+    h_dedx_p->SetLineColor(type_color_map[itype]);
+    h_dedx_p->GetXaxis()->SetRangeUser(15,100);
+
+    if(count) h_dedx_p->Draw("box same");
+    else{
+      h_dedx_p->SetTitle(";p [GeV];dE/dx #times 10^{-6} GeV/mm");
+      h_dedx_p->Draw("box");
+    }
+
+    count++;
+  }
+
+
 }
 
 void dedxDistCosProjType()
@@ -320,11 +347,12 @@ void dedx()
 
   getHistograms();
 
+  dedxP();
   // dedxDistCosProj();
   // dedxDistCosProjType();
   // dedxCos();
   // dedxOffsetProjection();
-  dedxOffsetMeanSigma();
+  // dedxOffsetMeanSigma();
 
 
 }
