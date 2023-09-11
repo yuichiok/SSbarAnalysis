@@ -11,15 +11,15 @@ using std::vector;
 using std::unordered_map;
 using std::pair;
 
-TString prod_mode = "dd";
-TString chiral    = "eR.pL";
+TString prod_mode = "uu";
+TString chiral    = "eL.pR";
 TString LPFO_mode = "Pi";
 
 TFile *file = new TFile("../../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h." + chiral + "." + prod_mode + ".KPiLPFO.dedxPi.PFOp15.LPFOp15_pNaN.tpc0.mix_uds.correctDist.all.root","READ");
 
 const vector<TString> PFO_mode  = {"K","Pi"};
 const vector<TString> PFO_type  = {"K","Pi", "p", "e", "mu"};
-vector< pair< TString, Color_t > > type_color = {{"Pi",kBlue},{"K",kRed},{"p",kGreen},{"e",kMagenta},{"mu",kCyan}};
+vector< pair< TString, Color_t > > type_color = {{"Pi",kBlue},{"K",kRed},{"p",kGreen+1},{"e",kMagenta},{"mu",kCyan}};
 
 TH1F* plotEfficiency(TH1F *h_num, TH1F *h_denom)
 {
@@ -267,9 +267,46 @@ void dedxOffsetMeanSigma()
   }
 
   TFile *fout = new TFile("dedxOffsetMeanSigma.root","RECREATE");
-  for ( const auto &[itype, tge] : type_tge ){
+  TCanvas *c_dedx_cos_proj = new TCanvas("c_dedx_cos_proj", "c_dedx_cos_proj", 800,800);
+  TPad *pad_dedx_cos_proj  = new TPad("pad_dedx_cos_proj", "pad_dedx_cos_proj",0,0,1,1);
+  StylePad(pad_dedx_cos_proj,0,0.15,0,0.17);
+
+  // legend
+  TLegend *leg_dedx_cos_proj = new TLegend(0.59,0.20,0.77,0.36);
+  leg_dedx_cos_proj->SetLineColor(0);
+  leg_dedx_cos_proj->SetMargin(0.8);
+
+  Int_t counter = 0;
+  for ( const auto ipair : type_color ){
+
+    TString itype  = ipair.first;
+    Color_t icolor = ipair.second;
+    if(!(itype == "Pi" || itype == "K" || itype == "p")) continue;
+
+    TGraphErrors *tge = type_tge[itype];
+
+    pad_dedx_cos_proj->cd();
+    tge->SetMarkerColor(icolor);
+    tge->SetLineColor(icolor);
+    tge->SetMarkerStyle(20);
+    tge->SetMarkerSize(0.5);
+    leg_dedx_cos_proj->AddEntry(tge,itype,"lep");
+    if(counter) tge->Draw("P same");
+    else{
+      tge->SetTitle(";cos#theta;dE/dx #times 10^{-6} GeV/mm");
+      tge->GetYaxis()->SetRangeUser(0.1,0.2);
+      tge->Draw("AP");
+    }
+
+    fout->cd();
     tge->Write();
+
+    counter++;
   }
+
+
+  leg_dedx_cos_proj->Draw();
+
   fout->Close();
 
 }
@@ -284,10 +321,10 @@ void dedx()
   getHistograms();
 
   // dedxDistCosProj();
-  dedxDistCosProjType();
+  // dedxDistCosProjType();
   // dedxCos();
   // dedxOffsetProjection();
-  // dedxOffsetMeanSigma();
+  dedxOffsetMeanSigma();
 
 
 }
