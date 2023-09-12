@@ -7,8 +7,8 @@
 using std::cout; using std::endl;
 using std::vector; using std::unordered_map;
 
-TString prod_mode = "uu";
-TString chiral    = "eL.pR";
+TString prod_mode = "dd";
+TString chiral    = "eR.pL";
 TString LPFO_mode = "Pi";
 
 TFile *file = new TFile("../../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h." + chiral + "." + prod_mode + ".KPiLPFO.dedxPi.PFOp15.LPFOp15_pNaN.tpc0.mix_uds.correctDist.all.root","READ");
@@ -111,38 +111,6 @@ void main_pq()
 
   }
 
-  // if (isEffCorr)
-  // {
-  //   // scos & qcos
-  //   h_reco_Pi_scos_eff_corr = efficiencyCorrection(h_reco_Pi_scos,"Pi",file);
-  //   h_reco_Pi_qcos_eff_corr = efficiencyCorrection(h_reco_Pi_qcos,"Pi",file);
-  //   // h_reco_Pi_scos_eff_corr = resolutionCorrection(h_reco_Pi_scos,"Pi",file);
-  //   // h_reco_Pi_qcos_eff_corr = resolutionCorrection(h_reco_Pi_qcos,"Pi",file);
-
-  //   // TH1F* h_reco_Pi_scos_eff = efficiencyCorrection(h_reco_Pi_scos,"Pi",file);
-  //   // TH1F* h_reco_Pi_qcos_eff = efficiencyCorrection(h_reco_Pi_qcos,"Pi",file);
-  //   // h_reco_Pi_scos_eff_corr = resolutionCorrection(h_reco_Pi_scos_eff,"Pi",file);
-  //   // h_reco_Pi_qcos_eff_corr = resolutionCorrection(h_reco_Pi_qcos_eff,"Pi",file);
-
-  //   // acc & rej
-  //   h_acc_PiPi_cos_eff_corr = efficiencyCorrection(h_acc_PiPi_cos,"Pi",file);
-  //   h_rej_PiPi_cos_eff_corr = efficiencyCorrection(h_rej_PiPi_cos,"Pi",file);
-  //   // h_acc_PiPi_cos_eff_corr = resolutionCorrection(h_acc_PiPi_cos,"Pi",file);
-  //   // h_rej_PiPi_cos_eff_corr = resolutionCorrection(h_rej_PiPi_cos,"Pi",file);
-
-  //   // TH1F* h_acc_PiPi_cos_eff = efficiencyCorrection(h_acc_PiPi_cos,"Pi",file);
-  //   // TH1F* h_rej_PiPi_cos_eff = efficiencyCorrection(h_rej_PiPi_cos,"Pi",file);
-  //   // h_acc_PiPi_cos_eff_corr = resolutionCorrection(h_acc_PiPi_cos_eff,"Pi",file);
-  //   // h_rej_PiPi_cos_eff_corr = resolutionCorrection(h_rej_PiPi_cos_eff,"Pi",file);
-
-  // }else{
-  //   h_reco_Pi_scos_eff_corr = (TH1F*) h_reco_Pi_scos->Clone();
-  //   h_reco_Pi_qcos_eff_corr = (TH1F*) h_reco_Pi_qcos->Clone();
-
-  //   h_acc_PiPi_cos_eff_corr = (TH1F*) h_acc_PiPi_cos->Clone();
-  //   h_rej_PiPi_cos_eff_corr = (TH1F*) h_rej_PiPi_cos->Clone();
-  // }
-
   StyleHist(h_gen_q_qcos,kGreen+1);
   h_gen_q_qcos->SetFillStyle(0);
   h_gen_q_qcos->SetLineStyle(2);
@@ -244,6 +212,30 @@ void main_pq()
   leg_trp->AddEntry(h_reco_Pi_pq_cos_subhist,"Reconstructed #pi^{-} (corrected)","p");
   leg_trp->AddEntry(f_reco_ratio,"#frac{d#sigma}{dcos#theta} fit for LPFO","l");
   leg_trp->Draw();
+
+  // Draw polar angle reco/gen ratio
+    TCanvas  *c_ratio_genreco = new TCanvas("c_ratio_genreco","c_ratio_genreco",700,900);
+    TH1F *rGen  = (TH1F*) h_gen_q_qcos->Clone();
+    TH1F *rReco = (TH1F*) h_reco_Pi_pq_cos->Clone();
+    rReco->GetYaxis()->SetRangeUser(0,800E3);
+    rReco->SetTitle(";cos#theta;Entries");
+
+    auto trp_genreco = new TRatioPlot(rReco,rGen);
+    trp_genreco->SetGraphDrawOpt("P");
+    trp_genreco->SetSeparationMargin(0.0);
+    trp_genreco->Draw();
+    trp_genreco->GetLowerRefYaxis()->SetTitle("Data / MC");
+    trp_genreco->GetLowerRefGraph()->SetMinimum(0.5);
+    trp_genreco->GetLowerRefGraph()->SetMaximum(1.5);
+    trp_genreco->GetLowerRefYaxis()->SetLabelSize(0.02);
+
+    trp_genreco->GetUpperPad()->cd();
+    TLegend *leg_trp_genreco = new TLegend(0.51,0.74,0.89,0.89);
+    leg_trp_genreco->SetMargin(0.4);
+    leg_trp_genreco->SetLineColor(0);
+    leg_trp_genreco->AddEntry(rReco,"Reconstructed #pi^{-}","l");
+    leg_trp_genreco->AddEntry(rGen,"Generated #pi^{-}","l");
+    leg_trp_genreco->Draw();
 
   // Draw p value
   TCanvas *c_pval = new TCanvas("c_pval","c_pval",800,800);

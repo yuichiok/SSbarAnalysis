@@ -8,8 +8,12 @@
 using std::cout; using std::endl;
 using std::vector; using std::unordered_map;
 
-TString prod_mode = "ud";
+TString prod_mode = "uu";
+TString chiral    = "eR.pL";
 TString LPFO_mode = "Pi";
+
+TFile *uuFile = new TFile("../../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h." + chiral + ".uu.KPiLPFO.dedxPi.PFOp15.LPFOp15_pNaN.tpc0.mix_uds.correctDist.all.root","READ");
+TFile *ddFile = new TFile("../../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h." + chiral + ".dd.KPiLPFO.dedxPi.PFOp15.LPFOp15_pNaN.tpc0.mix_uds.correctDist.all.root","READ");
 
 Float_t fitRange = 0.9;
 
@@ -138,8 +142,6 @@ void pq_method_PiLPFO_add()
 {
   try
   {
-    TFile *uuFile = new TFile("../../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eR.pL.uu.KPiLPFO.dedxPi.PFOp15.LPFOp15_pNaN.tpc0.mix_uds.correctDist.all.root","READ");
-    TFile *ddFile = new TFile("../../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eR.pL.dd.KPiLPFO.dedxPi.PFOp15.LPFOp15_pNaN.tpc0.mix_uds.correctDist.all.root","READ");
     if (!uuFile->IsOpen() || !ddFile->IsOpen()) return;
 
     Float_t dd_ratio;
@@ -263,7 +265,7 @@ void pq_method_PiLPFO_add()
       h_gen_uu->Draw("h same");
       h_gen_dd->Draw("h same");
 
-      TLegend *legStackGen = new TLegend(0.3,0.7,0.7,0.85);
+      TLegend *legStackGen = new TLegend(0.51,0.76,0.85,0.86);
       legStackGen->SetMargin(0.4);
       legStackGen->SetLineColor(0);
       legStackGen->AddEntry(totalGen,"Total Generated #pi^{-}","l");
@@ -324,7 +326,7 @@ void pq_method_PiLPFO_add()
       trp_genreco->GetLowerRefYaxis()->SetLabelSize(0.02);
 
       trp_genreco->GetUpperPad()->cd();
-      TLegend *leg_trp_genreco = new TLegend(0.3,0.7,0.7,0.85);
+      TLegend *leg_trp_genreco = new TLegend(0.51,0.74,0.89,0.89);
       leg_trp_genreco->SetMargin(0.4);
       leg_trp_genreco->SetLineColor(0);
       leg_trp_genreco->AddEntry(rReco,"Reconstructed #pi^{-}","l");
