@@ -11,7 +11,16 @@ etc/*.ini
 *.root
 
 # batch job related
-batch_jobs
+batch_jobs/etc
+batch_jobs/*.sh
+batch_jobs/rootfiles
+batch_jobs/list
+batch_jobs/backup
+batch_jobs/grid
+
+# python related
+batch_jobs/__pycache__
+
 throw_jobs.sh
 
 merge.sh

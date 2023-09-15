@@ -15,6 +15,8 @@ namespace QQbarAnalysis
   HistManager::HistManager() {
     bins_dEdx[0]=0.1;
     for(int i=1;i<200;i++) bins_dEdx[i]=bins_dEdx[i-1]+0.1/100.;
+    bins_cos[0]=-1.0;
+    for(int i=1;i<nbins_cos+1;i++) bins_cos[i]=bins_cos[i-1]+2./nbins_cos;
   }
 
   void HistManager::InitializeHists()
@@ -53,6 +55,7 @@ namespace QQbarAnalysis
             TString hname_dedx_dist = "h2_" + i_gen_reco + "_" + i_lmode + "_" + i_type + "_" + iname;
             h2_dEdx_eff[i_gen_reco][i_lmode][i_type][iname]["dEdx_dist_cos"]  = new TH2F(hname_dedx_dist + "_dEdx_dist_cos",";cos#theta;#frac{dE}{dx} distance",nbins_cos,cos_min,cos_max,nbins_dEdx_dist,dEdx_dist_min,dEdx_dist_max);
             h2_dEdx_eff[i_gen_reco][i_lmode][i_type][iname]["dEdx_error_cos"] = new TH2F(hname_dedx_dist + "_dEdx_error_cos",";cos#theta;#frac{dE}{dx} error",nbins_cos,cos_min,cos_max,nbins_dEdx_dist,0.0001,0.005);
+            h2_dEdx_eff[i_gen_reco][i_lmode][i_type][iname]["dEdx_cos"]       = new TH2F(hname_dedx_dist + "_dEdx_cos",";cos#theta;#frac{dE}{dx}",nbins_cos,bins_cos,nbins_dEdx,bins_dEdx);
             h2_dEdx_eff[i_gen_reco][i_lmode][i_type][iname]["dEdx_p"]         = new TH2F(hname_dedx_dist + "_dEdx_p",";p (GeV);#frac{dE}{dx}",nbins_p,bins_p,nbins_dEdx,bins_dEdx);
           }
         }
@@ -63,6 +66,7 @@ namespace QQbarAnalysis
     for( auto i_lmode : _pt.PFO_mode ){
       for( auto i_type : _pt.PFO_type ){
         h2_dEdx[i_lmode][i_type]["dEdx_p"]        = new TH2F("h2_" + i_lmode + "_" + i_type + "_dEdx_p",";p (GeV);#frac{dE}{dx}",nbins_p,bins_p,nbins_dEdx,bins_dEdx);
+        h2_dEdx[i_lmode][i_type]["dEdx_cos"]      = new TH2F("h2_" + i_lmode + "_" + i_type + "_dEdx_cos",";cos#theta;#frac{dE}{dx}",nbins_cos,bins_cos,nbins_dEdx,bins_dEdx);
         h2_dEdx[i_lmode][i_type]["dEdx_dist_cos"] = new TH2F("h2_" + i_lmode + "_" + i_type + "_dEdx_dist_cos",";cos#theta;#frac{dE}{dx} distance",nbins_cos,cos_min,cos_max,nbins_dEdx_dist,dEdx_dist_min,dEdx_dist_max);
       }
     }

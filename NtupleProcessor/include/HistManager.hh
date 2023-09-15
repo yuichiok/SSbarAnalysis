@@ -29,14 +29,16 @@ namespace QQbarAnalysis
       virtual void WriteLists( TFile * output );
 
     // Variables
-      Int_t   nbins_cos = 100;
-      Float_t cos_min = -1.0, cos_max = 1.0;
+      const static Int_t   nbins_cos = 100;
+      static constexpr Float_t cos_min = -1.0, cos_max = 1.0;
 
       Float_t bins_dEdx[200];
-      Int_t nbins_dEdx=199;
+      const static Int_t nbins_dEdx=199;
 
-      Float_t nbins_dEdx_dist = 100;
-      Float_t dEdx_dist_min = -20.0, dEdx_dist_max = 20.0;
+      Float_t bins_cos[nbins_cos+1];
+
+      static constexpr Float_t nbins_dEdx_dist = 100;
+      static constexpr Float_t dEdx_dist_min = -20.0, dEdx_dist_max = 20.0;
 
 
     // Declear histograms
@@ -52,8 +54,8 @@ namespace QQbarAnalysis
 
       // efficiency plots
       vector<TString> gen_reco  = {"gen","reco"};
-      vector<TString> heff_name = {"momentum", "tpc_hits", "offset", "PID", "SPFO", "charge"};
-      vector<TString> heff_dedx_name = {"dEdx_p","dEdx_error_cos","dEdx_dist_cos"};
+      vector<TString> heff_name = {"nocut","momentum", "tpc_hits", "offset", "PID", "SPFO", "charge"};
+      vector<TString> heff_dedx_name = {"dEdx_p","dEdx_cos","dEdx_error_cos","dEdx_dist_cos"};
       unordered_map< TString, unordered_map< TString, unordered_map< TString, TH1F* > > > h1_cos_eff;  // [GenReco][LPFO][cut]
       unordered_map< TString, unordered_map< TString, unordered_map< TString, unordered_map< TString, unordered_map< TString, TH2F* > > > > > h2_dEdx_eff;  // [GenReco][LPFO][TruthID][cut][hist]
 

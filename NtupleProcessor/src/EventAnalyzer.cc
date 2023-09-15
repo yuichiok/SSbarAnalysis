@@ -62,6 +62,15 @@ namespace QQbarAnalysis
     return true;
   }
 
+  void EventAnalyzer::InitWeights()
+  {
+    TFile *f = TFile::Open("/home/ilc/yokugawa/SSbarAnalysis/rootfiles/weight/dedxOffsetMeanSigma.root","READ");
+    if(!f) cout << "NtupleProcessor: ERROR: Unable to open file " << endl;
+    TString modes[3] = {"Pi","K","P"};
+    for ( auto imode : modes ) _gdedx[imode] = (TGraphErrors*)f->Get(imode);
+    f->Close();
+  }
+
   void EventAnalyzer::CreateFile()
   {
     // Write Tree
@@ -242,6 +251,9 @@ namespace QQbarAnalysis
     unordered_map<TString, Bool_t> outMap;
     vector<PFO_Info> LPFOs = {subjet_pair.at(0).at(0), subjet_pair.at(1).at(0)};
 
+    // base
+    outMap["nocut"] = true;
+
     // check momentum
     outMap["momentum"] = pfot.is_momentum( LPFOs.at(0), _anCfg.LPFO_p_min, _anCfg.LPFO_p_max ) &&
                          pfot.is_momentum( LPFOs.at(1), _anCfg.LPFO_p_min, _anCfg.LPFO_p_max );
@@ -256,8 +268,8 @@ namespace QQbarAnalysis
 
     // check dEdx dist
     if( gen_reco == "reco" ){
-      outMap["PID"] = pfot.is_PID( i_lmode, LPFOs.at(0) ) &&
-                      pfot.is_PID( i_lmode, LPFOs.at(1) );
+      outMap["PID"] = pfot.is_PID( i_lmode, LPFOs.at(0), _gdedx ) &&
+                      pfot.is_PID( i_lmode, LPFOs.at(1), _gdedx );
     }else{
       outMap["PID"] = ( abs(LPFOs.at(0).pfo_pdgcheat) == pfot.PFO_type_map_rev.at(i_lmode) ) &&
                       ( abs(LPFOs.at(1).pfo_pdgcheat) == pfot.PFO_type_map_rev.at(i_lmode) );
@@ -368,7 +380,7 @@ namespace QQbarAnalysis
       
       if ( !is_cos_p ) continue;
 
-      if( pfot.is_PID(lmode,iPFO) )                                   PFO_Hadron_Collection.push_back(iPFO);
+      if( pfot.is_PID(lmode,iPFO,_gdedx) )                            PFO_Hadron_Collection.push_back(iPFO);
       if( abs(iPFO.pfo_pdgcheat) == pfot.PFO_type_map_rev.at(lmode) ) Gen_Hadron_Collection.push_back(iPFO);
 
 
@@ -411,28 +423,6 @@ namespace QQbarAnalysis
 
   }
 
-  Bool_t EventAnalyzer::is_high_LPFO( PFOTools pfot, TString lmode )
-  {
-    TString other_mode = (lmode == "K") ? "Pi" : "K";
-
-    Int_t check = 0;
-    for ( int ijet=0; ijet<2; ijet++ ){
-      vector<PFO_Info> subjet_lmode = pfot.PFO_subjet.at(lmode).at(ijet);
-      vector<PFO_Info> subjet_other = pfot.PFO_subjet.at(other_mode).at(ijet);
-      if( subjet_lmode.size() == 0 || subjet_other.size() == 0 ){
-        check++;
-        continue;
-      }
-
-      PFO_Info LPFO_lmode = subjet_lmode.at(0);
-      PFO_Info LPFO_other = subjet_other.at(0);
-      if( LPFO_lmode.p_mag > LPFO_other.p_mag ) check++;
-    }
-
-    return check == 2;
-
-  }
-
   void EventAnalyzer::ProcessDoubleTag(PFOTools pfot, PFOTools mct, unordered_map< TString, unordered_map<TString, Bool_t> > cuts, unordered_map< int, vector<PFO_Info> > subjet_pair)
   {
     unordered_map< TString, vector<Bool_t> > is_pass;
@@ -472,8 +462,11 @@ namespace QQbarAnalysis
 
             _hm.h2_dEdx.at(i_lmode).at(type).at("dEdx_p")->Fill( LPFO.p_mag, LPFO.pfo_dedx );
 
+            _hm.h2_dEdx.at(i_lmode).at(type).at("dEdx_cos")->Fill( LPFO.cos, LPFO.pfo_dedx );
+            _hm.h2_dEdx.at(i_lmode).at(type).at("dEdx_cos")->Fill( LPFO_opposite.cos, LPFO_opposite.pfo_dedx );
+
             _hm.h2_dEdx.at(i_lmode).at(type).at("dEdx_dist_cos")->Fill( LPFO.cos, pfot.Get_dEdx_dist(LPFO, i_lmode) );
-            _hm.h2_dEdx.at(i_lmode).at(type).at("dEdx_dist_cos")->Fill( LPFO_opposite.cos, pfot.Get_dEdx_dist(LPFO, i_lmode) );
+            _hm.h2_dEdx.at(i_lmode).at(type).at("dEdx_dist_cos")->Fill( LPFO_opposite.cos, pfot.Get_dEdx_dist(LPFO_opposite, i_lmode) );
           }
 
         }else{
@@ -513,6 +506,7 @@ namespace QQbarAnalysis
               TString type = _pt.PFO_type_map.at(abs(iLPFO.pfo_pdgcheat));
               _hm.h2_dEdx_eff.at(gen_reco).at(i_lmode).at(type).at(icut_name).at("dEdx_dist_cos")->Fill( iLPFO.cos, pfot.Get_dEdx_dist(iLPFO, i_lmode) );
               _hm.h2_dEdx_eff.at(gen_reco).at(i_lmode).at(type).at(icut_name).at("dEdx_error_cos")->Fill( iLPFO.cos, iLPFO.pfo_dedxerror );
+              _hm.h2_dEdx_eff.at(gen_reco).at(i_lmode).at(type).at(icut_name).at("dEdx_cos")->Fill( iLPFO.cos, iLPFO.pfo_dedx );
               _hm.h2_dEdx_eff.at(gen_reco).at(i_lmode).at(type).at(icut_name).at("dEdx_p")->Fill( iLPFO.p_mag, iLPFO.pfo_dedx );
             }
 

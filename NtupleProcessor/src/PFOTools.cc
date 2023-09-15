@@ -8,6 +8,7 @@ PFOTools.cpp
 #include <algorithm>
 #include <TString.h>
 #include <TFile.h> 
+#include <TH1F.h>
 
 #include "PFOTools.hh"
 #include "VectorTools.hh"
@@ -179,11 +180,6 @@ namespace QQbarAnalysis
       Valid_PFOs.push_back(PFO);
       PFO_jet[ijet].push_back(PFO);
 
-      // Cheated PFO
-      for( auto i_lmode : PFO_mode ){
-        if( abs(PFO.pfo_pdgcheat) == PFO_type_map_rev.at(i_lmode) ) PFO_unsorted_subjet_cheat[i_lmode][ijet].push_back(PFO);
-      }
-
     }
 
     for (int ijet=0; ijet < 2; ijet++){
@@ -191,20 +187,10 @@ namespace QQbarAnalysis
       // sort jet
       PFO_sorted_jet[ijet] = SortJet(PFO_jet[ijet]);
       if( PFO_sorted_jet[ijet].size() ) LPFO.push_back(PFO_sorted_jet[ijet].at(0));
-      
-      // get subjet
-      for ( auto i_lmode : PFO_mode ){
-        
-        PFO_subjet[i_lmode][ijet] = GetSubjet(ijet, i_lmode);
-
-        if( PFO_unsorted_subjet_cheat[i_lmode][ijet].size() ){
-          PFO_subjet_cheat[i_lmode][ijet] = SortJet(PFO_unsorted_subjet_cheat.at(i_lmode).at(ijet));
-        }
-      }
-
-      // cheat
 
     }
+
+    fCorrection->SetParameters(pars);
 
   }
 
@@ -224,15 +210,6 @@ namespace QQbarAnalysis
       vector<PFO_Info> sorted_jet = PFO_jet[ijet];
       sorted_jet = SortJet( sorted_jet );
       return sorted_jet;
-  }
-
-  vector<PFO_Info> PFOTools::GetSubjet( int ijet, TString lmode )
-  {
-    vector<PFO_Info> subjet;
-    for ( const auto iPFO : PFO_sorted_jet[ijet] ){
-      if( is_PID( lmode, iPFO ) ) subjet.push_back( iPFO );
-    }
-    return subjet;
   }
 
   Int_t PFOTools::Get_dEdx_dist_PID( Float_t kdEdx_dist, Float_t pidEdx_dist, Float_t pdEdx_dist )
@@ -258,20 +235,41 @@ namespace QQbarAnalysis
     else {return -1000;}
   }
 
-  Bool_t PFOTools::isKaon( PFO_Info iPFO )
+  vector<Float_t> PFOTools::get_dedxRange( TGraphErrors *gdedx, Float_t cos )
   {
-      return iPFO.dEdx_dist_pdg == 321;
+    TH1F template_cos_hist("template_cos_hist","template_cos_hist",100,-1,1);
+    Float_t dedx_mean  = gdedx->Eval(cos);
+    Float_t dedx_sigma = gdedx->GetErrorY(template_cos_hist.FindBin(cos));
+    Float_t dedx_min   = dedx_mean - dedx_sigma;
+    Float_t dedx_max   = dedx_mean + dedx_sigma;
+    return {dedx_min, dedx_max};
   }
 
-  Bool_t PFOTools::isPion( PFO_Info iPFO )
+  Bool_t PFOTools::isKaon( PFO_Info iPFO, TGraphErrors *gdedx )
   {
-    return iPFO.dEdx_dist_pdg == 211;
+    // return iPFO.dEdx_dist_pdg == 321;
+
+    vector<Float_t> dedxRange = get_dedxRange(gdedx, iPFO.cos);
+    return (dedxRange.at(0) < iPFO.pfo_dedx) && (iPFO.pfo_dedx < dedxRange.at(1));
+  }
+
+  Bool_t PFOTools::isPion( PFO_Info iPFO, TGraphErrors *gdedx )
+  {
+    // return iPFO.dEdx_dist_pdg == 211;
     // return (iPFO.dEdx_dist_pdg == 211) && (0 < iPFO.pfo_piddedx_pi_dedxdist);
+    // return (iPFO.dEdx_dist_pdg == 211) && (-2 < iPFO.pfo_piddedx_pi_dedxdist) && (iPFO.pfo_piddedx_pi_dedxdist < 2);
+
+    vector<Float_t> dedxRange = get_dedxRange(gdedx, iPFO.cos);
+    return (dedxRange.at(0) < iPFO.pfo_dedx) && (iPFO.pfo_dedx < dedxRange.at(1));
+
   }
 
-  Bool_t PFOTools::isProton( PFO_Info iPFO )
+  Bool_t PFOTools::isProton( PFO_Info iPFO, TGraphErrors *gdedx )
   {
-    return iPFO.dEdx_dist_pdg == 2212;
+    // return iPFO.dEdx_dist_pdg == 2212;
+
+    vector<Float_t> dedxRange = get_dedxRange(gdedx, iPFO.cos);
+    return (dedxRange.at(0) < iPFO.pfo_dedx) && (iPFO.pfo_dedx < dedxRange.at(1));
   }
 
   Bool_t PFOTools::is_cheatNoOthers( PFO_Info iPFO )
@@ -279,11 +277,11 @@ namespace QQbarAnalysis
     return (abs(iPFO.pfo_pdgcheat) != 11) && (abs(iPFO.pfo_pdgcheat) != 13);
   }
 
-  Bool_t PFOTools::is_PID( TString lmode, PFO_Info iPFO )
+  Bool_t PFOTools::is_PID( TString lmode, PFO_Info iPFO, unordered_map<TString, TGraphErrors*> gdedx )
   {
-    if     ( lmode == "K"  ){ return isKaon(iPFO);   }
-    else if( lmode == "Pi" ){ return isPion(iPFO);   }
-    else if( lmode == "p"  ){ return isProton(iPFO); }
+    if     ( lmode == "K"  ){ return isKaon(iPFO, gdedx[lmode]);   }
+    else if( lmode == "Pi" ){ return isPion(iPFO, gdedx[lmode]);   }
+    else if( lmode == "p"  ){ return isProton(iPFO, gdedx[lmode]); }
     else                    { return false; }
   }
 

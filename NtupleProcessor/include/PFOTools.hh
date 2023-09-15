@@ -13,6 +13,8 @@
 #include <TString.h>
 #include <TFile.h>
 #include <TTree.h>
+#include <TF1.h>
+#include <TGraphErrors.h>
 
 #include <vector>
 
@@ -37,14 +39,14 @@ namespace QQbarAnalysis
 
       virtual vector<PFO_Info>  GetJet            ( int ijet );
       virtual vector<PFO_Info>  GetSortedJet      ( int ijet );
-      virtual vector<PFO_Info>  GetSubjet         ( int ijet, TString lmode );
       virtual Int_t             Get_dEdx_dist_PID ( Float_t kdEdx_dist, Float_t pidEdx_dist, Float_t pdEdx_dist );
       virtual Float_t           Get_dEdx_dist     ( PFO_Info iPFO, TString particle );
-      static  Bool_t            isKaon            ( PFO_Info iPFO );
-      static  Bool_t            isPion            ( PFO_Info iPFO );
-      static  Bool_t            isProton          ( PFO_Info iPFO );
-      static  Bool_t            is_cheatNoOthers  ( PFO_Info iPFO );
-      virtual Bool_t            is_PID            ( TString lmode, PFO_Info iPFO );
+      virtual vector<Float_t>   get_dedxRange     ( TGraphErrors* gdedx, Float_t cos );
+      virtual Bool_t            isKaon            ( PFO_Info iPFO, TGraphErrors* gdedx );
+      virtual Bool_t            isPion            ( PFO_Info iPFO, TGraphErrors* gdedx );
+      virtual Bool_t            isProton          ( PFO_Info iPFO, TGraphErrors* gdedx );
+      virtual Bool_t            is_cheatNoOthers  ( PFO_Info iPFO );
+      virtual Bool_t            is_PID            ( TString lmode, PFO_Info iPFO, unordered_map< TString, TGraphErrors*> gdedx );
 
     // LPFO checks
       virtual Bool_t           is_jet_mult_non0 ();
@@ -64,9 +66,6 @@ namespace QQbarAnalysis
 
       vector<PFO_Info> PFO_jet[2];
       unordered_map<int, vector<PFO_Info> > PFO_sorted_jet;
-      unordered_map< TString, unordered_map<int, vector<PFO_Info> > > PFO_subjet;
-      unordered_map< TString, unordered_map<int, vector<PFO_Info> > > PFO_unsorted_subjet_cheat;
-      unordered_map< TString, unordered_map<int, vector<PFO_Info> > > PFO_subjet_cheat;
 
       vector<PFO_Info> LPFO;      
 
@@ -81,6 +80,9 @@ namespace QQbarAnalysis
       MC_QQbar  *mc_data  ;
       PFO_QQbar *data     ;
       PFO_Info   PFO      ;
+
+      TF1 *fCorrection = new TF1("fCorrection","-2*(1.6 - pol8)",-1,1);
+      Double_t pars[9] = {0.599455,-0.000377453,-0.120892,0.00118809,0.82,-0.000671831,-1.72613,-0.000781913,1.04};
 
       AnalysisConfig _anCfg;
 
