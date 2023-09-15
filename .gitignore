@@ -18,6 +18,9 @@ batch_jobs/list
 batch_jobs/backup
 batch_jobs/grid
 
+# python related
+batch_jobs/__pycache__
+
 throw_jobs.sh
 
 merge.sh
