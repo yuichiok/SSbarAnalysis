@@ -3,11 +3,11 @@ import sys
 import subprocess
 
 # udsProcess
-udsProcess = "dd"
+udsProcess = "uu"
 
 # chiral
-chiral = "eLpR"
-# chiral = "eRpL"
+# chiral = "eLpR"
+chiral = "eRpL"
 
 # processID
 chiral_node = ""
