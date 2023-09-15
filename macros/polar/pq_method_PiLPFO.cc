@@ -7,8 +7,12 @@
 using std::cout; using std::endl;
 using std::vector; using std::unordered_map;
 
-TString prod_mode = "uu";
+TString prod_mode = "dd";
+TString chiral    = "eR.pL";
 TString LPFO_mode = "Pi";
+
+TFile *file = new TFile("../../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h." + chiral + "." + prod_mode + ".KPiLPFO.dedxPi.PFOp15.LPFOp15_pNaN.tpc0.mix_uds.correctDist.all.root","READ");
+enum correctionType {typeEfficiency, typeResolution, typeBoth, typeNone};
 
 void BinNormal(TH1F *h)
 {
@@ -34,15 +38,17 @@ void Normalize(TH1F *h)
 
 void Normalize2Gen(TH1F *h, TH1F *h_gen)
 {
-	double intCosReco = h->Integral(20,80);
-	double intCosGen  = h_gen->Integral(20,80);
+	double intCosReco = h->Integral(20,30);
+	double intCosGen  = h_gen->Integral(20,30);
   h->Scale( intCosGen / intCosReco );
 }
 
 
-void main_pq(TFile *file)
+void main_pq()
 {
   gStyle->SetOptStat(0);
+
+  TString prodMode = getProductionMode(file);
 
   // reco and gen polar
   TH1F *h_gen_q_qcos    = (TH1F*) file->Get("gen/h_qcos");
@@ -54,27 +60,55 @@ void main_pq(TFile *file)
   TH1F *h_rej_PiPi_cos  = (TH1F*) file->Get("cos/h_Pi_rej_cos");
 
   // efficiency correction
-  Bool_t isEffCorr = true;
+  correctionType corrType = typeBoth;
+  
   TH1F *h_reco_Pi_scos_eff_corr;
   TH1F *h_reco_Pi_qcos_eff_corr;
-  if (isEffCorr)
-  {
-    h_reco_Pi_scos_eff_corr = Efficiency_Correction(h_reco_Pi_scos,"Pi",file);
-    h_reco_Pi_qcos_eff_corr = Efficiency_Correction(h_reco_Pi_qcos,"Pi",file);
-  }else{
-    h_reco_Pi_scos_eff_corr = (TH1F*) h_reco_Pi_scos->Clone();
-    h_reco_Pi_qcos_eff_corr = (TH1F*) h_reco_Pi_qcos->Clone();
-  }
 
   TH1F *h_acc_PiPi_cos_eff_corr;
   TH1F *h_rej_PiPi_cos_eff_corr;
-  if (isEffCorr)
+
+  switch (corrType)
   {
-    h_acc_PiPi_cos_eff_corr = Efficiency_Correction(h_acc_PiPi_cos,"Pi",file);
-    h_rej_PiPi_cos_eff_corr = Efficiency_Correction(h_rej_PiPi_cos,"Pi",file);
-  }else{
-    h_acc_PiPi_cos_eff_corr = (TH1F*) h_acc_PiPi_cos->Clone();
-    h_rej_PiPi_cos_eff_corr = (TH1F*) h_rej_PiPi_cos->Clone();
+    default:
+      break;
+
+    case typeNone:
+      h_reco_Pi_scos_eff_corr = (TH1F*) h_reco_Pi_scos->Clone();
+      h_reco_Pi_qcos_eff_corr = (TH1F*) h_reco_Pi_qcos->Clone();
+      h_acc_PiPi_cos_eff_corr = (TH1F*) h_acc_PiPi_cos->Clone();
+      h_rej_PiPi_cos_eff_corr = (TH1F*) h_rej_PiPi_cos->Clone();
+      break;    
+
+    case typeEfficiency:
+      h_reco_Pi_scos_eff_corr = efficiencyCorrection(h_reco_Pi_scos,"Pi",file);
+      h_reco_Pi_qcos_eff_corr = efficiencyCorrection(h_reco_Pi_qcos,"Pi",file);
+      h_acc_PiPi_cos_eff_corr = efficiencyCorrection(h_acc_PiPi_cos,"Pi",file);
+      h_rej_PiPi_cos_eff_corr = efficiencyCorrection(h_rej_PiPi_cos,"Pi",file);
+      break;
+    
+    case typeResolution:
+      h_reco_Pi_scos_eff_corr = resolutionCorrection(h_reco_Pi_scos,"Pi",file);
+      h_reco_Pi_qcos_eff_corr = resolutionCorrection(h_reco_Pi_qcos,"Pi",file);
+      h_acc_PiPi_cos_eff_corr = resolutionCorrection(h_acc_PiPi_cos,"Pi",file);
+      h_rej_PiPi_cos_eff_corr = resolutionCorrection(h_rej_PiPi_cos,"Pi",file);
+      break;
+    
+    case typeBoth:
+      TH1F* h_reco_Pi_scos_eff = efficiencyCorrection(h_reco_Pi_scos,"Pi",file);
+      h_reco_Pi_scos_eff_corr = resolutionCorrection(h_reco_Pi_scos_eff,"Pi",file);
+
+      TH1F* h_reco_Pi_qcos_eff = efficiencyCorrection(h_reco_Pi_qcos,"Pi",file);
+      h_reco_Pi_qcos_eff_corr = resolutionCorrection(h_reco_Pi_qcos_eff,"Pi",file);
+
+      TH1F* h_acc_PiPi_cos_eff = efficiencyCorrection(h_acc_PiPi_cos,"Pi",file);
+      h_acc_PiPi_cos_eff_corr = resolutionCorrection(h_acc_PiPi_cos_eff,"Pi",file);
+
+      TH1F* h_rej_PiPi_cos_eff = efficiencyCorrection(h_rej_PiPi_cos,"Pi",file);
+      h_rej_PiPi_cos_eff_corr = resolutionCorrection(h_rej_PiPi_cos_eff,"Pi",file);
+      
+      break;
+
   }
 
   StyleHist(h_gen_q_qcos,kGreen+1);
@@ -100,10 +134,12 @@ void main_pq(TFile *file)
     p_PiPi->SetBinError(nbins / 2 - i, p_vec.at(i + nbins / 2));
   }
 
-  TH1F *h_reco_Pi_pq_cos = CorrectHist(h_reco_Pi_qcos_eff_corr, p_vec);
+  TH1F *h_reco_Pi_pq_cos = CorrectHist(prodMode, h_reco_Pi_qcos_eff_corr, p_vec);
+  // TH1F *h_reco_Pi_pq_cos = (TH1F*) h_reco_Pi_qcos_eff_corr->Clone();
   StyleHist(h_reco_Pi_pq_cos,kBlue);
 
   Normalize2Gen(h_gen_q_qcos,h_reco_Pi_scos_eff_corr);
+  // Normalize2Gen(h_gen_q_qcos,h_reco_Pi_pq_cos);
 
   // Fitting
   TF1 * f_gen = new TF1("f_gen","[0]*(1+x*x)+[1]*x",-0.8,0.8);
@@ -177,6 +213,30 @@ void main_pq(TFile *file)
   leg_trp->AddEntry(f_reco_ratio,"#frac{d#sigma}{dcos#theta} fit for LPFO","l");
   leg_trp->Draw();
 
+  // Draw polar angle reco/gen ratio
+    TCanvas  *c_ratio_genreco = new TCanvas("c_ratio_genreco","c_ratio_genreco",700,900);
+    TH1F *rGen  = (TH1F*) h_gen_q_qcos->Clone();
+    TH1F *rReco = (TH1F*) h_reco_Pi_pq_cos->Clone();
+    rReco->GetYaxis()->SetRangeUser(0,800E3);
+    rReco->SetTitle(";cos#theta;Entries");
+
+    auto trp_genreco = new TRatioPlot(rReco,rGen);
+    trp_genreco->SetGraphDrawOpt("P");
+    trp_genreco->SetSeparationMargin(0.0);
+    trp_genreco->Draw();
+    trp_genreco->GetLowerRefYaxis()->SetTitle("Data / MC");
+    trp_genreco->GetLowerRefGraph()->SetMinimum(0.5);
+    trp_genreco->GetLowerRefGraph()->SetMaximum(1.5);
+    trp_genreco->GetLowerRefYaxis()->SetLabelSize(0.02);
+
+    trp_genreco->GetUpperPad()->cd();
+    TLegend *leg_trp_genreco = new TLegend(0.51,0.74,0.89,0.89);
+    leg_trp_genreco->SetMargin(0.4);
+    leg_trp_genreco->SetLineColor(0);
+    leg_trp_genreco->AddEntry(rReco,"Reconstructed #pi^{-}","l");
+    leg_trp_genreco->AddEntry(rGen,"Generated #pi^{-}","l");
+    leg_trp_genreco->Draw();
+
   // Draw p value
   TCanvas *c_pval = new TCanvas("c_pval","c_pval",800,800);
   TPad  *pad_pval = new TPad("pad_pval", "pad_pval",0,0,1,1);
@@ -225,10 +285,9 @@ void pq_method_PiLPFO()
 {
   try
   {
-    TFile *file = new TFile("../../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR." + prod_mode + ".KPiLPFO.distPi0.PFOp15.LPFOp15_pNaN.tpc0.mix_uds.check1.hists.all.root","READ");
     if (!file->IsOpen()) return;
 
-    main_pq(file);
+    main_pq();
 
   }
   catch(const std::exception& e)

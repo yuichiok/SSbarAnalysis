@@ -61,8 +61,8 @@ void main_pq()
   TH1F *h_reco_Pi_qcos_eff_corr;
   if (isEffCorr)
   {
-    h_reco_Pi_scos_eff_corr = Efficiency_Correction(h_reco_Pi_scos,"Pi",file);
-    h_reco_Pi_qcos_eff_corr = Efficiency_Correction(h_reco_Pi_qcos,"Pi",file);
+    h_reco_Pi_scos_eff_corr = resolutionCorrection(h_reco_Pi_scos,"Pi",file);
+    h_reco_Pi_qcos_eff_corr = resolutionCorrection(h_reco_Pi_qcos,"Pi",file);
   }else{
     h_reco_Pi_scos_eff_corr = (TH1F*) h_reco_Pi_scos->Clone();
     h_reco_Pi_qcos_eff_corr = (TH1F*) h_reco_Pi_qcos->Clone();
@@ -72,8 +72,8 @@ void main_pq()
   TH1F *h_rej_PiPi_cos_eff_corr;
   if (isEffCorr)
   {
-    h_acc_PiPi_cos_eff_corr = Efficiency_Correction(h_acc_PiPi_cos,"Pi",file);
-    h_rej_PiPi_cos_eff_corr = Efficiency_Correction(h_rej_PiPi_cos,"Pi",file);
+    h_acc_PiPi_cos_eff_corr = resolutionCorrection(h_acc_PiPi_cos,"Pi",file);
+    h_rej_PiPi_cos_eff_corr = resolutionCorrection(h_rej_PiPi_cos,"Pi",file);
   }else{
     h_acc_PiPi_cos_eff_corr = (TH1F*) h_acc_PiPi_cos->Clone();
     h_rej_PiPi_cos_eff_corr = (TH1F*) h_rej_PiPi_cos->Clone();
