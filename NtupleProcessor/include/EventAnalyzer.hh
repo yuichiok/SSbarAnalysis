@@ -58,6 +58,7 @@ namespace QQbarAnalysis
 
       unordered_map<TString, Bool_t> TriggerMap( PFOTools pfot, TString lmode, unordered_map< int, vector<PFO_Info> > subjet_pair, TString gen_reco );
       Bool_t           Cut_ESum( VectorTools v[2] );
+      Bool_t           Cut_PhotonJets();
       Bool_t           Cut_ACol( VectorTools v[2] );
       Bool_t           Cut_ISR ( VectorTools v[2] );
       void             ClearStructs();

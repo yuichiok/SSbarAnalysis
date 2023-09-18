@@ -303,6 +303,56 @@ namespace QQbarAnalysis
     return (SumE > 220);
   }
 
+  Bool_t EventAnalyzer::Cut_PhotonJets ()
+  {
+    Float_t photonjet_E[2];
+    Float_t photonjet_costheta[2];
+    Float_t photonJets_p[2][3] = {0};
+
+    for(int i_=0; i_<2; i_++) {
+      photonjet_E[i_]=0;
+      photonjet_costheta[i_]=-2;
+    }
+
+    for(int ipfo=0; ipfo<_pfo.pfo_n; ipfo++) {//jet_pfo_n[ijet]; ipfo++) {
+      
+      Int_t ijet = _pfo.pfo_match[ipfo];
+
+      if(ijet<0) continue;
+      if(_pfo.pfo_E[ipfo]<1) continue;
+      if(ijet>1) continue;
+
+      //pfo identified as photon or neutron
+      if( _pfo.pfo_type[ipfo]==22  || fabs(_pfo.pfo_type[ipfo])==2112 ) {
+        
+        photonJets_p[ijet][0]+=_pfo.pfo_px[ipfo];
+        photonJets_p[ijet][1]+=_pfo.pfo_py[ipfo];
+        photonJets_p[ijet][2]+=_pfo.pfo_pz[ipfo];
+
+        photonjet_E[ijet] += _pfo.pfo_E[ipfo];
+      } 
+    }//ipfo
+
+    VectorTools photonJets[2];
+    for (int i=0; i<2; i++){
+      photonJets[i].SetCoordinates(photonJets_p[i][0],photonJets_p[i][1],photonJets_p[i][2],photonjet_E[i]);
+      photonjet_costheta[i]=std::cos( photonJets[i].v3().Theta() );
+    }
+
+    Float_t photonjet_e_max=0;
+    Float_t photonjet_cos_max=-2;
+    if(photonjet_E[0]>photonjet_E[1]) {
+      photonjet_e_max=photonjet_E[0];
+      photonjet_cos_max=photonjet_costheta[0];
+    } else {
+      photonjet_e_max=photonjet_E[1];
+      photonjet_cos_max=photonjet_costheta[1];
+    }
+
+    return ( fabs(photonjet_cos_max)<0.97 && photonjet_e_max < 115 );
+
+  }
+
   Bool_t EventAnalyzer::Cut_ACol ( VectorTools v[2] )
   {
     Float_t cosacol = VectorTools::GetCosBetween( v[0].v3(), v[1].v3() );
