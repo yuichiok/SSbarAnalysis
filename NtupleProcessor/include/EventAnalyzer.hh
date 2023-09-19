@@ -54,6 +54,7 @@ namespace QQbarAnalysis
       void             AnalyzeReco( Long64_t entry );
       
       Bool_t           Select( Selector s );          // Evaluates the class' list of event selection criteria
+      Bool_t           isSignal();                      // Checks if the event is qqbar
       Bool_t           GenPairPicker( Float_t mc_particle, std::vector<int> input_gen );
 
       unordered_map<TString, Bool_t> TriggerMap( PFOTools pfot, TString lmode, unordered_map< int, vector<PFO_Info> > subjet_pair, TString gen_reco );
@@ -93,6 +94,8 @@ namespace QQbarAnalysis
       Int_t ientry = -1;
 
       Int_t _check_pt = 0;
+
+      Int_t _qmode = 0;
 
       MC_QQbar      _mc      ;
       Jet_QQbar     _jet     ;

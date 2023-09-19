@@ -209,9 +209,6 @@ namespace QQbarAnalysis
       vector<Bool_t> CutTrigger;
 
       switch (sel){
-        case kQQ:
-          CutTrigger.push_back( GenPairPicker( _mc.mc_quark_pdg[0], _anCfg.gen_quarks ) );
-          break;
         case kMC:
           CutTrigger.push_back( Cut_ESum( mcvt ) );
           CutTrigger.push_back( Cut_ACol( mcvt ) );
@@ -235,6 +232,12 @@ namespace QQbarAnalysis
 
       return true;
 
+  }
+
+  Bool_t EventAnalyzer::isSignal()
+  {
+    _qmode = fabs(_mc.mc_quark_pdg[0]);
+    return _qmode;
   }
 
   Bool_t EventAnalyzer::GenPairPicker ( Float_t mc_particle, std::vector<int> input_gen )
