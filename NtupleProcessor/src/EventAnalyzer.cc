@@ -303,7 +303,7 @@ namespace QQbarAnalysis
     return (SumE > 220);
   }
 
-  Bool_t EventAnalyzer::Cut_PhotonJets ()
+  Bool_t EventAnalyzer::Cut_PhotonJets ( TString recomc )
   {
     Float_t photonjet_E[2];
     Float_t photonjet_costheta[2];
@@ -323,7 +323,9 @@ namespace QQbarAnalysis
       if(ijet>1) continue;
 
       //pfo identified as photon or neutron
-      if( _pfo.pfo_type[ipfo]==22  || fabs(_pfo.pfo_type[ipfo])==2112 ) {
+      Int_t PFOID = (recomc=="reco") ? _pfo.pfo_type[ipfo] : _pfo.pfo_pdgcheat[ipfo];
+
+      if( fabs(PFOID)==22  || fabs(PFOID)==2112 ) {
         
         photonJets_p[ijet][0]+=_pfo.pfo_px[ipfo];
         photonJets_p[ijet][1]+=_pfo.pfo_py[ipfo];
@@ -351,6 +353,27 @@ namespace QQbarAnalysis
 
     return ( fabs(photonjet_cos_max)<0.97 && photonjet_e_max < 115 );
 
+  }
+
+  Float_t EventAnalyzer::Cut_SinACol ( VectorTools v[2] )
+  {
+    Float_t sinacol = std::sin( VectorTools::GetThetaBetween( v[0].v3(), v[1].v3() ) );
+
+    // return (sinacol < 0.3);
+    return sinacol;
+  }
+
+  Float_t EventAnalyzer::Cut_invM ( VectorTools v[2] )
+  {
+    Float_t invM = (v[0].v4() + v[1].v4()).M();
+
+    // return (invM > 140);
+    return invM;
+  }
+
+  Float_t EventAnalyzer::Cut_y23 ()
+  {
+    return _jet.y23;
   }
 
   Bool_t EventAnalyzer::Cut_ACol ( VectorTools v[2] )
