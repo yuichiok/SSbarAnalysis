@@ -99,10 +99,10 @@ namespace QQbarAnalysis
     PFOTools pfot( &_mc, &_pfo, _config );
 
     // Gen QQbar
-    _hm.h1_gen_cos.at("cos")->Fill(mct.mc_quark[0].cos);
-    _hm.h1_gen_cos.at("cos")->Fill(mct.mc_quark[1].cos);
+    _hm.h1_gen_cos.at(_qmode).at("cos")->Fill(mct.mc_quark[0].cos);
+    _hm.h1_gen_cos.at(_qmode).at("cos")->Fill(mct.mc_quark[1].cos);
 
-    _hm.h1_gen_cos.at("qcos")->Fill(mct.mc_quark[0].qcos);
+    _hm.h1_gen_cos.at(_qmode).at("qcos")->Fill(mct.mc_quark[0].qcos);
 
     Bool_t is_noJet = pfot.PFO_sorted_jet[0].size() == 0 || pfot.PFO_sorted_jet[1].size() == 0;
     if( is_noJet ) return;
@@ -236,8 +236,11 @@ namespace QQbarAnalysis
 
   Bool_t EventAnalyzer::isSignal()
   {
-    _qmode = fabs(_mc.mc_quark_pdg[0]);
-    return _qmode;
+    _qmodePDG = fabs(_mc.mc_quark_pdg[0]);
+    if(_qmodePDG>5) _qmodePDG = 0;
+
+    _qmode = _qmode_map.at(_qmodePDG);
+    return _qmodePDG;
   }
 
   Bool_t EventAnalyzer::GenPairPicker ( Float_t mc_particle, std::vector<int> input_gen )
@@ -426,7 +429,7 @@ namespace QQbarAnalysis
   {
     for( auto i_lmode : pfot.PFO_mode ){
       Int_t nbins_cos = _hm.nbins_cos;
-      TAxis *xaxis    = _hm.h1_resolution.at(i_lmode).at("gen_N_cos")->GetXaxis();
+      TAxis *xaxis    = _hm.h1_resolution.at(_qmode).at(i_lmode).at("gen_N_cos")->GetXaxis();
       for ( int ibin=1; ibin<=nbins_cos; ibin++ ){
         Float_t bin_center = xaxis->GetBinCenter(ibin);
         Float_t bin_width  = xaxis->GetBinWidth(ibin);
@@ -435,7 +438,7 @@ namespace QQbarAnalysis
         unordered_map<TString, Int_t> N_particles = Gen_Reco_Stats_Stable( pfot, mct, i_lmode, cos_min, cos_max );
 
         for( auto iname : _hm.hres_name ){
-          _hm.h1_resolution.at(i_lmode).at(iname)->Fill( bin_center ,N_particles.at(iname));
+          _hm.h1_resolution.at(_qmode).at(i_lmode).at(iname)->Fill( bin_center ,N_particles.at(iname));
         }
       }
     }
@@ -523,32 +526,32 @@ namespace QQbarAnalysis
 
         if( cuts.at(i_lmode).at("charge") ){
 
-          _hm.h1_cos.at(i_lmode).at("cos")->Fill( LPFO.cos );
-          _hm.h1_cos.at(i_lmode).at("cos")->Fill( LPFO_opposite.cos );
+          _hm.h1_cos.at(_qmode).at(i_lmode).at("cos")->Fill( LPFO.cos );
+          _hm.h1_cos.at(_qmode).at(i_lmode).at("cos")->Fill( LPFO_opposite.cos );
 
-          _hm.h1_cos.at(i_lmode).at("qcos")->Fill( LPFO.qcos );
-          _hm.h1_cos.at(i_lmode).at("acc_cos")->Fill( LPFO.qcos );
+          _hm.h1_cos.at(_qmode).at(i_lmode).at("qcos")->Fill( LPFO.qcos );
+          _hm.h1_cos.at(_qmode).at(i_lmode).at("acc_cos")->Fill( LPFO.qcos );
 
           Float_t scos = abs(LPFO.cos) * sgn( -_mc.mc_quark_charge[0] ) * mct.mc_quark[0].cos / abs(mct.mc_quark[0].cos);
-          _hm.h1_cos.at(i_lmode).at("scos")->Fill( scos );
+          _hm.h1_cos.at(_qmode).at(i_lmode).at("scos")->Fill( scos );
 
           if( _pt.PFO_type_map.find(abs(LPFO.pfo_pdgcheat)) != _pt.PFO_type_map.end() ){
 
             TString type = _pt.PFO_type_map.at(abs(LPFO.pfo_pdgcheat));
 
-            _hm.h2_dEdx.at(i_lmode).at(type).at("dEdx_p")->Fill( LPFO.p_mag, LPFO.pfo_dedx );
+            _hm.h2_dEdx.at(_qmode).at(i_lmode).at(type).at("dEdx_p")->Fill( LPFO.p_mag, LPFO.pfo_dedx );
 
-            _hm.h2_dEdx.at(i_lmode).at(type).at("dEdx_cos")->Fill( LPFO.cos, LPFO.pfo_dedx );
-            _hm.h2_dEdx.at(i_lmode).at(type).at("dEdx_cos")->Fill( LPFO_opposite.cos, LPFO_opposite.pfo_dedx );
+            _hm.h2_dEdx.at(_qmode).at(i_lmode).at(type).at("dEdx_cos")->Fill( LPFO.cos, LPFO.pfo_dedx );
+            _hm.h2_dEdx.at(_qmode).at(i_lmode).at(type).at("dEdx_cos")->Fill( LPFO_opposite.cos, LPFO_opposite.pfo_dedx );
 
-            _hm.h2_dEdx.at(i_lmode).at(type).at("dEdx_dist_cos")->Fill( LPFO.cos, pfot.Get_dEdx_dist(LPFO, i_lmode) );
-            _hm.h2_dEdx.at(i_lmode).at(type).at("dEdx_dist_cos")->Fill( LPFO_opposite.cos, pfot.Get_dEdx_dist(LPFO_opposite, i_lmode) );
+            _hm.h2_dEdx.at(_qmode).at(i_lmode).at(type).at("dEdx_dist_cos")->Fill( LPFO.cos, pfot.Get_dEdx_dist(LPFO, i_lmode) );
+            _hm.h2_dEdx.at(_qmode).at(i_lmode).at(type).at("dEdx_dist_cos")->Fill( LPFO_opposite.cos, pfot.Get_dEdx_dist(LPFO_opposite, i_lmode) );
           }
 
         }else{
 
-          _hm.h1_cos.at(i_lmode).at("rej_cos")->Fill( LPFO.cos );
-          _hm.h1_cos.at(i_lmode).at("rej_cos")->Fill( -LPFO_opposite.cos );
+          _hm.h1_cos.at(_qmode).at(i_lmode).at("rej_cos")->Fill( LPFO.cos );
+          _hm.h1_cos.at(_qmode).at(i_lmode).at("rej_cos")->Fill( -LPFO_opposite.cos );
 
         } // charge consistency check
 
@@ -575,15 +578,15 @@ namespace QQbarAnalysis
 
           for(auto iLPFO : LPFOs){
             
-            _hm.h1_cos_eff.at(gen_reco).at(i_lmode).at(icut_name)->Fill( iLPFO.cos );
+            _hm.h1_cos_eff.at(_qmode).at(gen_reco).at(i_lmode).at(icut_name)->Fill( iLPFO.cos );
 
             // plot dEdx dist vs cos
             if( _pt.PFO_type_map.find(abs(iLPFO.pfo_pdgcheat)) != _pt.PFO_type_map.end() ){
               TString type = _pt.PFO_type_map.at(abs(iLPFO.pfo_pdgcheat));
-              _hm.h2_dEdx_eff.at(gen_reco).at(i_lmode).at(type).at(icut_name).at("dEdx_dist_cos")->Fill( iLPFO.cos, pfot.Get_dEdx_dist(iLPFO, i_lmode) );
-              _hm.h2_dEdx_eff.at(gen_reco).at(i_lmode).at(type).at(icut_name).at("dEdx_error_cos")->Fill( iLPFO.cos, iLPFO.pfo_dedxerror );
-              _hm.h2_dEdx_eff.at(gen_reco).at(i_lmode).at(type).at(icut_name).at("dEdx_cos")->Fill( iLPFO.cos, iLPFO.pfo_dedx );
-              _hm.h2_dEdx_eff.at(gen_reco).at(i_lmode).at(type).at(icut_name).at("dEdx_p")->Fill( iLPFO.p_mag, iLPFO.pfo_dedx );
+              _hm.h2_dEdx_eff.at(_qmode).at(gen_reco).at(i_lmode).at(type).at(icut_name).at("dEdx_dist_cos")->Fill( iLPFO.cos, pfot.Get_dEdx_dist(iLPFO, i_lmode) );
+              _hm.h2_dEdx_eff.at(_qmode).at(gen_reco).at(i_lmode).at(type).at(icut_name).at("dEdx_error_cos")->Fill( iLPFO.cos, iLPFO.pfo_dedxerror );
+              _hm.h2_dEdx_eff.at(_qmode).at(gen_reco).at(i_lmode).at(type).at(icut_name).at("dEdx_cos")->Fill( iLPFO.cos, iLPFO.pfo_dedx );
+              _hm.h2_dEdx_eff.at(_qmode).at(gen_reco).at(i_lmode).at(type).at(icut_name).at("dEdx_p")->Fill( iLPFO.p_mag, iLPFO.pfo_dedx );
             }
 
           }

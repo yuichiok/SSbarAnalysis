@@ -95,7 +95,11 @@ namespace QQbarAnalysis
 
       Int_t _check_pt = 0;
 
-      Int_t _qmode = 0;
+      Int_t _qmodePDG = 0;
+      TString  _qmode = "";
+      unordered_map< Int_t, TString > _qmode_map = {
+        {0,"bg"}, {1,"dd"}, {2,"uu"}, {3,"ss"}, {4,"cc"}, {5,"bb"}
+      };
 
       MC_QQbar      _mc      ;
       Jet_QQbar     _jet     ;
