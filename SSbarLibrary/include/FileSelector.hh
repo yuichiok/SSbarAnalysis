@@ -24,7 +24,7 @@ class FileSelector
   private:
     TString _full;
     TString _name;
-    TString _suffix = ".ss.tmp.root";
+    TString _suffix = ".tmp.root";
 
     TString _out_path = "rootfiles/tmp_root/";
 

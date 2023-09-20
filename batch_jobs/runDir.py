@@ -6,10 +6,13 @@ import argparse
 from processDict import production
 from pathlib import Path
 
-projectDir = Path(__file__).parent.absolute()
+batchDir = Path(__file__).parent.absolute()
+projectDir = os.path.dirname(batchDir)
 
-subprocess.run('cp ../main.exe ./',shell=True)
-subprocess.run('cp ../etc/* ./etc',shell=True)
+subprocess.run(['cp', os.path.join(projectDir, 'main.exe'), batchDir])
+subprocess.run(f'cp {os.path.join(projectDir, "etc")}/* {batchDir}/etc',shell=True)
+
+runROOT = os.path.join(batchDir, 'runROOT.py')
 
 nfirst    = 1    # first file
 nlast_set = -1   # -1: all files
@@ -71,8 +74,5 @@ for prodID in prodIDList:
     sub_flist = file_list[nrun0 - 1:nrun1]
     arg_flist = ",".join(sub_flist)
 
-    # if prodID == 15271 or prodID == 15275:
-    #   log = f"./sublog/{prodID}_{seq:03d}.log"
-    #   subprocess.run(['bsub', '-q', 's', '-J', f'ana_{prodID}_{seq:03d}', '-o', log, f'python3', 'runROOT.py', '--flist', arg_flist])
-    # else:
-    #   subprocess.run(['bsub', '-q', 's', '-J', f'ana_{prodID}_{seq:03d}', f'python3', 'runROOT.py', '--flist', arg_flist])
+    subprocess.run(['bsub', '-q', 's', '-J', f'ana_{prodID}_{seq:03d}', f'python3', runROOT, '--flist', arg_flist])
+    # subprocess.run([f'python3', runROOT, '--flist', arg_flist])
