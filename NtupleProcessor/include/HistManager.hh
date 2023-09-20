@@ -52,6 +52,9 @@ namespace QQbarAnalysis
       vector<TString> hcos_gen_name = {"cos","qcos"};
       unordered_map<TString, unordered_map< TString, TH1F* > > h1_gen_cos;        // [QQ_mode][hist]
 
+      vector<TString> hpreselection_name = {"sinacol","invM","y23","cosBF","cosAF"};
+      unordered_map<TString, unordered_map< TString, TH1F* > > h1_preselection;        // [QQ_mode][hist]
+
       vector<TString> hcos_name = {"cos","qcos","scos","acc_cos","rej_cos"};
       unordered_map<TString, unordered_map< TString, unordered_map< TString, TH1F* > > > h1_cos;        // [QQ_mode][LPFO][hist]
 

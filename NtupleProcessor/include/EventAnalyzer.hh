@@ -54,6 +54,7 @@ namespace QQbarAnalysis
       void             AnalyzeReco( Long64_t entry );
       
       Bool_t           Select( Selector s );          // Evaluates the class' list of event selection criteria
+      vector<Bool_t>   SelectRecoMC( TString recomc, VectorTools v[2] );
       Bool_t           isSignal();                      // Checks if the event is qqbar
       Bool_t           GenPairPicker( Float_t mc_particle, std::vector<int> input_gen );
 
@@ -65,7 +66,7 @@ namespace QQbarAnalysis
       Bool_t           Cut_PhotonJets( TString recomc );
       Float_t          Cut_SinACol( VectorTools v[2] );
       Float_t          Cut_invM( VectorTools v[2] );
-      Float_t          Cut_y23();
+      Float_t          Cut_d23( TString recomc );
 
       void             ClearStructs();
       virtual Bool_t   Notify();

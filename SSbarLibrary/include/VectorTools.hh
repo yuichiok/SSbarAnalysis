@@ -26,6 +26,7 @@ class VectorTools
 
     // Common Tools
       static Float_t GetCosBetween ( ROOT::Math::XYZVector v1, ROOT::Math::XYZVector v2 );
+      static Float_t GetSinACol    ( ROOT::Math::XYZVector v1, ROOT::Math::XYZVector v2 );
       static Float_t GetThetaBetween ( ROOT::Math::XYZVector v1, ROOT::Math::XYZVector v2 );
 
     // return private members

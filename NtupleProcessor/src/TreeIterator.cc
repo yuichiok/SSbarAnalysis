@@ -63,18 +63,16 @@ namespace QQbarAnalysis
     // Evaluate the criteria for this entry
 
       if( eAnalyzer.isSignal() ){
-        // analyze signal
+        // analyze Gen MC
         if( eAnalyzer.Select( EventAnalyzer::kMC ) ){
           eAnalyzer.AnalyzeGen(entry);
         }
-        if( eAnalyzer.Select( EventAnalyzer::kReco ) ){
-          eAnalyzer.AnalyzeReco(entry);
-        }
-
-      }else{
-        // analyze background
-
       }
+
+      if( eAnalyzer.Select( EventAnalyzer::kReco ) ){
+        eAnalyzer.AnalyzeReco(entry);
+      }
+
 
 
       // if ( eAnalyzer.Select( EventAnalyzer::kQQ ) ){

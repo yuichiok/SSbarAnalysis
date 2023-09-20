@@ -210,14 +210,10 @@ namespace QQbarAnalysis
 
       switch (sel){
         case kMC:
-          CutTrigger.push_back( Cut_ESum( mcvt ) );
-          CutTrigger.push_back( Cut_ACol( mcvt ) );
-          CutTrigger.push_back( Cut_ISR ( mcvt ) );
+          CutTrigger = SelectRecoMC( "mc", mcvt );
           break;
         case kReco:
-          CutTrigger.push_back( Cut_ESum( jetvt ) );
-          CutTrigger.push_back( Cut_ACol( jetvt ) );
-          CutTrigger.push_back( Cut_ISR ( jetvt ) );
+          CutTrigger = SelectRecoMC( "reco", jetvt );
           break;
 
         default:
@@ -232,6 +228,44 @@ namespace QQbarAnalysis
 
       return true;
 
+  }
+
+  vector<Bool_t> EventAnalyzer::SelectRecoMC( TString recomc, VectorTools vt[2] )
+  {
+    Float_t invM          = Cut_invM( vt );
+    Float_t y23           = Cut_d23(recomc) / pow(invM,2);
+
+    Bool_t isNotPhotonJet = Cut_PhotonJets(recomc);
+    Bool_t isSinACol      = Cut_SinACol( vt ) < 0.3;
+    Bool_t isCosACol      = VectorTools::GetCosBetween(vt[0].v3(),vt[1].v3()) < 0;
+    isSinACol = isSinACol && isCosACol;
+    Bool_t isInvM         = invM > 140;
+    Bool_t isY23          = y23 < 0.02;
+
+    if( recomc == "reco" ){
+
+      _hm.h1_preselection.at(_qmode).at("cosBF")->Fill( std::cos( vt[0].v3().Theta() ) );
+      _hm.h1_preselection.at(_qmode).at("cosBF")->Fill( std::cos( vt[1].v3().Theta() ) );
+      
+      if( isNotPhotonJet ){
+        _hm.h1_preselection.at(_qmode).at("sinacol")->Fill( Cut_SinACol( vt ) );
+      }
+      if( isNotPhotonJet && isSinACol ){
+        _hm.h1_preselection.at(_qmode).at("invM")->Fill( Cut_invM( vt ) );
+      }
+      if( isNotPhotonJet && isSinACol && isInvM ){
+        _hm.h1_preselection.at(_qmode).at("y23")->Fill( y23 );
+      }
+
+      if(isNotPhotonJet && isSinACol && isInvM && isY23) {
+        _hm.h1_preselection.at(_qmode).at("cosAF")->Fill( std::cos( vt[0].v3().Theta() ) );
+        _hm.h1_preselection.at(_qmode).at("cosAF")->Fill( std::cos( vt[1].v3().Theta() ) );
+      }
+
+    }
+
+    vector<Bool_t> CutTrigger = {isNotPhotonJet, isSinACol, isInvM};
+    return CutTrigger;
   }
 
   Bool_t EventAnalyzer::isSignal()
@@ -363,7 +397,8 @@ namespace QQbarAnalysis
 
   Float_t EventAnalyzer::Cut_SinACol ( VectorTools v[2] )
   {
-    Float_t sinacol = std::sin( VectorTools::GetThetaBetween( v[0].v3(), v[1].v3() ) );
+    // Float_t sinacol = std::sin( VectorTools::GetThetaBetween( v[0].v3(), v[1].v3() ) );
+    Float_t sinacol = VectorTools::GetSinACol( v[0].v3(), v[1].v3() );
 
     // return (sinacol < 0.3);
     return sinacol;
@@ -377,9 +412,9 @@ namespace QQbarAnalysis
     return invM;
   }
 
-  Float_t EventAnalyzer::Cut_y23 ()
+  Float_t EventAnalyzer::Cut_d23 ( TString recomc )
   {
-    return _jet.y23;
+    return (recomc=="reco") ? _jet.d23 : _mc.mc_quark_ps_d23;
   }
 
   Bool_t EventAnalyzer::Cut_ACol ( VectorTools v[2] )
