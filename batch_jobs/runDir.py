@@ -9,8 +9,8 @@ from pathlib import Path
 batchDir = Path(__file__).parent.absolute()
 projectDir = os.path.dirname(batchDir)
 
-subprocess.run(['cp', os.path.join(projectDir, 'main.exe'), batchDir])
-subprocess.run(f'cp {os.path.join(projectDir, "etc")}/* {batchDir}/etc',shell=True)
+# subprocess.run(['cp', os.path.join(projectDir, 'main.exe'), batchDir])
+# subprocess.run(f'cp {os.path.join(projectDir, "etc")}/* {batchDir}/etc',shell=True)
 
 runROOT = os.path.join(batchDir, 'runROOT.py')
 
@@ -26,11 +26,11 @@ parser = argparse.ArgumentParser(description='Run QQbarAnalysis')
 parser.add_argument('--process', type=str, required=True,
                     help='Production process (P2f_z_h, P4f_ww_h, P4_zz_h, Pe1e1h)')
 parser.add_argument('--chiral',  type=str, required=True,
-                    help='Polarization of beam (eLpR or eRpL)')
+                    help='Polarization of beam (eLpR or eRpL or eLpL or eRpR)')
 
 args  = parser.parse_args()
-if args.chiral not in ["eLpR", "eRpL"]:
-  sys.exit("Error: chiral must be eLpR or eRpL")
+if args.chiral not in ["eLpR", "eRpL", "eLpL", "eRpR"]:
+  sys.exit("Error: chiral must be eLpR or eRpL or eLpL or eRpR")
 if args.process not in ["P2f_z_h", "P4f_ww_h", "P4f_zz_h", "Pe1e1h"]:
   sys.exit("Error: process must be P2f_z_h, P4f_ww_h, P4f_zz_h, or Pe1e1h")
 
