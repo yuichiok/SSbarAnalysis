@@ -16,7 +16,7 @@ runROOT = os.path.join(batchDir, 'runROOT.py')
 
 nfirst    = 1    # first file
 nlast_set = -1   # -1: all files
-nrun      = 100  # number of runs per job
+nrun      = 50  # number of runs per job
 
 isAll = False
 if nlast_set <= 0:
@@ -29,6 +29,10 @@ parser.add_argument('--chiral',  type=str, required=True,
                     help='Polarization of beam (eLpR or eRpL)')
 
 args  = parser.parse_args()
+if args.chiral not in ["eLpR", "eRpL"]:
+  sys.exit("Error: chiral must be eLpR or eRpL")
+if args.process not in ["P2f_z_h", "P4f_ww_h", "P4f_zz_h", "Pe1e1h"]:
+  sys.exit("Error: process must be P2f_z_h, P4f_ww_h, P4f_zz_h, or Pe1e1h")
 
 model = "l5"
 processID  = production[args.process, args.chiral][0]
