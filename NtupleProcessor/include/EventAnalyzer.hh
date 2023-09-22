@@ -54,12 +54,20 @@ namespace QQbarAnalysis
       void             AnalyzeReco( Long64_t entry );
       
       Bool_t           Select( Selector s );          // Evaluates the class' list of event selection criteria
+      vector<Bool_t>   SelectRecoMC( TString recomc, VectorTools v[2] );
+      Bool_t           isSignal();                      // Checks if the event is qqbar
       Bool_t           GenPairPicker( Float_t mc_particle, std::vector<int> input_gen );
 
       unordered_map<TString, Bool_t> TriggerMap( PFOTools pfot, TString lmode, unordered_map< int, vector<PFO_Info> > subjet_pair, TString gen_reco );
       Bool_t           Cut_ESum( VectorTools v[2] );
       Bool_t           Cut_ACol( VectorTools v[2] );
       Bool_t           Cut_ISR ( VectorTools v[2] );
+
+      Bool_t           Cut_PhotonJets( TString recomc );
+      Float_t          Cut_SinACol( VectorTools v[2] );
+      Float_t          Cut_invM( VectorTools v[2] );
+      Float_t          Cut_d23( TString recomc );
+
       void             ClearStructs();
       virtual Bool_t   Notify();
 
@@ -87,6 +95,12 @@ namespace QQbarAnalysis
       Int_t ientry = -1;
 
       Int_t _check_pt = 0;
+
+      Int_t _qmodePDG = 0;
+      TString  _qmode = "";
+      unordered_map< Int_t, TString > _qmode_map = {
+        {0,"bg"}, {1,"dd"}, {2,"uu"}, {3,"ss"}, {4,"cc"}, {5,"bb"}
+      };
 
       MC_QQbar      _mc      ;
       Jet_QQbar     _jet     ;
