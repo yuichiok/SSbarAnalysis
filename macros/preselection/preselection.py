@@ -36,6 +36,7 @@ def addData(file, hpath, df, process, qqbar, chiral):
   for category in hcategory:
     h = file.Get(f'{hpath}_{category}')
     entry = (h.GetEntries() / 2.0) if (category == "cosBF") or (category == "cosAF") else h.GetEntries()
+    # entry = (h.Integral(10,90) / 2.0) if (category == "cosBF") or (category == "cosAF") else h.GetEntries()
     values_dict[category] = entry
 
   # Append the values to a temporary DataFrame
@@ -88,7 +89,8 @@ def main():
       self.canvas = TCanvas(f"c_{category}", f"c_{category}", 900, 900)
       self.stack  = THStack(f"ths_{category}", title)
 
-  effDf = pd.DataFrame(columns=["process", "qqbar", "chiral", "cosBF", "sinacol", "invM", "y23", "cosAF"])
+  columnDf = ["process", "qqbar", "chiral", "cosBF", "sinacol", "invM", "y23", "cosAF"]
+  totDf = pd.DataFrame(columns=columnDf)
   PMs = {
     "sinacol": PlotManager("sinacol", ";sin#Psi_{acol};Norm.", 100, 0, 1),
     "invM": PlotManager("invM", ";m_{j_{1},j_{2}};Norm.", 100, 0, 500),
@@ -101,7 +103,7 @@ def main():
 
         for chiral in chirals:
           hpath = f'{qqbar}/preselection/h_{qqbar}'
-          effDf = addData(files[process, chiral], hpath, effDf, process, qqbar, chiral)
+          totDf = addData(files[process, chiral], hpath, totDf, process, qqbar, chiral)
 
         for category, PM in PMs.items():
 
@@ -118,6 +120,10 @@ def main():
           PM.stack.Add(h_sum)
 
     else: # background
+      for chiral in chirals:
+        hpath = f'bg/preselection/h_bg'
+        totDf = addData(files[process, chiral], hpath, totDf, process, 'bg', chiral)
+
       for category, PM in PMs.items():
 
         hprefix = f'h_{process}_{category}'
@@ -132,7 +138,19 @@ def main():
         h_sum.SetTitle(f"{process}")
         PM.stack.Add(h_sum)
 
-  print(effDf)
+  print(totDf)
+  effDf = pd.DataFrame(columns=columnDf[:2])
+  cutno = 1
+  for column in columnDf:
+    if column == "process" or column == "qqbar" or column == "chiral":
+      effDf[column] = totDf[column]
+    elif column == "cosBF":
+      denom = totDf[column]
+    else:
+      effDf[f'cut{cutno}'] = totDf[column]*100. / denom
+      cutno += 1
+  with pd.option_context('display.float_format', '{:0.1f}'.format):
+    print(effDf)
 
   for category, PM in PMs.items():
     c = PM.canvas
