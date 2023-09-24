@@ -1,7 +1,7 @@
 import os
 import sys
 from ROOT import TFile, TCanvas, TLegend
-from ROOT import TCanvas, TH1F
+from ROOT import TCanvas, TH1F, THStack
 import subprocess
 import argparse
 
@@ -9,7 +9,6 @@ from pathlib import Path
 macroDir = Path(__file__).parent.parent.absolute()
 libDir   = os.path.join(macroDir, 'lib')
 sys.path.append(os.path.join(macroDir, 'lib'))
-print(macroDir)
 from processDict import production
 
 inDir = os.path.join(macroDir, '..', 'rootfiles', 'merged')
@@ -18,9 +17,8 @@ chirals   = ["eLpR", "eRpL"]
 processes = ["P2f_z_h", "P4f_ww_h", "P4f_zz_h", "Pe1e1h"]
 qqbars    = ["dd", "uu", "ss", "cc", "bb"]
 
-c_sinacol = TCanvas("c_sinacol", "c_sinacol", 900, 900)
-c_invM    = TCanvas("c_invM", "c_invM", 900, 900)
-c_y23     = TCanvas("c_y23", "c_y23", 900, 900)
+def normHist(h):
+  h.Scale(1.0 / h.Integral())
 
 def drawHist(c, h, logy=False, option=""):
   c.cd()
@@ -31,9 +29,9 @@ def drawHist(c, h, logy=False, option=""):
 
 def addHist(file, hpath, htype, hsum):
   h = file.Get(f'{hpath}_{htype}')
+  normHist(h)
   hsum.Add(h)  
 
-  
 files = dict()
 for process in processes:
   for chiral in chirals:
@@ -43,7 +41,17 @@ for process in processes:
     filename = f"rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I{processID}.{process}.{chiralDot}.KPiLPFO.dedxPi.PFOp15.LPFOp15_pNaN.all.root"
     files[prochiTuple] = TFile.Open(os.path.join(inDir, filename))
 
-hists = []
+class PlotManager:
+  def __init__(self, category):
+    self.canvas = TCanvas(f"c_{category}", f"c_{category}", 900, 900)
+    self.stack  = THStack(f"ths_{category}", f"ths_{category}")
+
+
+PMs = {
+  "sinacol": PlotManager("sinacol"),
+  "invM": PlotManager("invM"),
+  "y23": PlotManager("y23")
+}
 for process in processes:
 
   if process == "P2f_z_h": # signal
@@ -63,49 +71,31 @@ for process in processes:
         addHist(file, tmp_hname, "invM"   , h_invM_sum)
         addHist(file, tmp_hname, "y23"    , h_y23_sum)
 
-      hists.append((h_sinacol_sum, h_invM_sum, h_y23_sum))
+      PMs["sinacol"].stack.Add(h_sinacol_sum)
+      PMs["invM"].stack.Add(h_invM_sum)
+      PMs["y23"].stack.Add(h_y23_sum)
 
-drawCounter = 0
-for iqq, hlist in zip(qqbars, hists):
-  h_sinacol_sum, h_invM_sum, h_y23_sum = hlist
-  drawOption = "h" if drawCounter == 0 else "hsame"
-  
-  c_sinacol.cd()
-  h_sinacol_sum.Draw(drawOption)
-  
-  c_invM.cd()
-  h_invM_sum.Draw(drawOption)
+  else: # background
+    hprefix = f'h_{process}'
+    h_sinacol_sum = TH1F(f"{hprefix}_sinacol_sum", f"{hprefix}_sinacol_sum", 100, 0, 1)
+    h_invM_sum    = TH1F(f"{hprefix}_invM_sum", f"{hprefix}_invM_sum", 100, 0, 500)
+    h_y23_sum     = TH1F(f"{hprefix}_y23_sum", f"{hprefix}_y23_sum", 50, 0, 0.25)
 
-  c_y23.cd()
-  h_y23_sum.Draw(drawOption)
+    for chiral in chirals:
+      chiralDot = "eL.pR" if chiral == "eLpR" else "eR.pL"
 
-  drawCounter += 1
+      file = files[process, chiral]
 
-c_invM.SaveAs("c_invM.pdf")
+      tmp_hname = f'bg/preselection/h_bg'
+      addHist(file, tmp_hname, "sinacol", h_sinacol_sum)
+      addHist(file, tmp_hname, "invM"   , h_invM_sum)
+      addHist(file, tmp_hname, "y23"    , h_y23_sum)
 
+    PMs["sinacol"].stack.Add(h_sinacol_sum)
+    PMs["invM"].stack.Add(h_invM_sum)
+    PMs["y23"].stack.Add(h_y23_sum)
 
+PMs["invM"].canvas.cd()
+PMs["invM"].stack.Draw("h nostack")
 
-  
-
-
-# parser = argparse.ArgumentParser(description='Preselection Analysis')
-# parser.add_argument('--process', type=str, required=True,
-#                     help='Production process (P2f_z_h, P4f_ww_h, P4_zz_h, Pe1e1h)')
-# parser.add_argument('--chiral',  type=str, required=True,
-#                     help='Polarization of beam (eLpR or eRpL or eLpL or eRpR)')
-
-# args  = parser.parse_args()
-# if args.chiral not in ["eLpR", "eRpL", "eLpL", "eRpR"]:
-#   sys.exit("Error: chiral must be eLpR or eRpL or eLpL or eRpR")
-# if args.process not in ["P2f_z_h", "P4f_ww_h", "P4f_zz_h", "Pe1e1h"]:
-#   sys.exit("Error: process must be P2f_z_h, P4f_ww_h, P4f_zz_h, or Pe1e1h")
-
-# chiralDot = "eL.pR" if args.chiral == "eLpR" else "eR.pL"
-
-# processID  = production[args.process, args.chiral][0]
-# prodIDList = production[args.process, args.chiral][1]
-
-# # rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I402001.Pe1e1h.eL.pR.KPiLPFO.dedxPi.PFOp15.LPFOp15_pNaN.all.root
-
-# for prodID in prodIDList:
-#   fileName = f"rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I{processID}.{args.process}.{chiralDot}.KPiLPFO.dedxPi.PFOp15.LPFOp15_pNaN.all.root"
+PMs["invM"].canvas.SaveAs("c_invM.pdf")
