@@ -42,60 +42,57 @@ for process in processes:
     files[prochiTuple] = TFile.Open(os.path.join(inDir, filename))
 
 class PlotManager:
-  def __init__(self, category):
+  def __init__(self, category, bin, xmin, xmax):
+    self.category = category
+    self.bin = bin
+    self.xmin = xmin
+    self.xmax = xmax
     self.canvas = TCanvas(f"c_{category}", f"c_{category}", 900, 900)
     self.stack  = THStack(f"ths_{category}", f"ths_{category}")
 
 
 PMs = {
-  "sinacol": PlotManager("sinacol"),
-  "invM": PlotManager("invM"),
-  "y23": PlotManager("y23")
+  "sinacol": PlotManager("sinacol", 100, 0, 1),
+  "invM": PlotManager("invM", 100, 0, 500),
+  "y23": PlotManager("y23", 50, 0, 0.25)
 }
 for process in processes:
 
   if process == "P2f_z_h": # signal
     for qqbar in qqbars:
-      hprefix = f'h_{process}_{qqbar}'
-      h_sinacol_sum = TH1F(f"{hprefix}_sinacol_sum", f"{hprefix}_sinacol_sum", 100, 0, 1)
-      h_invM_sum    = TH1F(f"{hprefix}_invM_sum", f"{hprefix}_invM_sum", 100, 0, 500)
-      h_y23_sum     = TH1F(f"{hprefix}_y23_sum", f"{hprefix}_y23_sum", 50, 0, 0.25)
+
+      for category, PM in PMs.items():
+
+        hprefix = f'h_{process}_{qqbar}_{category}'
+        h_sum = TH1F(f"{hprefix}_sum", f"{hprefix}_sum", PM.bin, PM.xmin, PM.xmax)
+
+        for chiral in chirals:
+          chiralDot = "eL.pR" if chiral == "eLpR" else "eR.pL"
+
+          file = files[process, chiral]
+          
+          tmp_hname = f'{qqbar}/preselection/h_{qqbar}'
+          addHist(file, tmp_hname, category, h_sum)
+
+        PM.stack.Add(h_sum)
+
+  else: # background
+    for category, PM in PMs.items():
+
+      hprefix = f'h_{process}_{category}'
+      h_sum = TH1F(f"{hprefix}_sum", f"{hprefix}_sum", PM.bin, PM.xmin, PM.xmax)
 
       for chiral in chirals:
         chiralDot = "eL.pR" if chiral == "eLpR" else "eR.pL"
 
         file = files[process, chiral]
+        
+        tmp_hname = f'bg/preselection/h_bg'
+        addHist(file, tmp_hname, category, h_sum)
 
-        tmp_hname = f'{qqbar}/preselection/h_{qqbar}'
-        addHist(file, tmp_hname, "sinacol", h_sinacol_sum)
-        addHist(file, tmp_hname, "invM"   , h_invM_sum)
-        addHist(file, tmp_hname, "y23"    , h_y23_sum)
+      PM.stack.Add(h_sum)
 
-      PMs["sinacol"].stack.Add(h_sinacol_sum)
-      PMs["invM"].stack.Add(h_invM_sum)
-      PMs["y23"].stack.Add(h_y23_sum)
-
-  else: # background
-    hprefix = f'h_{process}'
-    h_sinacol_sum = TH1F(f"{hprefix}_sinacol_sum", f"{hprefix}_sinacol_sum", 100, 0, 1)
-    h_invM_sum    = TH1F(f"{hprefix}_invM_sum", f"{hprefix}_invM_sum", 100, 0, 500)
-    h_y23_sum     = TH1F(f"{hprefix}_y23_sum", f"{hprefix}_y23_sum", 50, 0, 0.25)
-
-    for chiral in chirals:
-      chiralDot = "eL.pR" if chiral == "eLpR" else "eR.pL"
-
-      file = files[process, chiral]
-
-      tmp_hname = f'bg/preselection/h_bg'
-      addHist(file, tmp_hname, "sinacol", h_sinacol_sum)
-      addHist(file, tmp_hname, "invM"   , h_invM_sum)
-      addHist(file, tmp_hname, "y23"    , h_y23_sum)
-
-    PMs["sinacol"].stack.Add(h_sinacol_sum)
-    PMs["invM"].stack.Add(h_invM_sum)
-    PMs["y23"].stack.Add(h_y23_sum)
-
-PMs["invM"].canvas.cd()
-PMs["invM"].stack.Draw("h nostack")
-
-PMs["invM"].canvas.SaveAs("c_invM.pdf")
+for category, PM in PMs.items():
+  PM.canvas.cd()
+  PM.stack.Draw("h nostack")
+  PM.canvas.SaveAs(f"c_{category}.pdf")
