@@ -10,6 +10,9 @@ etc/*.ini
 *.exe
 *.root
 *.pdf
+*.png
+*.jpg
+*.csv
 
 # batch job related
 batch_jobs/etc
