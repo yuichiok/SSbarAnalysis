@@ -1,7 +1,7 @@
 import os
 import sys
 import pandas as pd
-from ROOT import TFile, TCanvas, TPad
+from ROOT import gStyle, TFile, TCanvas, TPad
 from ROOT import TCanvas, TH1F, THStack
 
 from pathlib import Path
@@ -50,7 +50,7 @@ def addData(file, hpath, df, process, qqbar, chiral):
 def styleHist(h, isty):
   normHist(h)
   h.SetFillColor(0)
-  h.SetLineWidth(2)
+  h.SetLineWidth(3)
   h.SetLineStyle(isty)  # Different line style for each histogram
 
 def stylePad(pad, top=0, buttom=0, left=0, right=0):
@@ -150,20 +150,32 @@ def main():
       effDf[f'cut{cutno}'] = totDf[column]*100. / denom
       cutno += 1
   with pd.option_context('display.float_format', '{:0.1f}'.format):
+    effDf = effDf.sort_values(by=['chiral', 'process'])
     print(effDf)
+    print(effDf.head(8).T)
+    print(effDf.loc[1:].T)
+    eLpRdf = effDf.head(8).T
+    eRpLdf = effDf.loc[1:].T
+
+    # file_eLpR = Path('eLpR.csv')  
+    file_eLpR = os.path.join(macroDir, 'eLpR.csv')
+    file_eRpL = os.path.join(macroDir, 'eRpL.csv')
+    eLpRdf.to_csv(file_eLpR)
+    eRpLdf.to_csv(file_eRpL)
 
   for category, PM in PMs.items():
     c = PM.canvas
     c.cd()
     pad = TPad("pad", "pad", 0, 0, 1, 1)
     stylePad(pad,0.1,0.1,0.15,0.1)
+    gStyle.SetPalette(55)
     PM.stack.Draw("h plc nostack")
     if category == "y23":
       pad.SetLogy()
       pad.BuildLegend(0.18,0.17,0.33,0.52)
     else:
       pad.BuildLegend(0.70,0.5,0.85,0.85)
-    c.SaveAs(f"c_{category}.pdf")
+    c.SaveAs(f"c_{category}.png")
 
 if __name__ == "__main__":
   main()
