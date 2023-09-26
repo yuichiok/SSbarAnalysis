@@ -210,10 +210,10 @@ namespace QQbarAnalysis
 
       switch (sel){
         case kMC:
-          CutTrigger = SelectRecoMC( "mc", mcvt );
+          CutTrigger = SelectRecoMC( "mc", jetvt, mcvt );
           break;
         case kReco:
-          CutTrigger = SelectRecoMC( "reco", jetvt );
+          CutTrigger = SelectRecoMC( "reco", jetvt, mcvt );
           break;
 
         default:
@@ -230,34 +230,52 @@ namespace QQbarAnalysis
 
   }
 
-  vector<Bool_t> EventAnalyzer::SelectRecoMC( TString recomc, VectorTools vt[2] )
+  vector<Bool_t> EventAnalyzer::SelectRecoMC( TString recomc, VectorTools vt_reco[2], VectorTools vt_gen[2] )
   {
+    VectorTools *vt = (recomc=="reco") ? vt_reco : vt_gen;
+
     Float_t invM          = Cut_invM( vt );
     Float_t y23           = Cut_d23(recomc) / pow(invM,2);
 
     Bool_t isNotPhotonJet = Cut_PhotonJets(recomc);
+    Bool_t isSinglePFOJet = (_jet.jet_npfo[0] == 1 || _jet.jet_npfo[1] == 1 );
+    Bool_t cut1 = isNotPhotonJet && !isSinglePFOJet;
+
     Bool_t isSinACol      = Cut_SinACol( vt ) < 0.3;
     Bool_t isCosACol      = VectorTools::GetCosBetween(vt[0].v3(),vt[1].v3()) < 0;
     isSinACol = isSinACol && isCosACol;
     Bool_t isInvM         = invM > 140;
     Bool_t isY23          = y23 < 0.02;
 
+    // signal background criteria
+    Bool_t isSinAColQQ = Cut_SinACol( vt_gen ) < 0.3;
+    Bool_t isCosAColQQ = VectorTools::GetCosBetween(vt_gen[0].v3(),vt_gen[1].v3()) < 0;
+    isSinAColQQ = isSinAColQQ && isCosAColQQ;
+    Bool_t isInvMQQ    = Cut_invM( vt_gen ) > 140;
+    Bool_t isSignal    = isSinAColQQ && isInvMQQ ;
+    if( _qmode != "bg" && !isSignal ) _qmode = "rr";
+
     if( recomc == "reco" ){
 
       _hm.h1_preselection.at(_qmode).at("cosBF")->Fill( std::cos( vt[0].v3().Theta() ) );
       _hm.h1_preselection.at(_qmode).at("cosBF")->Fill( std::cos( vt[1].v3().Theta() ) );
       
-      if( isNotPhotonJet ){
+      if( cut1 ){
         _hm.h1_preselection.at(_qmode).at("sinacol")->Fill( Cut_SinACol( vt ) );
       }
-      if( isNotPhotonJet && isSinACol ){
+      if( cut1 && isSinACol ){
+        // if( _qmode == "rr" ){
+        //   cout << "====" << endl;
+        //   cout << "invM: " << Cut_invM( vt ) << ", " << Cut_invM( vt_gen ) << endl;
+        //   cout << "sinA: " << Cut_SinACol( vt ) << ", " << Cut_SinACol( vt_gen ) << endl;
+        // }
         _hm.h1_preselection.at(_qmode).at("invM")->Fill( Cut_invM( vt ) );
       }
-      if( isNotPhotonJet && isSinACol && isInvM ){
+      if( cut1 && isSinACol && isInvM ){
         _hm.h1_preselection.at(_qmode).at("y23")->Fill( y23 );
       }
 
-      if(isNotPhotonJet && isSinACol && isInvM && isY23) {
+      if( cut1 && isSinACol && isInvM && isY23) {
         _hm.h1_preselection.at(_qmode).at("cosAF")->Fill( std::cos( vt[0].v3().Theta() ) );
         _hm.h1_preselection.at(_qmode).at("cosAF")->Fill( std::cos( vt[1].v3().Theta() ) );
       }

@@ -46,7 +46,7 @@ namespace QQbarAnalysis
     // Declear histograms
 
     // process declaration
-      vector<TString> QQ_mode = {"dd","uu","ss","cc","bb","bg"};
+      vector<TString> QQ_mode = {"dd","uu","ss","cc","bb","bg","rr"};
 
     // h1 hist
       vector<TString> hcos_gen_name = {"cos","qcos"};

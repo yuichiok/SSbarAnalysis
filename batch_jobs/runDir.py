@@ -9,8 +9,8 @@ from pathlib import Path
 batchDir = Path(__file__).parent.absolute()
 projectDir = os.path.dirname(batchDir)
 
-# subprocess.run(['cp', os.path.join(projectDir, 'main.exe'), batchDir])
-# subprocess.run(f'cp {os.path.join(projectDir, "etc")}/* {batchDir}/etc',shell=True)
+subprocess.run(['cp', os.path.join(projectDir, 'main.exe'), batchDir])
+subprocess.run(f'cp {os.path.join(projectDir, "etc")}/* {batchDir}/etc',shell=True)
 
 runROOT = os.path.join(batchDir, 'runROOT.py')
 
