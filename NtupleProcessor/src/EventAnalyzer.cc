@@ -187,6 +187,10 @@ namespace QQbarAnalysis
     _data_lpfo  = {};
 
     _data       = {};
+
+    _jet.jet_npfo[0] = 0;
+    _jet.jet_npfo[1] = 0;
+
   }
 
   Bool_t EventAnalyzer::Select(Selector sel)
@@ -234,16 +238,21 @@ namespace QQbarAnalysis
   {
     VectorTools *vt = (recomc=="reco") ? vt_reco : vt_gen;
 
+    for(int ipfo=0; ipfo<_pfo.pfo_n;ipfo++){
+      _jet.jet_npfo[_pfo.pfo_match[ipfo]]++;
+    }
+
     Float_t invM          = Cut_invM( vt );
     Float_t y23           = Cut_d23(recomc) / pow(invM,2);
 
-    Bool_t isNotPhotonJet = Cut_PhotonJets(recomc);
+    Bool_t isNotPhotonJet = Cut_PhotonJets(recomc, "nodebug");
     Bool_t isSinglePFOJet = (_jet.jet_npfo[0] == 1 || _jet.jet_npfo[1] == 1 );
     Bool_t cut1 = isNotPhotonJet && !isSinglePFOJet;
 
     Bool_t isSinACol      = Cut_SinACol( vt ) < 0.3;
     Bool_t isCosACol      = VectorTools::GetCosBetween(vt[0].v3(),vt[1].v3()) < 0;
     isSinACol = isSinACol && isCosACol;
+    Bool_t isKv           = Cut_ISR( vt );
     Bool_t isInvM         = invM > 140;
     Bool_t isY23          = y23 < 0.02;
 
@@ -264,11 +273,21 @@ namespace QQbarAnalysis
         _hm.h1_preselection.at(_qmode).at("sinacol")->Fill( Cut_SinACol( vt ) );
       }
       if( cut1 && isSinACol ){
-        // if( _qmode == "rr" ){
-        //   cout << "====" << endl;
-        //   cout << "invM: " << Cut_invM( vt ) << ", " << Cut_invM( vt_gen ) << endl;
-        //   cout << "sinA: " << Cut_SinACol( vt ) << ", " << Cut_SinACol( vt_gen ) << endl;
-        // }
+        if( _qmode == "rr" ){
+          cout << "====" << endl;
+          cout << "sinA: " << Cut_SinACol( vt ) << ", " << Cut_SinACol( vt_gen ) << endl;
+          cout << "invM: " << Cut_invM( vt ) << ", " << Cut_invM( vt_gen ) << endl;
+          cout << "mc_quark0 (E,x,y,z) = (" << 
+          _mc.mc_quark_E[0] << "," << _mc.mc_quark_px[0] << ", " << _mc.mc_quark_py[0] << ", " << _mc.mc_quark_pz[0] << ")" << endl;
+          cout << "mc_quark1 (E,x,y,z) = (" << 
+          _mc.mc_quark_E[1] << "," << _mc.mc_quark_px[1] << ", " << _mc.mc_quark_py[1] << ", " << _mc.mc_quark_pz[1] << ")" << endl;
+          cout << "--" << endl;
+          cout << "jet0 (E,x,y,z) = (" << 
+          _jet.jet_E[0] << "," << _jet.jet_px[0] << ", " << _jet.jet_py[0] << ", " << _jet.jet_pz[0] << ")" << endl;
+          cout << "jet1 (E,x,y,z) = (" << 
+          _jet.jet_E[1] << "," << _jet.jet_px[1] << ", " << _jet.jet_py[1] << ", " << _jet.jet_pz[1] << ")" << endl;
+          Bool_t debug = Cut_PhotonJets(recomc, "debug");
+        }
         _hm.h1_preselection.at(_qmode).at("invM")->Fill( Cut_invM( vt ) );
       }
       if( cut1 && isSinACol && isInvM ){
@@ -361,8 +380,9 @@ namespace QQbarAnalysis
     return (SumE > 220);
   }
 
-  Bool_t EventAnalyzer::Cut_PhotonJets ( TString recomc )
+  Bool_t EventAnalyzer::Cut_PhotonJets ( TString recomc, TString debug )
   {
+    Float_t photonjet_invM;
     Float_t photonjet_E[2];
     Float_t photonjet_costheta[2];
     Float_t photonJets_p[2][3] = {0};
@@ -373,7 +393,7 @@ namespace QQbarAnalysis
     }
 
     for(int ipfo=0; ipfo<_pfo.pfo_n; ipfo++) {//jet_pfo_n[ijet]; ipfo++) {
-      
+
       Int_t ijet = _pfo.pfo_match[ipfo];
 
       if(ijet<0) continue;
@@ -382,6 +402,11 @@ namespace QQbarAnalysis
 
       //pfo identified as photon or neutron
       Int_t PFOID = (recomc=="reco") ? _pfo.pfo_type[ipfo] : _pfo.pfo_pdgcheat[ipfo];
+
+      // if(ijet==1 && debug=="debug"){
+      //   cout << "PFOID: " << PFOID << ", (E,x,y,z) = (" << 
+      //   _pfo.pfo_E[ipfo] << "," << _pfo.pfo_px[ipfo] << ", " << _pfo.pfo_py[ipfo] << ", " << _pfo.pfo_pz[ipfo] << ")" << endl;
+      // }
 
       if( fabs(PFOID)==22  || fabs(PFOID)==2112 ) {
         
@@ -396,9 +421,10 @@ namespace QQbarAnalysis
     VectorTools photonJets[2];
     for (int i=0; i<2; i++){
       photonJets[i].SetCoordinates(photonJets_p[i][0],photonJets_p[i][1],photonJets_p[i][2],photonjet_E[i]);
-      photonjet_costheta[i]=std::cos( photonJets[i].v3().Theta() );
+      photonjet_costheta[i]=abs(std::cos( photonJets[i].v3().Theta() ));
     }
 
+    Int_t ijet_max = photonjet_E[0]<photonjet_E[1];
     Float_t photonjet_e_max=0;
     Float_t photonjet_cos_max=-2;
     if(photonjet_E[0]>photonjet_E[1]) {
@@ -407,6 +433,18 @@ namespace QQbarAnalysis
     } else {
       photonjet_e_max=photonjet_E[1];
       photonjet_cos_max=photonjet_costheta[1];
+    }
+
+    photonjet_invM = (photonJets[0].v4() + photonJets[1].v4()).M();
+    if(debug=="debug") {
+      cout << "ijet_max = " << ijet_max << endl;
+      cout << "photonjet" << 0 << " (E,x,y,z) = (" <<
+      photonJets[0].v4().E() << "," << photonJets[0].v4().Px() << ", " << photonJets[0].v4().Py() << ", " << photonJets[0].v4().Pz() << ")" << endl;
+      cout << "photonjet" << 1 << " (E,x,y,z) = (" <<
+      photonJets[1].v4().E() << "," << photonJets[1].v4().Px() << ", " << photonJets[1].v4().Py() << ", " << photonJets[1].v4().Pz() << ")" << endl;
+      cout << "photonjet_e_max: " << photonjet_e_max << endl;
+      cout << "photonjet_cos_max: " << photonjet_cos_max << endl;
+      cout << "photonjet_invM: " << photonjet_invM << endl;
     }
 
     return ( fabs(photonjet_cos_max)<0.97 && photonjet_e_max < 115 );
@@ -463,7 +501,8 @@ namespace QQbarAnalysis
     //         K[0] = jet_vec[0].v3().R() * sinacol / sqrt(1 - abscos[1] * abscos[1]);
     //         K[1] = jet_vec[1].v3().R() * sinacol / sqrt(1 - abscos[0] * abscos[0]);
 
-    return (Kv < 35 && ssmass > 130);
+    // return (Kv < 35 && ssmass > 130);
+    return Kv < 35;
 
   }
 
