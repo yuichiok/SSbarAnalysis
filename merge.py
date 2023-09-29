@@ -2,6 +2,7 @@ import os
 import sys
 import subprocess
 import argparse
+from multiprocessing.pool import ThreadPool as Pool
 from pathlib import Path
 projectDir = Path(__file__).parent.absolute()
 sys.path.append(os.path.join(projectDir, 'batch_jobs'))
@@ -33,20 +34,35 @@ dirCheck = os.path.isdir(inDir) or os.path.isdir(outDir) or os.path.isdir(stageD
 if not dirCheck:
   sys.exit("Error: directory not found")
 
-print("Removing staged directory...")
-subprocess.run(['rm', '-rf', stageDir])
-print("Creating staged directory...")
-subprocess.run(['mkdir', '-p', stageDir])
-
-for prodID in prodIDList:
+def mergeStage(prodID):
   print(f"Processing {args.process} {args.chiral} {processID} {prodID}")
   subprocess.run(f"hadd -f -j 8 {stageDir}/stage_{args.process}_{args.chiral}_{processID}_{prodID}.root \
                   {inDir}/*{processID}*{args.process}*{chiralDot}*{prodID}*.root",shell=True)
+  return f"stage_{args.process}_{args.chiral}_{processID}_{prodID}.root done"
 
-# # subprocess.run(f"rm -rf {indir}",shell=True)
-# # subprocess.run(f"mkdir -p {indir}",shell=True)
+if __name__ == '__main__':
+  
+  print("Removing staged directory...")
+  subprocess.run(['rm', '-rf', stageDir])
+  print("Creating staged directory...")
+  subprocess.run(['mkdir', '-p', stageDir])
 
-haddCommand = f"hadd -f -j 8 {outDir}/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I{processID}.{args.process}.{chiralDot}.KPiLPFO.dedxPi.PFOp15.LPFOp15_pNaN.all.root \
-                {stageDir}/stage_*.root"
-print(haddCommand)
-subprocess.run(haddCommand,shell=True)
+  # njobs = 20
+  # nrun = len(prodIDList) // njobs + 1
+  # print(f"njobs: {njobs}, nrun: {nrun}")
+
+  # with Pool(8) as pool:
+  #   for result in pool.map(mergeStage, prodIDList):
+  #     print(result)
+  #   pool.terminate()
+  #   pool.join()
+
+  for prodID in prodIDList:
+    print(f"Processing {args.process} {args.chiral} {processID} {prodID}")
+    subprocess.run(f"hadd -f -j 8 {stageDir}/stage_{args.process}_{args.chiral}_{processID}_{prodID}.root \
+                    {inDir}/*{processID}*{args.process}*{chiralDot}*{prodID}*.root",shell=True)
+
+  haddCommand = f"hadd -f -j 8 {outDir}/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I{processID}.{args.process}.{chiralDot}.KPiLPFO.dedxPi.PFOp15.LPFOp15_pNaN.all.root \
+                  {stageDir}/stage_*.root"
+  print(haddCommand)
+  subprocess.run(haddCommand,shell=True)
