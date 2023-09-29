@@ -12,6 +12,7 @@ void AnalysisConfig::SetConfig(TString fnc)
 
   // Gen cuts
     // gen_quark  = pt.get<int>("GENERATED.gen_quark");
+    // gen_quark  = pt.get<string>("GENERATED.gen_quark");
     string input_gen_quarks  = pt.get<string>("GENERATED.gen_quark");
     getListFromString(input_gen_quarks, gen_quarks);
 

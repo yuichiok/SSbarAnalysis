@@ -1,5 +1,6 @@
 #ifndef GUARD_AnalysisConfig_h
 #define GUARD_AnalysisConfig_h
+#define BOOST_SPIRIT_THREADSAFE
 
 #include "MapTString.hh"
 #include "ConfigReader.hh"
@@ -26,7 +27,7 @@ class AnalysisConfig
 
   // Config variables
   // Gen cuts
-    // int gen_quark;
+    // std::string gen_quark;
     std::vector<int> gen_quarks;
 
   // PFO cuts
