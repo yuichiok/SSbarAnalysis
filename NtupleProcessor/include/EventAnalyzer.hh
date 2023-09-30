@@ -63,7 +63,7 @@ namespace QQbarAnalysis
       Bool_t           Cut_ACol( VectorTools v[2] );
       Bool_t           Cut_ISR ( VectorTools v[2] );
 
-      Bool_t           Cut_PhotonJets( TString recomc, TString debug );
+      Bool_t           Cut_PhotonJets( TString recomc );
       Float_t          Cut_SinACol( VectorTools v[2] );
       Float_t          Cut_invM( VectorTools v[2] );
       Float_t          Cut_d23( TString recomc );

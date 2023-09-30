@@ -245,7 +245,7 @@ namespace QQbarAnalysis
     Float_t invM          = Cut_invM( vt );
     Float_t y23           = Cut_d23(recomc) / pow(invM,2);
 
-    Bool_t isNotPhotonJet = Cut_PhotonJets(recomc, "nodebug");
+    Bool_t isNotPhotonJet = Cut_PhotonJets(recomc);
     Bool_t isSinglePFOJet = (_jet.jet_npfo[0] == 1 || _jet.jet_npfo[1] == 1 );
     Bool_t cut1 = isNotPhotonJet && !isSinglePFOJet;
 
@@ -286,7 +286,6 @@ namespace QQbarAnalysis
           _jet.jet_E[0] << "," << _jet.jet_px[0] << ", " << _jet.jet_py[0] << ", " << _jet.jet_pz[0] << ")" << endl;
           cout << "jet1 (E,x,y,z) = (" << 
           _jet.jet_E[1] << "," << _jet.jet_px[1] << ", " << _jet.jet_py[1] << ", " << _jet.jet_pz[1] << ")" << endl;
-          Bool_t debug = Cut_PhotonJets(recomc, "debug");
         }
         _hm.h1_preselection.at(_qmode).at("invM")->Fill( Cut_invM( vt ) );
       }
@@ -380,7 +379,7 @@ namespace QQbarAnalysis
     return (SumE > 220);
   }
 
-  Bool_t EventAnalyzer::Cut_PhotonJets ( TString recomc, TString debug )
+  Bool_t EventAnalyzer::Cut_PhotonJets ( TString recomc )
   {
     Float_t photonjet_invM;
     Float_t photonjet_E[2];
@@ -402,11 +401,6 @@ namespace QQbarAnalysis
 
       //pfo identified as photon or neutron
       Int_t PFOID = (recomc=="reco") ? _pfo.pfo_type[ipfo] : _pfo.pfo_pdgcheat[ipfo];
-
-      // if(ijet==1 && debug=="debug"){
-      //   cout << "PFOID: " << PFOID << ", (E,x,y,z) = (" << 
-      //   _pfo.pfo_E[ipfo] << "," << _pfo.pfo_px[ipfo] << ", " << _pfo.pfo_py[ipfo] << ", " << _pfo.pfo_pz[ipfo] << ")" << endl;
-      // }
 
       if( fabs(PFOID)==22  || fabs(PFOID)==2112 ) {
         
@@ -436,16 +430,6 @@ namespace QQbarAnalysis
     }
 
     photonjet_invM = (photonJets[0].v4() + photonJets[1].v4()).M();
-    if(debug=="debug") {
-      cout << "ijet_max = " << ijet_max << endl;
-      cout << "photonjet" << 0 << " (E,x,y,z) = (" <<
-      photonJets[0].v4().E() << "," << photonJets[0].v4().Px() << ", " << photonJets[0].v4().Py() << ", " << photonJets[0].v4().Pz() << ")" << endl;
-      cout << "photonjet" << 1 << " (E,x,y,z) = (" <<
-      photonJets[1].v4().E() << "," << photonJets[1].v4().Px() << ", " << photonJets[1].v4().Py() << ", " << photonJets[1].v4().Pz() << ")" << endl;
-      cout << "photonjet_e_max: " << photonjet_e_max << endl;
-      cout << "photonjet_cos_max: " << photonjet_cos_max << endl;
-      cout << "photonjet_invM: " << photonjet_invM << endl;
-    }
 
     return ( fabs(photonjet_cos_max)<0.97 && photonjet_e_max < 115 );
 
