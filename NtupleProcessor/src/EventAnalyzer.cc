@@ -275,20 +275,6 @@ namespace QQbarAnalysis
         _hm.h1_preselection.at(_qmode).at("sinacol")->Fill( chgJetSinAcol );
       }
       if( cut1 && isSinACol ){
-        if( _qmode == "rr" ){
-          cout << "====" << endl;
-          cout << "sinA: " << chgJetSinAcol << ", " << VectorTools::GetSinACol( vt_gen[0].v3(), vt_gen[1].v3() ) << endl;
-          cout << "invM: " << Cut_invM( vt ) << ", " << Cut_invM( vt_gen ) << endl;
-          cout << "mc_quark0 (E,x,y,z) = (" << 
-          _mc.mc_quark_E[0] << "," << _mc.mc_quark_px[0] << ", " << _mc.mc_quark_py[0] << ", " << _mc.mc_quark_pz[0] << ")" << endl;
-          cout << "mc_quark1 (E,x,y,z) = (" << 
-          _mc.mc_quark_E[1] << "," << _mc.mc_quark_px[1] << ", " << _mc.mc_quark_py[1] << ", " << _mc.mc_quark_pz[1] << ")" << endl;
-          cout << "--" << endl;
-          cout << "jet0 (E,x,y,z) = (" << 
-          _jet.jet_E[0] << "," << _jet.jet_px[0] << ", " << _jet.jet_py[0] << ", " << _jet.jet_pz[0] << ")" << endl;
-          cout << "jet1 (E,x,y,z) = (" << 
-          _jet.jet_E[1] << "," << _jet.jet_px[1] << ", " << _jet.jet_py[1] << ", " << _jet.jet_pz[1] << ")" << endl;
-        }
         _hm.h1_preselection.at(_qmode).at("invM")->Fill( Cut_invM( vt ) );
       }
       if( cut1 && isSinACol && isInvM ){
