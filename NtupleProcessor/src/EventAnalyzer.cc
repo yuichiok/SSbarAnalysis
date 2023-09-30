@@ -249,7 +249,8 @@ namespace QQbarAnalysis
     Bool_t isSinglePFOJet = (_jet.jet_npfo[0] == 1 || _jet.jet_npfo[1] == 1 );
     Bool_t cut1 = isNotPhotonJet && !isSinglePFOJet;
 
-    Bool_t isSinACol      = Cut_SinACol( vt ) < 0.3;
+    Float_t chgJetSinAcol = Cut_SinACol();
+    Bool_t isSinACol      = chgJetSinAcol < 0.3;
     Bool_t isCosACol      = VectorTools::GetCosBetween(vt[0].v3(),vt[1].v3()) < 0;
     isSinACol = isSinACol && isCosACol;
     Bool_t isKv           = Cut_ISR( vt );
@@ -257,7 +258,8 @@ namespace QQbarAnalysis
     Bool_t isY23          = y23 < 0.02;
 
     // signal background criteria
-    Bool_t isSinAColQQ = Cut_SinACol( vt_gen ) < 0.3;
+    // Bool_t isSinAColQQ = Cut_SinACol( vt_gen ) < 0.3;
+    Bool_t isSinAColQQ = VectorTools::GetSinACol( vt_gen[0].v3(), vt_gen[1].v3() ) < 0.3;
     Bool_t isCosAColQQ = VectorTools::GetCosBetween(vt_gen[0].v3(),vt_gen[1].v3()) < 0;
     isSinAColQQ = isSinAColQQ && isCosAColQQ;
     Bool_t isInvMQQ    = Cut_invM( vt_gen ) > 140;
@@ -270,12 +272,12 @@ namespace QQbarAnalysis
       _hm.h1_preselection.at(_qmode).at("cosBF")->Fill( std::cos( vt[1].v3().Theta() ) );
       
       if( cut1 ){
-        _hm.h1_preselection.at(_qmode).at("sinacol")->Fill( Cut_SinACol( vt ) );
+        _hm.h1_preselection.at(_qmode).at("sinacol")->Fill( chgJetSinAcol );
       }
       if( cut1 && isSinACol ){
         if( _qmode == "rr" ){
           cout << "====" << endl;
-          cout << "sinA: " << Cut_SinACol( vt ) << ", " << Cut_SinACol( vt_gen ) << endl;
+          cout << "sinA: " << chgJetSinAcol << ", " << VectorTools::GetSinACol( vt_gen[0].v3(), vt_gen[1].v3() ) << endl;
           cout << "invM: " << Cut_invM( vt ) << ", " << Cut_invM( vt_gen ) << endl;
           cout << "mc_quark0 (E,x,y,z) = (" << 
           _mc.mc_quark_E[0] << "," << _mc.mc_quark_px[0] << ", " << _mc.mc_quark_py[0] << ", " << _mc.mc_quark_pz[0] << ")" << endl;
@@ -435,13 +437,39 @@ namespace QQbarAnalysis
 
   }
 
-  Float_t EventAnalyzer::Cut_SinACol ( VectorTools v[2] )
+  Float_t EventAnalyzer::Cut_SinACol ()
   {
     // Float_t sinacol = std::sin( VectorTools::GetThetaBetween( v[0].v3(), v[1].v3() ) );
-    Float_t sinacol = VectorTools::GetSinACol( v[0].v3(), v[1].v3() );
+    // Float_t sinacol = VectorTools::GetSinACol( v[0].v3(), v[1].v3() );
 
     // return (sinacol < 0.3);
-    return sinacol;
+    // return sinacol;
+
+    std::vector<float> p1;
+    std::vector<float> p2;
+    float px_charged_pfos[2]={0};
+    float py_charged_pfos[2]={0};
+    float pz_charged_pfos[2]={0};
+    float E_charged_pfos[2]={0};
+    int n_charged_pfos[2]={0};
+    for(int ipfo=0; ipfo<_pfo.pfo_n; ipfo++) {
+      if((_pfo.pfo_match[ipfo]==0 || _pfo.pfo_match[ipfo]==1) && _pfo.pfo_charge[ipfo]!=0 && _pfo.pfo_ntracks[ipfo]==1) {
+        px_charged_pfos[_pfo.pfo_match[ipfo]]+=_pfo.pfo_px[ipfo];
+        py_charged_pfos[_pfo.pfo_match[ipfo]]+=_pfo.pfo_py[ipfo];
+        pz_charged_pfos[_pfo.pfo_match[ipfo]]+=_pfo.pfo_pz[ipfo];
+        E_charged_pfos[_pfo.pfo_match[ipfo]]+=_pfo.pfo_E[ipfo];
+        n_charged_pfos[_pfo.pfo_match[ipfo]]++;
+      }
+    }
+
+    VectorTools chgJetvt[2];
+    for (int ijet=0; ijet<2; ijet++) chgJetvt[ijet].SetCoordinates(px_charged_pfos[ijet],py_charged_pfos[ijet],pz_charged_pfos[ijet],E_charged_pfos[ijet]);
+    float acol = VectorTools::GetSinACol( chgJetvt[0].v3(), chgJetvt[1].v3() );
+
+    if(n_charged_pfos[0]<2 || n_charged_pfos[1]<2) acol=2;
+    
+    return acol;
+
   }
 
   Float_t EventAnalyzer::Cut_invM ( VectorTools v[2] )
