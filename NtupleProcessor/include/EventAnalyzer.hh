@@ -23,6 +23,8 @@
 #include <TChain.h>
 #include <TFile.h>
 #include <TGraphErrors.h>
+#include <TVector3.h>
+#include <TLorentzVector.h>
 
 #include <vector>
 #include <fstream>
@@ -67,6 +69,28 @@ namespace QQbarAnalysis
       Float_t          Cut_SinACol( VectorTools v[2] );
       Float_t          Cut_invM( VectorTools v[2] );
       Float_t          Cut_d23( TString recomc );
+
+      /////
+      bool PreSelection(int type=0, float acolcut=0.3);
+      
+      // calculation of photon related quantities
+      double  a_npfo[2]={-1};
+      double  a_npfo_photon[2]={-1};
+      double  a_npfo_charge[2]={-1};
+      double  a_photonjet_E[2]={0};
+      double  a_photonjet_costheta[2]={-2};
+      void PFOphotonQuantities();
+
+      std::vector< float > getAngles(std::vector< float > & direction);
+      float getModule(vector< float > & v);
+      std::vector< float > getDirection(vector<float> & vectorPoint);
+      float GetCostheta(std::vector<float> & vectorPoint);
+      float GetSinacol(TVector3 v1, TVector3 v2);
+      float AcolValue();
+
+      /////
+
+
 
       void             ClearStructs();
       virtual Bool_t   Notify();

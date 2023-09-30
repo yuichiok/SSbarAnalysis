@@ -272,7 +272,8 @@ namespace QQbarAnalysis
       if( cut1 ){
         _hm.h1_preselection.at(_qmode).at("sinacol")->Fill( Cut_SinACol( vt ) );
       }
-      if( cut1 && isSinACol ){
+      // if( cut1 && isSinACol ){
+      if( PreSelection(2) ){
         if( _qmode == "rr" ){
           cout << "====" << endl;
           cout << "sinA: " << Cut_SinACol( vt ) << ", " << Cut_SinACol( vt_gen ) << endl;
@@ -704,4 +705,186 @@ namespace QQbarAnalysis
     _data.jet_theta_diff = std::abs( jetvt[0].v3().theta() - jetvt[1].v3().theta() );
 
   }
+
+
+  std::vector< float > EventAnalyzer::getAngles(std::vector< float > & direction) {
+    vector< float > result;
+
+    TLorentzVector v1(direction[0],direction[1],0,0);
+    TLorentzVector v2(1,0,0,0);
+      
+    float phi = v1.Angle(v2.Vect()); 
+    if(direction[1]<0 && direction[0]>0) phi=2*TMath::Pi() - phi;
+    if(direction[1]<0 && direction[0]<0) phi=2*TMath::Pi() - phi;
+      
+    if(direction[1]<0 && direction[0]==0) phi=3.*TMath::Pi()/2.;
+    if(direction[1]>0 && direction[0]==0) phi=TMath::Pi()/2.;
+    if(direction[1]==0 && direction[0]>0) phi=0;
+    if(direction[1]==0 && direction[0]<0) phi=TMath::Pi();
+      
+    float teta = acos(direction[2]);
+    result.push_back(phi);
+    result.push_back(teta);
+    return result;
+  }
+
+  float EventAnalyzer::getModule(vector< float > & v)   {
+    float module = 0.0;
+    for (unsigned int i = 0; i < v.size(); i++) module += v[i]*v[i];
+    module = sqrt(module);
+    return module;
+  }
+    
+  std::vector< float > EventAnalyzer::getDirection(vector<float> & vectorPoint) {
+    vector< float > vector1;
+    float module = getModule(vectorPoint);
+    for (int i = 0; i < 3; i++) vector1.push_back( vectorPoint[i]/module);
+    return vector1;
+  }
+
+  float EventAnalyzer::GetCostheta(std::vector<float> & vectorPoint){
+    float costheta1 =  -2.0;
+    std::vector< float > d1= getDirection(vectorPoint);
+    costheta1 =  std::cos( getAngles(d1).at(1) );
+    return costheta1;
+  }
+  float EventAnalyzer::GetSinacol(TVector3 v1, TVector3 v2){
+    float sinacol =  -2.0;
+    TVector3 v= v1.Cross(v2);
+    sinacol = (v.Mag()/(v1.Mag()*v2.Mag()));// * v2.Mag()/(v1+v2).Mag(); 
+    return sinacol;
+  }
+
+  float EventAnalyzer::AcolValue() {
+
+    std::vector<float> p1;
+    std::vector<float> p2;
+    float px_charged_pfos[2]={0};
+    float py_charged_pfos[2]={0};
+    float pz_charged_pfos[2]={0};
+    int n_charged_pfos[2]={0};
+    for(int ipfo=0; ipfo<_pfo.pfo_n; ipfo++) {
+      if((_pfo.pfo_match[ipfo]==0 || _pfo.pfo_match[ipfo]==1) && _pfo.pfo_charge[ipfo]!=0 && _pfo.pfo_ntracks[ipfo]==1) {
+        px_charged_pfos[_pfo.pfo_match[ipfo]]+=_pfo.pfo_px[ipfo];
+        py_charged_pfos[_pfo.pfo_match[ipfo]]+=_pfo.pfo_py[ipfo];
+        pz_charged_pfos[_pfo.pfo_match[ipfo]]+=_pfo.pfo_pz[ipfo];
+        n_charged_pfos[_pfo.pfo_match[ipfo]]++;
+      }
+    }
+
+    TVector3 v1(px_charged_pfos[0],py_charged_pfos[0],pz_charged_pfos[0]);
+    TVector3 v2(px_charged_pfos[1],py_charged_pfos[1],pz_charged_pfos[1]);
+    float acol=GetSinacol(v1,v2);
+
+    if(n_charged_pfos[0]<2 || n_charged_pfos[1]<2) acol=2;
+    
+    return acol;
+
+  }
+
+  void EventAnalyzer::PFOphotonQuantities() {
+
+    for(int i_=0; i_<2; i_++) {
+      a_npfo[i_]=0;
+      a_npfo_photon[i_]=0;
+      a_npfo_charge[i_]=0;
+      a_photonjet_E[i_]=0;
+      a_photonjet_costheta[i_]=-2;
+    }
+
+    float costheta=-2;
+    float energy=0;
+      
+    //  for(int ijet=0; ijet<2; ijet++) {
+    float costheta_jet_0=0;
+    float costheta_jet_1=0;
+
+    std::vector<float> p_pfo_0;
+    std::vector<float> p_pfo_1;
+    float px_0=0, py_0=0, pz_0=0;
+    float px_1=0, py_1=0, pz_1=0;
+
+    for(int ipfo=0; ipfo<_pfo.pfo_n; ipfo++) {//jet_pfo_n[ijet]; ipfo++) {
+        
+      if(_pfo.pfo_match[ipfo]<0) continue;
+      if(_pfo.pfo_E[ipfo]<1) continue;
+      if(_pfo.pfo_match[ipfo]>1) continue;
+
+      a_npfo[_pfo.pfo_match[ipfo]]++;
+
+      if( _pfo.pfo_charge[ipfo] != 0 && _pfo.pfo_ntracks[ipfo]==1 ) a_npfo_charge[_pfo.pfo_match[ipfo]]++;
+
+      //pfo identified as photon or neutron
+      if( _pfo.pfo_type[ipfo]==22  || fabs(_pfo.pfo_type[ipfo])==2112 ) {
+        
+        a_npfo_photon[_pfo.pfo_match[ipfo]]++;
+
+        if(_pfo.pfo_match[ipfo]==0) {
+          px_0+=_pfo.pfo_px[ipfo];
+          py_0+=_pfo.pfo_py[ipfo];
+          pz_0+=_pfo.pfo_pz[ipfo];
+        }
+        if(_pfo.pfo_match[ipfo]==1) {
+          px_1+=_pfo.pfo_px[ipfo];
+          py_1+=_pfo.pfo_py[ipfo];
+          pz_1+=_pfo.pfo_pz[ipfo];
+        }
+
+        a_photonjet_E[_pfo.pfo_match[ipfo]] += _pfo.pfo_E[ipfo];
+      } 
+    }//ipfo
+    
+    p_pfo_0.push_back(px_0);
+    p_pfo_0.push_back(py_0);
+    p_pfo_0.push_back(pz_0);
+    a_photonjet_costheta[0]=GetCostheta(p_pfo_0);
+
+    p_pfo_1.push_back(px_1);
+    p_pfo_1.push_back(py_1);
+    p_pfo_1.push_back(pz_1);
+    a_photonjet_costheta[1]=GetCostheta(p_pfo_1);
+    
+  }
+
+  bool EventAnalyzer::PreSelection(int type, float acolcut) {
+    
+    if(_jet.jet_E[0]<0.5 || _jet.jet_E[1]<0.5) return false;
+
+    if(type == 0 ) return true;
+
+    double bbmass= sqrt(pow(_jet.jet_E[0]+_jet.jet_E[1],2)-pow(_jet.jet_px[0]+_jet.jet_px[1],2)-pow(_jet.jet_py[0]+_jet.jet_py[1],2)-pow(_jet.jet_pz[0]+_jet.jet_pz[1],2));
+
+    // KRECO CALCULATION
+    //float Kv=Kreco();
+    float acol_value=AcolValue();
+
+    //----------------------------------------------------------
+    // IDENTIFICATION OF PFO's associated to photons, charged pfos, neutral pgos
+    //Radiative return cuts, photon INSIDE the detector //NUEVO ADRIAN 2021 04 21
+    //---------------------
+    PFOphotonQuantities();
+    float photonjet_e_max=0;
+    float photonjet_cos_max=-2;
+    if(a_photonjet_E[0]>a_photonjet_E[1]) {
+      photonjet_e_max=a_photonjet_E[0];
+      photonjet_cos_max=a_photonjet_costheta[0];
+    } else {
+      photonjet_e_max=a_photonjet_E[1];
+      photonjet_cos_max=a_photonjet_costheta[1];
+    }
+      
+    //----------------------------------------------------------
+    bool cut_[10]={false};
+    cut_[0]=true;
+    cut_[1]=( a_npfo[0]>1 && a_npfo[1]>1);
+    cut_[2]=( cut_[1] &&  fabs(photonjet_cos_max)<0.97 && photonjet_e_max<115 ) ;
+    cut_[3]=( cut_[2] && acol_value<0.3 );
+    cut_[4]=( cut_[3] && bbmass>140 ) ;
+    cut_[5]=( cut_[4] && _jet.d23>0.5 && _jet.d23/pow(bbmass,2)<0.02 );
+    
+    return cut_[type];
+
+
+  }
+
 }
