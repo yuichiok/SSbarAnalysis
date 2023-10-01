@@ -9,9 +9,6 @@ from pathlib import Path
 batchDir = Path(__file__).parent.absolute()
 projectDir = os.path.dirname(batchDir)
 
-subprocess.run(['cp', os.path.join(projectDir, 'main.exe'), batchDir])
-subprocess.run(f'cp {os.path.join(projectDir, "etc")}/* {batchDir}/etc',shell=True)
-
 runROOT = os.path.join(batchDir, 'runROOT.py')
 
 nfirst    = 1    # first file
@@ -27,12 +24,19 @@ parser.add_argument('--process', type=str, required=True,
                     help='Production process (P2f_z_h, P4f_ww_h, P4_zz_h, Pe1e1h)')
 parser.add_argument('--chiral',  type=str, required=True,
                     help='Polarization of beam (eLpR or eRpL or eLpL or eRpR)')
+parser.add_argument('--copy',type=int, required=True,
+                    help='Copy executable and setting files. Set to false when running consecutive jobs.')
 
 args  = parser.parse_args()
 if args.chiral not in ["eLpR", "eRpL", "eLpL", "eRpR"]:
   sys.exit("Error: chiral must be eLpR or eRpL or eLpL or eRpR")
 if args.process not in ["P2f_z_h", "P4f_ww_h", "P4f_zz_h", "Pe1e1h"]:
   sys.exit("Error: process must be P2f_z_h, P4f_ww_h, P4f_zz_h, or Pe1e1h")
+if args.copy:
+  print("Copy exe and setting files...")
+  subprocess.run(['cp', os.path.join(projectDir, 'main.exe'), batchDir])
+  subprocess.run(f'cp {os.path.join(projectDir, "etc")}/* {batchDir}/etc',shell=True)
+
 
 model = "l5"
 processID  = production[args.process, args.chiral][0]
