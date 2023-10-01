@@ -48,8 +48,9 @@ def mergeStage(prodID):
     tmpROOT   = os.path.join(tmpDir, f'*{processID}*{args.process}*{chiralDot}*{prodID}*.root')
 
     condor = f"bsub -q s -J merge_{processID}_{prodID}"
-    stageCommand = f"hadd -f -v 0 {stageROOT} {tmpROOT}"
-    subprocess.run(f"{condor} {stageCommand}",shell=True)
+    stageCommand = f"hadd -f -v 0 -j 24 {stageROOT} {tmpROOT}"
+    # subprocess.run(f"{condor} {stageCommand}",shell=True)
+    subprocess.run(f"{stageCommand}",shell=True)
 
 if __name__ == '__main__':
   
@@ -61,7 +62,10 @@ if __name__ == '__main__':
       subprocess.run(['mkdir', '-p', stageDir])
 
     for prodID in prodIDList:
+      start_time = time.time()
+      print(f"Staging {prodID}...")
       mergeStage(prodID)
+      print(f"Staging {prodID} took {time.time() - start_time} seconds")
   
   else:
     stageROOTFileList = [stageROOTFileName(prodID) for prodID in prodIDList]
