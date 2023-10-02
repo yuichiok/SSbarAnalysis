@@ -68,7 +68,7 @@ def main():
 
   chirals   = ["eLpR", "eRpL"]
   processes = ["P2f_z_h", "P4f_ww_h", "P4f_zz_h", "Pe1e1h"]
-  qqbars    = ["dd", "uu", "ss", "cc", "bb","rr"]
+  qqbars    = ["dd", "uu", "ss", "cc", "bb", "rr"]
 
   files = {}
   for process in processes:
@@ -147,7 +147,7 @@ def main():
     elif column == "cosBF":
       denom = totDf[column]
     else:
-      effDf[f'cut{cutno}'] = totDf[column]*100. / denom
+      effDf[f'cut{cutno}'] = totDf[column] / denom
       cutno += 1
   with pd.option_context('display.float_format', '{:0.1f}'.format):
     effDf = effDf.sort_values(by=['chiral', 'process'])
@@ -158,8 +158,8 @@ def main():
     eRpLdf = effDf.loc[1:].T
 
     # file_eLpR = Path('eLpR.csv')  
-    file_eLpR = os.path.join(macroDir, 'eLpR.csv')
-    file_eRpL = os.path.join(macroDir, 'eRpL.csv')
+    file_eLpR = os.path.join(macroDir, 'preselection', 'eLpR.csv')
+    file_eRpL = os.path.join(macroDir, 'preselection', 'eRpL.csv')
     eLpRdf.to_csv(file_eLpR)
     eRpLdf.to_csv(file_eRpL)
 
