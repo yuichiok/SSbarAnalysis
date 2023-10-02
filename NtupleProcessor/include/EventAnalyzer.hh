@@ -67,6 +67,7 @@ namespace QQbarAnalysis
       Float_t          Cut_SinACol();
       Float_t          Cut_invM( VectorTools v[2] );
       Float_t          Cut_d23( TString recomc );
+      Float_t          Cut_LPFOACol();
 
       void             ClearStructs();
       virtual Bool_t   Notify();

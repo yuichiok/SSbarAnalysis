@@ -244,6 +244,7 @@ namespace QQbarAnalysis
 
     Float_t invM          = Cut_invM( vt );
     Float_t y23           = Cut_d23(recomc) / pow(invM,2);
+    Float_t LPFOacol      = Cut_LPFOACol();
 
     Bool_t isNotPhotonJet = Cut_PhotonJets(recomc);
     Bool_t isSinglePFOJet = (_jet.jet_npfo[0] == 1 || _jet.jet_npfo[1] == 1 );
@@ -253,9 +254,10 @@ namespace QQbarAnalysis
     Bool_t isSinACol      = chgJetSinAcol < 0.3;
     Bool_t isCosACol      = VectorTools::GetCosBetween(vt[0].v3(),vt[1].v3()) < 0;
     isSinACol = isSinACol && isCosACol;
-    Bool_t isKv           = Cut_ISR( vt );
     Bool_t isInvM         = invM > 140;
     Bool_t isY23          = y23 < 0.02;
+    Bool_t isLPFOacol     = LPFOacol > 0.97;
+
 
     // signal background criteria
     // Bool_t isSinAColQQ = Cut_SinACol( vt_gen ) < 0.3;
@@ -280,15 +282,19 @@ namespace QQbarAnalysis
       if( cut1 && isSinACol && isInvM ){
         _hm.h1_preselection.at(_qmode).at("y23")->Fill( y23 );
       }
+      if( cut1 && isSinACol && isInvM && isY23 ){
+        _hm.h1_preselection.at(_qmode).at("LPFOacol")->Fill( LPFOacol );
+      }
 
-      if( cut1 && isSinACol && isInvM && isY23) {
+      if( cut1 && isSinACol && isInvM && isY23 && isLPFOacol ) {
         _hm.h1_preselection.at(_qmode).at("cosAF")->Fill( std::cos( vt[0].v3().Theta() ) );
         _hm.h1_preselection.at(_qmode).at("cosAF")->Fill( std::cos( vt[1].v3().Theta() ) );
       }
 
     }
 
-    vector<Bool_t> CutTrigger = {isNotPhotonJet, isSinACol, isInvM};
+    // vector<Bool_t> CutTrigger = {isNotPhotonJet, isSinACol, isInvM};
+    vector<Bool_t> CutTrigger = {cut1, isSinACol, isInvM, isY23, isLPFOacol};
     return CutTrigger;
   }
 
@@ -469,6 +475,21 @@ namespace QQbarAnalysis
   Float_t EventAnalyzer::Cut_d23 ( TString recomc )
   {
     return (recomc=="reco") ? _jet.d23 : _mc.mc_quark_ps_d23;
+  }
+
+  Float_t EventAnalyzer::Cut_LPFOACol ()
+  {
+    PFOTools pfot( &_mc, &_pfo, _config );
+
+    Float_t acol = -2;
+    if(pfot.PFO_sorted_jet[0].size()&&pfot.PFO_sorted_jet[1].size()) {
+      acol = VectorTools::GetCosBetween( pfot.LPFO[0].vt.v3(), pfot.LPFO[1].vt.v3() );
+    }
+
+    ClearStructs();
+
+    return abs(acol);
+
   }
 
   Bool_t EventAnalyzer::Cut_ACol ( VectorTools v[2] )
