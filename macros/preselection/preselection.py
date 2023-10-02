@@ -35,8 +35,7 @@ def addData(file, hpath, df, process, qqbar, chiral):
 
   for category in hcategory:
     h = file.Get(f'{hpath}_{category}')
-    entry = (h.GetEntries() / 2.0) if (category == "cosBF") or (category == "cosAF") else h.GetEntries()
-    # entry = (h.Integral(10,90) / 2.0) if (category == "cosBF") or (category == "cosAF") else h.GetEntries()
+    entry = (h.Integral() / 2.0) if (category == "cosBF") or (category == "cosAF") else h.Integral()
     values_dict[category] = entry
 
   # Append the values to a temporary DataFrame
@@ -138,7 +137,6 @@ def main():
         h_sum.SetTitle(f"{process}")
         PM.stack.Add(h_sum)
 
-  print(totDf)
   effDf = pd.DataFrame(columns=columnDf[:2])
   cutno = 1
   for column in columnDf:
@@ -151,11 +149,10 @@ def main():
       cutno += 1
   with pd.option_context('display.float_format', '{:0.1f}'.format):
     effDf = effDf.sort_values(by=['chiral', 'process'])
-    print(effDf)
-    print(effDf.head(9).T)
-    print(effDf.loc[1:].T)
     eLpRdf = effDf.head(9).T
     eRpLdf = effDf.loc[1:].T
+    print(eLpRdf)
+    print(eRpLdf)
 
     # file_eLpR = Path('eLpR.csv')  
     file_eLpR = os.path.join(macroDir, 'preselection', 'eLpR.csv')
