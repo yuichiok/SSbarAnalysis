@@ -190,7 +190,7 @@ TH1F * resolutionCorrection( TH1F * h, TString LPFO_mode, TFile * file, TString 
   TH1F *h_gen_N_Pi_cos  = (TH1F*) file->Get( category + "/resolution/h_" + category + "_" + LPFO_mode + "_gen_N_cos");
   TH1F *h_reco_N_Pi_cos = (TH1F*) file->Get( category + "/resolution/h_" + category + "_" + LPFO_mode + "_reco_N_cos");
   TH1F *h_N_Pi_corr_cos = (TH1F*) file->Get( category + "/resolution/h_" + category + "_" + LPFO_mode + "_N_corr_cos");
-  Int_t genN = h_gen_N_Pi_cos->GetEntries();
+  Int_t genN = h_gen_N_Pi_cos->Integral();
   TH1F *htmp = (TH1F*) h->Clone();
   if(!genN) return htmp;
 

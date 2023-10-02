@@ -10,7 +10,8 @@ using std::vector; using std::array; using std::unordered_map;
 
 // TString prod_mode = "uu";
 // TString chiral    = "eR.pL";
-TString LPFO_mode = "Pi";
+TString LPFO_mode = "K";
+Float_t TopRange = 300E3;
 
 TString inputDir = "../../rootfiles/merged/";
 array<TString,2> chirals   = {"eL.pR", "eR.pL"};
@@ -61,6 +62,29 @@ void Normalize2Gen(TH1F *h, TH1F *h_gen)
   h->Scale( intCosGen / intCosReco );
 }
 
+TString histLabel(TString process, TString category){
+
+  if (category.Length() != 2) {
+    std::cerr << "Error: category must be two letters" << std::endl;
+    return "";
+  }
+
+  if(process=="P2f_z_h" && category!="rr"){
+    std::string category_str(category.Data(), category.Length());
+    return TString(category_str.substr(0, 1) + "#bar{" + category_str.substr(1, 1) + "}").Data();
+  }else if (category == "rr"){
+    return "Rad. Ret.";
+  }else if (process=="P4f_ww_h"){
+    return "WW";
+  }else if (process=="P4f_zz_h"){
+    return "ZZ";
+  }else if (process=="Pe1e1h"){
+    return "q#bar{q}H";
+  }
+  return "";
+
+}
+
 unordered_map<TString, TH1F*> main_pq(TFile* file, TString category)
 {
   gStyle->SetOptStat(0);
@@ -84,7 +108,8 @@ unordered_map<TString, TH1F*> main_pq(TFile* file, TString category)
   Bool_t isEffCorr = true;
   TH1F *h_reco_LPFO_scos_eff_corr;
   TH1F *h_reco_LPFO_qcos_eff_corr;
-  if (isEffCorr && category!="bg")
+  // if (isEffCorr && category!="bg")
+  if (isEffCorr)
   {
     TH1F* h_reco_LPFO_scos_eff = efficiencyCorrection(h_reco_LPFO_scos,LPFO_mode,file,category);
     TH1F* h_reco_LPFO_qcos_eff = efficiencyCorrection(h_reco_LPFO_qcos,LPFO_mode,file,category);
@@ -98,12 +123,13 @@ unordered_map<TString, TH1F*> main_pq(TFile* file, TString category)
 
   TH1F *h_acc_PiPi_cos_eff_corr;
   TH1F *h_rej_PiPi_cos_eff_corr;
-  if (isEffCorr && category!="bg")
+  // if (isEffCorr && category!="bg")
+  if (isEffCorr)
   {
-    TH1F* h_acc_PiPi_cos_eff = efficiencyCorrection(h_acc_PiPi_cos,"Pi",file,category);
-    TH1F* h_rej_PiPi_cos_eff = efficiencyCorrection(h_rej_PiPi_cos,"Pi",file,category);
-    h_acc_PiPi_cos_eff_corr = resolutionCorrection(h_acc_PiPi_cos_eff,"Pi",file,category);
-    h_rej_PiPi_cos_eff_corr = resolutionCorrection(h_rej_PiPi_cos_eff,"Pi",file,category);
+    TH1F* h_acc_PiPi_cos_eff = efficiencyCorrection(h_acc_PiPi_cos,LPFO_mode,file,category);
+    TH1F* h_rej_PiPi_cos_eff = efficiencyCorrection(h_rej_PiPi_cos,LPFO_mode,file,category);
+    h_acc_PiPi_cos_eff_corr = resolutionCorrection(h_acc_PiPi_cos_eff,LPFO_mode,file,category);
+    h_rej_PiPi_cos_eff_corr = resolutionCorrection(h_rej_PiPi_cos_eff,LPFO_mode,file,category);
   }else{
     h_acc_PiPi_cos_eff_corr = (TH1F*) h_acc_PiPi_cos->Clone();
     h_rej_PiPi_cos_eff_corr = (TH1F*) h_rej_PiPi_cos->Clone();
@@ -127,11 +153,12 @@ unordered_map<TString, TH1F*> main_pq(TFile* file, TString category)
   }
 
   TH1F *h_reco_LPFO_pq_cos;
-  if( category!="bg" ){
-    h_reco_LPFO_pq_cos = CorrectHist(prodMode, h_reco_LPFO_qcos_eff_corr, p_vec);
-  }else{
-    h_reco_LPFO_pq_cos = (TH1F*) h_reco_LPFO_qcos_eff_corr->Clone();
-  }
+  h_reco_LPFO_pq_cos = CorrectHist(prodMode, h_reco_LPFO_qcos_eff_corr, p_vec);
+  // if( category!="bg" ){
+  //   h_reco_LPFO_pq_cos = CorrectHist(prodMode, h_reco_LPFO_qcos_eff_corr, p_vec);
+  // }else{
+  //   h_reco_LPFO_pq_cos = (TH1F*) h_reco_LPFO_qcos_eff_corr->Clone();
+  // }
   StyleHist(h_reco_LPFO_pq_cos,kBlue);
 
   // Fitting
@@ -180,7 +207,11 @@ void pq_method_PiLPFO_total()
       }
     }
 
-    THStack *hs_reco = new THStack("hs_reco",";Entries;cos#theta");
+    unordered_map<TString, THStack*> hs_reco;
+    for( auto chiral : chirals ){
+      hs_reco[chiral] = new THStack("hs_reco_" + chiral,";cos#theta;Entries");
+    }
+
     for( auto process : processes ){
       for( auto chiral : chirals ){
         if( process=="P2f_z_h" ){
@@ -188,19 +219,38 @@ void pq_method_PiLPFO_total()
             // if(category=="bb" || category=="cc" || category=="ss") continue;
             if(category=="bb" || category=="cc" ) continue;
             TH1F *h = hmap[process][chiral][category]["reco"];
-            hs_reco->Add(h);
+            h->GetYaxis()->SetRangeUser(0,TopRange);
+            h->SetFillStyle(0);
+            h->SetTitle(histLabel(process,category));
+            hs_reco.at(chiral)->Add(h);
           }
         }else{
           TH1F *h = hmap[process][chiral]["bg"]["reco"];
+          h->GetYaxis()->SetRangeUser(0,TopRange);
+          h->SetFillStyle(0);
+          h->SetTitle(histLabel(process,"bg"));
           h->SetLineStyle(7);
-          hs_reco->Add(h);
+          hs_reco.at(chiral)->Add(h);
         }
       }
     }
-    TCanvas *c_hs_reco = new TCanvas("c_hs_reco","c_hs_reco",900,900);
-    gStyle->SetPalette(55);
-    hs_reco->Draw("h plc nostack");
-    c_hs_reco->BuildLegend();
+
+    for( auto chiral : chirals ){
+      TCanvas *c_hs_reco = new TCanvas("c_hs_reco_" + chiral,"c_hs_reco_" + chiral,900,900);
+      TPad *pad_hs_reco = new TPad("pad_hs_reco_" + chiral, "pad_hs_reco_" + chiral,0,0,1,1);
+      StylePad(pad_hs_reco,0,0.12,0,0.15);
+      gStyle->SetHistTopMargin(0);
+      gStyle->SetPalette(55);
+      hs_reco.at(chiral)->Draw("h plc nostack");
+      pad_hs_reco->BuildLegend();
+    }
+
+    // TCanvas *c_hs_reco = new TCanvas("c_hs_reco","c_hs_reco",900,900);
+    // TPad *pad_hs_reco = new TPad("pad_hs_reco", "pad_hs_reco",0,0,1,1);
+    // StylePad(pad_hs_reco,0,0.12,0,0.15);
+    // gStyle->SetPalette(55);
+    // hs_reco->Draw("h plc nostack");
+    // pad_hs_reco->BuildLegend();
 
 
   }
