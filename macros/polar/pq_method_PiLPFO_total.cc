@@ -8,14 +8,27 @@
 using std::cout; using std::endl;
 using std::vector; using std::array; using std::unordered_map;
 
-TString prod_mode = "uu";
-TString chiral    = "eR.pL";
+// TString prod_mode = "uu";
+// TString chiral    = "eR.pL";
 TString LPFO_mode = "Pi";
 
 TString inputDir = "../../rootfiles/merged/";
-std::array<TString,2> chirals   = {"eL.pR", "eR.pL"}
-std::array<TString,4> processes = {"P2f_z_h", "P4f_ww_h", "P4f_zz_h", "Pe1e1h"}
-std::array<TString,7> qqbars    = {"dd", "uu", "ss", "cc", "bb", "rr", "bg"}
+array<TString,2> chirals   = {"eL.pR", "eR.pL"};
+array<TString,4> processes = {"P2f_z_h", "P4f_ww_h", "P4f_zz_h", "Pe1e1h"};
+array<TString,6> qqbars    = {"dd", "uu", "ss", "cc", "bb", "rr"};
+
+unordered_map<pair<TString,TString>,Int_t> production = {
+    {{"P2f_z_h", "eL.pR"}, 500010},
+    {{"P2f_z_h", "eR.pL"}, 500012},
+    {{"P4f_ww_h", "eL.pR"}, 500066},
+    {{"P4f_ww_h", "eR.pL"}, 500068},
+    {{"P4f_zz_h", "eL.pR"}, 500062},
+    {{"P4f_zz_h", "eR.pL"}, 500064},
+    {{"Pe1e1h", "eL.pL"}, 402013},
+    {{"Pe1e1h", "eL.pR"}, 402001},
+    {{"Pe1e1h", "eR.pL"}, 402002},
+    {{"Pe1e1h", "eR.pR"}, 402014}
+};
 
 Float_t fitRange = 0.8;
 
@@ -48,51 +61,49 @@ void Normalize2Gen(TH1F *h, TH1F *h_gen)
   h->Scale( intCosGen / intCosReco );
 }
 
-unordered_map<TString, TH1F*> main_pq(TFile* file, Float_t &ratio)
+unordered_map<TString, TH1F*> main_pq(TFile* file, TString category)
 {
   gStyle->SetOptStat(0);
 
   TString prodMode = getProductionMode(file);
 
   // reco and gen polar
-  TH1F *h_gen_q_qcos    = (TH1F*) file->Get("gen/h_qcos");
-  TH1F *h_reco_Pi_scos  = (TH1F*) file->Get("cos/h_Pi_scos");
-  TH1F *h_reco_Pi_qcos  = (TH1F*) file->Get("cos/h_Pi_qcos");
+  TH1F *h_gen_q_qcos    = (TH1F*) file->Get(category + "/gen/h_" + category + "_qcos");
+  TH1F *h_reco_LPFO_scos  = (TH1F*) file->Get(category + "/cos/h_" + category + "_" + LPFO_mode + "_scos");
+  TH1F *h_reco_LPFO_qcos  = (TH1F*) file->Get(category + "/cos/h_" + category + "_" + LPFO_mode + "_qcos");
 
-  cout << prodMode << " reco entry = " << h_reco_Pi_qcos->GetEntries() << endl;
+  cout << prodMode << " reco entry = " << h_reco_LPFO_qcos->GetEntries() << endl;
   cout << prodMode << " gen entry  = " << h_gen_q_qcos->GetEntries() << endl;
-  cout << prodMode << " reco eff   = " << (float)h_reco_Pi_qcos->GetEntries() / (float)h_gen_q_qcos->GetEntries() << endl;
+  cout << prodMode << " reco eff   = " << (float)h_reco_LPFO_qcos->GetEntries() / (float)h_gen_q_qcos->GetEntries() << endl;
   
-  ratio = (Float_t) h_reco_Pi_qcos->GetEntries() / (Float_t) h_gen_q_qcos->GetEntries();
-
   // used for pq correction
-  TH1F *h_acc_PiPi_cos  = (TH1F*) file->Get("cos/h_Pi_acc_cos");
-  TH1F *h_rej_PiPi_cos  = (TH1F*) file->Get("cos/h_Pi_rej_cos");
+  TH1F *h_acc_PiPi_cos  = (TH1F*) file->Get(category + "/cos/h_" + category + "_" + LPFO_mode + "_acc_cos");
+  TH1F *h_rej_PiPi_cos  = (TH1F*) file->Get(category + "/cos/h_" + category + "_" + LPFO_mode + "_rej_cos");
 
   // efficiency correction
   Bool_t isEffCorr = true;
-  TH1F *h_reco_Pi_scos_eff_corr;
-  TH1F *h_reco_Pi_qcos_eff_corr;
-  if (isEffCorr)
+  TH1F *h_reco_LPFO_scos_eff_corr;
+  TH1F *h_reco_LPFO_qcos_eff_corr;
+  if (isEffCorr && category!="bg")
   {
-    TH1F* h_reco_Pi_scos_eff = efficiencyCorrection(h_reco_Pi_scos,"Pi",file);
-    TH1F* h_reco_Pi_qcos_eff = efficiencyCorrection(h_reco_Pi_qcos,"Pi",file);
-    h_reco_Pi_scos_eff_corr = resolutionCorrection(h_reco_Pi_scos_eff,"Pi",file);
-    h_reco_Pi_qcos_eff_corr = resolutionCorrection(h_reco_Pi_qcos_eff,"Pi",file);
+    TH1F* h_reco_LPFO_scos_eff = efficiencyCorrection(h_reco_LPFO_scos,LPFO_mode,file,category);
+    TH1F* h_reco_LPFO_qcos_eff = efficiencyCorrection(h_reco_LPFO_qcos,LPFO_mode,file,category);
+    h_reco_LPFO_scos_eff_corr = resolutionCorrection(h_reco_LPFO_scos_eff,LPFO_mode,file,category);
+    h_reco_LPFO_qcos_eff_corr = resolutionCorrection(h_reco_LPFO_qcos_eff,LPFO_mode,file,category);
 
   }else{
-    h_reco_Pi_scos_eff_corr = (TH1F*) h_reco_Pi_scos->Clone();
-    h_reco_Pi_qcos_eff_corr = (TH1F*) h_reco_Pi_qcos->Clone();
+    h_reco_LPFO_scos_eff_corr = (TH1F*) h_reco_LPFO_scos->Clone();
+    h_reco_LPFO_qcos_eff_corr = (TH1F*) h_reco_LPFO_qcos->Clone();
   }
 
   TH1F *h_acc_PiPi_cos_eff_corr;
   TH1F *h_rej_PiPi_cos_eff_corr;
-  if (isEffCorr)
+  if (isEffCorr && category!="bg")
   {
-    TH1F* h_acc_PiPi_cos_eff = efficiencyCorrection(h_acc_PiPi_cos,"Pi",file);
-    TH1F* h_rej_PiPi_cos_eff = efficiencyCorrection(h_rej_PiPi_cos,"Pi",file);
-    h_acc_PiPi_cos_eff_corr = resolutionCorrection(h_acc_PiPi_cos_eff,"Pi",file);
-    h_rej_PiPi_cos_eff_corr = resolutionCorrection(h_rej_PiPi_cos_eff,"Pi",file);
+    TH1F* h_acc_PiPi_cos_eff = efficiencyCorrection(h_acc_PiPi_cos,"Pi",file,category);
+    TH1F* h_rej_PiPi_cos_eff = efficiencyCorrection(h_rej_PiPi_cos,"Pi",file,category);
+    h_acc_PiPi_cos_eff_corr = resolutionCorrection(h_acc_PiPi_cos_eff,"Pi",file,category);
+    h_rej_PiPi_cos_eff_corr = resolutionCorrection(h_rej_PiPi_cos_eff,"Pi",file,category);
   }else{
     h_acc_PiPi_cos_eff_corr = (TH1F*) h_acc_PiPi_cos->Clone();
     h_rej_PiPi_cos_eff_corr = (TH1F*) h_rej_PiPi_cos->Clone();
@@ -100,7 +111,7 @@ unordered_map<TString, TH1F*> main_pq(TFile* file, Float_t &ratio)
 
   StyleHist(h_gen_q_qcos,kGreen+1);
 
-  const Int_t nbins = h_reco_Pi_scos_eff_corr->GetNbinsX();
+  const Int_t nbins = h_reco_LPFO_scos_eff_corr->GetNbinsX();
 
   // pq correction
   TString pValName = "p_PiPi_" + prodMode;
@@ -115,9 +126,13 @@ unordered_map<TString, TH1F*> main_pq(TFile* file, Float_t &ratio)
     p_PiPi->SetBinError(nbins / 2 - i, p_vec.at(i + nbins / 2));
   }
 
-  TH1F *h_reco_Pi_pq_cos = CorrectHist(prodMode, h_reco_Pi_qcos_eff_corr, p_vec);
-  // TH1F *h_reco_Pi_pq_cos = (TH1F*) h_reco_Pi_qcos_eff_corr->Clone();
-  StyleHist(h_reco_Pi_pq_cos,kBlue);
+  TH1F *h_reco_LPFO_pq_cos;
+  if( category!="bg" ){
+    h_reco_LPFO_pq_cos = CorrectHist(prodMode, h_reco_LPFO_qcos_eff_corr, p_vec);
+  }else{
+    h_reco_LPFO_pq_cos = (TH1F*) h_reco_LPFO_qcos_eff_corr->Clone();
+  }
+  StyleHist(h_reco_LPFO_pq_cos,kBlue);
 
   // Fitting
   TF1 * f_gen = new TF1("f_gen","[0]*(1+x*x)+[1]*x",-fitRange,fitRange);
@@ -127,13 +142,13 @@ unordered_map<TString, TH1F*> main_pq(TFile* file, Float_t &ratio)
 
   TF1 * f_reco = new TF1("f_reco","[0]*(1+x*x)+[1]*x",-fitRange,fitRange);
   f_reco->SetParNames("S","A");
-  h_reco_Pi_pq_cos->Fit("f_reco","MNRS");
+  h_reco_LPFO_pq_cos->Fit("f_reco","MNRS");
   cout << "Reco Chi2 / ndf = " << f_reco->GetChisquare() << " / " << f_reco->GetNDF() << endl;
 
   // output
   unordered_map<TString, TH1F*> hmap;
   hmap["gen"] = h_gen_q_qcos;
-  hmap["reco"] = h_reco_Pi_pq_cos;
+  hmap["reco"] = h_reco_LPFO_pq_cos;
 
   return hmap;
 
@@ -144,14 +159,49 @@ void pq_method_PiLPFO_total()
 {
   try
   {
-    unordered_map<TSting, unordered_map<TString, TFile*> > file_map;
+    unordered_map<TString, unordered_map<TString, TFile*> > file_map;
+    unordered_map<TString, unordered_map<TString, unordered_map< TString, unordered_map<TString, TH1F*> > > > hmap;
     for( auto process : processes ){
       for( auto chiral : chirals ){
-        TString filename = inputDir + "";
+        Int_t processID = production.at({process,chiral});
+        cout << process << " " << chiral << " " << processID << endl;
+        TString filename = inputDir + "rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I" + processID + "." + process + "." + chiral + ".KPiLPFO.dedxPi.PFOp15.LPFOp15_pNaN.all.root";
         TFile *file = new TFile(filename,"READ");
-        file_map[process][qqbar] = file;
+        if( !file->IsOpen() ) throw std::runtime_error("File not found");
+
+        if( process=="P2f_z_h" ){
+          for( auto category : qqbars ){
+            hmap[process][chiral][category] = main_pq(file,category);
+          }
+        }else{
+          hmap[process][chiral]["bg"] = main_pq(file,"bg");
+        }
+        // file_map[process][chiral] = file;
       }
     }
+
+    THStack *hs_reco = new THStack("hs_reco",";Entries;cos#theta");
+    for( auto process : processes ){
+      for( auto chiral : chirals ){
+        if( process=="P2f_z_h" ){
+          for( auto category : qqbars ){
+            // if(category=="bb" || category=="cc" || category=="ss") continue;
+            if(category=="bb" || category=="cc" ) continue;
+            TH1F *h = hmap[process][chiral][category]["reco"];
+            hs_reco->Add(h);
+          }
+        }else{
+          TH1F *h = hmap[process][chiral]["bg"]["reco"];
+          h->SetLineStyle(7);
+          hs_reco->Add(h);
+        }
+      }
+    }
+    TCanvas *c_hs_reco = new TCanvas("c_hs_reco","c_hs_reco",900,900);
+    gStyle->SetPalette(55);
+    hs_reco->Draw("h plc nostack");
+    c_hs_reco->BuildLegend();
+
 
   }
   catch(const std::exception& e)
