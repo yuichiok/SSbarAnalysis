@@ -68,7 +68,7 @@ def main():
 
   chirals   = ["eLpR", "eRpL"]
   processes = ["P2f_z_h", "P4f_ww_h", "P4f_zz_h", "Pe1e1h"]
-  qqbars    = ["dd", "uu", "ss", "cc", "bb"]
+  qqbars    = ["dd", "uu", "ss", "cc", "bb","rr"]
 
   files = {}
   for process in processes:
@@ -152,9 +152,9 @@ def main():
   with pd.option_context('display.float_format', '{:0.1f}'.format):
     effDf = effDf.sort_values(by=['chiral', 'process'])
     print(effDf)
-    print(effDf.head(8).T)
+    print(effDf.head(9).T)
     print(effDf.loc[1:].T)
-    eLpRdf = effDf.head(8).T
+    eLpRdf = effDf.head(9).T
     eRpLdf = effDf.loc[1:].T
 
     # file_eLpR = Path('eLpR.csv')  
