@@ -25,7 +25,7 @@ def addHist(file, hpath, htype, hsum):
   hsum.Add(h)
 
 def addData(file, hpath, df, process, qqbar, chiral):
-  hcategory = ["cosBF","sinacol", "invM", "y23","cosAF"]
+  hcategory = ["cosBF","sinacol", "invM", "y23","LPFOacol","cosAF"]
   # Initialize dictionaries to accumulate values
   values_dict = {
       "process": process,
@@ -88,12 +88,13 @@ def main():
       self.canvas = TCanvas(f"c_{category}", f"c_{category}", 900, 900)
       self.stack  = THStack(f"ths_{category}", title)
 
-  columnDf = ["process", "qqbar", "chiral", "cosBF", "sinacol", "invM", "y23", "cosAF"]
+  columnDf = ["process", "qqbar", "chiral", "cosBF", "sinacol", "invM", "y23", "LPFOacol", "cosAF"]
   totDf = pd.DataFrame(columns=columnDf)
   PMs = {
     "sinacol": PlotManager("sinacol", ";sin#Psi_{acol};Norm.", 100, 0, 1),
     "invM": PlotManager("invM", ";m_{j_{1},j_{2}};Norm.", 100, 0, 500),
-    "y23": PlotManager("y23", ";y_{23};Norm.", 50, 0, 0.25)
+    "y23": PlotManager("y23", ";y_{23};Norm.", 50, 0, 0.25),
+    "LPFOacol": PlotManager("LPFOacol", ";cos#theta_{L_{1},L_{2}};Norm.", 100, 0, 1),
   }
   for process in processes:
 
