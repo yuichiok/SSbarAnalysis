@@ -11,7 +11,8 @@ using std::vector; using std::array; using std::unordered_map;
 // TString prod_mode = "uu";
 // TString chiral    = "eR.pL";
 TString LPFO_mode = "Pi";
-Float_t TopRange = 700E3;
+// Float_t TopRange = 700E3;
+Float_t TopRange = 150;
 
 TString inputDir = "../../rootfiles/merged/";
 array<TString,2> chirals   = {"eL.pR", "eR.pL"};
@@ -85,7 +86,7 @@ TString histLabel(TString process, TString category){
 
 }
 
-unordered_map<TString, TH1F*> main_pq(TFile* file, TString category)
+unordered_map<TString, TH1F*> main_pq(TFile* file, TString process, TString chiral, TString category)
 {
   gStyle->SetOptStat(0);
 
@@ -170,6 +171,10 @@ unordered_map<TString, TH1F*> main_pq(TFile* file, TString category)
   h_reco_LPFO_pq_cos->Fit("f_reco","MNRS");
   cout << "Reco Chi2 / ndf = " << f_reco->GetChisquare() << " / " << f_reco->GetNDF() << endl;
 
+  Int_t luminosity = production.at({process,chiral}).second;
+  h_gen_q_qcos->Scale(1.0 / luminosity);
+  h_reco_LPFO_pq_cos->Scale(1.0 / luminosity);
+
   // output
   unordered_map<TString, TH1F*> hmap;
   hmap["gen"] = h_gen_q_qcos;
@@ -196,10 +201,10 @@ void pq_method_PiLPFO_total()
 
         if( process=="P2f_z_h" ){
           for( auto category : qqbars ){
-            hmap[process][chiral][category] = main_pq(file,category);
+            hmap[process][chiral][category] = main_pq(file,process,chiral,category);
           }
         }else{
-          hmap[process][chiral]["bg"] = main_pq(file,"bg");
+          hmap[process][chiral]["bg"] = main_pq(file,process,chiral,"bg");
         }
         file_map[process][chiral] = file;
       }
