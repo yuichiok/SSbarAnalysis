@@ -10,25 +10,25 @@ using std::vector; using std::array; using std::unordered_map;
 
 // TString prod_mode = "uu";
 // TString chiral    = "eR.pL";
-TString LPFO_mode = "K";
-Float_t TopRange = 300E3;
+TString LPFO_mode = "Pi";
+Float_t TopRange = 700E3;
 
 TString inputDir = "../../rootfiles/merged/";
 array<TString,2> chirals   = {"eL.pR", "eR.pL"};
 array<TString,4> processes = {"P2f_z_h", "P4f_ww_h", "P4f_zz_h", "Pe1e1h"};
 array<TString,6> qqbars    = {"dd", "uu", "ss", "cc", "bb", "rr"};
 
-unordered_map<pair<TString,TString>,Int_t> production = {
-    {{"P2f_z_h", "eL.pR"}, 500010},
-    {{"P2f_z_h", "eR.pL"}, 500012},
-    {{"P4f_ww_h", "eL.pR"}, 500066},
-    {{"P4f_ww_h", "eR.pL"}, 500068},
-    {{"P4f_zz_h", "eL.pR"}, 500062},
-    {{"P4f_zz_h", "eR.pL"}, 500064},
-    {{"Pe1e1h", "eL.pL"}, 402013},
-    {{"Pe1e1h", "eL.pR"}, 402001},
-    {{"Pe1e1h", "eR.pL"}, 402002},
-    {{"Pe1e1h", "eR.pR"}, 402014}
+unordered_map<pair<TString,TString>,pair<Int_t,Int_t>, hash_pair> production = {
+    {{"P2f_z_h", "eL.pR"}, {500010,4994}},
+    {{"P2f_z_h", "eR.pL"}, {500012,4994}},
+    {{"P4f_ww_h", "eL.pR"}, {500066,4996}},
+    {{"P4f_ww_h", "eR.pL"}, {500068,5116}},
+    {{"P4f_zz_h", "eL.pR"}, {500062,5052}},
+    {{"P4f_zz_h", "eR.pL"}, {500064,5109}},
+    {{"Pe1e1h", "eL.pL"}, {402013,801943}},
+    {{"Pe1e1h", "eL.pR"}, {402001,28294}},
+    {{"Pe1e1h", "eR.pL"}, {402002,44887}},
+    {{"Pe1e1h", "eR.pR"}, {402014,800018}}
 };
 
 Float_t fitRange = 0.8;
@@ -89,16 +89,14 @@ unordered_map<TString, TH1F*> main_pq(TFile* file, TString category)
 {
   gStyle->SetOptStat(0);
 
-  TString prodMode = getProductionMode(file);
-
   // reco and gen polar
   TH1F *h_gen_q_qcos    = (TH1F*) file->Get(category + "/gen/h_" + category + "_qcos");
   TH1F *h_reco_LPFO_scos  = (TH1F*) file->Get(category + "/cos/h_" + category + "_" + LPFO_mode + "_scos");
   TH1F *h_reco_LPFO_qcos  = (TH1F*) file->Get(category + "/cos/h_" + category + "_" + LPFO_mode + "_qcos");
 
-  cout << prodMode << " reco entry = " << h_reco_LPFO_qcos->GetEntries() << endl;
-  cout << prodMode << " gen entry  = " << h_gen_q_qcos->GetEntries() << endl;
-  cout << prodMode << " reco eff   = " << (float)h_reco_LPFO_qcos->GetEntries() / (float)h_gen_q_qcos->GetEntries() << endl;
+  cout << category << " reco entry = " << h_reco_LPFO_qcos->GetEntries() << endl;
+  cout << category << " gen entry  = " << h_gen_q_qcos->GetEntries() << endl;
+  cout << category << " reco eff   = " << (float)h_reco_LPFO_qcos->GetEntries() / (float)h_gen_q_qcos->GetEntries() << endl;
   
   // used for pq correction
   TH1F *h_acc_PiPi_cos  = (TH1F*) file->Get(category + "/cos/h_" + category + "_" + LPFO_mode + "_acc_cos");
@@ -140,7 +138,7 @@ unordered_map<TString, TH1F*> main_pq(TFile* file, TString category)
   const Int_t nbins = h_reco_LPFO_scos_eff_corr->GetNbinsX();
 
   // pq correction
-  TString pValName = "p_PiPi_" + prodMode;
+  TString pValName = "p_PiPi_" + category;
   TH1F *p_PiPi = new TH1F(pValName,pValName, 50,0,1);
   p_PiPi->Sumw2();
 
@@ -153,9 +151,9 @@ unordered_map<TString, TH1F*> main_pq(TFile* file, TString category)
   }
 
   TH1F *h_reco_LPFO_pq_cos;
-  h_reco_LPFO_pq_cos = CorrectHist(prodMode, h_reco_LPFO_qcos_eff_corr, p_vec);
+  h_reco_LPFO_pq_cos = CorrectHist(category, h_reco_LPFO_qcos_eff_corr, p_vec);
   // if( category!="bg" ){
-  //   h_reco_LPFO_pq_cos = CorrectHist(prodMode, h_reco_LPFO_qcos_eff_corr, p_vec);
+  //   h_reco_LPFO_pq_cos = CorrectHist(category, h_reco_LPFO_qcos_eff_corr, p_vec);
   // }else{
   //   h_reco_LPFO_pq_cos = (TH1F*) h_reco_LPFO_qcos_eff_corr->Clone();
   // }
@@ -190,7 +188,7 @@ void pq_method_PiLPFO_total()
     unordered_map<TString, unordered_map<TString, unordered_map< TString, unordered_map<TString, TH1F*> > > > hmap;
     for( auto process : processes ){
       for( auto chiral : chirals ){
-        Int_t processID = production.at({process,chiral});
+        Int_t processID = production.at({process,chiral}).first;
         cout << process << " " << chiral << " " << processID << endl;
         TString filename = inputDir + "rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I" + processID + "." + process + "." + chiral + ".KPiLPFO.dedxPi.PFOp15.LPFOp15_pNaN.all.root";
         TFile *file = new TFile(filename,"READ");
@@ -203,7 +201,7 @@ void pq_method_PiLPFO_total()
         }else{
           hmap[process][chiral]["bg"] = main_pq(file,"bg");
         }
-        // file_map[process][chiral] = file;
+        file_map[process][chiral] = file;
       }
     }
 
@@ -242,15 +240,8 @@ void pq_method_PiLPFO_total()
       gStyle->SetHistTopMargin(0);
       gStyle->SetPalette(55);
       hs_reco.at(chiral)->Draw("h plc nostack");
-      pad_hs_reco->BuildLegend();
+      pad_hs_reco->BuildLegend(0.59,0.68,0.89,0.89);
     }
-
-    // TCanvas *c_hs_reco = new TCanvas("c_hs_reco","c_hs_reco",900,900);
-    // TPad *pad_hs_reco = new TPad("pad_hs_reco", "pad_hs_reco",0,0,1,1);
-    // StylePad(pad_hs_reco,0,0.12,0,0.15);
-    // gStyle->SetPalette(55);
-    // hs_reco->Draw("h plc nostack");
-    // pad_hs_reco->BuildLegend();
 
 
   }
