@@ -9,11 +9,12 @@
 using std::cout; using std::endl;
 using std::vector; using std::unordered_map;
 
-TString prod_mode = "dd";
+TString prod_mode = "ss";
 TString chiral    = "eL.pR";
 TString LPFO_mode = "Pi";
 
-TFile *file = new TFile("../../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h." + chiral + "." + prod_mode + ".KPiLPFO.dedxPi.PFOp15.LPFOp15_pNaN.tpc0.mix_uds.correctDist.all.root","READ");
+// TFile *file = new TFile("../../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h." + chiral + "." + prod_mode + ".KPiLPFO.dedxPi.PFOp15.LPFOp15_pNaN.tpc0.mix_uds.correctDist.all.root","READ");
+TFile *file = new TFile("../../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.KPiLPFO.dedxPi.PFOp15.LPFOp15_pNaN.all.root","READ");
 
 void BinNormal(TH1F *h)
 {
@@ -73,7 +74,7 @@ void SaveHists(TCanvas *c, TH1F *ih)
 void PrintEfficiency(TFile *file, vector<TH1F*> hvec)
 {
   if (!file->IsOpen()) return;
-  TH1F *h_gen_q_qcos     = (TH1F*) file->Get("h_gen_q_qcos");
+  TH1F *h_gen_q_qcos     = (TH1F*) file->Get(prod_mode + "/gen/h_" + prod_mode + "_qcos");
   Int_t n_gen_events     = h_gen_q_qcos->GetEntries();
   cout << "name,nevents,efficiency\n";
   cout << "gen," << n_gen_events << ",-\n";
@@ -98,13 +99,13 @@ void efficiency_cos()
   try
   {
     if (!file->IsOpen()) return;
-    TString dir_name = "efficiency/";
+    TString dir_name = "/efficiency/";
 
     for ( auto igenreco : gen_reco ){
       for ( auto i_lmode : PFO_mode ){
         for ( auto ih : heff_name ){
-          TString hname = "h_" + igenreco + "_" + i_lmode + "_" + ih;
-          TH1F *h = (TH1F*) file->Get(dir_name + hname);
+          TString hname = "h_" + prod_mode + "_" + igenreco + "_" + i_lmode + "_" + ih;
+          TH1F *h = (TH1F*) file->Get(prod_mode + dir_name + hname);
           h1_cos_eff[igenreco][i_lmode][ih] = h;
         }
       }

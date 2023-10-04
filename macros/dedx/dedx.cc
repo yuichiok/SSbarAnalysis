@@ -11,11 +11,12 @@ using std::vector;
 using std::unordered_map;
 using std::pair;
 
-TString prod_mode = "uu";
+TString prod_mode = "dd";
 TString chiral    = "eL.pR";
 TString LPFO_mode = "Pi";
 
-TFile *file = new TFile("../../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h." + chiral + "." + prod_mode + ".KPiLPFO.dedxPi.PFOp15.LPFOp15_pNaN.tpc0.mix_uds.correctDist.all.root","READ");
+// TFile *file = new TFile("../../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h." + chiral + "." + prod_mode + ".KPiLPFO.dedxPi.PFOp15.LPFOp15_pNaN.tpc0.mix_uds.correctDist.all.root","READ");
+TFile *file = new TFile("../../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.KPiLPFO.dedxPi.PFOp15.LPFOp15_pNaN.all.root","READ");
 
 const vector<TString> PFO_mode  = {"K","Pi"};
 const vector<TString> PFO_type  = {"K","Pi", "p", "e", "mu"};
@@ -43,14 +44,14 @@ vector<TString> hdEdx_name = {"dEdx_p","dEdx_cos","dEdx_dist_cos"};
 
 void getHistograms()
 {
-  TString dir_eff_name = "efficiency/dEdx/";
+  TString dir_eff_name = prod_mode + "/efficiency/dEdx/";
 
   for ( auto igen_reco : gen_reco ){
     for ( auto imode : PFO_mode ){
       for ( auto itype : PFO_type ){
         for ( auto icut : cut_name ){
           for ( auto ihist : heff_dedx_name ){
-            TString hname = "h2_" + igen_reco + "_" + imode + "_" + itype + "_" + icut + "_" + ihist;
+            TString hname = "h2_" + prod_mode + "_" + igen_reco + "_" + imode + "_" + itype + "_" + icut + "_" + ihist;
             TH2F *h = (TH2F*) file->Get(dir_eff_name + hname);
             h2_dEdx_eff[igen_reco][imode][itype][icut][ihist] = h;
           }
@@ -85,6 +86,8 @@ void dedxP()
     h_dedx_p->SetFillColor(type_color_map[itype]);
     h_dedx_p->SetLineColor(type_color_map[itype]);
     h_dedx_p->GetXaxis()->SetRangeUser(15,100);
+
+    cout << itype << " " << h_dedx_p->GetEntries() << endl;
 
     if(count) h_dedx_p->Draw("box same");
     else{
