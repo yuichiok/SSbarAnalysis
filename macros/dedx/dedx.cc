@@ -11,7 +11,7 @@ using std::vector;
 using std::unordered_map;
 using std::pair;
 
-TString prod_mode = "dd";
+TString prod_mode = "ss";
 TString chiral    = "eL.pR";
 TString LPFO_mode = "Pi";
 
@@ -350,12 +350,12 @@ void dedx()
 
   getHistograms();
 
-  dedxP();
+  // dedxP();
   // dedxDistCosProj();
   // dedxDistCosProjType();
   // dedxCos();
   // dedxOffsetProjection();
-  // dedxOffsetMeanSigma();
+  dedxOffsetMeanSigma();
 
 
 }
