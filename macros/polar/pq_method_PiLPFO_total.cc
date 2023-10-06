@@ -212,15 +212,15 @@ void pq_method_PiLPFO_total()
 
     unordered_map<TString, THStack*> hs_reco;
     for( auto chiral : chirals ){
-      hs_reco[chiral] = new THStack("hs_reco_" + chiral,";cos#theta;Entries");
+      hs_reco[chiral] = new THStack("hs_reco_" + chiral,";cos#theta;Entries / Int. Lumi.");
     }
 
     for( auto process : processes ){
       for( auto chiral : chirals ){
         if( process=="P2f_z_h" ){
           for( auto category : qqbars ){
-            // if(category=="bb" || category=="cc" || category=="ss") continue;
-            if(category=="bb" || category=="cc" ) continue;
+            if(category=="bb" || category=="cc" || category=="ss") continue;
+            // if(category=="bb" || category=="cc" ) continue;
             TH1F *h = hmap[process][chiral][category]["reco"];
             h->GetYaxis()->SetRangeUser(0,TopRange);
             h->SetFillStyle(0);
@@ -247,6 +247,55 @@ void pq_method_PiLPFO_total()
       hs_reco.at(chiral)->Draw("h plc nostack");
       pad_hs_reco->BuildLegend(0.59,0.68,0.89,0.89);
     }
+
+
+
+    unordered_map<TString, THStack*> hs_gen;
+    for( auto chiral : chirals ){
+      hs_gen[chiral] = new THStack("hs_gen_" + chiral,";cos#theta;Entries / Int. Lumi.");
+    }
+
+    for( auto process : processes ){
+      for( auto chiral : chirals ){
+        if( process=="P2f_z_h" ){
+          for( auto category : qqbars ){
+            if(category=="bb" || category=="cc" || category=="ss") continue;
+            // if(category=="bb" || category=="cc" ) continue;
+            TH1F *h = hmap[process][chiral][category]["gen"];
+            // h->GetYaxis()->SetRangeUser(0,TopRange);
+            h->SetFillStyle(0);
+            h->SetTitle(histLabel(process,category));
+            hs_gen.at(chiral)->Add(h);
+          }
+        }else{
+          TH1F *h = hmap[process][chiral]["bg"]["gen"];
+          // h->GetYaxis()->SetRangeUser(0,TopRange);
+          h->SetFillStyle(0);
+          h->SetTitle(histLabel(process,"bg"));
+          h->SetLineStyle(7);
+          hs_gen.at(chiral)->Add(h);
+        }
+      }
+    }
+
+    for( auto chiral : chirals ){
+      TCanvas *c_hs_gen = new TCanvas("c_hs_gen_" + chiral,"c_hs_gen_" + chiral,900,900);
+      TPad *pad_hs_gen = new TPad("pad_hs_gen_" + chiral, "pad_hs_gen_" + chiral,0,0,1,1);
+      StylePad(pad_hs_gen,0,0.12,0,0.15);
+      gStyle->SetHistTopMargin(0);
+      gStyle->SetPalette(55);
+      hs_gen.at(chiral)->Draw("h plc nostack");
+      pad_hs_gen->BuildLegend(0.59,0.68,0.89,0.89);
+    }
+
+    TCanvas *ctest = new TCanvas("ctest","ctest",900,900);
+    hmap["P2f_z_h"]["eL.pR"]["dd"]["gen"]->Draw("h");
+    TF1 * f_gen = new TF1("f_gen","[0]*(1+x*x)+[1]*x",-fitRange,fitRange);
+    f_gen->SetParNames("S","A");
+    hmap["P2f_z_h"]["eL.pR"]["dd"]["gen"]->Fit("f_gen","MNRS");
+    cout << "Gen Chi2 / ndf = " << f_gen->GetChisquare() << " / " << f_gen->GetNDF() << endl;
+
+
 
 
   }
