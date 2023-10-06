@@ -12,7 +12,7 @@ using std::vector; using std::array; using std::unordered_map;
 // TString chiral    = "eR.pL";
 TString LPFO_mode = "Pi";
 // Float_t TopRange = 700E3;
-Float_t TopRange = 150;
+Float_t TopRange = 200;
 
 TString inputDir = "../../rootfiles/merged/";
 array<TString,2> chirals   = {"eL.pR", "eR.pL"};
@@ -219,8 +219,8 @@ void pq_method_PiLPFO_total()
       for( auto chiral : chirals ){
         if( process=="P2f_z_h" ){
           for( auto category : qqbars ){
-            if(category=="bb" || category=="cc" || category=="ss") continue;
-            // if(category=="bb" || category=="cc" ) continue;
+            // if(category=="bb" || category=="cc" || category=="ss") continue;
+            if(category=="bb" || category=="cc" ) continue;
             TH1F *h = hmap[process][chiral][category]["reco"];
             h->GetYaxis()->SetRangeUser(0,TopRange);
             h->SetFillStyle(0);
@@ -287,16 +287,6 @@ void pq_method_PiLPFO_total()
       hs_gen.at(chiral)->Draw("h plc nostack");
       pad_hs_gen->BuildLegend(0.59,0.68,0.89,0.89);
     }
-
-    TCanvas *ctest = new TCanvas("ctest","ctest",900,900);
-    hmap["P2f_z_h"]["eL.pR"]["dd"]["gen"]->Draw("h");
-    TF1 * f_gen = new TF1("f_gen","[0]*(1+x*x)+[1]*x",-fitRange,fitRange);
-    f_gen->SetParNames("S","A");
-    hmap["P2f_z_h"]["eL.pR"]["dd"]["gen"]->Fit("f_gen","MNRS");
-    cout << "Gen Chi2 / ndf = " << f_gen->GetChisquare() << " / " << f_gen->GetNDF() << endl;
-
-
-
 
   }
   catch(const std::exception& e)
