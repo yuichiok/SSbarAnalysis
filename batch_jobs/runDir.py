@@ -21,17 +21,17 @@ if nlast_set <= 0:
 
 parser = argparse.ArgumentParser(description='Run QQbarAnalysis')
 parser.add_argument('--process', type=str, required=True,
-                    help='Production process (P2f_z_h, P4f_ww_h, P4_zz_h, Pe1e1h)')
+                    help='Production process (P2f_z_h, P4f_ww_h, P4_zz_h, Pqqh)')
 parser.add_argument('--chiral',  type=str, required=True,
-                    help='Polarization of beam (eLpR or eRpL or eLpL or eRpR)')
+                    help='Polarization of beam (eLpR or eRpL)')
 parser.add_argument('--copy',type=int, required=True,
                     help='Copy executable and setting files. Set to false when running consecutive jobs.')
 
 args  = parser.parse_args()
-if args.chiral not in ["eLpR", "eRpL", "eLpL", "eRpR"]:
+if args.chiral not in ["eLpR", "eRpL"]:
   sys.exit("Error: chiral must be eLpR or eRpL or eLpL or eRpR")
-if args.process not in ["P2f_z_h", "P4f_ww_h", "P4f_zz_h", "Pe1e1h"]:
-  sys.exit("Error: process must be P2f_z_h, P4f_ww_h, P4f_zz_h, or Pe1e1h")
+if args.process not in ["P2f_z_h", "P4f_ww_h", "P4f_zz_h", "Pqqh"]:
+  sys.exit("Error: process must be P2f_z_h, P4f_ww_h, P4f_zz_h, or Pqqh")
 if args.copy:
   print("Copy exe and setting files...")
   subprocess.run(['cp', os.path.join(projectDir, 'main.exe'), batchDir])

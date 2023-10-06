@@ -11,7 +11,7 @@ from processDict import production
 
 parser = argparse.ArgumentParser(description='Run QQbarAnalysis')
 parser.add_argument('--process', type=str, required=True,
-                    help='Production process (P2f_z_h, P4f_ww_h, P4_zz_h, Pe1e1h)')
+                    help='Production process (P2f_z_h, P4f_ww_h, P4_zz_h, Pqqh)')
 parser.add_argument('--chiral', type=str, required=True,
                     help='Polarization of beam (eLpR or eRpL or eLpL or eRpR)')
 parser.add_argument('--mergeMode', type=int, required=True,
@@ -22,8 +22,8 @@ parser.add_argument('--rmStage', action='store_true',
 args  = parser.parse_args()
 if args.chiral not in ["eLpR", "eRpL", "eLpL", "eRpR"]:
   sys.exit("Error: chiral must be eLpR or eRpL or eLpL or eRpR")
-if args.process not in ["P2f_z_h", "P4f_ww_h", "P4f_zz_h", "Pe1e1h"]:
-  sys.exit("Error: process must be P2f_z_h, P4f_ww_h, P4f_zz_h, or Pe1e1h")
+if args.process not in ["P2f_z_h", "P4f_ww_h", "P4f_zz_h", "Pqqh"]:
+  sys.exit("Error: process must be P2f_z_h, P4f_ww_h, P4f_zz_h, or Pqqh")
 
 chiralDot = "eL.pR" if args.chiral == "eLpR" else "eR.pL"
 

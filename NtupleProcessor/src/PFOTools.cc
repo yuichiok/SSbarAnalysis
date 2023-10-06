@@ -259,8 +259,9 @@ namespace QQbarAnalysis
     // return (iPFO.dEdx_dist_pdg == 211) && (0 < iPFO.pfo_piddedx_pi_dedxdist);
     // return (iPFO.dEdx_dist_pdg == 211) && (-2 < iPFO.pfo_piddedx_pi_dedxdist) && (iPFO.pfo_piddedx_pi_dedxdist < 2);
 
-    vector<Float_t> dedxRange = get_dedxRange(gdedx, iPFO.cos);
-    return (dedxRange.at(0) < iPFO.pfo_dedx) && (iPFO.pfo_dedx < dedxRange.at(1));
+    // vector<Float_t> dedxRange = get_dedxRange(gdedx, iPFO.cos);
+    // return (dedxRange.at(0) < iPFO.pfo_dedx) && (iPFO.pfo_dedx < dedxRange.at(1));
+    return (0.178 < iPFO.pfo_dedx);
 
   }
 
