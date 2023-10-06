@@ -107,7 +107,9 @@ void total()
           TString hname = "h_" + iprod_mode + "_" + igenreco + "_" + i_lmode + "_" + ih;
           TH1F *h = (TH1F*) file->Get(iprod_mode + dir_name + hname);
           if(tmp==0) {
-            h1_cos_eff[igenreco][i_lmode][ih] = (TH1F*)h->Clone();
+            TH1F *htmp = (TH1F*) h->Clone();
+            htmp->SetName("h_" + igenreco + "_" + i_lmode + "_" + ih);
+            h1_cos_eff[igenreco][i_lmode][ih] = htmp;
           }else{
             h1_cos_eff[igenreco][i_lmode][ih]->Add(h);
           }
@@ -155,6 +157,16 @@ void total()
     count++;
 
   }
+
+  TFile *file_eff_weight = new TFile("eff_weight.root","RECREATE");
+  for ( auto igenreco : gen_reco ){
+    for ( auto i_lmode : PFO_mode ){
+      for ( auto ih : heff_name ){
+        h1_cos_eff[igenreco][i_lmode][ih]->Write();
+      }
+    }
+  }
+  file_eff_weight->Close();
 
 
 
