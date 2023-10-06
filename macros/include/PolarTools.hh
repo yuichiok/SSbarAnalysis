@@ -171,9 +171,13 @@ TH1F * CorrectHist( TString prodMode, TH1F * h_reco, vector<Float_t> p_vec)
 
 TH1F * efficiencyCorrection( TH1F * h, TString LPFO_mode, TFile * file, TString category )
 {
-  TString dirName = category + "/efficiency/";
-  TH1F *h_reco_offset = (TH1F*) file->Get(dirName + "h_" + category + "_reco_" + LPFO_mode + "_momentum");
-  TH1F *h_reco_PID    = (TH1F*) file->Get(dirName + "h_" + category + "_reco_" + LPFO_mode + "_charge");
+  // TString dirName = category + "/efficiency/";
+  // TH1F *h_reco_offset = (TH1F*) file->Get(dirName + "h_" + category + "_reco_" + LPFO_mode + "_momentum");
+  // TH1F *h_reco_PID    = (TH1F*) file->Get(dirName + "h_" + category + "_reco_" + LPFO_mode + "_charge");
+  TFile *file_eff_weight = new TFile("../efficiency/eff_weight.root","READ");
+  TH1F *h_reco_offset = (TH1F*) file_eff_weight->Get("h_reco_" + LPFO_mode + "_momentum");
+  TH1F *h_reco_PID    = (TH1F*) file_eff_weight->Get("h_reco_" + LPFO_mode + "_charge");
+
 
   TH1F *h_eff = (TH1F*) h_reco_PID->Clone();
   h_eff->Sumw2();
