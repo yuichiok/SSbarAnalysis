@@ -12,6 +12,11 @@ using std::vector; using std::unordered_map;
 TString prod_mode = "ss";
 TString chiral    = "eL.pR";
 TString LPFO_mode = "Pi";
+TString prod_modes[3] = {"uu","dd","ss"};
+
+vector<TString> gen_reco  = {"gen","reco"};
+vector<TString> PFO_mode  = {"K","Pi"};
+vector<TString> heff_name = {"nocut","momentum", "tpc_hits", "offset", "PID", "SPFO", "charge"};
 
 // TFile *file = new TFile("../../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h." + chiral + "." + prod_mode + ".KPiLPFO.dedxPi.PFOp15.LPFOp15_pNaN.tpc0.mix_uds.correctDist.all.root","READ");
 TFile *file = new TFile("../../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.KPiLPFO.dedxPi.PFOp15.LPFOp15_pNaN.all.root","READ");
@@ -87,13 +92,78 @@ void PrintEfficiency(TFile *file, vector<TH1F*> hvec)
 
 }
 
-void efficiency_cos()
+void total()
 {
   TGaxis::SetMaxDigits(3);
 
-  vector<TString> gen_reco  = {"gen","reco"};
-  vector<TString> PFO_mode  = {"K","Pi"};
-  vector<TString> heff_name = {"nocut","momentum", "tpc_hits", "offset", "PID", "SPFO", "charge"};
+  unordered_map< TString, unordered_map< TString, unordered_map< TString, TH1F* > > > h1_cos_eff;  // [GenReco][LPFO][hist]
+
+  for ( auto igenreco : gen_reco ){
+    for ( auto i_lmode : PFO_mode ){
+      for ( auto ih : heff_name ){
+        Int_t tmp = 0;
+        for( auto iprod_mode : prod_modes ){
+          TString dir_name = "/efficiency/";
+          TString hname = "h_" + iprod_mode + "_" + igenreco + "_" + i_lmode + "_" + ih;
+          TH1F *h = (TH1F*) file->Get(iprod_mode + dir_name + hname);
+          if(tmp==0) {
+            h1_cos_eff[igenreco][i_lmode][ih] = (TH1F*)h->Clone();
+          }else{
+            h1_cos_eff[igenreco][i_lmode][ih]->Add(h);
+          }
+          tmp++;
+        }
+      }
+    }
+  }
+
+  int count = 0;
+  TH1F * h_denom;
+  TCanvas *c_eff_Pi = new TCanvas("c_eff_Pi", "c_eff_Pi", 1500,400);
+  c_eff_Pi->Divide(heff_name.size()-1,1);
+  TCanvas *c_cos_Pi = new TCanvas("c_cos_Pi", "c_cos_Pi", 1500,400);
+  c_cos_Pi->Divide(heff_name.size()-1,1);
+  
+  for ( auto ih : heff_name ){
+
+    TH1F * h_num = h1_cos_eff["reco"]["Pi"][ih];
+    
+    if (count) {
+      
+      TH1F *h_eff = plotEfficiency(h_num, h_denom);
+      TString hname = "after " + ih + " selection";
+      
+      TH1F *h_num_norm   = (TH1F*) h_num->Clone();
+      TH1F *h_denom_norm = (TH1F*) h_denom->Clone();
+      Normalize(h_num_norm);
+      Normalize(h_denom_norm);
+
+      c_eff_Pi->cd(count);
+      StylePad(gPad,0,0,0.17,0.1);
+      StyleHist(h_eff,kBlue);
+      h_eff->SetTitle(hname);
+      h_eff->Draw("h");
+
+      c_cos_Pi->cd(count);
+      h_denom_norm->SetTitle(hname);
+      h_denom_norm->Draw("h");
+      h_num_norm->Draw("hsame");
+
+    }
+    
+    h_denom = h_num;
+    count++;
+
+  }
+
+
+
+}
+
+void partial()
+{
+  TGaxis::SetMaxDigits(3);
+
   unordered_map< TString, unordered_map< TString, unordered_map< TString, TH1F* > > > h1_cos_eff;  // [GenReco][LPFO][hist]
 
   try
@@ -158,4 +228,10 @@ void efficiency_cos()
     std::cerr << e.what() << '\n';
   }
 
+}
+
+void efficiency_cos()
+{
+  // partial();
+  total();
 }
