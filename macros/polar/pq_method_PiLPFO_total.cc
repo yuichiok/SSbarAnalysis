@@ -16,7 +16,7 @@ Float_t TopRange = 200;
 
 TString inputDir = "../../rootfiles/merged/";
 array<TString,2> chirals   = {"eL.pR", "eR.pL"};
-array<TString,4> processes = {"P2f_z_h", "P4f_ww_h", "P4f_zz_h", "Pe1e1h"};
+array<TString,4> processes = {"P2f_z_h", "P4f_ww_h", "P4f_zz_h", "Pqqh"};
 array<TString,6> qqbars    = {"dd", "uu", "ss", "cc", "bb", "rr"};
 
 unordered_map<pair<TString,TString>,pair<Int_t,Int_t>, hash_pair> production = {
@@ -26,10 +26,8 @@ unordered_map<pair<TString,TString>,pair<Int_t,Int_t>, hash_pair> production = {
     {{"P4f_ww_h", "eR.pL"}, {500068,5116}},
     {{"P4f_zz_h", "eL.pR"}, {500062,5052}},
     {{"P4f_zz_h", "eR.pL"}, {500064,5109}},
-    {{"Pe1e1h", "eL.pL"}, {402013,801943}},
-    {{"Pe1e1h", "eL.pR"}, {402001,28294}},
-    {{"Pe1e1h", "eR.pL"}, {402002,44887}},
-    {{"Pe1e1h", "eR.pR"}, {402014,800018}}
+    {{"Pqqh", "eL.pR"}, {402011,1457}},
+    {{"Pqqh", "eR.pL"}, {402012,2278}},
 };
 
 Float_t fitRange = 0.8;
@@ -79,7 +77,7 @@ TString histLabel(TString process, TString category){
     return "WW";
   }else if (process=="P4f_zz_h"){
     return "ZZ";
-  }else if (process=="Pe1e1h"){
+  }else if (process=="Pqqh"){
     return "q#bar{q}H";
   }
   return "";

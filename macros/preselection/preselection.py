@@ -66,7 +66,7 @@ def main():
   inDir = os.path.join(macroDir, '..', 'rootfiles', 'merged')
 
   chirals   = ["eLpR", "eRpL"]
-  processes = ["P2f_z_h", "P4f_ww_h", "P4f_zz_h", "Pe1e1h"]
+  processes = ["P2f_z_h", "P4f_ww_h", "P4f_zz_h", "Pqqh"]
   qqbars    = ["dd", "uu", "ss", "cc", "bb", "rr"]
 
   files = {}
