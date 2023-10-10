@@ -36,17 +36,18 @@ TH1F* plotEfficiency(TH1F *h_num, TH1F *h_denom)
   return h_eff;
 }
 
-unordered_map< TString, unordered_map< TString, unordered_map< TString, unordered_map< TString, unordered_map< TString, unordered_map< TString, TH2F* > > > > > > h2_dEdx_eff;  // [prod_mode][GenReco][LPFO][TruthID][cut][hist]
+// unordered_map< TString, unordered_map< TString, unordered_map< TString, unordered_map< TString, unordered_map< TString, unordered_map< TString, TH2F* > > > > > > h2_dEdx_eff;  // [prod_mode][GenReco][LPFO][TruthID][cut][hist]
+unordered_map< TString, unordered_map< TString, unordered_map< TString, unordered_map< TString, unordered_map< TString, unordered_map< TString, TString > > > > > > h2_dEdx_eff_str;  // [prod_mode][GenReco][LPFO][TruthID][cut][hist]
 vector<TString> gen_reco  = {"gen","reco"};
 vector<TString> cut_name = {"nocut","momentum", "tpc_hits", "offset", "PID", "SPFO", "charge"};
 vector<TString> heff_dedx_name = {"dEdx_p","dEdx_cos","dEdx_error_cos","dEdx_dist_cos"};
 
-unordered_map< TString, unordered_map< TString, unordered_map< TString, unordered_map< TString, TH2F* > > > > h2_dEdx; // [prod_mode][LPFO][TruthID][hist]
+// unordered_map< TString, unordered_map< TString, unordered_map< TString, unordered_map< TString, TH2F* > > > > h2_dEdx; // [prod_mode][LPFO][TruthID][hist]
+unordered_map< TString, unordered_map< TString, unordered_map< TString, unordered_map< TString, TString > > > > h2_dEdx_str; // [prod_mode][LPFO][TruthID][hist]
 vector<TString> hdEdx_name = {"dEdx_p","dEdx_cos","dEdx_dist_cos"};
 
-void getHistograms()
+void get_dEdx_eff()
 {
-
   for (auto iprod_mode : prod_modes ){
     TString dir_eff_name = iprod_mode + "/efficiency/dEdx/";
     for ( auto igen_reco : gen_reco ){
@@ -55,24 +56,28 @@ void getHistograms()
           for ( auto icut : cut_name ){
             for ( auto ihist : heff_dedx_name ){
               TString hname = "h2_" + iprod_mode + "_" + igen_reco + "_" + imode + "_" + itype + "_" + icut + "_" + ihist;
-              TH2F *h = (TH2F*) file->Get(dir_eff_name + hname);
-              h2_dEdx_eff[iprod_mode][igen_reco][imode][itype][icut][ihist] = h;
+              h2_dEdx_eff_str[iprod_mode][igen_reco][imode][itype][icut][ihist] = dir_eff_name + hname;
+              // TH2F *h = (TH2F*) file->Get(dir_eff_name + hname);
+              // h2_dEdx_eff[iprod_mode][igen_reco][imode][itype][icut][ihist] = h;
             }
           }
         }
       }
     }
   }
+}
 
-
+void get_dEdx()
+{
   for (auto iprod_mode : prod_modes ){
     TString dir_dedx_name = iprod_mode + "/dEdx/";
     for ( auto imode : PFO_mode ){
       for ( auto itype : PFO_type ){
         for ( auto icut : hdEdx_name ){
           TString hname = "h2_" + iprod_mode + "_" + imode + "_" + itype + "_" + icut;
-          TH2F *h = (TH2F*) file->Get(dir_dedx_name + hname);
-          h2_dEdx[iprod_mode][imode][itype][icut] = h;
+          h2_dEdx_str[iprod_mode][imode][itype][icut] = dir_dedx_name + hname;
+          // TH2F *h = (TH2F*) file->Get(dir_dedx_name + hname);
+          // h2_dEdx[iprod_mode][imode][itype][icut] = h;
         }
       }
     }
@@ -81,11 +86,15 @@ void getHistograms()
 
 void dedxP()
 {
+  get_dEdx_eff();
+
   TCanvas *c_dedx_p_type = new TCanvas("c_dedx_p_type", "c_dedx_p_type", 800,800);
   TPad *pad_dedx_p_type  = new TPad("pad_dedx_p_type", "pad_dedx_p_type",0,0,1,1);
   StylePad(pad_dedx_p_type,0,0.15,0,0.17);
   TLegend *leg = new TLegend(0.5,0.76,0.75,0.85);
   leg->SetLineColor(0);
+  leg->SetFillStyle(0);
+  leg->SetMargin(0.8);
 
   int count_draw = 0;
   for ( auto itype : PFO_type ){
@@ -95,7 +104,9 @@ void dedxP()
 
     for ( auto iprod_mode : prod_modes ){
 
-      TH2F *h_dedx_p_tmp = h2_dEdx_eff.at(prod_mode).at("reco").at(LPFO_mode).at(itype).at("nocut").at("dEdx_p");
+      // TH2F *h_dedx_p_tmp = h2_dEdx_eff.at(prod_mode).at("reco").at(LPFO_mode).at(itype).at("nocut").at("dEdx_p");
+      TString key = h2_dEdx_eff_str.at(iprod_mode).at("reco").at(LPFO_mode).at(itype).at("nocut").at("dEdx_p");
+      TH2F *h_dedx_p_tmp = (TH2F*) file->Get(key);
       h_dedx_p_tmp->SetFillColor(type_color_map[itype]);
       h_dedx_p_tmp->SetLineColor(type_color_map[itype]);
       h_dedx_p_tmp->GetXaxis()->SetRangeUser(15,100);
@@ -126,6 +137,8 @@ void dedxP()
 
 void dedxDistCosProjType()
 {
+  get_dEdx_eff();
+
   TCanvas *c_type_dedx_cos_type = new TCanvas("c_type_dedx_cos_type", "c_type_dedx_cos_type", 1500,1000);
   c_type_dedx_cos_type->Divide(cut_name.size(),PFO_type.size());
 
@@ -153,9 +166,16 @@ void dedxDistCosProjType()
       count++;
 
       TString hTitle = itype + " | " + iname;
-      TH2F *h_dedx_cos           = h2_dEdx_eff.at(prod_mode).at("reco").at(LPFO_mode).at(itype).at(iname).at("dEdx_cos");
-      TH2F *h_dedx_p             = h2_dEdx_eff.at(prod_mode).at("reco").at(LPFO_mode).at(itype).at(iname).at("dEdx_p");
-      TH2F *h_dedx_dist_cos      = h2_dEdx_eff.at(prod_mode).at("reco").at(LPFO_mode).at(itype).at(iname).at("dEdx_dist_cos");
+      // TH2F *h_dedx_cos           = h2_dEdx_eff.at(prod_mode).at("reco").at(LPFO_mode).at(itype).at(iname).at("dEdx_cos");
+      // TH2F *h_dedx_p             = h2_dEdx_eff.at(prod_mode).at("reco").at(LPFO_mode).at(itype).at(iname).at("dEdx_p");
+      // TH2F *h_dedx_dist_cos      = h2_dEdx_eff.at(prod_mode).at("reco").at(LPFO_mode).at(itype).at(iname).at("dEdx_dist_cos");
+      TString key_dedx_cos = h2_dEdx_eff_str.at(prod_mode).at("reco").at(LPFO_mode).at(itype).at(iname).at("dEdx_cos");
+      TString key_dedx_p   = h2_dEdx_eff_str.at(prod_mode).at("reco").at(LPFO_mode).at(itype).at(iname).at("dEdx_p");
+      TString key_dedx_dist_cos = h2_dEdx_eff_str.at(prod_mode).at("reco").at(LPFO_mode).at(itype).at(iname).at("dEdx_dist_cos");
+
+      TH2F *h_dedx_cos           = (TH2F*) file->Get(key_dedx_cos);
+      TH2F *h_dedx_p             = (TH2F*) file->Get(key_dedx_p);
+      TH2F *h_dedx_dist_cos      = (TH2F*) file->Get(key_dedx_dist_cos);
       TH1F *h_dedx_dist_cos_proj = (TH1F*) h_dedx_dist_cos->ProjectionX();
 
       h_dedx_dist_cos->SetTitle(hTitle);
@@ -201,6 +221,8 @@ void dedxDistCosProjType()
 
 void dedxDistCosProj()
 {
+  get_dEdx();
+
   TCanvas *c_dedx_dist_cos = new TCanvas("c_dedx_dist_cos", "c_dedx_dist_cos", 500,500);
   TCanvas *c_type_dedx_dist_cos = new TCanvas("c_type_dedx_dist_cos", "c_type_dedx_dist_cos", 1500,400);
   c_type_dedx_dist_cos->Divide(5,1);
@@ -209,7 +231,9 @@ void dedxDistCosProj()
   TH1F * h_dedx_dist_cos_proj_sum = new TH1F("h_dedx_dist_cos_proj_sum","h_dedx_dist_cos_proj_sum",100,-1,1);
   StyleHist(h_dedx_dist_cos_proj_sum,kBlue);
   for ( auto itype : PFO_type ){
-    TH2F *h_dedx_dist_cos = h2_dEdx.at(prod_mode).at(LPFO_mode).at(itype).at("dEdx_dist_cos");
+    // TH2F *h_dedx_dist_cos = h2_dEdx.at(prod_mode).at(LPFO_mode).at(itype).at("dEdx_dist_cos");
+    TString key_dedx_dist_cos = h2_dEdx_str.at(prod_mode).at(LPFO_mode).at(itype).at("dEdx_dist_cos");
+    TH2F *h_dedx_dist_cos = (TH2F*) file->Get(key_dedx_dist_cos);
     TH1F *h_dedx_dist_cos_proj = (TH1F*) h_dedx_dist_cos->ProjectionX();
     StyleHist(h_dedx_dist_cos_proj,kBlue);
 
@@ -226,6 +250,8 @@ void dedxDistCosProj()
 
 void dedxCos()
 {
+  get_dEdx();
+
   TCanvas *c_type_dedx_cos = new TCanvas("c_type_dedx_cos", "c_type_dedx_cos", 1500,400);
   c_type_dedx_cos->Divide(5,1);
 
@@ -234,7 +260,9 @@ void dedxCos()
 
     count++;
 
-    TH2F *h_dedx_cos = h2_dEdx.at(prod_mode).at(LPFO_mode).at(itype).at("dEdx_cos");
+    // TH2F *h_dedx_cos = h2_dEdx.at(prod_mode).at(LPFO_mode).at(itype).at("dEdx_cos");
+    TString key_dedx_cos = h2_dEdx_str.at(prod_mode).at(LPFO_mode).at(itype).at("dEdx_cos");
+    TH2F *h_dedx_cos = (TH2F*) file->Get(key_dedx_cos);
 
     c_type_dedx_cos->cd(count);
     h_dedx_cos->Draw("colz");
@@ -245,6 +273,8 @@ void dedxCos()
 
 void dedxOffsetProjection()
 {
+  get_dEdx_eff();
+
   TCanvas *c_type_dedx_p = new TCanvas("c_type_dedx_p", "c_type_dedx_p", 800,800);
   TPad *pad_type_dedx_p  = new TPad("pad_type_dedx_p", "pad_type_dedx_p",0,0,1,1);
   StylePad(pad_type_dedx_p,0,0.15,0,0.17);
@@ -252,6 +282,7 @@ void dedxOffsetProjection()
   // legend
   TLegend *leg = new TLegend(0.62,0.67,0.80,0.83);
   leg->SetLineColor(0);
+  leg->SetFillStyle(0);
   leg->SetMargin(0.8);
 
   Int_t count = 0;
@@ -261,8 +292,13 @@ void dedxOffsetProjection()
     Color_t icolor = ipair.second;
 
     count++;
-    TH2F *h_dedx_p   = h2_dEdx_eff.at(prod_mode).at("reco").at(LPFO_mode).at(itype).at("offset").at("dEdx_p");
-    TH2F *h_dedx_cos = h2_dEdx_eff.at(prod_mode).at("reco").at(LPFO_mode).at(itype).at("offset").at("dEdx_cos");
+    // TH2F *h_dedx_p   = h2_dEdx_eff.at(prod_mode).at("reco").at(LPFO_mode).at(itype).at("offset").at("dEdx_p");
+    // TH2F *h_dedx_cos = h2_dEdx_eff.at(prod_mode).at("reco").at(LPFO_mode).at(itype).at("offset").at("dEdx_cos");
+    TString key_dedx_p   = h2_dEdx_eff_str.at(prod_mode).at("reco").at(LPFO_mode).at(itype).at("offset").at("dEdx_p");
+    TString key_dedx_cos = h2_dEdx_eff_str.at(prod_mode).at("reco").at(LPFO_mode).at(itype).at("offset").at("dEdx_cos");
+    TH2F *h_dedx_p   = (TH2F*) file->Get(key_dedx_p);
+    TH2F *h_dedx_cos = (TH2F*) file->Get(key_dedx_cos);
+
     TH1F *h_dedx_p_proj   = (TH1F*) h_dedx_p->ProjectionY();
     StyleHist(h_dedx_p_proj,icolor);
 
@@ -284,6 +320,8 @@ void dedxOffsetProjection()
 
 void dedxOffsetMeanSigma()
 {
+  get_dEdx_eff();
+
   unordered_map<TString, TGraphErrors*> type_tge; // [type]
 
   for ( const auto ipair : type_color ){
@@ -291,7 +329,19 @@ void dedxOffsetMeanSigma()
     TString itype  = ipair.first;
     Color_t icolor = ipair.second;
 
-    TH2F *h_dedx_cos = h2_dEdx_eff.at(prod_mode).at("reco").at(LPFO_mode).at(itype).at("offset").at("dEdx_cos");
+    TH2F *h_dedx_cos;
+    Int_t countAdd = 0;
+    for ( const auto iprod_mode : prod_modes ){
+      TString key_dedx_cos = h2_dEdx_eff_str.at(iprod_mode).at("reco").at(LPFO_mode).at(itype).at("offset").at("dEdx_cos");
+      TH2F *h_dedx_cos_tmp = (TH2F*) file->Get(key_dedx_cos);
+      if(countAdd){
+        h_dedx_cos->Add(h_dedx_cos_tmp);
+      }else{
+        h_dedx_cos = (TH2F*) h_dedx_cos_tmp->Clone();
+      }
+      countAdd++;
+    }
+
 
     Int_t nbins = h_dedx_cos->GetNbinsX();
     Float_t tge_cos[nbins], tge_err_cos[nbins];
@@ -371,14 +421,14 @@ void dedx()
 
   if (!file->IsOpen()) return;
 
-  getHistograms();
+  // getHistograms();
 
-  dedxP();
+  // dedxP();
   // dedxDistCosProj();
   // dedxDistCosProjType();
   // dedxCos();
   // dedxOffsetProjection();
-  // dedxOffsetMeanSigma();
+  dedxOffsetMeanSigma();
 
 
 }
