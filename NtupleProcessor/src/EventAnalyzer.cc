@@ -347,14 +347,18 @@ namespace QQbarAnalysis
     
     // SPFO opposite check
     vector<Bool_t> is_SPFO_charge_opposite(2,false);
+    TString backgroundMode = (i_lmode=="Pi") ? "K" : "Pi";
     for ( int ijet=0; ijet<2; ijet++ ){
       vector<PFO_Info> subjet = subjet_pair.at(ijet);
       if( subjet.size() == 0 ) continue;
       for ( auto iSPFO : subjet ){
         if(iSPFO.ipfo == LPFOs.at(ijet).ipfo) continue;
+        Bool_t isSPFO_PDG = ( gen_reco == "reco" ) ? pfot.is_PID( backgroundMode, iSPFO, _gdedx ) : ( abs(iSPFO.pfo_pdgcheat) == pfot.PFO_type_map_rev.at(backgroundMode) );
+        Bool_t isSPFO_Kveto_mom = iSPFO.p_mag > 5;
+
         Bool_t charge_opposite = iSPFO.pfo_charge * LPFOs.at(ijet).pfo_charge < 0;
         Bool_t momentum_above  = iSPFO.p_mag > 10;
-        if( charge_opposite && momentum_above ) is_SPFO_charge_opposite.at(ijet) = true;
+        if( (momentum_above && charge_opposite) || (isSPFO_Kveto_mom && isSPFO_PDG)  ) is_SPFO_charge_opposite.at(ijet) = true;
       }
     }
     outMap["SPFO"] = std::none_of(is_SPFO_charge_opposite.begin(), is_SPFO_charge_opposite.end(), [](bool v) { return v; });
