@@ -92,7 +92,7 @@ def main():
 
   class PlotManager:
     cuts = {
-      "sinacol" : 0.9,
+      "sinacol" : 0.3,
       "invM"    : 140,
       "y23"     : 0.02,
       "LPFOacol": 0.97,

@@ -209,8 +209,12 @@ void pq_method_PiLPFO_total()
     }
 
     unordered_map<TString, THStack*> hs_reco;
+    unordered_map<TString, TLegend*> leg_reco;
     for( auto chiral : chirals ){
       hs_reco[chiral] = new THStack("hs_reco_" + chiral,";cos#theta;Entries / Int. Lumi.");
+      leg_reco[chiral] = new TLegend(0.59,0.68,0.89,0.89);
+      leg_reco[chiral]->SetBorderSize(0);
+      leg_reco[chiral]->SetFillStyle(0);
     }
 
     for( auto process : processes ){
@@ -222,16 +226,20 @@ void pq_method_PiLPFO_total()
             TH1F *h = hmap[process][chiral][category]["reco"];
             h->GetYaxis()->SetRangeUser(0,TopRange);
             h->SetFillStyle(0);
-            h->SetTitle(histLabel(process,category));
+            TString histName = histLabel(process,category);
+            h->SetTitle(histName);
             hs_reco.at(chiral)->Add(h);
+            leg_reco.at(chiral)->AddEntry(h,histName,"l");
           }
         }else{
           TH1F *h = hmap[process][chiral]["bg"]["reco"];
           h->GetYaxis()->SetRangeUser(0,TopRange);
           h->SetFillStyle(0);
-          h->SetTitle(histLabel(process,"bg"));
+          TString histName = histLabel(process,"bg");
+          h->SetTitle(histName);
           h->SetLineStyle(7);
           hs_reco.at(chiral)->Add(h);
+          leg_reco.at(chiral)->AddEntry(h,histName,"l");
         }
       }
     }
@@ -243,11 +251,12 @@ void pq_method_PiLPFO_total()
       gStyle->SetHistTopMargin(0);
       gStyle->SetPalette(55);
       hs_reco.at(chiral)->Draw("h plc nostack");
-      pad_hs_reco->BuildLegend(0.59,0.68,0.89,0.89);
+      leg_reco.at(chiral)->Draw();
+      // pad_hs_reco->BuildLegend(0.59,0.68,0.89,0.89);
     }
 
 
-
+  /*
     unordered_map<TString, THStack*> hs_gen;
     for( auto chiral : chirals ){
       hs_gen[chiral] = new THStack("hs_gen_" + chiral,";cos#theta;Entries / Int. Lumi.");
@@ -285,6 +294,7 @@ void pq_method_PiLPFO_total()
       hs_gen.at(chiral)->Draw("h plc nostack");
       pad_hs_gen->BuildLegend(0.59,0.68,0.89,0.89);
     }
+  */
 
   }
   catch(const std::exception& e)
