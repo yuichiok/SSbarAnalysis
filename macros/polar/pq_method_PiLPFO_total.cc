@@ -12,7 +12,7 @@ using std::vector; using std::array; using std::unordered_map;
 // TString chiral    = "eR.pL";
 TString LPFO_mode = "Pi";
 // Float_t TopRange = 700E3;
-Float_t TopRange = 200;
+Float_t TopRange = 160;
 
 TString inputDir = "../../rootfiles/merged/";
 array<TString,2> chirals   = {"eL.pR", "eR.pL"};
