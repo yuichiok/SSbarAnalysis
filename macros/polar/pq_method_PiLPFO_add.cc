@@ -8,12 +8,25 @@
 using std::cout; using std::endl;
 using std::vector; using std::unordered_map;
 
-TString prod_mode = "uu";
-TString chiral    = "eR.pL";
 TString LPFO_mode = "Pi";
+// TString chiral = "eL.pR";
+TString chiral = "eR.pL";
 
-TFile *uuFile = new TFile("../../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h." + chiral + ".uu.KPiLPFO.dedxPi.PFOp15.LPFOp15_pNaN.tpc0.mix_uds.correctDist.all.root","READ");
-TFile *ddFile = new TFile("../../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h." + chiral + ".dd.KPiLPFO.dedxPi.PFOp15.LPFOp15_pNaN.tpc0.mix_uds.correctDist.all.root","READ");
+TString inputDir = "../../rootfiles/merged/";
+array<TString,2> chirals   = {"eL.pR", "eR.pL"};
+array<TString,4> processes = {"P2f_z_h", "P4f_ww_h", "P4f_zz_h", "Pqqh"};
+array<TString,6> qqbars    = {"dd", "uu", "ss", "cc", "bb", "rr"};
+
+unordered_map<pair<TString,TString>,pair<Int_t,Int_t>, hash_pair> production = {
+    {{"P2f_z_h", "eL.pR"}, {500010,4994}},
+    {{"P2f_z_h", "eR.pL"}, {500012,4994}},
+    {{"P4f_ww_h", "eL.pR"}, {500066,4996}},
+    {{"P4f_ww_h", "eR.pL"}, {500068,5116}},
+    {{"P4f_zz_h", "eL.pR"}, {500062,5052}},
+    {{"P4f_zz_h", "eR.pL"}, {500064,5109}},
+    {{"Pqqh", "eL.pR"}, {402011,1457}},
+    {{"Pqqh", "eR.pL"}, {402012,2278}},
+};
 
 Float_t fitRange = 0.8;
 
@@ -46,51 +59,49 @@ void Normalize2Gen(TH1F *h, TH1F *h_gen)
   h->Scale( intCosGen / intCosReco );
 }
 
-unordered_map<TString, TH1F*> main_pq(TFile* file, Float_t &ratio)
+unordered_map<TString, TH1F*> main_pq(TFile* file, TString prodMode, Float_t &ratio)
 {
   gStyle->SetOptStat(0);
 
-  TString prodMode = getProductionMode(file);
-
   // reco and gen polar
-  TH1F *h_gen_q_qcos    = (TH1F*) file->Get("gen/h_qcos");
-  TH1F *h_reco_Pi_scos  = (TH1F*) file->Get("cos/h_Pi_scos");
-  TH1F *h_reco_Pi_qcos  = (TH1F*) file->Get("cos/h_Pi_qcos");
+  TH1F *h_gen_q_qcos    = (TH1F*) file->Get(prodMode + "/gen/h_" + prodMode + "_qcos");
+  TH1F *h_reco_LPFO_scos  = (TH1F*) file->Get(prodMode + "/cos/h_" + prodMode + "_" + LPFO_mode + "_scos");
+  TH1F *h_reco_LPFO_qcos  = (TH1F*) file->Get(prodMode + "/cos/h_" + prodMode + "_" + LPFO_mode + "_qcos");
 
-  cout << prodMode << " reco entry = " << h_reco_Pi_qcos->GetEntries() << endl;
+  cout << prodMode << " reco entry = " << h_reco_LPFO_qcos->GetEntries() << endl;
   cout << prodMode << " gen entry  = " << h_gen_q_qcos->GetEntries() << endl;
-  cout << prodMode << " reco eff   = " << (float)h_reco_Pi_qcos->GetEntries() / (float)h_gen_q_qcos->GetEntries() << endl;
+  cout << prodMode << " reco eff   = " << (float)h_reco_LPFO_qcos->GetEntries() / (float)h_gen_q_qcos->GetEntries() << endl;
   
-  ratio = (Float_t) h_reco_Pi_qcos->GetEntries() / (Float_t) h_gen_q_qcos->GetEntries();
+  ratio = (Float_t) h_reco_LPFO_qcos->GetEntries() / (Float_t) h_gen_q_qcos->GetEntries();
 
   // used for pq correction
-  TH1F *h_acc_PiPi_cos  = (TH1F*) file->Get("cos/h_Pi_acc_cos");
-  TH1F *h_rej_PiPi_cos  = (TH1F*) file->Get("cos/h_Pi_rej_cos");
+  TH1F *h_acc_PiPi_cos  = (TH1F*) file->Get(prodMode + "/cos/h_" + prodMode + "_" + LPFO_mode + "_acc_cos");
+  TH1F *h_rej_PiPi_cos  = (TH1F*) file->Get(prodMode + "/cos/h_" + prodMode + "_" + LPFO_mode + "_rej_cos");
 
   // efficiency correction
   Bool_t isEffCorr = true;
-  TH1F *h_reco_Pi_scos_eff_corr;
-  TH1F *h_reco_Pi_qcos_eff_corr;
+  TH1F *h_reco_LPFO_scos_eff_corr;
+  TH1F *h_reco_LPFO_qcos_eff_corr;
   if (isEffCorr)
   {
-    TH1F* h_reco_Pi_scos_eff = efficiencyCorrection(h_reco_Pi_scos,"Pi",file);
-    TH1F* h_reco_Pi_qcos_eff = efficiencyCorrection(h_reco_Pi_qcos,"Pi",file);
-    h_reco_Pi_scos_eff_corr = resolutionCorrection(h_reco_Pi_scos_eff,"Pi",file);
-    h_reco_Pi_qcos_eff_corr = resolutionCorrection(h_reco_Pi_qcos_eff,"Pi",file);
+    TH1F* h_reco_LPFO_scos_eff = efficiencyCorrection(h_reco_LPFO_scos,LPFO_mode,file,prodMode);
+    TH1F* h_reco_LPFO_qcos_eff = efficiencyCorrection(h_reco_LPFO_qcos,LPFO_mode,file,prodMode);
+    h_reco_LPFO_scos_eff_corr = resolutionCorrection(h_reco_LPFO_scos_eff,LPFO_mode,file,prodMode);
+    h_reco_LPFO_qcos_eff_corr = resolutionCorrection(h_reco_LPFO_qcos_eff,LPFO_mode,file,prodMode);
 
   }else{
-    h_reco_Pi_scos_eff_corr = (TH1F*) h_reco_Pi_scos->Clone();
-    h_reco_Pi_qcos_eff_corr = (TH1F*) h_reco_Pi_qcos->Clone();
+    h_reco_LPFO_scos_eff_corr = (TH1F*) h_reco_LPFO_scos->Clone();
+    h_reco_LPFO_qcos_eff_corr = (TH1F*) h_reco_LPFO_qcos->Clone();
   }
 
   TH1F *h_acc_PiPi_cos_eff_corr;
   TH1F *h_rej_PiPi_cos_eff_corr;
   if (isEffCorr)
   {
-    TH1F* h_acc_PiPi_cos_eff = efficiencyCorrection(h_acc_PiPi_cos,"Pi",file);
-    TH1F* h_rej_PiPi_cos_eff = efficiencyCorrection(h_rej_PiPi_cos,"Pi",file);
-    h_acc_PiPi_cos_eff_corr = resolutionCorrection(h_acc_PiPi_cos_eff,"Pi",file);
-    h_rej_PiPi_cos_eff_corr = resolutionCorrection(h_rej_PiPi_cos_eff,"Pi",file);
+    TH1F* h_acc_PiPi_cos_eff = efficiencyCorrection(h_acc_PiPi_cos,LPFO_mode,file,prodMode);
+    TH1F* h_rej_PiPi_cos_eff = efficiencyCorrection(h_rej_PiPi_cos,LPFO_mode,file,prodMode);
+    h_acc_PiPi_cos_eff_corr = resolutionCorrection(h_acc_PiPi_cos_eff,LPFO_mode,file,prodMode);
+    h_rej_PiPi_cos_eff_corr = resolutionCorrection(h_rej_PiPi_cos_eff,LPFO_mode,file,prodMode);
   }else{
     h_acc_PiPi_cos_eff_corr = (TH1F*) h_acc_PiPi_cos->Clone();
     h_rej_PiPi_cos_eff_corr = (TH1F*) h_rej_PiPi_cos->Clone();
@@ -98,7 +109,7 @@ unordered_map<TString, TH1F*> main_pq(TFile* file, Float_t &ratio)
 
   StyleHist(h_gen_q_qcos,kGreen+1);
 
-  const Int_t nbins = h_reco_Pi_scos_eff_corr->GetNbinsX();
+  const Int_t nbins = h_reco_LPFO_scos_eff_corr->GetNbinsX();
 
   // pq correction
   TString pValName = "p_PiPi_" + prodMode;
@@ -113,9 +124,9 @@ unordered_map<TString, TH1F*> main_pq(TFile* file, Float_t &ratio)
     p_PiPi->SetBinError(nbins / 2 - i, p_vec.at(i + nbins / 2));
   }
 
-  TH1F *h_reco_Pi_pq_cos = CorrectHist(prodMode, h_reco_Pi_qcos_eff_corr, p_vec);
-  // TH1F *h_reco_Pi_pq_cos = (TH1F*) h_reco_Pi_qcos_eff_corr->Clone();
-  StyleHist(h_reco_Pi_pq_cos,kBlue);
+  TH1F *h_reco_LPFO_pq_cos = CorrectHist(prodMode, h_reco_LPFO_qcos_eff_corr, p_vec);
+  // TH1F *h_reco_LPFO_pq_cos = (TH1F*) h_reco_LPFO_qcos_eff_corr->Clone();
+  StyleHist(h_reco_LPFO_pq_cos,kBlue);
 
   // Fitting
   TF1 * f_gen = new TF1("f_gen","[0]*(1+x*x)+[1]*x",-fitRange,fitRange);
@@ -125,13 +136,13 @@ unordered_map<TString, TH1F*> main_pq(TFile* file, Float_t &ratio)
 
   TF1 * f_reco = new TF1("f_reco","[0]*(1+x*x)+[1]*x",-fitRange,fitRange);
   f_reco->SetParNames("S","A");
-  h_reco_Pi_pq_cos->Fit("f_reco","MNRS");
+  h_reco_LPFO_pq_cos->Fit("f_reco","MNRS");
   cout << "Reco Chi2 / ndf = " << f_reco->GetChisquare() << " / " << f_reco->GetNDF() << endl;
 
   // output
   unordered_map<TString, TH1F*> hmap;
   hmap["gen"] = h_gen_q_qcos;
-  hmap["reco"] = h_reco_Pi_pq_cos;
+  hmap["reco"] = h_reco_LPFO_pq_cos;
 
   return hmap;
 
@@ -142,21 +153,31 @@ void pq_method_PiLPFO_add()
 {
   try
   {
-    if (!uuFile->IsOpen() || !ddFile->IsOpen()) return;
+    unordered_map<TString, unordered_map<TString, TFile*> > file_map;
+    for( auto process : processes ){
+      for( auto chiral : chirals ){
+        Int_t processID = production.at({process,chiral}).first;
+        cout << process << " " << chiral << " " << processID << endl;
+        TString filename = inputDir + "rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I" + processID + "." + process + "." + chiral + ".KPiLPFO.dedxPi.PFOp15.LPFOp15_pNaN.all.root";
+        TFile *file = new TFile(filename,"READ");
+        if( !file->IsOpen() ) throw std::runtime_error("File not found");
+        file_map[process][chiral] = file;
+      }
+    }
 
     Float_t dd_ratio;
     Float_t uu_ratio;
 
     unordered_map<TString, unordered_map<TString, TH1F*>> hmap; // [ud][reco/gen]
-    hmap["uu"] = main_pq(uuFile, uu_ratio);
-    hmap["dd"] = main_pq(ddFile, dd_ratio);
+    hmap["uu"] = main_pq(file_map["P2f_z_h"][chiral], "uu", uu_ratio);
+    hmap["dd"] = main_pq(file_map["P2f_z_h"][chiral], "dd", dd_ratio);
 
     cout << "uu ratio = " << uu_ratio << endl;
     cout << "dd ratio = " << dd_ratio << endl;
     cout << "weight   = " << dd_ratio / uu_ratio << endl;
 
-    // hmap.at("dd").at("gen")->Scale( dd_ratio / uu_ratio );
-    hmap.at("dd").at("gen")->Scale( 0.9 );
+    hmap.at("dd").at("gen")->Scale( dd_ratio / uu_ratio );
+    // hmap.at("dd").at("gen")->Scale( 0.9 );
 
     TH1F *h_reco = (TH1F*) hmap.at("uu").at("reco")->Clone();
     h_reco->Add(hmap.at("dd").at("reco"));
@@ -276,23 +297,23 @@ void pq_method_PiLPFO_add()
     // Draw polar angle fit ratio
       TCanvas  *c_ratio_fit = new TCanvas("c_ratio_fit","c_ratio_fit",700,900);
       // Int_t binFitRange = fitRange * h_reco->GetNbinsX();
-      TH1F *h_reco_Pi_pq_cos_subhist = new TH1F("h_reco_Pi_pq_cos_subhist",";LPFO Pion cos#theta; Entries",90,-fitRange,fitRange);
-      for ( int ibin=1; ibin<=h_reco_Pi_pq_cos_subhist->GetNbinsX(); ibin++ )
+      TH1F *h_reco_LPFO_pq_cos_subhist = new TH1F("h_reco_LPFO_pq_cos_subhist",";LPFO Pion cos#theta; Entries",90,-fitRange,fitRange);
+      for ( int ibin=1; ibin<=h_reco_LPFO_pq_cos_subhist->GetNbinsX(); ibin++ )
       {
         Int_t recobin = ibin + 5;
-        h_reco_Pi_pq_cos_subhist->SetBinContent(ibin,h_reco->GetBinContent(recobin));
-        h_reco_Pi_pq_cos_subhist->SetBinError(ibin,h_reco->GetBinError(recobin));
+        h_reco_LPFO_pq_cos_subhist->SetBinContent(ibin,h_reco->GetBinContent(recobin));
+        h_reco_LPFO_pq_cos_subhist->SetBinError(ibin,h_reco->GetBinError(recobin));
       }
-      h_reco_Pi_pq_cos_subhist->SetMarkerStyle(20);
+      h_reco_LPFO_pq_cos_subhist->SetMarkerStyle(20);
 
       TF1 *f_reco_ratio = new TF1("f_reco_ratio","[0]*(1+x*x)+[1]*x",-fitRange,fitRange);
       f_reco_ratio->SetParNames("S","A");
-      h_reco_Pi_pq_cos_subhist->Fit("f_reco_ratio");
+      h_reco_LPFO_pq_cos_subhist->Fit("f_reco_ratio");
       cout << "Reco Chi2 / ndf = " << f_reco_ratio->GetChisquare() << " / " << f_reco_ratio->GetNDF() << endl;
-      h_reco_Pi_pq_cos_subhist->GetYaxis()->SetRangeUser(0,800E3);
+      h_reco_LPFO_pq_cos_subhist->GetYaxis()->SetRangeUser(0,800E3);
       c_ratio_fit->Clear();
 
-      auto trp = new TRatioPlot(h_reco_Pi_pq_cos_subhist);
+      auto trp = new TRatioPlot(h_reco_LPFO_pq_cos_subhist);
       trp->SetGraphDrawOpt("P");
       trp->SetSeparationMargin(0.0);
       trp->Draw();
@@ -305,7 +326,7 @@ void pq_method_PiLPFO_add()
       TLegend *leg_trp = new TLegend(0.3,0.7,0.7,0.85);
       leg_trp->SetMargin(0.4);
       leg_trp->SetLineColor(0);
-      leg_trp->AddEntry(h_reco_Pi_pq_cos_subhist,"Reconstructed #pi^{-} (corrected)","p");
+      leg_trp->AddEntry(h_reco_LPFO_pq_cos_subhist,"Reconstructed #pi^{-} (corrected)","p");
       leg_trp->AddEntry(f_reco_ratio,"#frac{d#sigma}{dcos#theta} fit for LPFO","l");
       leg_trp->Draw();
 
