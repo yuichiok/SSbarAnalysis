@@ -12,7 +12,7 @@ using std::vector; using std::array; using std::unordered_map;
 // TString chiral    = "eR.pL";
 TString LPFO_mode = "Pi";
 // Float_t TopRange = 700E3;
-Float_t TopRange = 160;
+Float_t TopRange = 0.7;
 
 TString inputDir = "../../rootfiles/merged/";
 array<TString,2> chirals   = {"eL.pR", "eR.pL"};
@@ -105,7 +105,6 @@ unordered_map<TString, TH1F*> main_pq(TFile* file, TString process, TString chir
   Bool_t isEffCorr = true;
   TH1F *h_reco_LPFO_scos_eff_corr;
   TH1F *h_reco_LPFO_qcos_eff_corr;
-  // if (isEffCorr && category!="bg")
   if (isEffCorr)
   {
     TH1F* h_reco_LPFO_scos_eff = efficiencyCorrection(h_reco_LPFO_scos,LPFO_mode,file,category);
@@ -120,7 +119,6 @@ unordered_map<TString, TH1F*> main_pq(TFile* file, TString process, TString chir
 
   TH1F *h_acc_PiPi_cos_eff_corr;
   TH1F *h_rej_PiPi_cos_eff_corr;
-  // if (isEffCorr && category!="bg")
   if (isEffCorr)
   {
     TH1F* h_acc_PiPi_cos_eff = efficiencyCorrection(h_acc_PiPi_cos,LPFO_mode,file,category);
