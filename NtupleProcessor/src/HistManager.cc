@@ -3,7 +3,7 @@
 #include <TH1.h>
 #include <TH2.h>
 #include <TList.h>
-#include <TFile.h> 
+#include <TFile.h>
 
 #include "../include/HistManager.hh"
 
@@ -13,141 +13,87 @@ HistManager::HistManager() {}
 
 void HistManager::InitializeHists()
 {
+  h_primary[static_cast<int>(h_primary::d0)] = new TH2F("d0_primary"  ,"Reconstructed primary K;d_0, [mm];ctag",1000,0,0.2,100,0,1);
+  h_primary[static_cast<int>(h_primary::d0_sigma)] = new TH2F("d0_sigma_primary"  ,"Reconstructed primary K;#sigma(d_0), [mm];ctag",100,0,0.01,100,0,1);
+  h_primary[static_cast<int>(h_primary::d0_sigma_d0)] = new TH2F("d0_sigma_d0_primary"  ,"Reconstructed primary K;#frac{d0}{#sigma(d0)};ctag",1000,0,100,100,0,1);
 
-  // Own
+  h_primary[static_cast<int>(h_primary::z0)] = new TH2F("z0_primary"  ,"Reconstructed primary K;z_0, [mm];ctag",10000,0,2,100,0,1);
+  h_primary[static_cast<int>(h_primary::z0_sigma)] = new TH2F("z0_sigma_primary"  ,"Reconstructed primary K;#sigma(z_0), [mm];ctag",1000,0,0.1,100,0,1);
+  h_primary[static_cast<int>(h_primary::z0_sigma_z0)] = new TH2F("z0_sigma_z0_primary"  ,"Reconstructed primary K;#frac{z0}{#sigma(z0)};ctag",1000,0,100,100,0,1);
 
-    h1_K_reco[d0_K_reco_primary] = new TH1F("d0_K_reco_primary"  ,"Reconstructed primary K;d_0, [mm];",10000,0,2);
-    h1_K_reco[d0_sigma_K_reco_primary] = new TH1F("d0_sigma_K_reco_primary"  ,"Reconstructed primary K;#sigma(d_0), [mm];",1000,0,0.1);
-    h1_K_reco[d0_sigma_d0_K_reco_primary] = new TH1F("d0_sigma_d0_K_reco_primary"  ,"Reconstructed primary K;#frac{d0}{#sigma(d0)};",1000,0,100);
+  h_secondary[static_cast<int>(h_secondary::d0)] = new TH2F("d0_secondary"  ,"Reconstructed secondary K;d_0, [mm];ctag",1000,0,0.2,100,0,1);
+  h_secondary[static_cast<int>(h_secondary::d0_sigma)] = new TH2F("d0_sigma_secondary"  ,"Reconstructed secondary K;#sigma(d_0), [mm];ctag",100,0,0.01,100,0,1);
+  h_secondary[static_cast<int>(h_secondary::d0_sigma_d0)] = new TH2F("d0_sigma_d0_secondary"  ,"Reconstructed secondary K;#frac{d0}{#sigma(d0)};ctag",1000,0,100,100,0,1);
 
-    h1_K_reco[z0_K_reco_primary] = new TH1F("z0_K_reco_primary"  ,"Reconstructed primary K;z_0, [mm];",10000,0,2);
-    h1_K_reco[z0_sigma_K_reco_primary] = new TH1F("z0_sigma_K_reco_primary"  ,"Reconstructed primary K;#sigma(z_0), [mm];",1000,0,0.1);
-    h1_K_reco[z0_sigma_z0_K_reco_primary] = new TH1F("z0_sigma_z0_K_reco_primary"  ,"Reconstructed primary K;#frac{z0}{#sigma(z0)};",1000,0,100);
+  h_secondary[static_cast<int>(h_secondary::z0)] = new TH2F("z0_secondary"  ,"Reconstructed secondary K;z_0, [mm];ctag",10000,0,2,100,0,1);
+  h_secondary[static_cast<int>(h_secondary::z0_sigma)] = new TH2F("z0_sigma_secondary"  ,"Reconstructed secondary K;#sigma(z_0), [mm];ctag",100,0,0.01,100,0,1);
+  h_secondary[static_cast<int>(h_secondary::z0_sigma_z0)] = new TH2F("z0_sigma_z0_secondary"  ,"Reconstructed secondary K;#frac{z0}{#sigma(z0)};ctag",1000,0,100,100,0,1);
 
-    h1_K_reco[d0_K_reco_secondary] = new TH1F("d0_K_reco_secondary"  ,"Reconstructed secondary K;d_0, [mm];",10000,0,2);
-    h1_K_reco[d0_sigma_K_reco_secondary] = new TH1F("d0_sigma_K_reco_secondary"  ,"Reconstructed secondary K;#sigma(d_0), [mm];",1000,0,0.1);
-    h1_K_reco[d0_sigma_d0_K_reco_secondary] = new TH1F("d0_sigma_d0_K_reco_secondary"  ,"Reconstructed secondary K;#frac{d0}{#sigma(d0)};",1000,0,100);
+  h_garbage[static_cast<int>(h_garbage::d0)] = new TH2F("d0_garbage"  ,"Reconstructed garbage K;d_0, [mm];ctag",1000,0,0.2,100,0,1);
+  h_garbage[static_cast<int>(h_garbage::d0_sigma)] = new TH2F("d0_sigma_garbage"  ,"Reconstructed garbage K;#sigma(d_0), [mm];ctag",100,0,0.1,100,0,1);
+  h_garbage[static_cast<int>(h_garbage::d0_sigma_d0)] = new TH2F("d0_sigma_d0_garbage"  ,"Reconstructed garbage K;#frac{d0}{#sigma(d0)};ctag",1000,0,100,100,0,1);
 
-    h1_K_reco[z0_K_reco_secondary] = new TH1F("z0_K_reco_secondary"  ,"Reconstructed secondary K;z_0, [um];",10000,0,2);
-    h1_K_reco[z0_sigma_K_reco_secondary] = new TH1F("z0_sigma_K_reco_secondary"  ,"Reconstructed secondary K;#sigma(z_0), [mm];",1000,0,0.1);
-    h1_K_reco[z0_sigma_z0_K_reco_secondary] = new TH1F("z0_sigma_z0_K_reco_secondary"  ,"Reconstructed secondary K;#frac{z0}{#sigma(z0)};",1000,0,100);
+  h_garbage[static_cast<int>(h_garbage::z0)] = new TH2F("z0_garbage"  ,"Reconstructed garbage K;z_0, [mm];ctag",10000,0,2,100,0,1);
+  h_garbage[static_cast<int>(h_garbage::z0_sigma)] = new TH2F("z0_sigma_garbage"  ,"Reconstructed garbage K;#sigma(z_0), [mm];ctag",1000,0,0.1,100,0,1);
+  h_garbage[static_cast<int>(h_garbage::z0_sigma_z0)] = new TH2F("z0_sigma_z0_garbage"  ,"Reconstructed garbage K;#frac{z0}{#sigma(z0)};ctag",1000,0,100,100,0,1);
 
-    h1_K_reco[d0_K_reco_pseudo] = new TH1F("d0_K_reco_pseudo"  ,"Reconstructed pseudo K;d_0, [mm];",10000,0,2);
-    h1_K_reco[d0_sigma_K_reco_pseudo] = new TH1F("d0_sigma_K_reco_pseudo"  ,"Reconstructed pseudo K;#sigma(d_0), [mm];",1000,0,0.1);
-    h1_K_reco[d0_sigma_d0_K_reco_pseudo] = new TH1F("d0_sigma_d0_K_reco_pseudo"  ,"Reconstructed pseudo K;#frac{d0}{#sigma(d0)};",1000,0,100);
+  h_total[static_cast<int>(h_total::d0)] = new TH2F("d0_total"  ,"Reconstructed garbage K;d_0, [mm];ctag",1000,0,0.2,100,0,1);
+  h_total[static_cast<int>(h_total::d0_sigma)] = new TH2F("d0_sigma_total"  ,"Reconstructed garbage K;#sigma(d_0), [mm];ctag",1000,0,0.1,100,0,1);
+  h_total[static_cast<int>(h_total::d0_sigma_d0)] = new TH2F("d0_sigma_d0_total"  ,"Reconstructed garbage K;#frac{d0}{#sigma(d0)};ctag",1000,0,100,100,0,1);
 
-    h1_K_reco[z0_K_reco_pseudo] = new TH1F("z0_K_reco_pseudo"  ,"Reconstructed pseudo K;z_0, [um];",10000,0,2);
-    h1_K_reco[z0_sigma_K_reco_pseudo] = new TH1F("z0_sigma_K_reco_pseudo"  ,"Reconstructed pseudo K;#sigma(z_0), [mm];",1000,0,0.1);
-    h1_K_reco[z0_sigma_z0_K_reco_pseudo] = new TH1F("z0_sigma_z0_K_reco_pseudo"  ,"Reconstructed pseudo K;#frac{z0}{#sigma(z0)};",1000,0,100);
-
-    h1_K_reco[d0_K_reco_garbage] = new TH1F("d0_K_reco_garbage"  ,"Reconstructed garbage K;d_0, [mm];",10000,0,2);
-    h1_K_reco[d0_sigma_K_reco_garbage] = new TH1F("d0_sigma_K_reco_garbage"  ,"Reconstructed garbage K;#sigma(d_0), [mm];",1000,0,0.1);
-    h1_K_reco[d0_sigma_d0_K_reco_garbage] = new TH1F("d0_sigma_d0_K_reco_garbage"  ,"Reconstructed garbage K;#frac{d0}{#sigma(d0)};",1000,0,100);
-
-    h1_K_reco[z0_K_reco_garbage] = new TH1F("z0_K_reco_garbage"  ,"Reconstructed garbage K;z_0, [um];",2000,0,2);
-    h1_K_reco[z0_sigma_K_reco_garbage] = new TH1F("z0_sigma_K_reco_garbage"  ,"Reconstructed garbage K;#sigma(z_0), [mm];",1000,0,0.1);
-    h1_K_reco[z0_sigma_z0_K_reco_garbage] = new TH1F("z0_sigma_z0_K_reco_garbage"  ,"Reconstructed garbage K;#frac{z0}{#sigma(z0)};",1000,0,100);
-
-    h1_K_reco[z0_sin_theta_K_reco_primary] = new TH1F("z0_sin_theta_K_reco_primary"  ,"Reconstructed primary K;|z0|#timessin(#theta);",10000,0,2);
-    h1_K_reco[z0_sigma_sin_theta_K_reco_primary] = new TH1F("z0_sigma_sin_theta_K_reco_primary"  ,"Reconstructed primary K;|#sigma(z_0)|#timessin(#theta);",1000,0,0.1);
-    h1_K_reco[z0_sigma_z0_sin_theta_K_reco_primary] = new TH1F("z0_sigma_z0_sin_theta_K_reco_primary"  ,"Reconstructed primary K;|#frac{z0}{#sigma(z0)}|#timessin(#theta);",1000,0,100);
-
-    h1_K_reco[d0_K_reco_primary_initial] = new TH1F("d0_K_reco_primary_initial"  ,"Reconstructed primary K;d_0, [mm];",10000,0,2);
-    h1_K_reco[d0_sigma_K_reco_primary_initial] = new TH1F("d0_sigma_K_reco_primary_initial"  ,"Reconstructed primary K;#sigma(d_0), [mm];",1000,0,0.1);
-    h1_K_reco[d0_sigma_d0_K_reco_primary_initial] = new TH1F("d0_sigma_d0_K_reco_primary_initial"  ,"Reconstructed primary K;#frac{d0}{#sigma(d0)};",1000,0,100);
-
-    h1_K_reco[d0_K_reco_secondary_initial] = new TH1F("d0_K_reco_secondary_initial"  ,"Reconstructed secondary K;d_0, [mm];",10000,0,2);
-    h1_K_reco[d0_sigma_K_reco_secondary_initial] = new TH1F("d0_sigma_K_reco_secondary_initial"  ,"Reconstructed secondary K;#sigma(d_0), [mm];",1000,0,0.1);
-    h1_K_reco[d0_sigma_d0_K_reco_secondary_initial] = new TH1F("d0_sigma_d0_K_reco_secondary_initial"  ,"Reconstructed secondary K;#frac{d0}{#sigma(d0)};",1000,0,100);
+  h_total[static_cast<int>(h_total::z0)] = new TH2F("z0_total"  ,"Reconstructed all K;z_0, [mm];ctag",10000,0,2,100,0,1);
+  h_total[static_cast<int>(h_total::z0_sigma)] = new TH2F("z0_sigma__total"  ,"Reconstructed all K;#sigma(z_0), [mm];ctag",1000,0,0.1,100,0,1);
+  h_total[static_cast<int>(h_total::z0_sigma_z0)] = new TH2F("z0_sigma_z0_total"  ,"Reconstructed all K;#frac{z0}{#sigma(z0)};ctag",1000,0,100,100,0,1);
 
 
-    h1_K_reco[cuts] = new TH1F("cuts"  ,"Cuts stages",10,0,10);
-    h1_K_reco[cuts]->GetXaxis()->SetBinLabel(1,"No cuts");
-    h1_K_reco[cuts]->GetXaxis()->SetBinLabel(2,"ctag");
-    h1_K_reco[cuts]->GetXaxis()->SetBinLabel(3,"LPFO_checks && double_tag && is_ss");
-    h1_K_reco[cuts]->GetXaxis()->SetBinLabel(4,"sign_check");
-    h1_K_reco[cuts]->GetXaxis()->SetBinLabel(5,"P");
-    h1_K_reco[cuts]->GetXaxis()->SetBinLabel(6,"S");
-    
-    h1_K_reco[ctag_final] = new TH1F("ctag_final"  ,"Ctag after cuts",100,0,1);
-
-    h1_K_reco[pmag_K_reco] = new TH1F("pmag_K_reco"  ,"Reconstructed K;p, [GeV];",100,0,100); 
-    h1_K_reco[cos_theta_K_reco] = new TH1F("cos_theta_K_reco"  ,"Reconstructed K;cos#theta;",200,-1,1); 
-
-    h1_K_reco[pmag_K_reco_final] = new TH1F("pmag_K_reco_final"  ,"Reconstructed K after cuts;p, [GeV];",100,0,100); 
-
-    h_PS[d0_P_single] = new TH1F("d0_P_single"  ,"Primary vertex single prong;d_0, [mm];",2000,0,2);
-    h_PS[d0_S_single] = new TH1F("d0_S_single"  ,"Secondary vertex single prong;d_0, [mm];",2000,0,2);
-    h_PS[d0_P_mult] = new TH1F("d0_P_mult"  ,"Primary vertex mult prong;d_0, [mm];",2000,0,2);
-    h_PS[d0_S_mult] = new TH1F("d0_S_mult"  ,"Secondary vertex mult prong;d_0, [mm];",2000,0,2);
-
-    h_PS[z0_P_single] = new TH1F("z0_P_single"  ,"Primary vertex single prong;z_0, [mm];",2000,0,2);
-    h_PS[z0_S_single] = new TH1F("z0_S_single"  ,"Secondary vertex single prong;z_0, [mm];",2000,0,2);
-    h_PS[z0_P_mult] = new TH1F("z0_P_mult"  ,"Primary vertex mult prong;z_0, [mm];",2000,0,2);
-    h_PS[z0_S_mult] = new TH1F("z0_S_mult"  ,"Secondary vertex mult prong;z_0, [mm];",2000,0,2);
+  h_cos[static_cast<int>(h_cos::cos_theta)] = new TH2F("cos_theta"  ,"Reconstructed all K;cos(#theta);ctag",200,-1,1,100,0,1);
+  h_cos[static_cast<int>(h_cos::cos_theta_acc)] = new TH2F("cos_theta_acc"  ,"Reconstructed all acc K;cos(#theta);ctag",200,-1,1,100,0,1);
+  h_cos[static_cast<int>(h_cos::cos_theta_rej)] = new TH2F("cos_theta_rej"  ,"Reconstructed all rej K;cos(#theta);ctag",200,-1,1,100,0,1);
+  h_cos[static_cast<int>(h_cos::cos_theta_primary)] = new TH2F("cos_theta_primary"  ,"Reconstructed primary K;cos(#theta);ctag",200,-1,1,100,0,1);
+  h_cos[static_cast<int>(h_cos::cos_theta_acc_primary)] = new TH2F("cos_theta_acc_primary"  ,"Reconstructed primary acc K;cos(#theta);ctag",200,-1,1,100,0,1);
+  h_cos[static_cast<int>(h_cos::cos_theta_rej_primary)] = new TH2F("cos_theta_rej_primary"  ,"Reconstructed primary rej K;cos(#theta);ctag",200,-1,1,100,0,1);
 
 
-    h_cos_theta[cos_theta] = new TH1F("cos_theta","cos(#theta) distribution for K;cos(#theta);",200,-1.,1.);
-    h_cos_theta[acc_cos_theta] = new TH1F("acc_cos_theta","cos(#theta) distribution for accepted KPFOs;cos(#theta);",200,-1.,1.);
-    h_cos_theta[rej_cos_theta] = new TH1F("rej_cos_theta","cos(#theta) distribution for rejected KPFOs;cos(#theta);",200,-1.,1.);
+  h_general[static_cast<int>(h_general::cuts)] = new TH1F("cuts"  ,"Cuts stages",10,0,10);
+  h_general[static_cast<int>(h_general::cuts)]->GetXaxis()->SetBinLabel(1,"LPFO_checks[Kaon]");
+  h_general[static_cast<int>(h_general::cuts)]->GetXaxis()->SetBinLabel(2,"p_mag");
+  h_general[static_cast<int>(h_general::cuts)]->GetXaxis()->SetBinLabel(3,"double_tag && is_ss");
+  h_general[static_cast<int>(h_general::cuts)]->GetXaxis()->SetBinLabel(4,"sign_check");
+  h_general[static_cast<int>(h_general::cuts)]->GetXaxis()->SetBinLabel(5,"P");
+  h_general[static_cast<int>(h_general::cuts)]->GetXaxis()->SetBinLabel(6,"S");
 
-    h_tagging[p_ctag] = new TH1F("p_ctag","ctag for primary vertex",100,0,1.);
-    h_tagging[s_ctag] = new TH1F("s_ctag","ctag for secondary vertex",100,0,1.);
-    h_tagging[t_ctag] = new TH1F("t_ctag","ctag for no vertex",100,0,1.);
-    
-    h_tagging[p_btag] = new TH1F("p_btag","btag for primary vertex",100,0,1.);
-    h_tagging[s_btag] = new TH1F("s_btag","btag for secondary vertex",100,0,1.);
-    h_tagging[t_btag] = new TH1F("t_btag","btag for no vertex",100,0,1.);
+  h_general[static_cast<int>(h_general::ctag_primary)] = new TH1F("ctag_primary"  ,"ctag of primary K",100,0,1);
+  h_general[static_cast<int>(h_general::ctag_secondary)] = new TH1F("ctag_secondary"  ,"ctag of secondary K",100,0,1);
+  h_general[static_cast<int>(h_general::ctag_total)] = new TH1F("ctag_total"  ,"ctag of all K",100,0,1);
 
-    h_tagging[ctag] = new TH1F("ctag"  ,"Ctag values;ctag;",100,0,1);
-
-    h_tagging[jets_info] = new TH1F("jets_info","Info", 10,0,10);
-    h_tagging[jets_info]->GetXaxis()->SetBinLabel(1,"Events");
-    h_tagging[jets_info]->GetXaxis()->SetBinLabel(2,"Jet 1");
-    h_tagging[jets_info]->GetXaxis()->SetBinLabel(3,"Jet 2");
-    h_tagging[jets_info]->GetXaxis()->SetBinLabel(4,"Jets with no vtx");
-    h_tagging[jets_info]->GetXaxis()->SetBinLabel(5,"Jets with S");
-    h_tagging[jets_info]->GetXaxis()->SetBinLabel(6,"Jets w/o S");
-    h_tagging[jets_info]->GetXaxis()->SetBinLabel(7,"Events with both jets with S");
-    h_tagging[jets_info]->GetXaxis()->SetBinLabel(8,"Events with both jets w/o S");
-
-    h_general[n_K_ecal] = new TH1F("n_K_ecal","number of charged Kaons which reached calorimeter",5,-2,2);
-    // h_general[nvtx_ctag] = new TH2F("nvtx_ctag",";ctag;nvtx",100,0,1,5,0,5);
-
-    h2_K_reco[ctag_pmag] = new TH2F("ctag_pmag", "Ctag vs pmag;ctag;p, [GeV]",24,0,0.6,34,15,100);
-
-    Hist2List();
-
+  Hist2List();
 }
 
 void HistManager::Hist2List()
-{
+{  
+  for (auto ih : h_primary) {
+    hList_primary->Add(ih);
+  }
 
-  for (auto ih : h1_K_reco) {
-    hList_K_reco->Add(ih);
+  for (auto ih : h_secondary) {
+    hList_secondary->Add(ih);
+  }
+
+  for (auto ih : h_garbage) {
+    hList_garbage->Add(ih);
+  }
+
+  for (auto ih : h_total) {
+    hList_total->Add(ih);
   }
 
   for (auto ih : h_general) {
     hList_general->Add(ih);
   }
-
-  for (auto ih : h_PS) {
-    hList_PS->Add(ih);
-  }
-
-  for (auto ih : h_tagging) {
-    hList_tagging->Add(ih);
-  }
-
-  for (auto ih : h2_K_reco) {
-    hList_K_reco_2->Add(ih);
-  }
   
-  for (auto ih : h_cos_theta) {
-    hList_cos_theta->Add(ih);
-  }
-  
-  
+  for (auto ih : h_cos) {
+    hList_cos->Add(ih);
+  }  
 }
 
 void HistManager::WriteLists( TFile * output)
@@ -155,22 +101,11 @@ void HistManager::WriteLists( TFile * output)
   output->cd();
 
   hList_general->Write();
-  
-  TDirectory * d_reco = output->mkdir("Reconstructed");
-    d_reco->cd();
-    hList_K_reco->Write();
-    hList_K_reco_2->Write();
-
-  TDirectory * d_PS = output->mkdir("PS");
-    d_PS->cd();
-    hList_PS->Write();
-
-  TDirectory * d_tagging = output->mkdir("tagging");
-    d_tagging->cd();
-    hList_tagging->Write();
-  
-  TDirectory * d_cos_theta = output->mkdir("cos_theta");
-    d_cos_theta->cd();
-    hList_cos_theta->Write();
-  
+  hList_cos->Write();
+  TDirectory * d_ctag = output->mkdir("ctag-analysis");
+    d_ctag->cd();
+    hList_primary->Write();
+    hList_secondary->Write();
+    hList_garbage->Write();
+    hList_total->Write();
 }

@@ -13,5 +13,5 @@ etc/*.ini
 # batch job related
 batch_jobs
 throw_jobs.sh
-
+run.sh
 merge.sh
