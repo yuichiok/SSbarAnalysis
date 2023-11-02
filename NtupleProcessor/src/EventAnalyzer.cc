@@ -389,13 +389,6 @@ void EventAnalyzer::CCbarAnalysis(PFOTools pfot, vector<Bool_t> cuts[3], PDGConf
             if(pfot.KLPFO[ijet].pfo_vtx==0 and nprong[pfot.KLPFO[ijet].pfo_match][0]>1) {
               _hm.h_general[static_cast<int>(HistManager::h_general::cuts)]->Fill(4);
               _hm.h_general[static_cast<int>(HistManager::h_general::ctag_primary)]->Fill(ctag[ijet]);
-              if(ctag[ijet]>0.15) {
-                cout<<"-------------->\n";
-                cout<<event<<"  "<<ctag[ijet]<<"  "<<pfot.KLPFO[ijet].pfo_px<<"  "<<pfot.KLPFO[ijet].pfo_py<<"  "<<pfot.KLPFO[ijet].pfo_pz<<"  "<<pfot.KLPFO[ijet].pfo_E<<endl;
-              }
-              else{
-                cout<<event<<"  "<<ctag[ijet]<<"  "<<pfot.KLPFO[ijet].pfo_px<<"  "<<pfot.KLPFO[ijet].pfo_py<<"  "<<pfot.KLPFO[ijet].pfo_pz<<"  "<<pfot.KLPFO[ijet].pfo_E<<endl;
-              }
 
               _hm.h_primary[static_cast<int>(HistManager::h_primary::d0)]->Fill(TMath::Abs(pfot.KLPFO[ijet].pfo_d0), maxCtag);
               _hm.h_primary[static_cast<int>(HistManager::h_primary::d0_sigma)]->Fill(TMath::Sqrt(pfot.KLPFO[ijet].pfo_d0error), maxCtag);
