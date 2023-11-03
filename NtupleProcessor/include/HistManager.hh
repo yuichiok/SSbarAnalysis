@@ -18,131 +18,90 @@ class HistManager
     ~HistManager(){}
 
   // Methods
-    virtual void InitializeHists();
-    virtual void Hist2List();
-    virtual void WriteLists( TFile * output );
+  virtual void InitializeHists();
+  virtual void Hist2List();
+  virtual void WriteLists( TFile * output );
 
   // Declear histograms
   // h1 hist
 
-    enum h1_K_reco{
-      d0_K_reco_primary,
-      d0_sigma_K_reco_primary,
-      d0_sigma_d0_K_reco_primary,
+  enum class h_primary{
+    d0,
+    z0,
+    d0_sigma,
+    z0_sigma,
+    d0_sigma_d0,
+    z0_sigma_z0,
+    dummy,
+    last = dummy 
+  };
+  TH2F * h_primary[static_cast<int>(h_primary::last)];
 
-      z0_K_reco_primary,
-      z0_sigma_K_reco_primary,
-      z0_sigma_z0_K_reco_primary,
+  enum class h_secondary{
+    d0,
+    z0,
+    d0_sigma,
+    z0_sigma,
+    d0_sigma_d0,
+    z0_sigma_z0,
+    dummy,
+    last = dummy 
+  };
+  TH2F * h_secondary[static_cast<int>(h_secondary::last)];
 
-      d0_K_reco_secondary,
-      d0_sigma_K_reco_secondary,
-      d0_sigma_d0_K_reco_secondary,
+  enum class h_garbage{
+    d0,
+    z0,
+    d0_sigma,
+    z0_sigma,
+    d0_sigma_d0,
+    z0_sigma_z0,
+    dummy,
+    last = dummy 
+  };
+  TH2F * h_garbage[static_cast<int>(h_garbage::last)];
 
-      z0_K_reco_secondary,
-      z0_sigma_K_reco_secondary,
-      z0_sigma_z0_K_reco_secondary,
+  enum class h_total{
+    d0,
+    z0,
+    d0_sigma,
+    z0_sigma,
+    d0_sigma_d0,
+    z0_sigma_z0,
+    dummy,
+    last = dummy 
+  };
+  TH2F * h_total[static_cast<int>(h_total::last)];
 
-      d0_K_reco_pseudo,
-      d0_sigma_K_reco_pseudo,
-      d0_sigma_d0_K_reco_pseudo,
+  enum class h_general{
+    cuts,
+    ctag_primary,
+    ctag_secondary,
+    ctag_total,
+    dummy,
+    last = dummy 
+  };
+  TH1F * h_general[static_cast<int>(h_general::last)];
 
-      z0_K_reco_pseudo,
-      z0_sigma_K_reco_pseudo,
-      z0_sigma_z0_K_reco_pseudo,
-
-      d0_K_reco_garbage,
-      d0_sigma_K_reco_garbage,
-      d0_sigma_d0_K_reco_garbage,
-
-      z0_K_reco_garbage,
-      z0_sigma_K_reco_garbage,
-      z0_sigma_z0_K_reco_garbage,
-
-      z0_sin_theta_K_reco_primary,
-      z0_sigma_sin_theta_K_reco_primary,
-      z0_sigma_z0_sin_theta_K_reco_primary,
-
-      d0_K_reco_primary_initial,
-      d0_sigma_K_reco_primary_initial,
-      d0_sigma_d0_K_reco_primary_initial,
-
-      d0_K_reco_secondary_initial,
-      d0_sigma_K_reco_secondary_initial,
-      d0_sigma_d0_K_reco_secondary_initial,
-
-      cuts,
-      ctag_final,
-
-      pmag_K_reco,
-      cos_theta_K_reco,
-
-      pmag_K_reco_final,
-
-      dummy_K_reco,
-      Last_h1_K_reco = dummy_K_reco
-    };
-    TH1F * h1_K_reco[Last_h1_K_reco];
-
-    enum h_PS{
-      d0_P_single,
-      d0_S_single,
-      d0_P_mult,
-      d0_S_mult,
-      z0_P_single,
-      z0_S_single,
-      z0_P_mult,
-      z0_S_mult,
-      dummy_h_PS,
-      Last_h_PS = dummy_h_PS
-    };
-    TH1* h_PS[Last_h_PS];
-
-    enum h_tagging {
-      p_ctag,
-      s_ctag,
-      p_btag,
-      s_btag,
-      t_ctag,
-      t_btag,
-      jets_info,
-      ctag,
-      dummy_tagging,
-      Last_h_tagging = dummy_tagging
-    };
-    TH1F * h_tagging[Last_h_tagging];
-    
-    enum h2_K_reco{
-      ctag_pmag,
-      dummy_h2_K_reco,
-      Last_h2_K_reco = dummy_h2_K_reco
-    };
-    TH2F * h2_K_reco[Last_h2_K_reco];
-
-    enum h_cos_theta{
-      cos_theta,
-      acc_cos_theta,
-      rej_cos_theta,
-      dummy_h_cos_theta,
-      Last_h_cos_theta = dummy_h_cos_theta
-    };
-    TH1F * h_cos_theta[Last_h_cos_theta];
-
-    enum h_general {
-      // nvtx_ctag,
-      n_K_ecal,
-
-      dummy_general,
-      Last_h_general = dummy_general
-    };
-    TH1F * h_general[Last_h_general];
+  enum class h_cos{
+    cos_theta,
+    cos_theta_acc,
+    cos_theta_rej,
+    cos_theta_primary,
+    cos_theta_acc_primary,
+    cos_theta_rej_primary,
+    dummy,
+    last=dummy
+  };
+  TH2F * h_cos[static_cast<int>(h_cos::last)];
 
   private:
-    TList* hList_K_reco          = new TList();
-    TList* hList_general         = new TList();
-    TList* hList_tagging         = new TList();
-    TList* hList_PS              = new TList();
-    TList* hList_cos_theta       = new TList();
-    TList* hList_K_reco_2        = new TList();
+    TList* hList_primary   = new TList();
+    TList* hList_secondary = new TList();
+    TList* hList_garbage   = new TList();
+    TList* hList_total     = new TList();
+    TList* hList_general   = new TList();
+    TList* hList_cos       = new TList();
 };
 
 #endif

@@ -98,7 +98,7 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
   // MC, PFO Analysis
   PFOTools mct( &_mc, _config );
   PFOTools pfot( &_mc, &_pfo, _config );
-
+  
   // cout << "===== " << entry + 1 << " =====" << endl;
 
     if ( !pfot.ValidPFO() ) {
@@ -146,14 +146,14 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
         Bool_t charge_opposite_KSLPFO_PiLPFO = iSPFO_K.pfo_charge * pfot.PiLPFO[ijet].pfo_charge < 0;
         Bool_t momentum_above  = iSPFO_K.p_mag > 10;
         if( charge_opposite && momentum_above ) is_gluon[kKaon][ijet] = true;
-        // if( charge_opposite_KSLPFO_PiLPFO && momentum_above ) check_KSLPFO_PiLPFO = true;
-        // if( charge_opposite_KSLPFO_PiLPFO && iSPFO_K.p_mag > 15 ) check_KSLPFO_PiLPFO = true;
+        if( charge_opposite_KSLPFO_PiLPFO && momentum_above ) check_KSLPFO_PiLPFO = true;
+        if( charge_opposite_KSLPFO_PiLPFO && iSPFO_K.p_mag > 15 ) check_KSLPFO_PiLPFO = true;
       }
 
       for ( auto iSPFO_Pi : pfot.SPFOs_Pi[ijet] ){
         Bool_t charge_opposite = iSPFO_Pi.pfo_charge * pfot.PiLPFO[ijet].pfo_charge < 0;
         Bool_t momentum_above  = iSPFO_Pi.p_mag > 10;
-        // if( (charge_opposite && momentum_above) || check_KSLPFO_PiLPFO ) is_gluon[kPion][ijet] = true;
+        if( (charge_opposite && momentum_above) || check_KSLPFO_PiLPFO ) is_gluon[kPion][ijet] = true;
         if( charge_opposite && momentum_above ) is_gluon[kPion][ijet] = true;
       }
 
@@ -192,63 +192,9 @@ void EventAnalyzer::AnalyzeReco(Long64_t entry)
 
   Double_t ctag[2] = {0,0};
   for(Int_t ijet=0; ijet<2; ijet++){
-    _hm.h_tagging[_hm.ctag]->Fill(_jet.jet_ctag[ijet]);
     ctag[ijet] = _jet.jet_ctag[ijet];
   }
-
-  CCbarAnalysis(pfot,CutTrigger,dEdx_pdg_match, ctag);
-
-
-  _hm.h_tagging[_hm.jets_info]->Fill(0);
-
-  if(_jet.jet_npfo[0] >= 1 and _jet.jet_npfo[1] >= 1) {
-    _hm.h_tagging[_hm.jets_info]->Fill(6);
-  }
-  if(_jet.jet_npfo[0] == 0 and _jet.jet_npfo[1] == 0) {
-    _hm.h_tagging[_hm.jets_info]->Fill(7);
-  }
-
-  // with SV
-  if (_jet.jet_nvtx[0] >= 1) {
-    _hm.h_tagging[_hm.s_ctag]->Fill(_jet.jet_ctag[0]);
-    _hm.h_tagging[_hm.s_btag]->Fill(_jet.jet_btag[0]);
-    _hm.h_tagging[_hm.jets_info]->Fill(1);
-    _hm.h_tagging[_hm.jets_info]->Fill(4);
-  }
-  if (_jet.jet_nvtx[1] >= 1) {
-    _hm.h_tagging[_hm.s_ctag]->Fill(_jet.jet_ctag[1]);
-    _hm.h_tagging[_hm.s_btag]->Fill(_jet.jet_btag[1]);
-    _hm.h_tagging[_hm.jets_info]->Fill(2);
-    _hm.h_tagging[_hm.jets_info]->Fill(4);
-  }
-
-  // w/o SV
-  if (_jet.jet_nvtx[0] == 0) {
-    _hm.h_tagging[_hm.s_ctag]->Fill(_jet.jet_ctag[0]);
-    _hm.h_tagging[_hm.s_btag]->Fill(_jet.jet_btag[0]);
-    _hm.h_tagging[_hm.jets_info]->Fill(1);
-    _hm.h_tagging[_hm.jets_info]->Fill(5);
-  }
-  if (_jet.jet_nvtx[1] == 0) {
-    _hm.h_tagging[_hm.p_ctag]->Fill(_jet.jet_ctag[1]);
-    _hm.h_tagging[_hm.p_btag]->Fill(_jet.jet_btag[1]);
-    _hm.h_tagging[_hm.jets_info]->Fill(2);
-    _hm.h_tagging[_hm.jets_info]->Fill(5);
-  }
-
-  // w/o Vertex
-  if (_jet.jet_nvtx[0] == -1) {
-    _hm.h_tagging[_hm.t_ctag]->Fill(_jet.jet_ctag[0]);
-    _hm.h_tagging[_hm.t_btag]->Fill(_jet.jet_btag[0]);
-    _hm.h_tagging[_hm.jets_info]->Fill(1);
-    _hm.h_tagging[_hm.jets_info]->Fill(3);
-  }
-  if (_jet.jet_nvtx[1] == -1) {
-    _hm.h_tagging[_hm.t_ctag]->Fill(_jet.jet_ctag[1]);
-    _hm.h_tagging[_hm.t_btag]->Fill(_jet.jet_btag[1]);
-    _hm.h_tagging[_hm.jets_info]->Fill(2);
-    _hm.h_tagging[_hm.jets_info]->Fill(3);
-  }
+  CCbarAnalysis(pfot,CutTrigger,dEdx_pdg_match, ctag, entry + 1);
   
   // _hTree->Fill();
   ClearStructs();
@@ -371,15 +317,8 @@ Bool_t EventAnalyzer::Notify()
    return kTRUE;
 }
 
-void EventAnalyzer::CCbarAnalysis(PFOTools pfot, vector<Bool_t> cuts[3], PDGConfig double_tag[3], Double_t ctag[2])
-{
-  Bool_t low_ctag = true;
-  for(Int_t ijet=0; ijet<2; ijet++) {
-    if(ctag[ijet] > 0.6) {
-      low_ctag = false;
-    }  
-  }
-  
+void EventAnalyzer::CCbarAnalysis(PFOTools pfot, vector<Bool_t> cuts[3], PDGConfig double_tag[3], Double_t ctag[2], Double_t event)
+{  
   std::vector<PFO_Info> PFO_Collection = pfot.Get_Valid_PFOs();
 
   Int_t nprong[2][2] = {{0,0},{0,0}};
@@ -412,130 +351,71 @@ void EventAnalyzer::CCbarAnalysis(PFOTools pfot, vector<Bool_t> cuts[3], PDGConf
     }
   }
 
-  for(Int_t ijet=0; ijet<2; ijet++) {
-    if(LPFO_checks[kKaon]) {
-      _hm.h1_K_reco[_hm.cuts]->Fill(0);
-    }
-    if(LPFO_checks[kKaon] && pfot.is_ss() && double_tag[kKaon] == K_K) {
-      _hm.h1_K_reco[_hm.pmag_K_reco_final]->Fill(pfot.KLPFO[ijet].p_mag);
-      if(pfot.KLPFO[ijet].pfo_vtx==0 and nprong[pfot.KLPFO[ijet].pfo_match][0]>1) {
-        _hm.h1_K_reco[_hm.ctag_final]->Fill(ctag[ijet]);
-      }
-      _hm.h2_K_reco[_hm.ctag_pmag]->Fill(ctag[ijet],pfot.KLPFO[ijet].p_mag);
-    }
-  }
-
   Bool_t sign_check[3] = {false, false, false};
   for (int i=0; i<3; i++ ){
     if ( cuts[i].empty() ) continue;
     sign_check[i] = cuts[i].back();
   }
 
+  Double_t maxCtag = (ctag[0] > ctag[1]) ? ctag[0] : ctag[1];
   for(Int_t ijet=0; ijet<2; ijet++) {
-    if ( LPFO_checks[kKaon] && pfot.is_ss() && double_tag[kKaon] == K_K && sign_check[kKaon]){
-      if(pfot.KLPFO[ijet].pfo_vtx==0 and nprong[pfot.KLPFO[ijet].pfo_match][0]>1) {
-        _hm.h1_K_reco[_hm.d0_K_reco_primary_initial]->Fill(TMath::Abs(pfot.KLPFO[ijet].pfo_d0));
-        _hm.h1_K_reco[_hm.d0_sigma_K_reco_primary_initial]->Fill(TMath::Sqrt(pfot.KLPFO[ijet].pfo_d0error));
-        _hm.h1_K_reco[_hm.d0_sigma_d0_K_reco_primary_initial]->Fill(TMath::Abs(pfot.KLPFO[ijet].pfo_d0)/TMath::Sqrt(pfot.KLPFO[ijet].pfo_d0error)); 
-      }
-      if(pfot.KLPFO[ijet].pfo_vtx==1 and nprong[pfot.KLPFO[ijet].pfo_match][1]>1)
-      {
-        _hm.h1_K_reco[_hm.d0_K_reco_secondary_initial]->Fill(TMath::Abs(pfot.KLPFO[ijet].pfo_d0));
-        _hm.h1_K_reco[_hm.d0_sigma_K_reco_secondary_initial]->Fill(TMath::Sqrt(pfot.KLPFO[ijet].pfo_d0error));
-        _hm.h1_K_reco[_hm.d0_sigma_d0_K_reco_secondary_initial]->Fill(TMath::Abs(pfot.KLPFO[ijet].pfo_d0)/TMath::Sqrt(pfot.KLPFO[ijet].pfo_d0error));
-      }
-    }        
-  }
-
-  if(low_ctag) {
-    for(Int_t ijet=0; ijet<2; ijet++) {
-      if(LPFO_checks[kKaon]) {
-        _hm.h1_K_reco[_hm.cuts]->Fill(1);
-      }
-      if ( LPFO_checks[kKaon] && pfot.is_ss() && double_tag[kKaon] == K_K ){
-        _hm.h1_K_reco[_hm.cuts]->Fill(2);
-        if(sign_check[kKaon]){
-          _hm.h1_K_reco[_hm.cuts]->Fill(3);
-          if( nprong[pfot.KLPFO[ijet].pfo_match][0]==1 && pfot.KLPFO[ijet].pfo_vtx==0 ){
-            _hm.h_PS[_hm.d0_P_single]->Fill(TMath::Abs(pfot.KLPFO[ijet].pfo_d0));
-            _hm.h_PS[_hm.z0_P_single]->Fill(TMath::Abs(pfot.KLPFO[ijet].pfo_z0));
-          }else if( nprong[pfot.KLPFO[ijet].pfo_match][1]==1 && pfot.KLPFO[ijet].pfo_vtx==1 ){
-            _hm.h_PS[_hm.d0_S_single]->Fill(TMath::Abs(pfot.KLPFO[ijet].pfo_d0));
-            _hm.h_PS[_hm.z0_S_single]->Fill(TMath::Abs(pfot.KLPFO[ijet].pfo_z0));
-          }else if ( nprong[pfot.KLPFO[ijet].pfo_match][0]>1 && pfot.KLPFO[ijet].pfo_vtx==0 ){
-            _hm.h_PS[_hm.d0_P_mult]->Fill(TMath::Abs(pfot.KLPFO[ijet].pfo_d0));
-            _hm.h_PS[_hm.z0_P_mult]->Fill(TMath::Abs(pfot.KLPFO[ijet].pfo_z0));
-          }else if ( nprong[pfot.KLPFO[ijet].pfo_match][1]>1 && pfot.KLPFO[ijet].pfo_vtx==1 ){
-            _hm.h_PS[_hm.d0_S_mult]->Fill(TMath::Abs(pfot.KLPFO[ijet].pfo_d0));
-            _hm.h_PS[_hm.z0_S_mult]->Fill(TMath::Abs(pfot.KLPFO[ijet].pfo_z0));
-          }
-
-
-          if(pfot.KLPFO[ijet].pfo_vtx==0 and nprong[pfot.KLPFO[ijet].pfo_match][0]>1)
-          {
-            _hm.h1_K_reco[_hm.cuts]->Fill(4);
-            _hm.h1_K_reco[_hm.d0_K_reco_primary]->Fill(TMath::Abs(pfot.KLPFO[ijet].pfo_d0));
-            _hm.h1_K_reco[_hm.d0_sigma_K_reco_primary]->Fill(TMath::Sqrt(pfot.KLPFO[ijet].pfo_d0error));
-            _hm.h1_K_reco[_hm.d0_sigma_d0_K_reco_primary]->Fill(TMath::Abs(pfot.KLPFO[ijet].pfo_d0)/TMath::Sqrt(pfot.KLPFO[ijet].pfo_d0error));
+    if(LPFO_checks[kKaon]) {
+      _hm.h_general[static_cast<int>(HistManager::h_general::cuts)]->Fill(0);
+      if(pfot.KLPFO[ijet].p_mag > 15) {
+        _hm.h_general[static_cast<int>(HistManager::h_general::cuts)]->Fill(1);
+        if (pfot.is_ss() && double_tag[kKaon] == K_K ){
+          _hm.h_general[static_cast<int>(HistManager::h_general::cuts)]->Fill(2);
+          if(sign_check[kKaon]){
+              _hm.h_total[static_cast<int>(HistManager::h_total::d0)]->Fill(TMath::Abs(pfot.KLPFO[ijet].pfo_d0), maxCtag);
+              _hm.h_total[static_cast<int>(HistManager::h_total::d0_sigma)]->Fill(TMath::Sqrt(pfot.KLPFO[ijet].pfo_d0error), maxCtag);
+              _hm.h_total[static_cast<int>(HistManager::h_total::d0_sigma_d0)]->Fill(TMath::Abs(pfot.KLPFO[ijet].pfo_d0)/TMath::Sqrt(pfot.KLPFO[ijet].pfo_d0error), maxCtag);
             
-            _hm.h1_K_reco[_hm.z0_K_reco_primary]->Fill(TMath::Abs(pfot.KLPFO[ijet].pfo_z0));
-            _hm.h1_K_reco[_hm.z0_sigma_K_reco_primary]->Fill(TMath::Sqrt(pfot.KLPFO[ijet].pfo_z0error));
-            _hm.h1_K_reco[_hm.z0_sigma_z0_K_reco_primary]->Fill(TMath::Abs(pfot.KLPFO[ijet].pfo_z0)/TMath::Sqrt(pfot.KLPFO[ijet].pfo_z0error));
-
-            _hm.h1_K_reco[_hm.z0_sin_theta_K_reco_primary]->Fill(TMath::Abs(pfot.KLPFO[ijet].pfo_z0)*TMath::Sqrt(1-pfot.KLPFO[ijet].cos*pfot.KLPFO[ijet].cos));
-            _hm.h1_K_reco[_hm.z0_sigma_sin_theta_K_reco_primary]->Fill(TMath::Sqrt(pfot.KLPFO[ijet].pfo_z0error)*TMath::Sqrt(1-pfot.KLPFO[ijet].cos*pfot.KLPFO[ijet].cos));
-            _hm.h1_K_reco[_hm.z0_sigma_z0_sin_theta_K_reco_primary]->Fill(TMath::Abs(pfot.KLPFO[ijet].pfo_z0)/TMath::Sqrt(pfot.KLPFO[ijet].pfo_z0error)*TMath::Sqrt(1-pfot.KLPFO[ijet].cos*pfot.KLPFO[ijet].cos));
-          }
-
-          if(pfot.KLPFO[ijet].pfo_vtx==1 and nprong[pfot.KLPFO[ijet].pfo_match][1]>1)
-          {
-            _hm.h1_K_reco[_hm.cuts]->Fill(5);
-            _hm.h1_K_reco[_hm.d0_K_reco_secondary]->Fill(TMath::Abs(pfot.KLPFO[ijet].pfo_d0));
-            _hm.h1_K_reco[_hm.d0_sigma_K_reco_secondary]->Fill(TMath::Sqrt(pfot.KLPFO[ijet].pfo_d0error));
-            _hm.h1_K_reco[_hm.d0_sigma_d0_K_reco_secondary]->Fill(TMath::Abs(pfot.KLPFO[ijet].pfo_d0)/TMath::Sqrt(pfot.KLPFO[ijet].pfo_d0error));
+              _hm.h_total[static_cast<int>(HistManager::h_total::z0)]->Fill(TMath::Abs(pfot.KLPFO[ijet].pfo_z0), maxCtag);
+              _hm.h_total[static_cast<int>(HistManager::h_total::z0_sigma)]->Fill(TMath::Sqrt(pfot.KLPFO[ijet].pfo_z0error), maxCtag);
+              _hm.h_total[static_cast<int>(HistManager::h_total::z0_sigma_z0)]->Fill(TMath::Abs(pfot.KLPFO[ijet].pfo_z0)/TMath::Sqrt(pfot.KLPFO[ijet].pfo_z0error), maxCtag);
             
-            _hm.h1_K_reco[_hm.z0_K_reco_secondary]->Fill(TMath::Abs(pfot.KLPFO[ijet].pfo_z0));
-            _hm.h1_K_reco[_hm.z0_sigma_K_reco_secondary]->Fill(TMath::Sqrt(pfot.KLPFO[ijet].pfo_z0error));
-            _hm.h1_K_reco[_hm.z0_sigma_z0_K_reco_secondary]->Fill(TMath::Abs(pfot.KLPFO[ijet].pfo_z0)/TMath::Sqrt(pfot.KLPFO[ijet].pfo_z0error));
-          }
 
-          if(pfot.KLPFO[ijet].pfo_vtx==1 and nprong[pfot.KLPFO[ijet].pfo_match][1]==1)
-          {
-            _hm.h1_K_reco[_hm.d0_K_reco_pseudo]->Fill(TMath::Abs(pfot.KLPFO[ijet].pfo_d0));
-            _hm.h1_K_reco[_hm.d0_sigma_K_reco_pseudo]->Fill(TMath::Sqrt(pfot.KLPFO[ijet].pfo_d0error));
-            _hm.h1_K_reco[_hm.d0_sigma_d0_K_reco_pseudo]->Fill(TMath::Abs(pfot.KLPFO[ijet].pfo_d0)/TMath::Sqrt(pfot.KLPFO[ijet].pfo_d0error));
+            _hm.h_general[static_cast<int>(HistManager::h_general::cuts)]->Fill(3);
+            _hm.h_general[static_cast<int>(HistManager::h_general::ctag_total)]->Fill(ctag[ijet]);
+            if(pfot.KLPFO[ijet].pfo_vtx==-1) {
+              _hm.h_garbage[static_cast<int>(HistManager::h_total::d0)]->Fill(TMath::Abs(pfot.KLPFO[ijet].pfo_d0), maxCtag);
+              _hm.h_garbage[static_cast<int>(HistManager::h_total::d0_sigma)]->Fill(TMath::Sqrt(pfot.KLPFO[ijet].pfo_d0error), maxCtag);
+              _hm.h_garbage[static_cast<int>(HistManager::h_total::d0_sigma_d0)]->Fill(TMath::Abs(pfot.KLPFO[ijet].pfo_d0)/TMath::Sqrt(pfot.KLPFO[ijet].pfo_d0error), maxCtag);
             
-            _hm.h1_K_reco[_hm.z0_K_reco_pseudo]->Fill(TMath::Abs(pfot.KLPFO[ijet].pfo_z0));
-            _hm.h1_K_reco[_hm.z0_sigma_K_reco_pseudo]->Fill(TMath::Sqrt(pfot.KLPFO[ijet].pfo_z0error));
-            _hm.h1_K_reco[_hm.z0_sigma_z0_K_reco_pseudo]->Fill(TMath::Abs(pfot.KLPFO[ijet].pfo_z0)/TMath::Sqrt(pfot.KLPFO[ijet].pfo_z0error));
+              _hm.h_garbage[static_cast<int>(HistManager::h_garbage::z0)]->Fill(TMath::Abs(pfot.KLPFO[ijet].pfo_z0), maxCtag);
+              _hm.h_garbage[static_cast<int>(HistManager::h_garbage::z0_sigma)]->Fill(TMath::Sqrt(pfot.KLPFO[ijet].pfo_z0error), maxCtag);
+              _hm.h_garbage[static_cast<int>(HistManager::h_garbage::z0_sigma_z0)]->Fill(TMath::Abs(pfot.KLPFO[ijet].pfo_z0)/TMath::Sqrt(pfot.KLPFO[ijet].pfo_z0error), maxCtag);
+            }
+            if(pfot.KLPFO[ijet].pfo_vtx==0 and nprong[pfot.KLPFO[ijet].pfo_match][0]>1) {
+              _hm.h_general[static_cast<int>(HistManager::h_general::cuts)]->Fill(4);
+              _hm.h_general[static_cast<int>(HistManager::h_general::ctag_primary)]->Fill(ctag[ijet]);
+
+              _hm.h_primary[static_cast<int>(HistManager::h_primary::d0)]->Fill(TMath::Abs(pfot.KLPFO[ijet].pfo_d0), maxCtag);
+              _hm.h_primary[static_cast<int>(HistManager::h_primary::d0_sigma)]->Fill(TMath::Sqrt(pfot.KLPFO[ijet].pfo_d0error), maxCtag);
+              _hm.h_primary[static_cast<int>(HistManager::h_primary::d0_sigma_d0)]->Fill(TMath::Abs(pfot.KLPFO[ijet].pfo_d0)/TMath::Sqrt(pfot.KLPFO[ijet].pfo_d0error), maxCtag);
+            
+              _hm.h_primary[static_cast<int>(HistManager::h_primary::z0)]->Fill(TMath::Abs(pfot.KLPFO[ijet].pfo_z0), maxCtag);
+              _hm.h_primary[static_cast<int>(HistManager::h_primary::z0_sigma)]->Fill(TMath::Sqrt(pfot.KLPFO[ijet].pfo_z0error), maxCtag);
+              _hm.h_primary[static_cast<int>(HistManager::h_primary::z0_sigma_z0)]->Fill(TMath::Abs(pfot.KLPFO[ijet].pfo_z0)/TMath::Sqrt(pfot.KLPFO[ijet].pfo_z0error), maxCtag);
+            }
+            if(pfot.KLPFO[ijet].pfo_vtx==1 and nprong[pfot.KLPFO[ijet].pfo_match][1]>1) {
+              _hm.h_general[static_cast<int>(HistManager::h_general::cuts)]->Fill(5);
+              _hm.h_general[static_cast<int>(HistManager::h_general::ctag_secondary)]->Fill(ctag[ijet]);
+
+              _hm.h_secondary[static_cast<int>(HistManager::h_secondary::d0)]->Fill(TMath::Abs(pfot.KLPFO[ijet].pfo_d0), maxCtag);
+              _hm.h_secondary[static_cast<int>(HistManager::h_secondary::d0_sigma)]->Fill(TMath::Sqrt(pfot.KLPFO[ijet].pfo_d0error), maxCtag);
+              _hm.h_secondary[static_cast<int>(HistManager::h_secondary::d0_sigma_d0)]->Fill(TMath::Abs(pfot.KLPFO[ijet].pfo_d0)/TMath::Sqrt(pfot.KLPFO[ijet].pfo_d0error), maxCtag);
+            
+              _hm.h_secondary[static_cast<int>(HistManager::h_secondary::z0)]->Fill(TMath::Abs(pfot.KLPFO[ijet].pfo_z0), maxCtag);
+              _hm.h_secondary[static_cast<int>(HistManager::h_secondary::z0_sigma)]->Fill(TMath::Sqrt(pfot.KLPFO[ijet].pfo_z0error), maxCtag);
+              _hm.h_secondary[static_cast<int>(HistManager::h_secondary::z0_sigma_z0)]->Fill(TMath::Abs(pfot.KLPFO[ijet].pfo_z0)/TMath::Sqrt(pfot.KLPFO[ijet].pfo_z0error), maxCtag);
+            }
           }
-        } 
-      }
-    }
-
-    if ( LPFO_checks[kKaon] && pfot.is_ss() && double_tag[kKaon] == K_K ){
-      Int_t ineg = -1;
-
-      if( pfot.KLPFO[0].pfo_charge < 0 ){
-        ineg = 0;
-      }else{
-        ineg = 1;
-      }
-      if(sign_check[kKaon]){  
-        if(TMath::Abs(pfot.KLPFO[ineg].pfo_d0) < 0.01) {
-          _hm.h_cos_theta[_hm.acc_cos_theta]->Fill(pfot.KLPFO[ineg].qcos);
-        }
-      }
-      else{
-        if(TMath::Abs(pfot.KLPFO[ineg].pfo_d0) < 0.01 && TMath::Abs(pfot.KLPFO[1-ineg].pfo_d0) < 0.01) {
-          _hm.h_cos_theta[_hm.rej_cos_theta]->Fill(pfot.KLPFO[ineg].cos);
-          _hm.h_cos_theta[_hm.rej_cos_theta]->Fill(-1*pfot.KLPFO[1-ineg].cos);
         }
       }
     }
   }
-
-  if(LPFO_checks[kKaon] && pfot.is_ss() && double_tag[kKaon] == K_K) {
+  if ( LPFO_checks[kKaon] && pfot.is_ss() && double_tag[kKaon] == K_K ){
     Int_t ineg = -1;
 
     if( pfot.KLPFO[0].pfo_charge < 0 ){
@@ -543,6 +423,23 @@ void EventAnalyzer::CCbarAnalysis(PFOTools pfot, vector<Bool_t> cuts[3], PDGConf
     }else{
       ineg = 1;
     }
-    _hm.h_cos_theta[_hm.cos_theta]->Fill(pfot.KLPFO[ineg].cos);  
+    _hm.h_cos[static_cast<int>(HistManager::h_cos::cos_theta)]->Fill(pfot.KLPFO[ineg].cos, maxCtag);
+    if(pfot.KLPFO[ineg].pfo_vtx==0 and nprong[pfot.KLPFO[ineg].pfo_match][0]>1 and pfot.KLPFO[ineg].pfo_d0 < 0.01 and pfot.KLPFO[1-ineg].pfo_d0 < 0.01) {
+      _hm.h_cos[static_cast<int>(HistManager::h_cos::cos_theta_primary)]->Fill(pfot.KLPFO[ineg].cos, maxCtag);
+    }
+    if(sign_check[kKaon]){
+      _hm.h_cos[static_cast<int>(HistManager::h_cos::cos_theta_acc)]->Fill(pfot.KLPFO[ineg].qcos, maxCtag);  
+      if(pfot.KLPFO[ineg].pfo_vtx==0 and nprong[pfot.KLPFO[ineg].pfo_match][0]>1 and pfot.KLPFO[ineg].pfo_d0 < 0.01 and pfot.KLPFO[1-ineg].pfo_d0 < 0.01) {
+        _hm.h_cos[static_cast<int>(HistManager::h_cos::cos_theta_acc_primary)]->Fill(pfot.KLPFO[ineg].qcos, maxCtag);  
+      }
+    }
+    else{
+      _hm.h_cos[static_cast<int>(HistManager::h_cos::cos_theta_rej)]->Fill(pfot.KLPFO[ineg].cos, maxCtag);
+      _hm.h_cos[static_cast<int>(HistManager::h_cos::cos_theta_rej)]->Fill(-1*pfot.KLPFO[1-ineg].cos, maxCtag);
+      if(pfot.KLPFO[ineg].pfo_vtx==0 and nprong[pfot.KLPFO[ineg].pfo_match][0]>1 and pfot.KLPFO[ineg].pfo_d0 < 0.01 and pfot.KLPFO[1-ineg].pfo_d0 < 0.01) {
+        _hm.h_cos[static_cast<int>(HistManager::h_cos::cos_theta_rej_primary)]->Fill(pfot.KLPFO[ineg].cos, maxCtag);
+        _hm.h_cos[static_cast<int>(HistManager::h_cos::cos_theta_rej_primary)]->Fill(-1*pfot.KLPFO[1-ineg].cos, maxCtag);
+      }
+    }
   }
 }
