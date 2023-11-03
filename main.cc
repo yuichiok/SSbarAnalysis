@@ -39,7 +39,8 @@ int main(int argc, char* argv[])
         throw 0;
       }
 
-      TString anconfig = "etc/SSbarAnalysisConfig_default.ini";
+      // TString anconfig = "etc/SSbarAnalysisConfig_default.ini";
+      TString anconfig = "etc/CCbarAnalysisConfig_default.ini";
 
     // Record the time main starts processing.
       std::string ts_mainBegin  = timeStamp();
