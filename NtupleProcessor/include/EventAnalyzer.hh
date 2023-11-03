@@ -56,7 +56,7 @@ class EventAnalyzer
   // Gadgets
 
   // Histogram extractor
-    void             CCbarAnalysis(PFOTools pfot, vector<Bool_t> cuts[3], PDGConfig double_tag[3], Double_t ctag[2]);
+    void             CCbarAnalysis(PFOTools pfot, vector<Bool_t> cuts[3], PDGConfig double_tag[3], Double_t ctag[2], Double_t event);
 
   // Running Variables
     TString  options;  // Options input with TreeIterator.
