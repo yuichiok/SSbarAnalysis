@@ -15,7 +15,8 @@ TString prod_mode = "ss";
 TString chiral    = "eL.pR";
 TString LPFO_mode = "Pi";
 
-TString prod_modes[5] = {"dd","uu","ss","cc","bb"};
+// TString prod_modes[5] = {"dd","uu","ss","cc","bb"};
+TString prod_modes[3] = {"dd","uu","ss"};
 
 // TFile *file = new TFile("../../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h." + chiral + "." + prod_mode + ".KPiLPFO.dedxPi.PFOp15.LPFOp15_pNaN.tpc0.mix_uds.correctDist.all.root","READ");
 TFile *file = new TFile("../../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.KPiLPFO.dedxPi.PFOp15.LPFOp15_pNaN.all.root","READ");
@@ -275,15 +276,6 @@ void dedxOffsetProjection()
 {
   get_dEdx_eff();
 
-  TCanvas *c_type_dedx_p = new TCanvas("c_type_dedx_p", "c_type_dedx_p", 800,800);
-  TPad *pad_type_dedx_p  = new TPad("pad_type_dedx_p", "pad_type_dedx_p",0,0,1,1);
-  StylePad(pad_type_dedx_p,0,0.15,0,0.17);
-
-  TCanvas *c_type_dedx_cos = new TCanvas("c_type_dedx_cos", "c_type_dedx_cos", 800,800);
-  TPad *pad_type_dedx_cos  = new TPad("pad_type_dedx_cos", "pad_type_dedx_cos",0,0,1,1);
-  StylePad(pad_type_dedx_cos,0,0.15,0,0.17);
-
-
   // legend
   TLegend *leg_dedx_p = new TLegend(0.62,0.67,0.80,0.83);
   leg_dedx_p->SetLineColor(0);
@@ -310,8 +302,8 @@ void dedxOffsetProjection()
     Int_t countAdd = 0;
     for ( const auto iprod_mode : prod_modes ){
 
-      TString key_dedx_p   = h2_dEdx_eff_str.at(iprod_mode).at("reco").at(LPFO_mode).at(itype).at("nocut").at("dEdx_p");
-      TString key_dedx_cos = h2_dEdx_eff_str.at(iprod_mode).at("reco").at(LPFO_mode).at(itype).at("nocut").at("dEdx_cos");
+      TString key_dedx_p   = h2_dEdx_eff_str.at(iprod_mode).at("reco").at(LPFO_mode).at(itype).at("offset").at("dEdx_p");
+      TString key_dedx_cos = h2_dEdx_eff_str.at(iprod_mode).at("reco").at(LPFO_mode).at(itype).at("offset").at("dEdx_cos");
       TH2F *h_dedx_p_tmp   = (TH2F*) file->Get(key_dedx_p);
       TH2F *h_dedx_cos_tmp = (TH2F*) file->Get(key_dedx_cos);
       if(countAdd){
@@ -323,9 +315,6 @@ void dedxOffsetProjection()
       }
       countAdd++;
     }
-
-    // StyleHist(h_dedx_p,icolor);
-    // StyleHist(h_dedx_cos,icolor);
 
     leg_dedx_p->AddEntry(h_dedx_p,itype,"f");
     leg_dedx_cos->AddEntry(h_dedx_cos,itype,"f");
@@ -347,31 +336,16 @@ void dedxOffsetProjection()
     h_dedx_p_vec.push_back(h_dedx_p);
     h_dedx_cos_vec.push_back(h_dedx_cos);
 
-    // count++;
-    // TString key_dedx_p   = h2_dEdx_eff_str.at(prod_mode).at("reco").at(LPFO_mode).at(itype).at("offset").at("dEdx_p");
-    // TString key_dedx_cos = h2_dEdx_eff_str.at(prod_mode).at("reco").at(LPFO_mode).at(itype).at("offset").at("dEdx_cos");
-    // TH2F *h_dedx_p   = (TH2F*) file->Get(key_dedx_p);
-    // TH2F *h_dedx_cos = (TH2F*) file->Get(key_dedx_cos);
-
-    // TH1F *h_dedx_p_proj   = (TH1F*) h_dedx_p->ProjectionY();
-    // StyleHist(h_dedx_p_proj,icolor);
-
-    // pad_type_dedx_p->cd();
-    // if(count){
-    //   h_dedx_p_proj->Draw("hsame");
-    // }else{
-    //   h_dedx_p_proj->Draw("h");
-    // }
-    // h_dedx_p_proj->SetTitle(";dE/dx #times 10^{-6} [GeV/mm];Entries");
-    // h_dedx_p_proj->GetXaxis()->SetLabelSize(0.03);
-    // h_dedx_p_proj->GetXaxis()->SetTitleOffset(1.2);
-    // h_dedx_p_proj->GetYaxis()->SetLabelSize(0.03);
-    // h_dedx_p_proj->GetYaxis()->SetRangeUser(0,40E3);
-
-    // leg->AddEntry(h_dedx_p_proj,itype,"l");
-
   }
 
+
+  TCanvas *c_type_dedx_p = new TCanvas("c_type_dedx_p", "c_type_dedx_p", 800,800);
+  TPad *pad_type_dedx_p  = new TPad("pad_type_dedx_p", "pad_type_dedx_p",0,0,1,1);
+  StylePad(pad_type_dedx_p,0,0.15,0,0.17);
+
+  TCanvas *c_type_dedx_cos = new TCanvas("c_type_dedx_cos", "c_type_dedx_cos", 800,800);
+  TPad *pad_type_dedx_cos  = new TPad("pad_type_dedx_cos", "pad_type_dedx_cos",0,0,1,1);
+  StylePad(pad_type_dedx_cos,0,0.15,0,0.17);
 
   int count_draw = 0;
   for (int i=0; i < h_dedx_p_vec.size(); i++){
@@ -400,6 +374,38 @@ void dedxOffsetProjection()
 
   pad_type_dedx_cos->cd();
   leg_dedx_cos->Draw();
+
+
+  // Projection plot
+  TCanvas *c_type_dedx_p_proj = new TCanvas("c_type_dedx_p_proj", "c_type_dedx_p_proj", 800,800);
+  TPad *pad_type_dedx_p_proj  = new TPad("pad_type_dedx_p_proj", "pad_type_dedx_p_proj",0,0,1,1);
+  StylePad(pad_type_dedx_p_proj,0,0.15,0,0.17);
+
+  TLegend *leg_dedx_p_proj = new TLegend(0.62,0.67,0.80,0.83);
+  leg_dedx_p_proj->SetLineColor(0);
+  leg_dedx_p_proj->SetFillStyle(0);
+  leg_dedx_p_proj->SetMargin(0.8);
+
+  count_draw=0;
+  for (int i=0; i < h_dedx_p_vec.size(); i++){
+    TH1F *h_dedx_p_proj   = (TH1F*) h_dedx_p_vec.at(i)->ProjectionY();
+
+    StyleHist(h_dedx_p_proj,type_color.at(i).second);
+
+    leg_dedx_p_proj->AddEntry(h_dedx_p_proj,PFO_type.at(i),"l");
+    pad_type_dedx_p_proj->cd();
+
+    if(count_draw){
+      h_dedx_p_proj->Draw("box same");
+    }else{
+      h_dedx_p_proj->Draw("box");
+    }
+    count_draw++;
+
+  }
+
+  pad_type_dedx_p_proj->cd();
+  leg_dedx_p_proj->Draw();
 
 }
 
