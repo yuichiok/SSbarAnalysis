@@ -96,6 +96,17 @@ void registerSepPow(Int_t nbins, TH2F *h1, TH2F *h2, Float_t *spwr, Float_t *p)
 
 }
 
+void StyleGraph(TGraph *g, Color_t col, Int_t style)
+{
+  g->GetXaxis()->SetRangeUser(5,100);
+  g->SetTitle(";p [GeV];Separation Power");
+  g->SetLineColor(col);
+  g->SetMarkerColor(col);
+  g->SetLineWidth(3);
+  g->SetMarkerStyle(style);
+  g->SetMarkerSize(1);
+}
+
 void dedxPurity()
 {
   get_dEdx_eff();
@@ -154,6 +165,7 @@ void dedxPurity()
   pad_type_dedx_p_proj->SetLogx();
 
   TLegend *leg_dedx_p_proj = new TLegend(0.62,0.67,0.80,0.83);
+  leg_dedx_p_proj->SetTextSize(0.04);
   leg_dedx_p_proj->SetLineColor(0);
   leg_dedx_p_proj->SetFillStyle(0);
   leg_dedx_p_proj->SetMargin(0.8);
@@ -161,34 +173,43 @@ void dedxPurity()
   TH2F *h_dedx_p_K  = (TH2F*) h_dedx_p_vec.at(0)->Clone();
   TH2F *h_dedx_p_Pi = (TH2F*) h_dedx_p_vec.at(1)->Clone();
   TH2F *h_dedx_p_p  = (TH2F*) h_dedx_p_vec.at(2)->Clone();
+  TH2F *h_dedx_p_e  = (TH2F*) h_dedx_p_vec.at(3)->Clone();
+  TH2F *h_dedx_p_mu = (TH2F*) h_dedx_p_vec.at(4)->Clone();
 
   Int_t NBinsP = h_dedx_p_Pi->GetNbinsX();
   Float_t p[NBinsP];
   Float_t spwr_PiK[NBinsP];
   Float_t spwr_Pip[NBinsP];
+  Float_t spwr_Pie[NBinsP];
+  Float_t spwr_Pimu[NBinsP];
 
   registerSepPow(NBinsP, h_dedx_p_Pi, h_dedx_p_K, spwr_PiK, p);
   registerSepPow(NBinsP, h_dedx_p_Pi, h_dedx_p_p, spwr_Pip, p);
+  registerSepPow(NBinsP, h_dedx_p_Pi, h_dedx_p_e, spwr_Pie, p);
+  registerSepPow(NBinsP, h_dedx_p_Pi, h_dedx_p_mu, spwr_Pimu, p);
 
   TGraph *g_sep_pow_PiK = new TGraph(NBinsP, p, spwr_PiK);
-  g_sep_pow_PiK->GetXaxis()->SetRangeUser(10,100);
-  g_sep_pow_PiK->SetTitle(";p [GeV];Separation Power");
-  g_sep_pow_PiK->SetLineColor(kYellow+1);
-  g_sep_pow_PiK->SetMarkerColor(kYellow+1);
-  g_sep_pow_PiK->SetLineWidth(3);
-  g_sep_pow_PiK->SetMarkerStyle(20);
-  g_sep_pow_PiK->SetMarkerSize(1);
+  StyleGraph(g_sep_pow_PiK, kRed, 20);
+  leg_dedx_p_proj->AddEntry(g_sep_pow_PiK, "#pi/K", "p");
 
   TGraph *g_sep_pow_Pip = new TGraph(NBinsP, p, spwr_Pip);
-  g_sep_pow_Pip->SetTitle(";p [GeV];Separation Power");
-  g_sep_pow_Pip->SetLineColor(kGreen+1);
-  g_sep_pow_Pip->SetMarkerColor(kGreen+1);
-  g_sep_pow_Pip->SetLineWidth(3);
-  g_sep_pow_Pip->SetMarkerStyle(21);
-  g_sep_pow_Pip->SetMarkerSize(1);
+  StyleGraph(g_sep_pow_Pip, kBlue, 21);
+  leg_dedx_p_proj->AddEntry(g_sep_pow_Pip, "#pi/p", "p");
 
-  g_sep_pow_PiK->Draw("APC");
-  g_sep_pow_Pip->Draw("PCsame");
+  TGraph *g_sep_pow_Pie = new TGraph(NBinsP, p, spwr_Pie);
+  StyleGraph(g_sep_pow_Pie, kYellow+1, 23);
+  // leg_dedx_p_proj->AddEntry(g_sep_pow_Pie, "#pi/e", "p");
+
+  TGraph *g_sep_pow_Pimu = new TGraph(NBinsP, p, spwr_Pimu);
+  StyleGraph(g_sep_pow_Pimu, kGreen+1, 29);
+  // leg_dedx_p_proj->AddEntry(g_sep_pow_Pimu, "#pi/#mu", "p");
+
+  g_sep_pow_PiK->Draw("AP");
+  g_sep_pow_Pip->Draw("Psame");
+  // g_sep_pow_Pie->Draw("Psame");
+  // g_sep_pow_Pimu->Draw("Psame");
+
+  leg_dedx_p_proj->Draw("same");
 
 
 }
