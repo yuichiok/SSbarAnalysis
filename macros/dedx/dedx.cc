@@ -306,9 +306,14 @@ void dedxOffsetProjection()
     if(count){
       h_dedx_p_proj->Draw("hsame");
     }else{
-      h_dedx_p_proj->SetTitle(";dE/dx;Entries");
       h_dedx_p_proj->Draw("h");
     }
+    h_dedx_p_proj->SetTitle(";dE/dx #times 10^{-6} [GeV/mm];Entries");
+    h_dedx_p_proj->GetXaxis()->SetLabelSize(0.03);
+    h_dedx_p_proj->GetXaxis()->SetTitleOffset(1.2);
+    h_dedx_p_proj->GetYaxis()->SetLabelSize(0.03);
+    h_dedx_p_proj->GetYaxis()->SetRangeUser(0,40E3);
+
     leg->AddEntry(h_dedx_p_proj,itype,"l");
 
   }
@@ -427,8 +432,8 @@ void dedx()
   // dedxDistCosProj();
   // dedxDistCosProjType();
   // dedxCos();
-  // dedxOffsetProjection();
-  dedxOffsetMeanSigma();
+  dedxOffsetProjection();
+  // dedxOffsetMeanSigma();
 
 
 }
