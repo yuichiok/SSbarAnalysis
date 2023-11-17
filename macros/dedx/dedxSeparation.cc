@@ -21,8 +21,9 @@ TString prod_modes[3] = {"dd","uu","ss"};
 // TFile *file = new TFile("../../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h." + chiral + "." + prod_mode + ".KPiLPFO.dedxPi.PFOp15.LPFOp15_pNaN.tpc0.mix_uds.correctDist.all.root","READ");
 TFile *file = new TFile("../../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.KPiLPFO.dedxPi.PFOp15.LPFOp15_pNaN.all.root","READ");
 
-const vector<TString> PFO_mode  = {"K","Pi"};
-const vector<TString> PFO_type  = {"K","Pi", "p", "e", "mu"};
+const vector<TString> PFO_mode  = {"Pi","K"};
+const vector<TString> PFO_type  = {"Pi","K", "p", "e", "mu"};
+const int nPFO_type = PFO_type.size();
 vector< pair< TString, Color_t > > type_color = {{"Pi",kBlue},{"K",kRed},{"p",kGreen+1},{"e",kMagenta},{"mu",kCyan}};
 unordered_map<TString, Color_t> type_color_map = {{"Pi",kBlue},{"K",kRed},{"p",kGreen+1},{"e",kMagenta},{"mu",kCyan}};
 
@@ -96,6 +97,54 @@ void registerSepPow(Int_t nbins, TH2F *h1, TH2F *h2, Float_t *spwr, Float_t *p)
 
 }
 
+void registerPurity(TH2F *hPi, TH2F *hK, TH2F *hp, Float_t *purity, Float_t *efficiency, Float_t *x)
+{
+
+  float momentum_min = 5;
+  double ea=0.185;
+  Int_t ea_bin = 0;
+  Int_t dedx_Nbins = hPi->GetNbinsY();
+  Int_t x_Nbins = hPi->GetNbinsX();
+  
+  // search threshold bin
+  for(int ibin=1; ibin<=dedx_Nbins; ibin++){
+    if(hPi->GetYaxis()->GetBinLowEdge(ibin)>ea){
+      ea_bin=ibin;
+      break;
+    }
+  }
+
+  for (int i = 0; i < x_Nbins; i++) {
+
+    double int_pion       = 0;
+    double int_kaon       = 0;
+    double int_proton     = 0;
+    double int_pion_total = 0;
+
+    TH1D * proj_pion = hPi->ProjectionY("proj_pion",i,i+1);
+    int_pion_total = proj_pion->GetEntries();
+
+    TH1D * proj_kaon   = hK->ProjectionY("proj_kaon",i,i+1);
+    TH1D * proj_proton = hp->ProjectionY("proj_proton",i,i+1);
+
+    for(int j1=0; j1<proj_pion->GetNbinsX(); j1++) {
+      if(proj_pion->GetXaxis()->GetBinCenter(j1)> ea) int_pion+=proj_pion->GetBinContent(j1);
+    }
+    for(int j1=0; j1<proj_kaon->GetNbinsX(); j1++) {
+      if(proj_kaon->GetXaxis()->GetBinCenter(j1)> ea) int_kaon+=proj_kaon->GetBinContent(j1);
+    }
+    for(int j1=0; j1<proj_proton->GetNbinsX(); j1++) {
+      if(proj_proton->GetXaxis()->GetBinCenter(j1)> ea) int_proton+=proj_proton->GetBinContent(j1);
+    }
+
+    x[i]          = hPi->GetXaxis()->GetBinCenter(i+1);
+    purity[i]     = (int_pion/(int_proton+int_pion+int_kaon))*100.;
+    efficiency[i] = (int_pion/int_pion_total)*100.;
+
+  }
+
+}
+
 void StyleGraph(TGraph *g, Color_t col, Int_t style)
 {
   g->GetXaxis()->SetRangeUser(5,100);
@@ -104,7 +153,7 @@ void StyleGraph(TGraph *g, Color_t col, Int_t style)
   g->SetMarkerColor(col);
   g->SetLineWidth(3);
   g->SetMarkerStyle(style);
-  g->SetMarkerSize(1);
+  g->SetMarkerSize(0.7);
 }
 
 void dedxPurity()
@@ -157,59 +206,116 @@ void dedxPurity()
 
   }
 
-  // Projection plot
-  TCanvas *c_type_dedx_p_proj = new TCanvas("c_type_dedx_p_proj", "c_type_dedx_p_proj", 800,800);
-  TPad *pad_type_dedx_p_proj  = new TPad("pad_type_dedx_p_proj", "pad_type_dedx_p_proj",0,0,1,1);
-  StylePad(pad_type_dedx_p_proj,0,0.15,0,0.17);
-  c_type_dedx_p_proj->SetLogx();
-  pad_type_dedx_p_proj->SetLogx();
 
-  TLegend *leg_dedx_p_proj = new TLegend(0.62,0.67,0.80,0.83);
-  leg_dedx_p_proj->SetTextSize(0.04);
-  leg_dedx_p_proj->SetLineColor(0);
-  leg_dedx_p_proj->SetFillStyle(0);
-  leg_dedx_p_proj->SetMargin(0.8);
-
-  TH2F *h_dedx_p_K  = (TH2F*) h_dedx_p_vec.at(0)->Clone();
-  TH2F *h_dedx_p_Pi = (TH2F*) h_dedx_p_vec.at(1)->Clone();
+  TH2F *h_dedx_p_Pi = (TH2F*) h_dedx_p_vec.at(0)->Clone();
+  TH2F *h_dedx_p_K  = (TH2F*) h_dedx_p_vec.at(1)->Clone();
   TH2F *h_dedx_p_p  = (TH2F*) h_dedx_p_vec.at(2)->Clone();
-  TH2F *h_dedx_p_e  = (TH2F*) h_dedx_p_vec.at(3)->Clone();
-  TH2F *h_dedx_p_mu = (TH2F*) h_dedx_p_vec.at(4)->Clone();
 
-  Int_t NBinsP = h_dedx_p_Pi->GetNbinsX();
+  TH2F *h_dedx_cos_Pi = (TH2F*) h_dedx_cos_vec.at(0)->Clone();
+  TH2F *h_dedx_cos_K  = (TH2F*) h_dedx_cos_vec.at(1)->Clone();
+  TH2F *h_dedx_cos_p  = (TH2F*) h_dedx_cos_vec.at(2)->Clone();
+
+  // Projection plot
+  // TCanvas *c_type_dedx_p_proj = new TCanvas("c_type_dedx_p_proj", "c_type_dedx_p_proj", 800,800);
+  // TPad *pad_type_dedx_p_proj  = new TPad("pad_type_dedx_p_proj", "pad_type_dedx_p_proj",0,0,1,1);
+  // StylePad(pad_type_dedx_p_proj,0,0.15,0,0.17);
+  // c_type_dedx_p_proj->SetLogx();
+  // pad_type_dedx_p_proj->SetLogx();
+
+  // TLegend *leg_dedx_p_proj = new TLegend(0.62,0.67,0.80,0.83);
+  // leg_dedx_p_proj->SetTextSize(0.04);
+  // leg_dedx_p_proj->SetLineColor(0);
+  // leg_dedx_p_proj->SetFillStyle(0);
+  // leg_dedx_p_proj->SetMargin(0.8);  
+
+  // Int_t NBinsP = h_dedx_p_Pi->GetNbinsX();
+  // Float_t p[NBinsP];
+  // Float_t spwr_PiK[NBinsP];
+  // Float_t spwr_Pip[NBinsP];
+
+  // registerSepPow(NBinsP, h_dedx_p_Pi, h_dedx_p_K, spwr_PiK, p);
+  // registerSepPow(NBinsP, h_dedx_p_Pi, h_dedx_p_p, spwr_Pip, p);
+
+  // TGraph *g_sep_pow_PiK = new TGraph(NBinsP, p, spwr_PiK);
+  // StyleGraph(g_sep_pow_PiK, kRed, 20);
+  // leg_dedx_p_proj->AddEntry(g_sep_pow_PiK, "#pi/K", "p");
+
+  // TGraph *g_sep_pow_Pip = new TGraph(NBinsP, p, spwr_Pip);
+  // StyleGraph(g_sep_pow_Pip, kBlue, 21);
+  // leg_dedx_p_proj->AddEntry(g_sep_pow_Pip, "#pi/p", "p");
+
+  // g_sep_pow_PiK->Draw("AP");
+  // g_sep_pow_Pip->Draw("Psame");
+
+  // leg_dedx_p_proj->Draw("same");
+
+
+  // efficiency and purity
+
+  TCanvas *c_pureff_dedx_p = new TCanvas("c_pureff_dedx_p", "c_pureff_dedx_p", 800,800);
+  TPad  *pad_pureff_dedx_p = new TPad("pad_pureff_dedx_p", "pad_pureff_dedx_p",0,0,1,1);
+  StylePad(pad_pureff_dedx_p,0,0.15,0,0.17);
+  pad_pureff_dedx_p->SetGrid(1,1);
+
+  TCanvas *c_pureff_dedx_cos = new TCanvas("c_pureff_dedx_cos", "c_pureff_dedx_cos", 800,800);
+  TPad  *pad_pureff_dedx_cos = new TPad("pad_pureff_dedx_cos", "pad_pureff_dedx_cos",0,0,1,1);
+  StylePad(pad_pureff_dedx_cos,0,0.15,0,0.17);
+  pad_pureff_dedx_cos->SetGrid(1,1);
+
+  TLegend *leg_dedx_p_purity_efficiency = new TLegend(0.57,0.18,0.75,0.34);
+  leg_dedx_p_purity_efficiency->SetTextSize(0.035);
+  leg_dedx_p_purity_efficiency->SetLineColor(0);
+  leg_dedx_p_purity_efficiency->SetFillStyle(0);
+  leg_dedx_p_purity_efficiency->SetMargin(0.8);
+
+  TLegend *leg_dedx_cos_purity_efficiency = new TLegend(0.57,0.18,0.75,0.34);
+  leg_dedx_cos_purity_efficiency->SetTextSize(0.035);
+  leg_dedx_cos_purity_efficiency->SetLineColor(0);
+  leg_dedx_cos_purity_efficiency->SetFillStyle(0);
+  leg_dedx_cos_purity_efficiency->SetMargin(0.8);
+
+  Int_t NBinsP   = h_dedx_p_Pi->GetNbinsX();
+  Int_t NBinsCos = h_dedx_cos_Pi->GetNbinsX();
   Float_t p[NBinsP];
-  Float_t spwr_PiK[NBinsP];
-  Float_t spwr_Pip[NBinsP];
-  Float_t spwr_Pie[NBinsP];
-  Float_t spwr_Pimu[NBinsP];
+  Float_t cos[NBinsCos];
+  Float_t purity_p[NBinsP];
+  Float_t purity_cos[NBinsCos];
+  Float_t efficiency_p[NBinsP];
+  Float_t efficiency_cos[NBinsCos];
 
-  registerSepPow(NBinsP, h_dedx_p_Pi, h_dedx_p_K, spwr_PiK, p);
-  registerSepPow(NBinsP, h_dedx_p_Pi, h_dedx_p_p, spwr_Pip, p);
-  registerSepPow(NBinsP, h_dedx_p_Pi, h_dedx_p_e, spwr_Pie, p);
-  registerSepPow(NBinsP, h_dedx_p_Pi, h_dedx_p_mu, spwr_Pimu, p);
+  registerPurity(h_dedx_p_Pi, h_dedx_p_K, h_dedx_p_p, purity_p, efficiency_p, p);
+  registerPurity(h_dedx_cos_Pi, h_dedx_cos_K, h_dedx_cos_p, purity_cos, efficiency_cos, cos);
 
-  TGraph *g_sep_pow_PiK = new TGraph(NBinsP, p, spwr_PiK);
-  StyleGraph(g_sep_pow_PiK, kRed, 20);
-  leg_dedx_p_proj->AddEntry(g_sep_pow_PiK, "#pi/K", "p");
+  TGraph *g_purity_p = new TGraph(NBinsP, p, purity_p);
+  StyleGraph(g_purity_p, kGreen+1, 20);
+  leg_dedx_p_purity_efficiency->AddEntry(g_purity_p, "Purity", "p");
+  TGraph *g_efficiency_p = new TGraph(NBinsP, p, efficiency_p);
+  StyleGraph(g_efficiency_p, kBlue+1, 21);
+  leg_dedx_p_purity_efficiency->AddEntry(g_efficiency_p, "Efficiency", "p");
 
-  TGraph *g_sep_pow_Pip = new TGraph(NBinsP, p, spwr_Pip);
-  StyleGraph(g_sep_pow_Pip, kBlue, 21);
-  leg_dedx_p_proj->AddEntry(g_sep_pow_Pip, "#pi/p", "p");
+  // plot purity and efficiency
+  pad_pureff_dedx_p->cd();
+  g_purity_p->SetTitle(";p [GeV];Ratio [%]");
+  g_purity_p->GetXaxis()->SetRangeUser(5,100);
+  g_purity_p->GetYaxis()->SetRangeUser(0,100);
+  g_purity_p->Draw("AP");
+  g_efficiency_p->Draw("Psame");
+  leg_dedx_p_purity_efficiency->Draw("same");
 
-  TGraph *g_sep_pow_Pie = new TGraph(NBinsP, p, spwr_Pie);
-  StyleGraph(g_sep_pow_Pie, kYellow+1, 23);
-  // leg_dedx_p_proj->AddEntry(g_sep_pow_Pie, "#pi/e", "p");
-
-  TGraph *g_sep_pow_Pimu = new TGraph(NBinsP, p, spwr_Pimu);
-  StyleGraph(g_sep_pow_Pimu, kGreen+1, 29);
-  // leg_dedx_p_proj->AddEntry(g_sep_pow_Pimu, "#pi/#mu", "p");
-
-  g_sep_pow_PiK->Draw("AP");
-  g_sep_pow_Pip->Draw("Psame");
-  // g_sep_pow_Pie->Draw("Psame");
-  // g_sep_pow_Pimu->Draw("Psame");
-
-  leg_dedx_p_proj->Draw("same");
+  TGraph *g_purity_cos = new TGraph(NBinsCos, cos, purity_cos);
+  StyleGraph(g_purity_cos, kGreen+1, 20);
+  leg_dedx_cos_purity_efficiency->AddEntry(g_purity_cos, "Purity", "p");
+  TGraph *g_efficiency_cos = new TGraph(NBinsCos, cos, efficiency_cos);
+  StyleGraph(g_efficiency_cos, kBlue+1, 21);
+  leg_dedx_cos_purity_efficiency->AddEntry(g_efficiency_cos, "Efficiency", "p");
+  
+  pad_pureff_dedx_cos->cd();
+  g_purity_cos->GetXaxis()->SetRangeUser(-1,1);
+  g_purity_cos->GetYaxis()->SetRangeUser(0,100);
+  g_purity_cos->SetTitle(";cos#theta;Ratio [%]");
+  g_purity_cos->Draw("AP");
+  g_efficiency_cos->Draw("Psame");
+  leg_dedx_cos_purity_efficiency->Draw("same");
 
 
 }
