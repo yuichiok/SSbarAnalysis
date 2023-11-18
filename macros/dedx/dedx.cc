@@ -302,8 +302,8 @@ void dedxOffsetProjection()
     Int_t countAdd = 0;
     for ( const auto iprod_mode : prod_modes ){
 
-      TString key_dedx_p   = h2_dEdx_eff_str.at(iprod_mode).at("reco").at(LPFO_mode).at(itype).at("offset").at("dEdx_p");
-      TString key_dedx_cos = h2_dEdx_eff_str.at(iprod_mode).at("reco").at(LPFO_mode).at(itype).at("offset").at("dEdx_cos");
+      TString key_dedx_p   = h2_dEdx_eff_str.at(iprod_mode).at("reco").at(LPFO_mode).at(itype).at("nocut").at("dEdx_p");
+      TString key_dedx_cos = h2_dEdx_eff_str.at(iprod_mode).at("reco").at(LPFO_mode).at(itype).at("nocut").at("dEdx_cos");
       TH2F *h_dedx_p_tmp   = (TH2F*) file->Get(key_dedx_p);
       TH2F *h_dedx_cos_tmp = (TH2F*) file->Get(key_dedx_cos);
       if(countAdd){
@@ -342,6 +342,7 @@ void dedxOffsetProjection()
   TCanvas *c_type_dedx_p = new TCanvas("c_type_dedx_p", "c_type_dedx_p", 800,800);
   TPad *pad_type_dedx_p  = new TPad("pad_type_dedx_p", "pad_type_dedx_p",0,0,1,1);
   StylePad(pad_type_dedx_p,0,0.15,0,0.17);
+  pad_type_dedx_p->SetLogx();
 
   TCanvas *c_type_dedx_cos = new TCanvas("c_type_dedx_cos", "c_type_dedx_cos", 800,800);
   TPad *pad_type_dedx_cos  = new TPad("pad_type_dedx_cos", "pad_type_dedx_cos",0,0,1,1);
@@ -351,6 +352,8 @@ void dedxOffsetProjection()
   for (int i=0; i < h_dedx_p_vec.size(); i++){
     TH2F *h_dedx_p   = h_dedx_p_vec.at(i);
     TH2F *h_dedx_cos = h_dedx_cos_vec.at(i);
+
+    h_dedx_p->GetXaxis()->SetRangeUser(15,100);
 
     if(count_draw){
       pad_type_dedx_p->cd();
@@ -394,6 +397,7 @@ void dedxOffsetProjection()
 
     leg_dedx_p_proj->AddEntry(h_dedx_p_proj,PFO_type.at(i),"l");
     pad_type_dedx_p_proj->cd();
+    h_dedx_p_proj->SetTitle(";dE/dx #times 10^{-6} [GeV/mm];Entries");
 
     if(count_draw){
       h_dedx_p_proj->Draw("box same");
@@ -423,7 +427,7 @@ void dedxOffsetMeanSigma()
     TH2F *h_dedx_cos;
     Int_t countAdd = 0;
     for ( const auto iprod_mode : prod_modes ){
-      TString key_dedx_cos = h2_dEdx_eff_str.at(iprod_mode).at("reco").at(LPFO_mode).at(itype).at("offset").at("dEdx_cos");
+      TString key_dedx_cos = h2_dEdx_eff_str.at(iprod_mode).at("reco").at(LPFO_mode).at(itype).at("nocut").at("dEdx_cos");
       TH2F *h_dedx_cos_tmp = (TH2F*) file->Get(key_dedx_cos);
       if(countAdd){
         h_dedx_cos->Add(h_dedx_cos_tmp);
