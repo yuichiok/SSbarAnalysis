@@ -73,7 +73,7 @@ Float_t calculateSepPow(Float_t mean1, Float_t ey1, Float_t mean2, Float_t ey2)
 {
   Float_t sigma1 = ey1;
   Float_t sigma2 = ey2;
-  Float_t sigma12 = sqrt( pow(sigma1,2) + pow(sigma2,2) );
+  Float_t sigma12 = sqrt( (pow(sigma1,2) + pow(sigma2,2)) / 2 );
   return fabs(mean1 - mean2) / sigma12;
 }
 
@@ -101,7 +101,7 @@ void registerPurity(TH2F *hPi, TH2F *hK, TH2F *hp, Float_t *purity, Float_t *eff
 {
 
   float momentum_min = 5;
-  double ea=0.185;
+  double ea=0.178;
   Int_t ea_bin = 0;
   Int_t dedx_Nbins = hPi->GetNbinsY();
   Int_t x_Nbins = hPi->GetNbinsX();
@@ -153,7 +153,7 @@ void StyleGraph(TGraph *g, Color_t col, Int_t style)
   g->SetMarkerColor(col);
   g->SetLineWidth(3);
   g->SetMarkerStyle(style);
-  g->SetMarkerSize(0.7);
+  g->SetMarkerSize(1.5);
 }
 
 void dedxPurity()
@@ -215,39 +215,42 @@ void dedxPurity()
   TH2F *h_dedx_cos_K  = (TH2F*) h_dedx_cos_vec.at(1)->Clone();
   TH2F *h_dedx_cos_p  = (TH2F*) h_dedx_cos_vec.at(2)->Clone();
 
+
+
+  Int_t NBinsP = h_dedx_p_Pi->GetNbinsX();
+  Float_t p[NBinsP];
+
   // Projection plot
-  // TCanvas *c_type_dedx_p_proj = new TCanvas("c_type_dedx_p_proj", "c_type_dedx_p_proj", 800,800);
-  // TPad *pad_type_dedx_p_proj  = new TPad("pad_type_dedx_p_proj", "pad_type_dedx_p_proj",0,0,1,1);
-  // StylePad(pad_type_dedx_p_proj,0,0.15,0,0.17);
-  // c_type_dedx_p_proj->SetLogx();
-  // pad_type_dedx_p_proj->SetLogx();
+  TCanvas *c_type_dedx_p_proj = new TCanvas("c_type_dedx_p_proj", "c_type_dedx_p_proj", 800,800);
+  TPad *pad_type_dedx_p_proj  = new TPad("pad_type_dedx_p_proj", "pad_type_dedx_p_proj",0,0,1,1);
+  StylePad(pad_type_dedx_p_proj,0,0.15,0,0.17);
+  c_type_dedx_p_proj->SetLogx();
+  pad_type_dedx_p_proj->SetLogx();
 
-  // TLegend *leg_dedx_p_proj = new TLegend(0.62,0.67,0.80,0.83);
-  // leg_dedx_p_proj->SetTextSize(0.04);
-  // leg_dedx_p_proj->SetLineColor(0);
-  // leg_dedx_p_proj->SetFillStyle(0);
-  // leg_dedx_p_proj->SetMargin(0.8);  
+  TLegend *leg_dedx_p_proj = new TLegend(0.62,0.67,0.80,0.83);
+  leg_dedx_p_proj->SetTextSize(0.04);
+  leg_dedx_p_proj->SetLineColor(0);
+  leg_dedx_p_proj->SetFillStyle(0);
+  leg_dedx_p_proj->SetMargin(0.8);  
 
-  // Int_t NBinsP = h_dedx_p_Pi->GetNbinsX();
-  // Float_t p[NBinsP];
-  // Float_t spwr_PiK[NBinsP];
-  // Float_t spwr_Pip[NBinsP];
+  Float_t spwr_PiK[NBinsP];
+  Float_t spwr_Pip[NBinsP];
 
-  // registerSepPow(NBinsP, h_dedx_p_Pi, h_dedx_p_K, spwr_PiK, p);
-  // registerSepPow(NBinsP, h_dedx_p_Pi, h_dedx_p_p, spwr_Pip, p);
+  registerSepPow(NBinsP, h_dedx_p_Pi, h_dedx_p_K, spwr_PiK, p);
+  registerSepPow(NBinsP, h_dedx_p_Pi, h_dedx_p_p, spwr_Pip, p);
 
-  // TGraph *g_sep_pow_PiK = new TGraph(NBinsP, p, spwr_PiK);
-  // StyleGraph(g_sep_pow_PiK, kRed, 20);
-  // leg_dedx_p_proj->AddEntry(g_sep_pow_PiK, "#pi/K", "p");
+  TGraph *g_sep_pow_PiK = new TGraph(NBinsP, p, spwr_PiK);
+  StyleGraph(g_sep_pow_PiK, kRed, 20);
+  leg_dedx_p_proj->AddEntry(g_sep_pow_PiK, "#pi/K", "p");
 
-  // TGraph *g_sep_pow_Pip = new TGraph(NBinsP, p, spwr_Pip);
-  // StyleGraph(g_sep_pow_Pip, kBlue, 21);
-  // leg_dedx_p_proj->AddEntry(g_sep_pow_Pip, "#pi/p", "p");
+  TGraph *g_sep_pow_Pip = new TGraph(NBinsP, p, spwr_Pip);
+  StyleGraph(g_sep_pow_Pip, kBlue, 21);
+  leg_dedx_p_proj->AddEntry(g_sep_pow_Pip, "#pi/p", "p");
 
-  // g_sep_pow_PiK->Draw("AP");
-  // g_sep_pow_Pip->Draw("Psame");
+  g_sep_pow_PiK->Draw("AP");
+  g_sep_pow_Pip->Draw("Psame");
 
-  // leg_dedx_p_proj->Draw("same");
+  leg_dedx_p_proj->Draw("same");
 
 
   // efficiency and purity
@@ -274,9 +277,7 @@ void dedxPurity()
   leg_dedx_cos_purity_efficiency->SetFillStyle(0);
   leg_dedx_cos_purity_efficiency->SetMargin(0.8);
 
-  Int_t NBinsP   = h_dedx_p_Pi->GetNbinsX();
   Int_t NBinsCos = h_dedx_cos_Pi->GetNbinsX();
-  Float_t p[NBinsP];
   Float_t cos[NBinsCos];
   Float_t purity_p[NBinsP];
   Float_t purity_cos[NBinsCos];
@@ -285,6 +286,20 @@ void dedxPurity()
 
   registerPurity(h_dedx_p_Pi, h_dedx_p_K, h_dedx_p_p, purity_p, efficiency_p, p);
   registerPurity(h_dedx_cos_Pi, h_dedx_cos_K, h_dedx_cos_p, purity_cos, efficiency_cos, cos);
+
+  float ave_purity = 0;
+  for(auto i : purity_cos){
+    ave_purity += i;
+  }
+  ave_purity /= NBinsCos;
+  cout << "ave_purity = " << ave_purity << endl;
+  
+  float ave_efficiency = 0;
+  for(auto i : efficiency_cos){
+    ave_efficiency += i;
+  }
+  ave_efficiency /= NBinsCos;
+  cout << "ave_efficiency = " << ave_efficiency << endl;
 
   TGraph *g_purity_p = new TGraph(NBinsP, p, purity_p);
   StyleGraph(g_purity_p, kGreen+1, 20);
