@@ -691,6 +691,10 @@ namespace QQbarAnalysis
             
             _hm.h1_cos_eff.at(_qmode).at(gen_reco).at(i_lmode).at(icut_name)->Fill( iLPFO.cos );
 
+            _hm.h1_eff.at(_qmode).at(gen_reco).at(i_lmode).at("btag").at(icut_name)->Fill( _jet.jet_btag[ iLPFO.pfo_match ] );
+            _hm.h1_eff.at(_qmode).at(gen_reco).at(i_lmode).at("ctag").at(icut_name)->Fill( _jet.jet_ctag[ iLPFO.pfo_match ] );
+            _hm.h1_eff.at(_qmode).at(gen_reco).at(i_lmode).at("nvtx").at(icut_name)->Fill( _jet.jet_nvtx[ iLPFO.pfo_match ] );
+
             // plot dEdx dist vs cos
             if( _pt.PFO_type_map.find(abs(iLPFO.pfo_pdgcheat)) != _pt.PFO_type_map.end() ){
               TString type = _pt.PFO_type_map.at(abs(iLPFO.pfo_pdgcheat));

@@ -66,6 +66,12 @@ namespace QQbarAnalysis
           for( auto iname : heff_name){
             TString hname = hname_prefix + i_gen_reco + "_" + i_lmode + "_" + iname;
             h1_cos_eff[iqq][i_gen_reco][i_lmode][iname]  = new TH1F(hname,iname + ";cos#theta;Entries",nbins_cos,cos_min,cos_max);
+
+            TString hname_hist = hname_prefix + i_gen_reco + "_" + i_lmode;
+            h1_eff[iqq][i_gen_reco][i_lmode]["btag"][iname]  = new TH1F(hname_hist + "_btag_" + iname,"btag;btag;Entries",100,0,1);
+            h1_eff[iqq][i_gen_reco][i_lmode]["ctag"][iname]  = new TH1F(hname_hist + "_ctag_" + iname,"ctag;ctag;Entries",100,0,1);
+            h1_eff[iqq][i_gen_reco][i_lmode]["nvtx"][iname]  = new TH1F(hname_hist + "_nvtx_" + iname,"nvtx;nvtx;Entries",6,-0.5,5.5);
+
             for( auto i_type : _pt.PFO_type ){
               TString hname_dedx_dist = hname_prefix2 + i_gen_reco + "_" + i_lmode + "_" + i_type + "_" + iname;
               h2_dEdx_eff[iqq][i_gen_reco][i_lmode][i_type][iname]["dEdx_dist_cos"]  = new TH2F(hname_dedx_dist + "_dEdx_dist_cos",";cos#theta;#frac{dE}{dx} distance",nbins_cos,cos_min,cos_max,nbins_dEdx_dist,dEdx_dist_min,dEdx_dist_max);
@@ -132,6 +138,7 @@ namespace QQbarAnalysis
     recursiveIterate( hList1[iqq]["resolution"], h1_resolution[iqq] );
     // efficiency
     recursiveIterate( hList1[iqq]["efficiency"], h1_cos_eff[iqq] );
+    recursiveIterate( hList1[iqq]["efficiency"], h1_eff[iqq] );
     recursiveIterate( hList2[iqq]["efficiency"], h2_dEdx_eff[iqq] );
     // dEdx
     recursiveIterate( hList2[iqq]["dEdx"], h2_dEdx[iqq] );
