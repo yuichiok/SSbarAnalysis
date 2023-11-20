@@ -128,7 +128,7 @@ def main():
     if xtitle == "ctag" or xtitle == "btag":
       pad.SetLogy()
 
-    c.SaveAs(f"c_{category}.pdf")
+    c.SaveAs(f"plots/c_{category}.pdf")
 
 if __name__ == "__main__":
   main()
