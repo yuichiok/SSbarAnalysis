@@ -8,10 +8,16 @@
 #include <vector>
 #include <TDatime.h>
 
+#include <ctime>
+#include <chrono>
+#include <iomanip>
+
 // Spits out date and time, by default in YYYY-MM-DD HH:MM:SS
 static std::string timeStamp(char d = '-', char b = ' ', char t = ':');
 // Spits out date and time, by default in YYYY-MM-DD_HHMMSS, for use in filenames
 static std::string fileTimeStamp();
+// Calculates time duration
+static std::string timeDuration( std::string Tstart, std::string Tend );
 
 
 static std::string timeStamp( char d, char b, char t ) {
@@ -50,5 +56,23 @@ static std::string fileTimeStamp() {
 return output.str();
 }
 
+
+std::string timeDuration(std::string Tstart, std::string Tend) {
+    std::tm tm_start = {}, tm_end = {};
+    std::istringstream ss_start(Tstart), ss_end(Tend);
+    ss_start >> std::get_time(&tm_start, "%Y-%m-%d %H:%M:%S");
+    ss_end >> std::get_time(&tm_end, "%Y-%m-%d %H:%M:%S");
+    auto time_start = std::chrono::system_clock::from_time_t(std::mktime(&tm_start));
+    auto time_end = std::chrono::system_clock::from_time_t(std::mktime(&tm_end));
+    auto duration = std::chrono::duration_cast<std::chrono::seconds>(time_end - time_start);
+    int hours = duration.count() / 3600;
+    int minutes = (duration.count() % 3600) / 60;
+    int seconds = duration.count() % 60;
+    std::ostringstream output;
+    output << std::setw(2) << std::setfill('0') << hours << ":"
+           << std::setw(2) << std::setfill('0') << minutes << ":"
+           << std::setw(2) << std::setfill('0') << seconds;
+    return output.str();
+}
 
 #endif
