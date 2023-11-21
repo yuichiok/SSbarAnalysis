@@ -41,7 +41,7 @@ namespace QQbarAnalysis
       h1_preselection[iqq]["sinacol"] = new TH1F(hname_prefix + "sinacol","sinacol;sin#Psi_{acol};Entries",100,0,1);
       h1_preselection[iqq]["invM"]    = new TH1F(hname_prefix + "invM","invM;m_{j_{1},j_{2}} [GeV];Entries",100,0,500);
       h1_preselection[iqq]["y23"]     = new TH1F(hname_prefix + "y23","y23;y_{23};Entries",50,0,0.25);
-      h1_preselection[iqq]["LPFOacol"] = new TH1F(hname_prefix + "LPFOacol","LPFOacol;cos#theta_{L_{1},L_{2}};Entries",100,0,1);
+      // h1_preselection[iqq]["LPFOacol"] = new TH1F(hname_prefix + "LPFOacol","LPFOacol;cos#theta_{L_{1},L_{2}};Entries",100,0,1);
       h1_preselection[iqq]["cosBF"]   = new TH1F(hname_prefix + "cosBF","cosBF;cos#theta;Entries",nbins_cos,cos_min,cos_max);
       h1_preselection[iqq]["cosAF"]   = new TH1F(hname_prefix + "cosAF","cosAF;cos#theta;Entries",nbins_cos,cos_min,cos_max);
 

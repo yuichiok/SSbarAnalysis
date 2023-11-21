@@ -97,6 +97,27 @@ struct Jet_QQbar  {
     
 };
 
+struct Jet_Info {
+
+  public:
+    // jet kinematic variables
+    Float_t jet_E  = -1;
+    Float_t jet_px = -1;
+    Float_t jet_py = -1;
+    Float_t jet_pz = -1;
+
+    VectorTools vt;
+    Float_t p_mag  = -1;
+    Float_t cos    = -2;
+
+    // only in jet info
+    Float_t jet_btag = -1;
+    Float_t jet_ctag = -1;
+    Int_t   jet_nvtx = -1;
+    Int_t   jet_npfo = 0;
+
+};
+
 struct VTX_QQbar  {
 
   public:

@@ -27,9 +27,10 @@ namespace QQbarAnalysis
     public:
       PFOTools();
       PFOTools( MC_QQbar *ptr, TString fnac );
-      PFOTools( MC_QQbar *ptr_mc, PFO_QQbar *ptr, TString fnac );
+      PFOTools( MC_QQbar *ptr_mc, Jet_QQbar *ptr_jet, PFO_QQbar *ptr, TString fnac );
       virtual ~PFOTools() {};
       virtual void InitializeMCTools( MC_QQbar *ptr );
+      virtual void InitializeJetTools( Jet_QQbar *ptr );
       virtual void InitializePFOTools( MC_QQbar *ptr_mc, PFO_QQbar *ptr );
 
       enum   ChargeConfig { kSame, kOpposite };
@@ -52,7 +53,11 @@ namespace QQbarAnalysis
       virtual Bool_t           is_jet_mult_non0 ();
       virtual Bool_t           is_charge_config ( ChargeConfig cc, Int_t charge0, Int_t charge1 );
 
+      virtual Bool_t           is_btag               ( PFO_Info iPFO, Float_t MAX_BTAG );
+      virtual Bool_t           is_ctag               ( PFO_Info iPFO, Float_t MAX_CTAG );
+      virtual Bool_t           is_nvtx               ( PFO_Info iPFO, Int_t   MAX_NVTX );
       virtual Bool_t           is_momentum           ( PFO_Info iPFO, Float_t MINP, Float_t MAXP );
+      virtual Bool_t           is_LPFOacol           ( PFO_Info iPFO0, PFO_Info iPFO1, Float_t LPFO_ACOL );
       virtual Bool_t           is_tpc_hits           ( PFO_Info iPFO, Int_t MIN_TPC_HITS );
       virtual Bool_t           is_offset_small       ( PFO_Info iPFO, Int_t MAX_OFFSET );
       virtual Bool_t           is_dEdxdist_bad       ( Float_t e_dist, Float_t mu_dist, Float_t pi_dist, Float_t k_dist, Float_t p_dist );
@@ -60,6 +65,9 @@ namespace QQbarAnalysis
     // MC gen info
       MC_Info    mc_quark[2];
       MC_Info    mc_stable[1000];
+
+    // Jet info
+      Jet_Info   jet[2];
 
     // List of PFOs in jets
       vector<PFO_Info> Valid_PFOs;
@@ -78,6 +86,7 @@ namespace QQbarAnalysis
 
     private:
       MC_QQbar  *mc_data  ;
+      Jet_QQbar *jet_data ;
       PFO_QQbar *data     ;
       PFO_Info   PFO      ;
 

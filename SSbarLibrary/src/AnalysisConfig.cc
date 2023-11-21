@@ -16,6 +16,11 @@ void AnalysisConfig::SetConfig(TString fnc)
     string input_gen_quarks  = pt.get<string>("GENERATED.gen_quark");
     getListFromString(input_gen_quarks, gen_quarks);
 
+  // Jet cuts
+    JET_btag_max    = pt.get<float>("JET.JET_btag_max");
+    JET_ctag_max    = pt.get<float>("JET.JET_ctag_max");
+    JET_nvtx_max     = pt.get<int>("JET.JET_nvtx_max");
+
   // PFO cuts
     PFO_TPCHits_min = pt.get<int>("PFO.PFO_TPCHits_min");
     PFO_p_min       = pt.get<float>("PFO.PFO_p_min");
@@ -25,6 +30,7 @@ void AnalysisConfig::SetConfig(TString fnc)
   // LPFO cuts
     LPFO_p_min = pt.get<float>("LPFO.LPFO_p_min");
     LPFO_p_max = pt.get<float>("LPFO.LPFO_p_max");
+    LPFO_acol_min = pt.get<float>("LPFO.LPFO_acol_min");
 
 }
 

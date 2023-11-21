@@ -96,7 +96,7 @@ namespace QQbarAnalysis
     // cout << "evt: " << entry << endl;
 
     PFOTools mct( &_mc, _config );
-    PFOTools pfot( &_mc, &_pfo, _config );
+    PFOTools pfot( &_mc, &_jet, &_pfo, _config );
 
     // Gen QQbar
     _hm.h1_gen_cos.at(_qmode).at("cos")->Fill(mct.mc_quark[0].cos);
@@ -135,7 +135,7 @@ namespace QQbarAnalysis
   {
     // MC, PFO Analysis
     PFOTools mct( &_mc, _config );
-    PFOTools pfot( &_mc, &_pfo, _config );
+    PFOTools pfot( &_mc, &_jet, &_pfo, _config );
 
     ientry = entry;
     // cout << "evt: " << entry << endl;
@@ -282,11 +282,8 @@ namespace QQbarAnalysis
       if( cut1 && isSinACol && isInvM ){
         _hm.h1_preselection.at(_qmode).at("y23")->Fill( y23 );
       }
-      if( cut1 && isSinACol && isInvM && isY23 ){
-        _hm.h1_preselection.at(_qmode).at("LPFOacol")->Fill( LPFOacol );
-      }
 
-      if( cut1 && isSinACol && isInvM && isY23 && isLPFOacol ) {
+      if( cut1 && isSinACol && isInvM && isY23 ) {
         _hm.h1_preselection.at(_qmode).at("cosAF")->Fill( std::cos( vt[0].v3().Theta() ) );
         _hm.h1_preselection.at(_qmode).at("cosAF")->Fill( std::cos( vt[1].v3().Theta() ) );
       }
@@ -294,7 +291,7 @@ namespace QQbarAnalysis
     }
 
     // vector<Bool_t> CutTrigger = {isNotPhotonJet, isSinACol, isInvM};
-    vector<Bool_t> CutTrigger = {cut1, isSinACol, isInvM, isY23, isLPFOacol};
+    vector<Bool_t> CutTrigger = {cut1, isSinACol, isInvM, isY23};
     return CutTrigger;
   }
 
@@ -324,9 +321,24 @@ namespace QQbarAnalysis
     // base
     outMap["nocut"] = true;
 
+    // check btag
+    outMap["btag"] = pfot.is_btag( LPFOs.at(0), _anCfg.JET_btag_max ) &&
+                     pfot.is_btag( LPFOs.at(1), _anCfg.JET_btag_max );
+
+    // check ctag
+    outMap["ctag"] = pfot.is_btag( LPFOs.at(0), _anCfg.JET_ctag_max ) &&
+                     pfot.is_btag( LPFOs.at(1), _anCfg.JET_ctag_max );
+
+    // check ctag
+    outMap["nvtx"] = pfot.is_btag( LPFOs.at(0), _anCfg.JET_nvtx_max ) &&
+                     pfot.is_btag( LPFOs.at(1), _anCfg.JET_nvtx_max );
+
     // check momentum
     outMap["momentum"] = pfot.is_momentum( LPFOs.at(0), _anCfg.LPFO_p_min, _anCfg.LPFO_p_max ) &&
                          pfot.is_momentum( LPFOs.at(1), _anCfg.LPFO_p_min, _anCfg.LPFO_p_max );
+
+    // check acollinearity of LPFOs
+    outMap["LPFOacol"] = pfot.is_LPFOacol( LPFOs.at(0), LPFOs.at(1), _anCfg.LPFO_acol_min );
 
     // check tpc hits
     outMap["tpc_hits"] = pfot.is_tpc_hits( LPFOs.at(0), _anCfg.PFO_TPCHits_min ) &&
@@ -479,7 +491,7 @@ namespace QQbarAnalysis
 
   Float_t EventAnalyzer::Cut_LPFOACol ()
   {
-    PFOTools pfot( &_mc, &_pfo, _config );
+    PFOTools pfot( &_mc, &_jet, &_pfo, _config );
 
     Float_t acol = -2;
     if(pfot.PFO_sorted_jet[0].size()&&pfot.PFO_sorted_jet[1].size()) {

@@ -34,10 +34,11 @@ namespace QQbarAnalysis
       InitializeMCTools( mc_data );
   }
 
-  PFOTools::PFOTools( MC_QQbar *ptr_mc, PFO_QQbar *ptr, TString fnac )
-  : mc_data(ptr_mc), data(ptr)
+  PFOTools::PFOTools( MC_QQbar *ptr_mc, Jet_QQbar *ptr_jet, PFO_QQbar *ptr, TString fnac )
+  : mc_data(ptr_mc), jet_data(ptr_jet), data(ptr)
   {
       _anCfg.SetConfig(fnac);
+      InitializeJetTools( jet_data );
       InitializePFOTools( mc_data, data );
   }
 
@@ -58,6 +59,27 @@ namespace QQbarAnalysis
       mc_stable[istable].qcos  = (mc_data->mc_stable_charge[istable] < 0) ? mc_stable[istable].cos : -mc_stable[istable].cos;
     }
 
+  }
+
+  void PFOTools::InitializeJetTools( Jet_QQbar *jet_data )
+  {
+    for (int ijet=0; ijet < 2; ijet++){
+      VectorTools jetv(jet_data->jet_px[ijet],jet_data->jet_py[ijet],jet_data->jet_pz[ijet],jet_data->jet_E[ijet]);
+      jet[ijet].jet_E  = jet_data->jet_E[ijet];
+      jet[ijet].jet_px = jet_data->jet_px[ijet];
+      jet[ijet].jet_py = jet_data->jet_py[ijet];
+      jet[ijet].jet_pz = jet_data->jet_pz[ijet];
+
+      jet[ijet].vt    = jetv;
+      jet[ijet].p_mag = (Float_t) jetv.v3().R();
+      jet[ijet].cos   = std::cos(jetv.v3().Theta());
+    
+      jet[ijet].jet_btag = jet_data->jet_btag[ijet];
+      jet[ijet].jet_ctag = jet_data->jet_ctag[ijet];
+      jet[ijet].jet_nvtx = jet_data->jet_nvtx[ijet];
+      jet[ijet].jet_npfo = jet_data->jet_npfo[ijet];      
+    
+    }
   }
 
   void PFOTools::InitializePFOTools( MC_QQbar *mc_data, PFO_QQbar *data )
@@ -318,9 +340,33 @@ namespace QQbarAnalysis
 
   }
 
+  Bool_t PFOTools::is_btag( PFO_Info iPFO, Float_t MAX_BTAG )
+  {
+    return ( jet[iPFO.pfo_match].jet_btag < MAX_BTAG );
+  }
+
+  Bool_t PFOTools::is_ctag( PFO_Info iPFO, Float_t MAX_CTAG )
+  {
+    return ( jet[iPFO.pfo_match].jet_ctag < MAX_CTAG );
+  }
+
+  Bool_t PFOTools::is_nvtx( PFO_Info iPFO, Int_t MAX_NVTX )
+  {
+    return ( jet[iPFO.pfo_match].jet_nvtx < MAX_NVTX );
+  }
+
   Bool_t PFOTools::is_momentum( PFO_Info iPFO, Float_t MINP_CUT, Float_t MAXP_CUT )
   {
     return ( MINP_CUT < iPFO.p_mag && iPFO.p_mag < MAXP_CUT);
+  }
+
+  Bool_t PFOTools::is_LPFOacol( PFO_Info iPFO0, PFO_Info iPFO1, Float_t LPFO_ACOL )
+  {
+    Float_t acol = -2;
+    if(PFO_sorted_jet[0].size()&&PFO_sorted_jet[1].size()) {
+      acol = VectorTools::GetCosBetween( iPFO0.vt.v3(), iPFO1.vt.v3() );
+    }
+    return ( LPFO_ACOL < abs(acol) );
   }
 
   Bool_t PFOTools::is_tpc_hits( PFO_Info iPFO, Int_t MIN_TPC_HITS )

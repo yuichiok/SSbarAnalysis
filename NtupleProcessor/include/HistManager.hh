@@ -52,7 +52,7 @@ namespace QQbarAnalysis
       vector<TString> hcos_gen_name = {"cos","qcos"};
       unordered_map<TString, unordered_map< TString, TH1F* > > h1_gen_cos;        // [QQ_mode][hist]
 
-      vector<TString> hpreselection_name = {"sinacol","invM","y23","LPFOacol","cosBF","cosAF"};
+      vector<TString> hpreselection_name = {"sinacol","invM","y23","cosBF","cosAF"};
       unordered_map<TString, unordered_map< TString, TH1F* > > h1_preselection;        // [QQ_mode][hist]
 
       vector<TString> hcos_name = {"cos","qcos","scos","acc_cos","rej_cos"};
@@ -63,7 +63,7 @@ namespace QQbarAnalysis
 
       // efficiency plots
       vector<TString> gen_reco  = {"gen","reco"};
-      vector<TString> heff_name = {"nocut","momentum", "tpc_hits", "offset", "PID", "SPFO", "charge"};
+      vector<TString> heff_name = {"nocut", "btag", "ctag", "nvtx", "momentum", "LPFOacol", "tpc_hits", "offset", "PID", "SPFO", "charge"};
       vector<TString> heff_hist_name = {"btag","ctag","nvtx"};
       vector<TString> heff_dedx_name = {"dEdx_p","dEdx_cos","dEdx_error_cos","dEdx_dist_cos"};
       unordered_map<TString, unordered_map< TString, unordered_map< TString, unordered_map< TString, TH1F* > > > > h1_cos_eff;  // [QQ_mode][GenReco][LPFO][cut]
