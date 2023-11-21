@@ -326,12 +326,12 @@ namespace QQbarAnalysis
                      pfot.is_btag( LPFOs.at(1), _anCfg.JET_btag_max );
 
     // check ctag
-    outMap["ctag"] = pfot.is_btag( LPFOs.at(0), _anCfg.JET_ctag_max ) &&
-                     pfot.is_btag( LPFOs.at(1), _anCfg.JET_ctag_max );
+    outMap["ctag"] = pfot.is_ctag( LPFOs.at(0), _anCfg.JET_ctag_max ) &&
+                     pfot.is_ctag( LPFOs.at(1), _anCfg.JET_ctag_max );
 
     // check ctag
-    outMap["nvtx"] = pfot.is_btag( LPFOs.at(0), _anCfg.JET_nvtx_max ) &&
-                     pfot.is_btag( LPFOs.at(1), _anCfg.JET_nvtx_max );
+    outMap["nvtx"] = pfot.is_nvtx( LPFOs.at(0), _anCfg.JET_nvtx_max ) &&
+                     pfot.is_nvtx( LPFOs.at(1), _anCfg.JET_nvtx_max );
 
     // check momentum
     outMap["momentum"] = pfot.is_momentum( LPFOs.at(0), _anCfg.LPFO_p_min, _anCfg.LPFO_p_max ) &&
