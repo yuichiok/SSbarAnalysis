@@ -57,8 +57,11 @@ int main(int argc, char* argv[])
     // CLOSING OUTPUT.
       std::string ts_mainEnd = timeStamp();
 
+      std::string ts_mainDuration = timeDuration(ts_mainBegin,ts_mainEnd);
+
       cout << "\n"
               "   Completion time: " << ts_mainEnd <<      "\n"
+              "   Duration:        " << ts_mainDuration << "\n"
               "==========SSbarProcessor - FINISHED==========\n"
               "=============================================\n" << endl;
 
