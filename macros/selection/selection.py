@@ -79,7 +79,7 @@ def main():
       self.xmax = xrange[2]
       self.canvas = TCanvas(f"c_{category}", f"c_{category}", 900, 900)
       self.stack  = THStack(f"ths_{category}", title)
-      self.legend = TLegend(0.60,0.6,0.75,0.85)
+      self.legend = TLegend(0.60,0.7,0.75,0.85)
       self.styleLegend()
       self.line = None
 
@@ -87,7 +87,7 @@ def main():
       self.legend.SetLineColor(0)
       self.legend.SetFillColor(0)
       self.legend.SetFillStyle(0)
-      self.legend.SetTextSize(0.03)
+      self.legend.SetTextSize(0.027)
       self.legend.SetMargin(0.8)
 
   PMs = { f"{category}_{cut}": PlotManager(f"{category}_{cut}", f";{category};Norm.", xrange)
@@ -108,6 +108,25 @@ def main():
             file = files[process, chiral]
 
           h = file.Get(f'{hpath}/{hname_prefix}_{category}')
+
+          if category == "btag_nocut":
+            # selection efficiency when btag is below 0.3
+            bcutbin = h.FindBin(0.3)
+            btagNum = h.Integral(1,bcutbin)
+            btagDen = h.Integral(1,h.GetNbinsX())
+            btageff = btagNum / btagDen * 100.
+            print("btag cut eff")
+            print(f"{qqbar} : {btageff}%")
+
+          if category == "ctag_nocut":
+            # selection efficiency when ctag is below 0.65
+            ccutbin = h.FindBin(0.65)
+            ctagNum = h.Integral(1,ccutbin)
+            ctagDen = h.Integral(1,h.GetNbinsX())
+            ctageff = ctagNum / ctagDen * 100.
+            print("ctag cut eff")
+            print(f"{qqbar} : {ctageff}%")
+
           styleHist(h,1)
           h.SetTitle(f"{process} {qqbar}")
           PM.stack.Add(h)
