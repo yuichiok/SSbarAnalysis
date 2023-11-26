@@ -68,9 +68,19 @@ namespace QQbarAnalysis
             h1_cos_eff[iqq][i_gen_reco][i_lmode][iname]  = new TH1F(hname,iname + ";cos#theta;Entries",nbins_cos,cos_min,cos_max);
 
             TString hname_hist = hname_prefix + i_gen_reco + "_" + i_lmode;
-            h1_eff[iqq][i_gen_reco][i_lmode]["btag"][iname]  = new TH1F(hname_hist + "_btag_" + iname,"btag;btag;Entries",100,0,1);
-            h1_eff[iqq][i_gen_reco][i_lmode]["ctag"][iname]  = new TH1F(hname_hist + "_ctag_" + iname,"ctag;ctag;Entries",100,0,1);
-            h1_eff[iqq][i_gen_reco][i_lmode]["nvtx"][iname]  = new TH1F(hname_hist + "_nvtx_" + iname,"nvtx;nvtx;Entries",6,-0.5,5.5);
+            if( iname == "nocut" || iname == "SPFO" ){
+              h1_eff[iqq][i_gen_reco][i_lmode]["btag"][iname]               = new TH1F(hname_hist + "_btag_" + iname,"btag;btag;Entries",100,0,1);
+              h1_eff[iqq][i_gen_reco][i_lmode]["ctag"][iname]               = new TH1F(hname_hist + "_ctag_" + iname,"ctag;ctag;Entries",100,0,1);
+              h1_eff[iqq][i_gen_reco][i_lmode]["nvtx"][iname]               = new TH1F(hname_hist + "_nvtx_" + iname,"nvtx;nvtx;Entries",3,-0.5,2.5);
+              h1_eff[iqq][i_gen_reco][i_lmode]["momentum_LPFO"][iname]      = new TH1F(hname_hist + "_momentum_LPFO_" + iname,"momentum_LPFO;p_{LPFO} [GeV];Entries",120,0,120);
+              h1_eff[iqq][i_gen_reco][i_lmode]["momentum_SPFO"][iname]      = new TH1F(hname_hist + "_momentum_SPFO_" + iname,"momentum_SPFO;p_{SPFO} [GeV];Entries",120,0,120);
+              h1_eff[iqq][i_gen_reco][i_lmode]["LPFOacol"][iname]           = new TH1F(hname_hist + "_LPFOacol_" + iname,"LPFOacol;cos#theta_{acol};Entries",100,0,1);
+              h1_eff[iqq][i_gen_reco][i_lmode]["offset_hyperon"][iname]     = new TH1F(hname_hist + "_offset_hyperon_" + iname,"offset_hyperon;Offset [mm];Entries",100,0,100);
+              h1_eff[iqq][i_gen_reco][i_lmode]["offset_non-hyperon"][iname] = new TH1F(hname_hist + "_offset_non-hyperon_" + iname,"offset_non-hyperon;Offset [mm];Entries",100,0,100);
+              h2_eff[iqq][i_gen_reco][i_lmode]["tpc_hits"][iname]           = new TH2F(hname_hist + "_tpc_hits_" + iname,"tpc_hits;cos#theta;TPC Hits",nbins_cos,cos_min,cos_max,230,0,230);
+            }else if( iname == "offset" ){
+              h2_eff[iqq][i_gen_reco][i_lmode]["PID"][iname] = new TH2F(hname_hist + "_PID_" + iname,"PID;Reconstructed;Truth",4,0,4,4,0,4);
+            }
 
             for( auto i_type : _pt.PFO_type ){
               TString hname_dedx_dist = hname_prefix2 + i_gen_reco + "_" + i_lmode + "_" + i_type + "_" + iname;
@@ -139,6 +149,7 @@ namespace QQbarAnalysis
     // efficiency
     recursiveIterate( hList1[iqq]["efficiency"], h1_cos_eff[iqq] );
     recursiveIterate( hList1[iqq]["efficiency"], h1_eff[iqq] );
+    recursiveIterate( hList1[iqq]["efficiency"], h2_eff[iqq] );
     recursiveIterate( hList2[iqq]["efficiency"], h2_dEdx_eff[iqq] );
     // dEdx
     recursiveIterate( hList2[iqq]["dEdx"], h2_dEdx[iqq] );

@@ -699,13 +699,45 @@ namespace QQbarAnalysis
         
         if(selection) {
 
+          if( icut_name == "nocut" || icut_name == "SPFO" ){
+            // PFO info
+            for ( int ijet=0; ijet<2; ijet++ ){
+              for (int ijet_pfo=0; ijet_pfo<subjet_pair.at(ijet).size(); ijet_pfo++){
+                if (ijet_pfo == 0) continue;
+                _hm.h1_eff.at(_qmode).at(gen_reco).at(i_lmode).at("momentum_SPFO").at(icut_name)->Fill( subjet_pair.at(ijet).at(ijet_pfo).p_mag );
+              }
+            }
+
+            Float_t LPFOacol = VectorTools::GetCosBetween( LPFOs.at(0).vt.v3(), LPFOs.at(1).vt.v3() );
+            _hm.h1_eff.at(_qmode).at(gen_reco).at(i_lmode).at("LPFOacol").at(icut_name)->Fill( abs(LPFOacol) );
+
+          }
+
           for(auto iLPFO : LPFOs){
             
             _hm.h1_cos_eff.at(_qmode).at(gen_reco).at(i_lmode).at(icut_name)->Fill( iLPFO.cos );
 
-            _hm.h1_eff.at(_qmode).at(gen_reco).at(i_lmode).at("btag").at(icut_name)->Fill( _jet.jet_btag[ iLPFO.pfo_match ] );
-            _hm.h1_eff.at(_qmode).at(gen_reco).at(i_lmode).at("ctag").at(icut_name)->Fill( _jet.jet_ctag[ iLPFO.pfo_match ] );
-            _hm.h1_eff.at(_qmode).at(gen_reco).at(i_lmode).at("nvtx").at(icut_name)->Fill( _jet.jet_nvtx[ iLPFO.pfo_match ] );
+            if( icut_name == "nocut" || icut_name == "SPFO" ){
+              // Jet info
+              _hm.h1_eff.at(_qmode).at(gen_reco).at(i_lmode).at("btag").at(icut_name)->Fill( _jet.jet_btag[ iLPFO.pfo_match ] );
+              _hm.h1_eff.at(_qmode).at(gen_reco).at(i_lmode).at("ctag").at(icut_name)->Fill( _jet.jet_ctag[ iLPFO.pfo_match ] );
+              _hm.h1_eff.at(_qmode).at(gen_reco).at(i_lmode).at("nvtx").at(icut_name)->Fill( _jet.jet_nvtx[ iLPFO.pfo_match ] );
+
+              // PFO info
+              _hm.h1_eff.at(_qmode).at(gen_reco).at(i_lmode).at("momentum_LPFO").at(icut_name)->Fill( iLPFO.p_mag );
+              if( abs(iLPFO.pfo_pdgcheat) == 310 || abs(iLPFO.pfo_pdgcheat) == 2114 ){
+                _hm.h1_eff.at(_qmode).at(gen_reco).at(i_lmode).at("offset_hyperon").at(icut_name)->Fill( iLPFO.pv );
+              }else{
+                _hm.h1_eff.at(_qmode).at(gen_reco).at(i_lmode).at("offset_non-hyperon").at(icut_name)->Fill( iLPFO.pv );
+              }
+              _hm.h2_eff.at(_qmode).at(gen_reco).at(i_lmode).at("tpc_hits").at(icut_name)->Fill( iLPFO.cos, iLPFO.pfo_tpc_hits );
+
+            }else if( icut_name == "offset" ){
+              auto findElement = [](vector<Int_t>& vec, Int_t num) { return (std::find(vec.begin(), vec.end(), num) != vec.end()) ? std::distance(vec.begin(), std::find(vec.begin(), vec.end(), num)) : 3; };
+              Int_t reco_pid_bin = findElement(_pid_list, abs(iLPFO.dEdx_dist_pdg));
+              Int_t gen_pid_bin  = findElement(_pid_list, abs(iLPFO.pfo_pdgcheat));
+              _hm.h2_eff.at(_qmode).at(gen_reco).at(i_lmode).at("PID").at(icut_name)->Fill( reco_pid_bin, gen_pid_bin );
+            }
 
             // plot dEdx dist vs cos
             if( _pt.PFO_type_map.find(abs(iLPFO.pfo_pdgcheat)) != _pt.PFO_type_map.end() ){

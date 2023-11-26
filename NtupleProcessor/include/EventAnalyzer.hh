@@ -102,6 +102,7 @@ namespace QQbarAnalysis
       unordered_map< Int_t, TString > _qmode_map = {
         {0,"bg"}, {1,"dd"}, {2,"uu"}, {3,"ss"}, {4,"cc"}, {5,"bb"}
       };
+      vector<Int_t> _pid_list = { 321, 211, 2212 };
 
       MC_QQbar      _mc      ;
       Jet_QQbar     _jet     ;
