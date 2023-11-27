@@ -58,8 +58,12 @@ def main():
     "ctag" : [100,0,1],
     "btag" : [100,0,1],
     "nvtx" : [3,-0.5,2.5],
+    "momentum_LPFO" : [120,0,120],
+    "momentum_SPFO" : [120,0,120],
+    "LPFOacol" : [100,0,1],
+    "offset_non-hyperon" : [100,0,100],
   }
-  cuts       = ["nocut", "charge"]
+  cuts       = ["nocut", "SPFO"]
 
   files = {}
   for process in processes:
@@ -71,12 +75,13 @@ def main():
       files[prochiTuple] = TFile.Open(os.path.join(inDir, filename))
 
   class PlotManager:
-    def __init__(self, category, title, xrange):
+    def __init__(self, category, title, xrange, ylog):
       self.category = category
       self.title = title
       self.bin = xrange[0]
       self.xmin = xrange[1]
       self.xmax = xrange[2]
+      self.ylog = ylog
       self.canvas = TCanvas(f"c_{category}", f"c_{category}", 900, 900)
       self.stack  = THStack(f"ths_{category}", title)
       self.legend = TLegend(0.60,0.7,0.75,0.85)
@@ -90,7 +95,7 @@ def main():
       self.legend.SetTextSize(0.027)
       self.legend.SetMargin(0.8)
 
-  PMs = { f"{category}_{cut}": PlotManager(f"{category}_{cut}", f";{category};Norm.", xrange)
+  PMs = { f"{category}_{cut}": PlotManager(f"{category}_{cut}", f";{category};Norm.", xrange, 1)
           for category, xrange in categories.items()
           for cut in cuts
         }
@@ -109,24 +114,6 @@ def main():
 
           h = file.Get(f'{hpath}/{hname_prefix}_{category}')
 
-          if category == "btag_nocut":
-            # selection efficiency when btag is below 0.3
-            bcutbin = h.FindBin(0.3)
-            btagNum = h.Integral(1,bcutbin)
-            btagDen = h.Integral(1,h.GetNbinsX())
-            btageff = btagNum / btagDen * 100.
-            print("btag cut eff")
-            print(f"{qqbar} : {btageff}%")
-
-          if category == "ctag_nocut":
-            # selection efficiency when ctag is below 0.65
-            ccutbin = h.FindBin(0.65)
-            ctagNum = h.Integral(1,ccutbin)
-            ctagDen = h.Integral(1,h.GetNbinsX())
-            ctageff = ctagNum / ctagDen * 100.
-            print("ctag cut eff")
-            print(f"{qqbar} : {ctageff}%")
-
           styleHist(h,1)
           h.SetTitle(f"{process} {qqbar}")
           PM.stack.Add(h)
@@ -144,7 +131,7 @@ def main():
     PM.legend.Draw()
     
     xtitle = PM.stack.GetXaxis().GetTitle()
-    if xtitle == "ctag" or xtitle == "btag":
+    if PM.ylog:
       pad.SetLogy()
 
     c.SaveAs(f"plots/c_{category}.pdf")
