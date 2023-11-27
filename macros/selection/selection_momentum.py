@@ -43,7 +43,7 @@ def styleLegend(leg):
   leg.SetLineColor(0)
   leg.SetFillColor(0)
   leg.SetFillStyle(0)
-  leg.SetTextSize(0.027)
+  leg.SetTextSize(0.0001)
   leg.SetMargin(0.8)
 
 def stylePad(pad, top=0, buttom=0, left=0, right=0):
@@ -62,7 +62,7 @@ def main():
   chirals    = ["eLpR"]
   processes  = ["P2f_z_h"]
   qqbars     = ["dd", "uu", "ss"]
-  genreco    = ["gen", "reco"]
+  genreco    = ["reco"]
   categories = ["momentum_LPFO", "momentum_SPFO"]
 
   xnbins = 120
@@ -79,7 +79,7 @@ def main():
       files[prochiTuple] = TFile.Open(os.path.join(inDir, filename))
 
 
-  legend = TLegend(0.60,0.7,0.88,0.88)
+  legend = TLegend(0.60,0.75,0.88,0.88)
 
   ths_LPFO_SPFO = []
 
@@ -105,10 +105,7 @@ def main():
             h_sum.Add(h)
 
           styleHist(h_sum,1)
-          if igenreco == "gen":
-            legend.AddEntry(h_sum, category.split("_")[1], "l")
-          if igenreco == "reco":
-            h_sum.SetLineStyle(2)
+          legend.AddEntry(h_sum, category.split("_")[1], "l")
           h_sum.SetTitle(f"{process} {category} {igenreco}")
           tmp_ths_LPFO_SPFO.Add(h_sum)
         
@@ -117,12 +114,12 @@ def main():
 
   h_leg_gen  = TH1F("h_leg_gen", "h_leg_gen", 120, 0, 120)
   styleHist(h_leg_gen,1)
-  legend.AddEntry(h_leg_gen, "Parton level", "l")
+  # legend.AddEntry(h_leg_gen, "Parton level", "l")
 
   h_leg_reco = TH1F("h_leg_reco", "h_leg_reco", 120, 0, 120)
   styleHist(h_leg_reco,1)
   h_leg_reco.SetLineStyle(2)
-  legend.AddEntry(h_leg_reco, "Reconstructed", "l")
+  # legend.AddEntry(h_leg_reco, "Reconstructed", "l")
 
   c = TCanvas("c", "c", 900, 900)
   c.cd()
@@ -131,7 +128,7 @@ def main():
   gStyle.SetPalette(51)
   ths_LPFO_SPFO[0].SetTitle(f";Momentum [GeV];Entries")
   ths_LPFO_SPFO[0].Draw("h plc nostack")
-  ths_LPFO_SPFO[1].Draw("h plc nostack same")
+  # ths_LPFO_SPFO[1].Draw("h plc nostack same")
   ths_LPFO_SPFO[0].GetXaxis().SetLimits(0, 120)
   legend.Draw()
   pad.SetLogy()
