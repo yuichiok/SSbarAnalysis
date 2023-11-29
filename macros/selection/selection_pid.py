@@ -1,8 +1,9 @@
 import os
 import sys
 import pandas as pd
+from tabulate import tabulate
 from ROOT import gStyle, TFile, TCanvas, TPad, TGaxis
-from ROOT import TCanvas, TH1F, TH2F, THStack, TLine, TLegend
+from ROOT import TCanvas, TH2F, TLegend
 
 from pathlib import Path
 macroDir = Path(__file__).parent.parent.absolute()
@@ -57,7 +58,8 @@ def stylePad(pad, top=0, buttom=0, left=0, right=0):
 
 def main():
 
-  inDir = os.path.join(macroDir, '..', 'rootfiles', 'merged')
+  # inDir = os.path.join(macroDir, '..', 'rootfiles', 'merged')
+  inDir = os.path.join(macroDir, '..', 'rootfiles', 'offline')
 
   chirals    = ["eLpR"]
   processes  = ["P2f_z_h"]
@@ -102,7 +104,7 @@ def main():
   stylePad(pad,0.1,0.1,0.12,0.1)
   h_sum.SetTitle(";Reconstructed;Truth")
   h_sum.GetXaxis().SetRangeUser(0, 3)
-  h_sum.GetYaxis().SetRangeUser(0, 3)
+  h_sum.GetYaxis().SetRangeUser(0, 4)
 
   h_sum.GetXaxis().SetBinLabel(1, "K^{#pm}")
   h_sum.GetXaxis().SetBinLabel(2, "#pi^{#pm}")
@@ -118,9 +120,37 @@ def main():
   h_sum.GetXaxis().SetTitleOffset(1.2)
   h_sum.GetYaxis().SetTitleOffset(1.2)
 
-  
   h_sum.Draw("col text")
   c.SaveAs(f"plots/c_PID.pdf")
+
+
+  # purity
+  total_gen = [0,0,0] # K, pi, p
+  for xbin in range(3):
+    for ybin in range(4):
+      total_gen[xbin] += h_sum.GetBinContent(xbin+1, ybin+1)
+
+
+  # print(total_gen)
+  # print(h_sum.GetBinContent(2,1))
+
+  purity = [ [h_sum.GetBinContent(x+1,y+1) / total_gen[x] for y in range(4)] for x in range(3) ]
+
+  print(tabulate(purity, tablefmt='latex'))
+  # print(*purity,sep='\n')
+
+  # efficiency
+  total_reco = [0,0,0] # K, pi, p
+  for xbin in range(3):
+    for ybin in range(4):
+      total_reco[xbin] += h_sum.GetBinContent(xbin+1, ybin+1)
+
+  efficiency = [ h_sum.GetBinContent(i+1,i+1) / total_reco[i] for i in range(3) ]
+
+  print(f"efficiency of K: {efficiency[0]}")
+  print(f"efficiency of pi: {efficiency[1]}")
+  print(f"efficiency of p: {efficiency[2]}")
+
 
 
 
