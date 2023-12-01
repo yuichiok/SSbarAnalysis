@@ -58,8 +58,8 @@ def stylePad(pad, top=0, buttom=0, left=0, right=0):
 
 def main():
 
-  # inDir = os.path.join(macroDir, '..', 'rootfiles', 'merged')
-  inDir = os.path.join(macroDir, '..', 'rootfiles', 'offline')
+  inDir = os.path.join(macroDir, '..', 'rootfiles', 'merged')
+  # inDir = os.path.join(macroDir, '..', 'rootfiles', 'offline')
 
   chirals    = ["eLpR"]
   processes  = ["P2f_z_h"]
@@ -102,57 +102,58 @@ def main():
   c.cd()
   pad = TPad("pad", "pad", 0, 0, 1, 1)
   stylePad(pad,0.1,0.1,0.12,0.1)
-  h_sum.SetTitle(";Reconstructed;Truth")
-  h_sum.GetXaxis().SetRangeUser(0, 3)
-  h_sum.GetYaxis().SetRangeUser(0, 4)
+  h_sum_plot = h_sum.Clone()
+  # h_sum_plot.Scale(1.0 / h_sum_plot.GetEntries())
+  h_sum_plot.SetTitle(";Reconstructed;Truth")
+  h_sum_plot.GetXaxis().SetRangeUser(0, 3)
+  h_sum_plot.GetYaxis().SetRangeUser(1, 4)
 
-  h_sum.GetXaxis().SetBinLabel(1, "K^{#pm}")
-  h_sum.GetXaxis().SetBinLabel(2, "#pi^{#pm}")
-  h_sum.GetXaxis().SetBinLabel(3, "p (#bar{p})")
+  h_sum_plot.GetXaxis().SetBinLabel(1, "#pi^{#pm}")
+  h_sum_plot.GetXaxis().SetBinLabel(2, "K^{#pm}")
+  h_sum_plot.GetXaxis().SetBinLabel(3, "p (#bar{p})")
 
-  h_sum.GetYaxis().SetBinLabel(1, "K^{#pm}")
-  h_sum.GetYaxis().SetBinLabel(2, "#pi^{#pm}")
-  h_sum.GetYaxis().SetBinLabel(3, "p (#bar{p})")
+  h_sum_plot.GetYaxis().SetBinLabel(4, "#pi^{#pm}")
+  h_sum_plot.GetYaxis().SetBinLabel(3, "K^{#pm}")
+  h_sum_plot.GetYaxis().SetBinLabel(2, "p (#bar{p})")
 
-  h_sum.GetXaxis().SetLabelSize(0.05)
-  h_sum.GetYaxis().SetLabelSize(0.05)
+  h_sum_plot.GetXaxis().SetLabelSize(0.05)
+  h_sum_plot.GetYaxis().SetLabelSize(0.05)
 
-  h_sum.GetXaxis().SetTitleOffset(1.2)
-  h_sum.GetYaxis().SetTitleOffset(1.2)
+  h_sum_plot.GetXaxis().SetTitleOffset(1.2)
+  h_sum_plot.GetYaxis().SetTitleOffset(1.2)
 
-  h_sum.Draw("col text")
+  h_sum_plot.Draw("col text")
   c.SaveAs(f"plots/c_PID.pdf")
 
 
   # purity
   total_gen = [0,0,0] # K, pi, p
   for xbin in range(3):
-    for ybin in range(4):
+    for ybin in reversed(range(4)):
       total_gen[xbin] += h_sum.GetBinContent(xbin+1, ybin+1)
 
 
   # print(total_gen)
   # print(h_sum.GetBinContent(2,1))
 
-  purity = [ [h_sum.GetBinContent(x+1,y+1) / total_gen[x] for y in range(4)] for x in range(3) ]
+  purity = [ [h_sum.GetBinContent(x+1,y+1) / total_gen[x] for y in reversed(range(4))] for x in range(3) ]
 
-  print(tabulate(purity, tablefmt='latex'))
+  print(tabulate(purity, tablefmt='latex',floatfmt=".3f"))
   # print(*purity,sep='\n')
 
   # efficiency
   total_reco = [0,0,0] # K, pi, p
-  for xbin in range(3):
-    for ybin in range(4):
+  for ybin in reversed(range(1,4)):
+    for xbin in range(3):
       total_reco[xbin] += h_sum.GetBinContent(xbin+1, ybin+1)
 
-  efficiency = [ h_sum.GetBinContent(i+1,i+1) / total_reco[i] for i in range(3) ]
+  print(total_reco)
 
-  print(f"efficiency of K: {efficiency[0]}")
-  print(f"efficiency of pi: {efficiency[1]}")
+  efficiency = [ h_sum.GetBinContent(i+1,4-i) / total_reco[i] for i in range(3) ]
+
+  print(f"efficiency of pi: {efficiency[0]}")
+  print(f"efficiency of K: {efficiency[1]}")
   print(f"efficiency of p: {efficiency[2]}")
-
-
-
 
 if __name__ == "__main__":
   main()
