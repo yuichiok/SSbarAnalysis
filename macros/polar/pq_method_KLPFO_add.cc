@@ -8,14 +8,16 @@
 using std::cout; using std::endl;
 using std::vector; using std::unordered_map;
 
-TString LPFO_mode = "Pi";
-// TString chiral = "eL.pR";
-TString chiral = "eR.pL";
+TString LPFO_mode = "K";
+TString chiral = "eL.pR";
+// TString chiral = "eR.pL";
 
 TString inputDir = "../../rootfiles/merged/";
 array<TString,2> chirals   = {"eL.pR", "eR.pL"};
-array<TString,4> processes = {"P2f_z_h", "P4f_ww_h", "P4f_zz_h", "Pqqh"};
-array<TString,6> qqbars    = {"dd", "uu", "ss", "cc", "bb", "rr"};
+// array<TString,4> processes = {"P2f_z_h", "P4f_ww_h", "P4f_zz_h", "Pqqh"};
+array<TString,1> processes = {"P2f_z_h"};
+// array<TString,6> qqbars    = {"dd", "uu", "ss", "cc", "bb", "rr"};
+array<TString,3> qqbars    = {"dd", "uu", "ss"};
 
 unordered_map<pair<TString,TString>,pair<Int_t,Int_t>, hash_pair> production = {
     {{"P2f_z_h", "eL.pR"}, {500010,4994}},
@@ -49,7 +51,9 @@ void Normalize(TH1F *h)
   Int_t nbins4 = nbins / 4;
   Int_t int_high = (nbins / 2) + nbins4;
   Int_t int_low  = (nbins / 2 + 1) - nbins4;
-  h->Scale( 1.0 / h->Integral(int_low,int_high) );
+  if(h->Integral(int_low,int_high)){
+    h->Scale( 1.0 / h->Integral(int_low,int_high) );
+  }
 }
 
 void Normalize2Gen(TH1F *h, TH1F *h_gen)
@@ -59,7 +63,7 @@ void Normalize2Gen(TH1F *h, TH1F *h_gen)
   h->Scale( intCosGen / intCosReco );
 }
 
-unordered_map<TString, TH1F*> main_pq(TFile* file, TString prodMode, Float_t &ratio)
+unordered_map<TString, TH1F*> main_pq(TFile* file, TString prodMode)
 {
   gStyle->SetOptStat(0);
 
@@ -67,13 +71,7 @@ unordered_map<TString, TH1F*> main_pq(TFile* file, TString prodMode, Float_t &ra
   TH1F *h_gen_q_qcos    = (TH1F*) file->Get(prodMode + "/gen/h_" + prodMode + "_qcos");
   TH1F *h_reco_LPFO_scos  = (TH1F*) file->Get(prodMode + "/cos/h_" + prodMode + "_" + LPFO_mode + "_scos");
   TH1F *h_reco_LPFO_qcos  = (TH1F*) file->Get(prodMode + "/cos/h_" + prodMode + "_" + LPFO_mode + "_qcos");
-
-  cout << prodMode << " reco entry = " << h_reco_LPFO_qcos->GetEntries() << endl;
-  cout << prodMode << " gen entry  = " << h_gen_q_qcos->GetEntries() << endl;
-  cout << prodMode << " reco eff   = " << (float)h_reco_LPFO_qcos->GetEntries() / (float)h_gen_q_qcos->GetEntries() << endl;
   
-  ratio = (Float_t) h_reco_LPFO_qcos->GetEntries() / (Float_t) h_gen_q_qcos->GetEntries();
-
   // used for pq correction
   TH1F *h_acc_PiPi_cos  = (TH1F*) file->Get(prodMode + "/cos/h_" + prodMode + "_" + LPFO_mode + "_acc_cos");
   TH1F *h_rej_PiPi_cos  = (TH1F*) file->Get(prodMode + "/cos/h_" + prodMode + "_" + LPFO_mode + "_rej_cos");
@@ -112,7 +110,7 @@ unordered_map<TString, TH1F*> main_pq(TFile* file, TString prodMode, Float_t &ra
   const Int_t nbins = h_reco_LPFO_scos_eff_corr->GetNbinsX();
 
   // pq correction
-  TString pValName = "p_PiPi_" + prodMode;
+  TString pValName = "p_" + LPFO_mode + LPFO_mode + "_" + prodMode;
   TH1F *p_PiPi = new TH1F(pValName,pValName, 50,0,1);
   p_PiPi->Sumw2();
 
@@ -127,17 +125,6 @@ unordered_map<TString, TH1F*> main_pq(TFile* file, TString prodMode, Float_t &ra
   TH1F *h_reco_LPFO_pq_cos = CorrectHist(prodMode, h_reco_LPFO_qcos_eff_corr, p_vec);
   // TH1F *h_reco_LPFO_pq_cos = (TH1F*) h_reco_LPFO_qcos_eff_corr->Clone();
   StyleHist(h_reco_LPFO_pq_cos,kBlue);
-
-  // Fitting
-  TF1 * f_gen = new TF1("f_gen","[0]*(1+x*x)+[1]*x",-fitRange,fitRange);
-  f_gen->SetParNames("S","A");
-  h_gen_q_qcos->Fit("f_gen","MNRS");
-  cout << "Gen Chi2 / ndf = " << f_gen->GetChisquare() << " / " << f_gen->GetNDF() << endl;
-
-  TF1 * f_reco = new TF1("f_reco","[0]*(1+x*x)+[1]*x",-fitRange,fitRange);
-  f_reco->SetParNames("S","A");
-  h_reco_LPFO_pq_cos->Fit("f_reco","MNRS");
-  cout << "Reco Chi2 / ndf = " << f_reco->GetChisquare() << " / " << f_reco->GetNDF() << endl;
 
   // output
   unordered_map<TString, TH1F*> hmap;
@@ -168,11 +155,45 @@ void pq_method_KLPFO_add()
     Float_t dd_ratio;
     Float_t uu_ratio;
 
-    unordered_map<TString, unordered_map<TString, TH1F*>> hmap; // [ud][reco/gen]
-    hmap["uu"] = main_pq(file_map["P2f_z_h"][chiral], "uu", uu_ratio);
-    hmap["dd"] = main_pq(file_map["P2f_z_h"][chiral], "dd", dd_ratio);
+    unordered_map<TString, THStack*> hs_map;
+    hs_map["gen"]  = new THStack("hs_gen",";cos#theta;Entries");
+    hs_map["reco"] = new THStack("hs_reco",";cos#theta;Entries");
+    
+    TLegend *legend = new TLegend(0.60,0.75,0.88,0.88);
+
+    for ( auto process : processes ){
+      if(process == "P2f_z_h"){
+        for ( auto qq : qqbars ){
+          unordered_map<TString, TH1F*> reco_gen_map = main_pq(file_map[process][chiral], qq);
+          // TH1F *h_gen  = (TH1F*) file_map[process][chiral]->Get(qq + "/gen/h_" + qq + "_qcos");
+          // TH1F *h_reco = (TH1F*) file_map[process][chiral]->Get(qq + "/cos/h_" + qq + "_" + LPFO_mode + "_qcos");
+          TH1F * h_gen = reco_gen_map["gen"];
+          TH1F * h_reco = reco_gen_map["reco"];
+          Normalize(h_gen);
+          Normalize(h_reco);
+          h_gen->SetLineWidth(3);
+          h_gen->SetFillStyle(3002);
+          h_reco->SetLineWidth(3);
+          
+          legend->AddEntry(h_reco,qq,"l");
+
+          hs_map.at("gen")->Add(h_gen);
+          hs_map.at("reco")->Add(h_reco);
+        }
+
+      }
+    }
 
 
+
+    gStyle->SetPalette(kRainbow);
+    TCanvas * c_polar_nostack = new TCanvas("c_polar_nostack","c_polar_nostack",800,800);
+    hs_map.at("reco")->Draw("he plc nostack");
+    hs_map.at("gen")->Draw("he plc nostack same");
+    legend->Draw("same");
+    TCanvas * c_polar_stack = new TCanvas("c_polar_stack","c_polar_stack",800,800);
+    hs_map.at("gen")->Draw("he plc");
+    hs_map.at("reco")->Draw("he plc same");
 
   }
   catch(const std::exception& e)
