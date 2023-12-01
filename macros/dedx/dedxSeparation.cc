@@ -235,20 +235,29 @@ void dedxPurity()
 
   Float_t spwr_PiK[NBinsP];
   Float_t spwr_Pip[NBinsP];
+  Float_t spwr_Kp[NBinsP];
+
 
   registerSepPow(NBinsP, h_dedx_p_Pi, h_dedx_p_K, spwr_PiK, p);
   registerSepPow(NBinsP, h_dedx_p_Pi, h_dedx_p_p, spwr_Pip, p);
+  registerSepPow(NBinsP, h_dedx_p_K, h_dedx_p_p, spwr_Kp, p);
 
   TGraph *g_sep_pow_PiK = new TGraph(NBinsP, p, spwr_PiK);
-  StyleGraph(g_sep_pow_PiK, kRed, 20);
-  leg_dedx_p_proj->AddEntry(g_sep_pow_PiK, "#pi/K", "p");
+  StyleGraph(g_sep_pow_PiK, kRed+1, 20);
+  leg_dedx_p_proj->AddEntry(g_sep_pow_PiK, "#pi / K", "p");
 
   TGraph *g_sep_pow_Pip = new TGraph(NBinsP, p, spwr_Pip);
-  StyleGraph(g_sep_pow_Pip, kBlue, 21);
-  leg_dedx_p_proj->AddEntry(g_sep_pow_Pip, "#pi/p", "p");
+  StyleGraph(g_sep_pow_Pip, kBlue+1, 21);
+  leg_dedx_p_proj->AddEntry(g_sep_pow_Pip, "#pi / p", "p");
+
+  TGraph *g_sep_pow_Kp = new TGraph(NBinsP, p, spwr_Kp);
+  StyleGraph(g_sep_pow_Kp, kGreen+1, 22);
+  leg_dedx_p_proj->AddEntry(g_sep_pow_Kp, "K / p", "p");
+
 
   g_sep_pow_PiK->Draw("AP");
   g_sep_pow_Pip->Draw("Psame");
+  g_sep_pow_Kp->Draw("Psame");
 
   leg_dedx_p_proj->Draw("same");
 
