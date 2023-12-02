@@ -17,7 +17,8 @@ array<TString,2> chirals   = {"eL.pR", "eR.pL"};
 // array<TString,4> processes = {"P2f_z_h", "P4f_ww_h", "P4f_zz_h", "Pqqh"};
 array<TString,1> processes = {"P2f_z_h"};
 // array<TString,6> qqbars    = {"dd", "uu", "ss", "cc", "bb", "rr"};
-array<TString,3> qqbars    = {"dd", "uu", "ss"};
+// array<TString,3> qqbars    = {"dd", "uu", "ss"};
+array<TString,1> qqbars    = {"ss"};
 
 unordered_map<pair<TString,TString>,pair<Int_t,Int_t>, hash_pair> production = {
     {{"P2f_z_h", "eL.pR"}, {500010,4994}},
@@ -138,6 +139,7 @@ unordered_map<TString, TH1F*> main_pq(TFile* file, TString prodMode)
 
 void pq_method_KLPFO_add()
 {
+  gStyle->SetOptStat(0);
   try
   {
     unordered_map<TString, unordered_map<TString, TFile*> > file_map;
@@ -152,8 +154,30 @@ void pq_method_KLPFO_add()
       }
     }
 
-    Float_t dd_ratio;
-    Float_t uu_ratio;
+    // TH1F *h_gen  = (TH1F*) file_map["P2f_z_h"][chiral]->Get("ss/gen/h_ss_qcos");
+    // TH1F *h_reco = (TH1F*) file_map["P2f_z_h"][chiral]->Get("ss/cos/h_ss_" + LPFO_mode + "_qcos");
+    // StyleHist(h_gen,kRed+2);
+    // StyleHist(h_reco,kRed+2);
+    // Normalize(h_gen);
+    // Normalize(h_reco);
+    // h_reco->SetFillStyle(0);
+
+    // TLegend *legend = new TLegend(0.60,0.75,0.88,0.88);
+    // legend->AddEntry(h_gen,"Parton level","f");
+    // legend->AddEntry(h_reco,"Reconstructed","le");
+
+
+    // TCanvas *c_signal = new TCanvas("c_signal","c_signal",800,800);
+    // TPad    *p_signal = new TPad("p_signal","p_signal",0,0,1,1);
+    // StylePad(p_signal,0.1,0.1,0.08,0.155);
+    // // p_signal->Draw();
+    // h_gen->SetTitle(";cos#theta;Entries");
+    // h_gen->Draw("h");
+    // h_reco->Draw("e same");
+    // legend->Draw("same");
+
+
+
 
     unordered_map<TString, THStack*> hs_map;
     hs_map["gen"]  = new THStack("hs_gen",";cos#theta;Entries");
