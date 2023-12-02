@@ -11,12 +11,13 @@ using std::vector; using std::unordered_map;
 
 TString prod_mode = "ss";
 TString chiral    = "eL.pR";
-TString LPFO_mode = "Pi";
+TString LPFO_mode = "K";
 TString prod_modes[3] = {"uu","dd","ss"};
 
 vector<TString> gen_reco  = {"gen","reco"};
 vector<TString> PFO_mode  = {"K","Pi"};
-vector<TString> heff_name = {"nocut","momentum", "tpc_hits", "offset", "PID", "SPFO", "charge"};
+// vector<TString> heff_name = {"nocut","momentum", "tpc_hits", "offset", "PID", "SPFO", "charge"};
+vector<TString> heff_name = {"nocut", "btag", "ctag", "nvtx", "momentum", "LPFOacol", "tpc_hits", "offset", "PID", "SPFO", "charge"};
 
 // TFile *file = new TFile("../../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h." + chiral + "." + prod_mode + ".KPiLPFO.dedxPi.PFOp15.LPFOp15_pNaN.tpc0.mix_uds.correctDist.all.root","READ");
 TFile *file = new TFile("../../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.KPiLPFO.dedxPi.PFOp15.LPFOp15_pNaN.all.root","READ");
@@ -128,7 +129,7 @@ void total()
   
   for ( auto ih : heff_name ){
 
-    TH1F * h_num = h1_cos_eff["reco"]["Pi"][ih];
+    TH1F * h_num = h1_cos_eff["reco"][LPFO_mode][ih];
     
     if (count) {
       
@@ -203,7 +204,7 @@ void partial()
     
     for ( auto ih : heff_name ){
 
-      TH1F * h_num = h1_cos_eff["reco"]["Pi"][ih];
+      TH1F * h_num = h1_cos_eff["reco"][LPFO_mode][ih];
       
       if (count) {
         
@@ -244,6 +245,6 @@ void partial()
 
 void efficiency_cos()
 {
-  // partial();
-  total();
+  partial();
+  // total();
 }

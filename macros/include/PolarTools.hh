@@ -183,7 +183,7 @@ TH1F * efficiencyCorrection( TH1F * h, TString LPFO_mode, TFile * file, TString 
   // TH1F *h_reco_offset = (TH1F*) file->Get(dirName + "h_" + category + "_reco_" + LPFO_mode + "_momentum");
   // TH1F *h_reco_PID    = (TH1F*) file->Get(dirName + "h_" + category + "_reco_" + LPFO_mode + "_charge");
   TFile *file_eff_weight = new TFile("../efficiency/eff_weight.root","READ");
-  TH1F *h_reco_offset = (TH1F*) file_eff_weight->Get("h_reco_" + LPFO_mode + "_momentum");
+  TH1F *h_reco_offset = (TH1F*) file_eff_weight->Get("h_reco_" + LPFO_mode + "_btag");
   TH1F *h_reco_PID    = (TH1F*) file_eff_weight->Get("h_reco_" + LPFO_mode + "_charge");
 
 
