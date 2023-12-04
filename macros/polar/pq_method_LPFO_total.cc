@@ -10,7 +10,7 @@ using std::vector; using std::array; using std::unordered_map;
 
 // TString prod_mode = "uu";
 // TString chiral    = "eR.pL";
-TString LPFO_mode = "Pi";
+TString LPFO_mode = "K";
 // Float_t TopRange = 700;
 Float_t TopRange = 550;
 // Float_t TopRange = 0.7;
@@ -19,14 +19,12 @@ TString inputDir = "../../rootfiles/merged/";
 array<TString,2> chirals   = {"eL.pR", "eR.pL"};
 // array<TString,4> processes = {"P2f_z_h", "P4f_ww_h", "P4f_zz_h", "Pqqh"};
 array<TString,4> processes = {"Pqqh", "P4f_zz_h", "P4f_ww_h", "P2f_z_h"};
-// array<TString,6> qqbars    = {"dd", "uu", "ss", "cc", "bb", "rr"};
 
-array<TString,6> qqbars    = {"rr", "bb", "cc", "ss", "dd", "uu"};
-// array<TString,1> qqbars    = {"cc"};
+// array<TString,6> qqbars    = {"rr", "bb", "cc", "ss", "dd", "uu"};
+array<TString,6> qqbars    = {"rr", "bb", "cc", "dd", "uu", "ss"};
 
 array<TString,4> leg_processes = {"P2f_z_h", "P4f_ww_h", "P4f_zz_h", "Pqqh"};
 array<TString,6> leg_qqbars    = {"dd", "uu", "ss", "cc", "bb", "rr"};
-// array<TString,1> leg_qqbars    = {"cc"};
 
 
 
@@ -219,10 +217,14 @@ void pq_method_LPFO_total()
     }
 
     unordered_map<TString, THStack*> hs_reco;
+    unordered_map<TString, TH1F*>    h_reco;
     unordered_map<TString, TLegend*> leg_reco;
+
     for( auto chiral : chirals ){
       hs_reco[chiral] = new THStack("hs_reco_" + chiral,";cos#theta;Entries / Int. Lumi.");
-      leg_reco[chiral] = new TLegend(0.59,0.68,0.89,0.89);
+      h_reco[chiral]  = new TH1F("h_reco_" + chiral,";cos#theta;Entries / Int. Lumi.", 100,-1,1);
+      leg_reco[chiral] = new TLegend(0.59,0.65,0.89,0.85);
+      leg_reco[chiral]->SetMargin(0.4);
       leg_reco[chiral]->SetBorderSize(0);
       leg_reco[chiral]->SetFillStyle(0);
     }
@@ -231,15 +233,17 @@ void pq_method_LPFO_total()
       for( auto chiral : chirals ){
         if( process=="P2f_z_h" ){
           for( auto category : qqbars ){
-            // if(category=="bb" || category=="cc" || category=="ss") continue;
-            // if(category=="bb" || category=="cc" ) continue;
             TH1F *h = hmap[process][chiral][category]["reco"];
             h->GetYaxis()->SetRangeUser(0,TopRange);
             h->SetFillStyle(0);
             TString histName = histLabel(process,category);
             h->SetTitle(histName);
             hs_reco.at(chiral)->Add(h);
-            // leg_reco.at(chiral)->AddEntry(h,histName,"l");
+            h_reco.at(chiral)->Add(h);
+
+            cout << "====== " << category << " ======\n";
+            cout << h->Integral(1,25) << endl;
+
           }
         }else{
           TH1F *h = hmap[process][chiral]["bg"]["reco"];
@@ -249,7 +253,7 @@ void pq_method_LPFO_total()
           h->SetTitle(histName);
           h->SetLineStyle(7);
           hs_reco.at(chiral)->Add(h);
-          // leg_reco.at(chiral)->AddEntry(h,histName,"l");
+          h_reco.at(chiral)->Add(h);
         }
       }
     }
@@ -257,8 +261,6 @@ void pq_method_LPFO_total()
       for( auto chiral : chirals ){
         if( process=="P2f_z_h" ){
           for( auto category : leg_qqbars ){
-            // if(category=="bb" || category=="cc" || category=="ss") continue;
-            // if(category=="bb" || category=="cc" ) continue;
             TH1F *h = hmap[process][chiral][category]["reco"];
             TString histName = histLabel(process,category);
             leg_reco.at(chiral)->AddEntry(h,histName,"l");
@@ -272,6 +274,7 @@ void pq_method_LPFO_total()
     }
 
 
+    cout << "========== Main Fit Results ==========\n";
 
     for( auto chiral : chirals ){
       TCanvas *c_hs_reco = new TCanvas("c_hs_reco_" + chiral,"c_hs_reco_" + chiral,900,900);
@@ -281,10 +284,46 @@ void pq_method_LPFO_total()
       gStyle->SetPalette(55);
       // hs_reco.at(chiral)->Draw("h plc nostack");
       hs_reco.at(chiral)->Draw("h plc");
-      leg_reco.at(chiral)->Draw();
+      leg_reco.at(chiral)->Draw("same");
       hs_reco.at(chiral)->SetMaximum(TopRange);
-      pad_hs_reco->Draw();
+
+
+
+      // Fit
+      TCanvas *c_h_reco = new TCanvas("c_h_reco_" + chiral,"c_h_reco_" + chiral,900,900);
+      TPad *pad_h_reco  = new TPad("pad_h_reco_" + chiral, "pad_h_reco_" + chiral,0,0,1,1);
+      StylePad(pad_h_reco,0,0.12,0,0.15);
+      h_reco.at(chiral)->SetLineWidth(3);
+      h_reco.at(chiral)->Draw("");
+
+      TF1 * f_total = new TF1("f_total","[0]*(1+x*x)+[1]*x",-0.6,0.6);
+      f_total->SetParNames("S","A");
+      h_reco.at(chiral)->Fit("f_total","MNRS");
+      cout << "Gen Chi2 / ndf = " << f_total->GetChisquare() << " / " << f_total->GetNDF() << endl;
+      f_total->SetLineWidth(3);
+      f_total->SetLineColor(kRed);
+      f_total->Draw("same");
+
+      TLegend *leg = new TLegend(0.56,0.71,0.86,0.85);
+      leg->SetMargin(0.2);
+      leg->SetBorderSize(0);
+      leg->SetFillStyle(0);
+      leg->AddEntry(h_reco.at(chiral),"Data","lep");
+      leg->AddEntry(f_total,"#frac{d#sigma}{dcos#theta} = S(1+cos^{2}#theta) + Acos#theta","l");
+      leg->Draw("same");
+
+      // TCanvas *c_hs_reco_nostack = new TCanvas("c_hs_reco_nostack_" + chiral,"c_hs_reco_nostack_" + chiral,900,900);
+      // TPad *pad_hs_reco_nostack = new TPad("pad_hs_reco_nostack_" + chiral, "pad_hs_reco_nostack_" + chiral,0,0,1,1);
+      // StylePad(pad_hs_reco_nostack,0,0.12,0,0.15);
+      // hs_reco.at(chiral)->Draw("h plc nostack");
+      // leg_reco.at(chiral)->Draw();
+      // hs_reco.at(chiral)->SetMaximum(TopRange);
+
+      cout << "======================================\n";
+
     }
+
+
 
 
   /*
