@@ -11,13 +11,24 @@ using std::vector; using std::array; using std::unordered_map;
 // TString prod_mode = "uu";
 // TString chiral    = "eR.pL";
 TString LPFO_mode = "Pi";
-// Float_t TopRange = 700E3;
-Float_t TopRange = 0.7;
+// Float_t TopRange = 700;
+Float_t TopRange = 550;
+// Float_t TopRange = 0.7;
 
 TString inputDir = "../../rootfiles/merged/";
 array<TString,2> chirals   = {"eL.pR", "eR.pL"};
-array<TString,4> processes = {"P2f_z_h", "P4f_ww_h", "P4f_zz_h", "Pqqh"};
-array<TString,6> qqbars    = {"dd", "uu", "ss", "cc", "bb", "rr"};
+// array<TString,4> processes = {"P2f_z_h", "P4f_ww_h", "P4f_zz_h", "Pqqh"};
+array<TString,4> processes = {"Pqqh", "P4f_zz_h", "P4f_ww_h", "P2f_z_h"};
+// array<TString,6> qqbars    = {"dd", "uu", "ss", "cc", "bb", "rr"};
+
+array<TString,6> qqbars    = {"rr", "bb", "cc", "ss", "dd", "uu"};
+// array<TString,1> qqbars    = {"cc"};
+
+array<TString,4> leg_processes = {"P2f_z_h", "P4f_ww_h", "P4f_zz_h", "Pqqh"};
+array<TString,6> leg_qqbars    = {"dd", "uu", "ss", "cc", "bb", "rr"};
+// array<TString,1> leg_qqbars    = {"cc"};
+
+
 
 unordered_map<pair<TString,TString>,pair<Int_t,Int_t>, hash_pair> production = {
     {{"P2f_z_h", "eL.pR"}, {500010,4994}},
@@ -197,6 +208,7 @@ void pq_method_PiLPFO_total()
 
         if( process=="P2f_z_h" ){
           for( auto category : qqbars ){
+            cout << "======== read " << category << " ===========" << endl;
             hmap[process][chiral][category] = main_pq(file,process,chiral,category);
           }
         }else{
@@ -220,14 +232,14 @@ void pq_method_PiLPFO_total()
         if( process=="P2f_z_h" ){
           for( auto category : qqbars ){
             // if(category=="bb" || category=="cc" || category=="ss") continue;
-            if(category=="bb" || category=="cc" ) continue;
+            // if(category=="bb" || category=="cc" ) continue;
             TH1F *h = hmap[process][chiral][category]["reco"];
             h->GetYaxis()->SetRangeUser(0,TopRange);
             h->SetFillStyle(0);
             TString histName = histLabel(process,category);
             h->SetTitle(histName);
             hs_reco.at(chiral)->Add(h);
-            leg_reco.at(chiral)->AddEntry(h,histName,"l");
+            // leg_reco.at(chiral)->AddEntry(h,histName,"l");
           }
         }else{
           TH1F *h = hmap[process][chiral]["bg"]["reco"];
@@ -237,10 +249,29 @@ void pq_method_PiLPFO_total()
           h->SetTitle(histName);
           h->SetLineStyle(7);
           hs_reco.at(chiral)->Add(h);
+          // leg_reco.at(chiral)->AddEntry(h,histName,"l");
+        }
+      }
+    }
+    for( auto process : leg_processes ){
+      for( auto chiral : chirals ){
+        if( process=="P2f_z_h" ){
+          for( auto category : leg_qqbars ){
+            // if(category=="bb" || category=="cc" || category=="ss") continue;
+            // if(category=="bb" || category=="cc" ) continue;
+            TH1F *h = hmap[process][chiral][category]["reco"];
+            TString histName = histLabel(process,category);
+            leg_reco.at(chiral)->AddEntry(h,histName,"l");
+          }
+        }else{
+          TH1F *h = hmap[process][chiral]["bg"]["reco"];
+          TString histName = histLabel(process,"bg");
           leg_reco.at(chiral)->AddEntry(h,histName,"l");
         }
       }
     }
+
+
 
     for( auto chiral : chirals ){
       TCanvas *c_hs_reco = new TCanvas("c_hs_reco_" + chiral,"c_hs_reco_" + chiral,900,900);
@@ -248,9 +279,11 @@ void pq_method_PiLPFO_total()
       StylePad(pad_hs_reco,0,0.12,0,0.15);
       gStyle->SetHistTopMargin(0);
       gStyle->SetPalette(55);
-      hs_reco.at(chiral)->Draw("h plc nostack");
+      // hs_reco.at(chiral)->Draw("h plc nostack");
+      hs_reco.at(chiral)->Draw("h plc");
       leg_reco.at(chiral)->Draw();
-      // pad_hs_reco->BuildLegend(0.59,0.68,0.89,0.89);
+      hs_reco.at(chiral)->SetMaximum(TopRange);
+      pad_hs_reco->Draw();
     }
 
 
