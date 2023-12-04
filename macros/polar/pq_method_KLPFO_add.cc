@@ -88,6 +88,9 @@ unordered_map<TString, TH1F*> main_pq(TFile* file, TString prodMode)
     h_reco_LPFO_scos_eff_corr = resolutionCorrection(h_reco_LPFO_scos_eff,LPFO_mode,file,prodMode);
     h_reco_LPFO_qcos_eff_corr = resolutionCorrection(h_reco_LPFO_qcos_eff,LPFO_mode,file,prodMode);
 
+    // h_reco_LPFO_scos_eff_corr = efficiencyCorrection(h_reco_LPFO_scos,LPFO_mode,file,prodMode);
+    // h_reco_LPFO_qcos_eff_corr = efficiencyCorrection(h_reco_LPFO_qcos,LPFO_mode,file,prodMode);
+
   }else{
     h_reco_LPFO_scos_eff_corr = (TH1F*) h_reco_LPFO_scos->Clone();
     h_reco_LPFO_qcos_eff_corr = (TH1F*) h_reco_LPFO_qcos->Clone();
@@ -101,6 +104,10 @@ unordered_map<TString, TH1F*> main_pq(TFile* file, TString prodMode)
     TH1F* h_rej_PiPi_cos_eff = efficiencyCorrection(h_rej_PiPi_cos,LPFO_mode,file,prodMode);
     h_acc_PiPi_cos_eff_corr = resolutionCorrection(h_acc_PiPi_cos_eff,LPFO_mode,file,prodMode);
     h_rej_PiPi_cos_eff_corr = resolutionCorrection(h_rej_PiPi_cos_eff,LPFO_mode,file,prodMode);
+
+    // h_acc_PiPi_cos_eff_corr = efficiencyCorrection(h_acc_PiPi_cos,LPFO_mode,file,prodMode);
+    // h_rej_PiPi_cos_eff_corr = efficiencyCorrection(h_rej_PiPi_cos,LPFO_mode,file,prodMode);
+
   }else{
     h_acc_PiPi_cos_eff_corr = (TH1F*) h_acc_PiPi_cos->Clone();
     h_rej_PiPi_cos_eff_corr = (TH1F*) h_rej_PiPi_cos->Clone();
@@ -185,39 +192,73 @@ void pq_method_KLPFO_add()
     
     TLegend *legend = new TLegend(0.60,0.75,0.88,0.88);
 
-    for ( auto process : processes ){
-      if(process == "P2f_z_h"){
-        for ( auto qq : qqbars ){
-          unordered_map<TString, TH1F*> reco_gen_map = main_pq(file_map[process][chiral], qq);
-          // TH1F *h_gen  = (TH1F*) file_map[process][chiral]->Get(qq + "/gen/h_" + qq + "_qcos");
-          // TH1F *h_reco = (TH1F*) file_map[process][chiral]->Get(qq + "/cos/h_" + qq + "_" + LPFO_mode + "_qcos");
-          TH1F * h_gen = reco_gen_map["gen"];
-          TH1F * h_reco = reco_gen_map["reco"];
-          Normalize(h_gen);
-          Normalize(h_reco);
-          h_gen->SetLineWidth(3);
-          h_gen->SetFillStyle(3002);
-          h_reco->SetLineWidth(3);
+    // for ( auto process : processes ){
+    //   if(process == "P2f_z_h"){
+    //     for ( auto qq : qqbars ){
+    //       unordered_map<TString, TH1F*> reco_gen_map = main_pq(file_map[process][chiral], qq);
+    //       // TH1F *h_gen  = (TH1F*) file_map[process][chiral]->Get(qq + "/gen/h_" + qq + "_qcos");
+    //       // TH1F *h_reco = (TH1F*) file_map[process][chiral]->Get(qq + "/cos/h_" + qq + "_" + LPFO_mode + "_qcos");
+    //       TH1F * h_gen = reco_gen_map["gen"];
+    //       TH1F * h_reco = reco_gen_map["reco"];
+    //       Normalize(h_gen);
+    //       Normalize(h_reco);
+    //       h_gen->SetLineWidth(3);
+    //       h_gen->SetFillStyle(3002);
+    //       h_reco->SetLineWidth(3);
           
-          legend->AddEntry(h_reco,qq,"l");
+    //       legend->AddEntry(h_reco,qq,"l");
 
-          hs_map.at("gen")->Add(h_gen);
-          hs_map.at("reco")->Add(h_reco);
-        }
+    //       hs_map.at("gen")->Add(h_gen);
+    //       hs_map.at("reco")->Add(h_reco);
+    //     }
 
-      }
-    }
+    //   }
+    // }
+
+    // gStyle->SetPalette(kRainbow);
+    // TCanvas * c_polar_nostack = new TCanvas("c_polar_nostack","c_polar_nostack",800,800);
+    // hs_map.at("reco")->Draw("he plc nostack");
+    // hs_map.at("gen")->Draw("he plc nostack same");
+    // legend->Draw("same");
+    // TCanvas * c_polar_stack = new TCanvas("c_polar_stack","c_polar_stack",800,800);
+    // hs_map.at("gen")->Draw("he plc");
+    // hs_map.at("reco")->Draw("he plc same");
 
 
+    // Fitting
+    unordered_map<TString, TH1F*> reco_gen_map_fit = main_pq(file_map["P2f_z_h"]["eL.pR"], "ss");
+    TH1F *h_gen_q_qcos     = (TH1F*) reco_gen_map_fit.at("gen")->Clone();
+    TH1F *h_reco_Pi_pq_cos = (TH1F*) reco_gen_map_fit.at("reco")->Clone();
+    Normalize(h_gen_q_qcos);
+    Normalize(h_reco_Pi_pq_cos);
 
-    gStyle->SetPalette(kRainbow);
-    TCanvas * c_polar_nostack = new TCanvas("c_polar_nostack","c_polar_nostack",800,800);
-    hs_map.at("reco")->Draw("he plc nostack");
-    hs_map.at("gen")->Draw("he plc nostack same");
-    legend->Draw("same");
-    TCanvas * c_polar_stack = new TCanvas("c_polar_stack","c_polar_stack",800,800);
-    hs_map.at("gen")->Draw("he plc");
-    hs_map.at("reco")->Draw("he plc same");
+    TF1 * f_gen = new TF1("f_gen","[0]*(1+x*x)+[1]*x",-0.8,0.8);
+    f_gen->SetParNames("S","A");
+    h_gen_q_qcos->Fit("f_gen","MNRS");
+    cout << "Gen Chi2 / ndf = " << f_gen->GetChisquare() << " / " << f_gen->GetNDF() << endl;
+
+    TF1 * f_reco = new TF1("f_reco","[0]*(1+x*x)+[1]*x",-0.8,0.8);
+    f_reco->SetParNames("S","A");
+    h_reco_Pi_pq_cos->Fit("f_reco","MNRS");
+    cout << "Reco Chi2 / ndf = " << f_reco->GetChisquare() << " / " << f_reco->GetNDF() << endl;
+    
+    // output AFB
+    Float_t AFB_gen  = AFB_calculation(f_gen);
+    Float_t AFB_reco = AFB_calculation(f_reco);
+    cout << "Gen  AFB = " << AFB_gen << endl;
+    cout << "Reco AFB = " << AFB_reco << endl;
+
+
+    // Draw polar angle
+    TCanvas *c_polar = new TCanvas("c_polar","c_polar",800,800);
+    TPad  *pad_polar = new TPad("pad_polar", "pad_polar",0,0,1,1);
+    StylePad(pad_polar,0,0.12,0,0.15);
+
+    h_reco_Pi_pq_cos->SetTitle(";cos#theta_{#pi^{-}};a.u.");
+    h_reco_Pi_pq_cos->Draw("");
+    h_gen_q_qcos->Draw("hsame");
+    f_reco->Draw("same");
+
 
   }
   catch(const std::exception& e)
