@@ -123,14 +123,6 @@ TH1F * CorrectHist( TString prodMode, TH1F * h_reco, vector<Float_t> p_vec)
     // float p = 0.73;    // average p for u & d
     float q = 1 - p;
     float weight = (p * p + q * q) / (q * q * q * q - p * p * p * p);
-    if (weight > 5){
-      int ibf = i-1;
-      if(i!=1){
-        p = p_vec.at(ibf - 1);
-        q = 1 - p;
-        weight = (p * p + q * q) / (q * q * q * q - p * p * p * p);
-      }
-    }
 
     // calcualte average
     float av_i = 0;
@@ -149,6 +141,13 @@ TH1F * CorrectHist( TString prodMode, TH1F * h_reco, vector<Float_t> p_vec)
     }
     av_i /= n;
     av_41i /= n;
+
+    if(av_i<0 || av_41i<0){
+      float aveavi = (av_i + av_41i) / 2;
+      av_i   = aveavi;
+      av_41i = aveavi;
+    }
+
     corrected->SetBinContent(i, av_i);
     corrected->SetBinContent(nbins + 1 - i, av_41i);
 
