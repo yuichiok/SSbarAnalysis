@@ -109,8 +109,8 @@ unordered_map<TString, TH1F*> main_pq(TFile* file, TString process, TString chir
   cout << category << " reco eff   = " << (float)h_reco_LPFO_qcos->GetEntries() / (float)h_gen_q_qcos->GetEntries() << endl;
   
   // used for pq correction
-  TH1F *h_acc_PiPi_cos  = (TH1F*) file->Get(category + "/cos/h_" + category + "_" + LPFO_mode + "_acc_cos");
-  TH1F *h_rej_PiPi_cos  = (TH1F*) file->Get(category + "/cos/h_" + category + "_" + LPFO_mode + "_rej_cos");
+  TH1F *h_acc_LL_cos  = (TH1F*) file->Get(category + "/cos/h_" + category + "_" + LPFO_mode + "_acc_cos");
+  TH1F *h_rej_LL_cos  = (TH1F*) file->Get(category + "/cos/h_" + category + "_" + LPFO_mode + "_rej_cos");
 
   // efficiency correction
   Bool_t isEffCorr = true;
@@ -128,17 +128,17 @@ unordered_map<TString, TH1F*> main_pq(TFile* file, TString process, TString chir
     h_reco_LPFO_qcos_eff_corr = (TH1F*) h_reco_LPFO_qcos->Clone();
   }
 
-  TH1F *h_acc_PiPi_cos_eff_corr;
-  TH1F *h_rej_PiPi_cos_eff_corr;
+  TH1F *h_acc_LL_cos_eff_corr;
+  TH1F *h_rej_LL_cos_eff_corr;
   if (isEffCorr)
   {
-    TH1F* h_acc_PiPi_cos_eff = efficiencyCorrection(h_acc_PiPi_cos,LPFO_mode,file,category);
-    TH1F* h_rej_PiPi_cos_eff = efficiencyCorrection(h_rej_PiPi_cos,LPFO_mode,file,category);
-    h_acc_PiPi_cos_eff_corr = resolutionCorrection(h_acc_PiPi_cos_eff,LPFO_mode,file,category);
-    h_rej_PiPi_cos_eff_corr = resolutionCorrection(h_rej_PiPi_cos_eff,LPFO_mode,file,category);
+    TH1F* h_acc_LL_cos_eff = efficiencyCorrection(h_acc_LL_cos,LPFO_mode,file,category);
+    TH1F* h_rej_LL_cos_eff = efficiencyCorrection(h_rej_LL_cos,LPFO_mode,file,category);
+    h_acc_LL_cos_eff_corr = resolutionCorrection(h_acc_LL_cos_eff,LPFO_mode,file,category);
+    h_rej_LL_cos_eff_corr = resolutionCorrection(h_rej_LL_cos_eff,LPFO_mode,file,category);
   }else{
-    h_acc_PiPi_cos_eff_corr = (TH1F*) h_acc_PiPi_cos->Clone();
-    h_rej_PiPi_cos_eff_corr = (TH1F*) h_rej_PiPi_cos->Clone();
+    h_acc_LL_cos_eff_corr = (TH1F*) h_acc_LL_cos->Clone();
+    h_rej_LL_cos_eff_corr = (TH1F*) h_rej_LL_cos->Clone();
   }
 
   StyleHist(h_gen_q_qcos,kGreen+1);
@@ -146,16 +146,16 @@ unordered_map<TString, TH1F*> main_pq(TFile* file, TString process, TString chir
   const Int_t nbins = h_reco_LPFO_scos_eff_corr->GetNbinsX();
 
   // pq correction
-  TString pValName = "p_PiPi_" + category;
-  TH1F *p_PiPi = new TH1F(pValName,pValName, 50,0,1);
-  p_PiPi->Sumw2();
+  TString pValName = "p_" + LPFO_mode + LPFO_mode + "_" + category;
+  TH1F *p_LL = new TH1F(pValName,pValName, 50,0,1);
+  p_LL->Sumw2();
 
-  vector<Float_t> p_vec = GetP(h_acc_PiPi_cos_eff_corr, h_rej_PiPi_cos_eff_corr);
+  vector<Float_t> p_vec = GetP(h_acc_LL_cos_eff_corr, h_rej_LL_cos_eff_corr);
 
   for (unsigned i = 0; i < p_vec.size() / 2; i++)
   {
-    p_PiPi->SetBinContent(nbins / 2 - i, p_vec.at(i));
-    p_PiPi->SetBinError(nbins / 2 - i, p_vec.at(i + nbins / 2));
+    p_LL->SetBinContent(nbins / 2 - i, p_vec.at(i));
+    p_LL->SetBinError(nbins / 2 - i, p_vec.at(i + nbins / 2));
   }
 
   TH1F *h_reco_LPFO_pq_cos;
@@ -192,7 +192,7 @@ unordered_map<TString, TH1F*> main_pq(TFile* file, TString process, TString chir
 
 }
 
-void pq_method_PiLPFO_total()
+void pq_method_LPFO_total()
 {
   try
   {
