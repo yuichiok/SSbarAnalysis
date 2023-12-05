@@ -9,18 +9,20 @@
 using std::cout; using std::endl;
 using std::vector; using std::unordered_map;
 
-TString prod_mode = "ss";
+TString prod_mode = "uu";
 TString chiral    = "eL.pR";
 TString LPFO_mode = "K";
-TString prod_modes[3] = {"uu","dd","ss"};
+// TString qq[3] = {"uu","dd","ss"};
+TString qq[5] = {"dd","uu","ss","cc","bb"};
+// TString prod_modes[1] = {"ss"};
 
 vector<TString> gen_reco  = {"gen","reco"};
 vector<TString> PFO_mode  = {"K","Pi"};
 // vector<TString> heff_name = {"nocut","momentum", "tpc_hits", "offset", "PID", "SPFO", "charge"};
-vector<TString> heff_name = {"nocut", "btag", "ctag", "nvtx", "momentum", "LPFOacol", "tpc_hits", "offset", "PID", "SPFO", "charge"};
+vector<TString> heff_name = {"nocut", "btag", "ctag", "nvtx", "momentum", "LPFOacol", "offset", "PID", "SPFO", "charge"};
 
-// TFile *file = new TFile("../../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h." + chiral + "." + prod_mode + ".KPiLPFO.dedxPi.PFOp15.LPFOp15_pNaN.tpc0.mix_uds.correctDist.all.root","READ");
 TFile *file = new TFile("../../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.KPiLPFO.dedxPi.PFOp15.LPFOp15_pNaN.all.root","READ");
+// TFile *file = new TFile("../../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500012.P2f_z_h.eR.pL.KPiLPFO.dedxPi.PFOp15.LPFOp15_pNaN.all.root","READ");
 
 void BinNormal(TH1F *h)
 {
@@ -93,6 +95,66 @@ void PrintEfficiency(TFile *file, vector<TH1F*> hvec)
 
 }
 
+void calcEff()
+{
+  unordered_map< TString, unordered_map< TString, unordered_map< TString, unordered_map< TString, TH1F* > > > > h1_cos_eff;  // [qq][GenReco][LPFO][hist]
+
+  for ( auto igenreco : gen_reco ){
+    for ( auto i_lmode : PFO_mode ){
+      for ( auto ih : heff_name ){
+        for( auto iqq : qq ){
+          TString dir_name = "/efficiency/";
+          TString hname = "h_" + iqq + "_" + igenreco + "_" + i_lmode + "_" + ih;
+          TH1F *h = (TH1F*) file->Get(iqq + dir_name + hname);
+          h1_cos_eff[iqq][igenreco][i_lmode][ih] = h;
+        }
+      }
+    }
+  }
+
+  unordered_map< TString, unordered_map< TString, Float_t > > eff_map; // [qq][cut]
+  for ( auto iqq : qq ){
+    Int_t total = 0;
+    for ( auto ih : heff_name ){
+
+      Int_t nevt = h1_cos_eff[iqq]["reco"][LPFO_mode][ih]->GetEntries();
+      if(ih=="nocut"){
+        eff_map[iqq][ih] = nevt;
+        total = nevt;
+      }else{
+        Float_t eff = (Float_t) nevt / (Float_t) total;
+        eff_map[iqq][ih] = eff;
+      }
+
+    } // end of heff
+
+  } // end of iqq
+
+  // output efficiencies
+
+  int cutno = 0;
+  for (auto ih : heff_name ){
+    if(!cutno){
+      cout << "       & ";
+    }else{
+      cout << "+ Cut " << cutno << " & ";
+    }
+    for (auto iqq : qq){
+      if(ih=="nocut"){
+        cout << std::setprecision (3) << iqq << " 100\\% (" << eff_map[iqq][ih] << ") & ";
+      }else{
+        cout << std::setprecision (3) << eff_map[iqq][ih] * 100. << "\\% & "; 
+      }
+    }
+    cout << "\\\\" << endl;
+    cutno++;
+  }
+
+
+
+}
+
+
 void total()
 {
   TGaxis::SetMaxDigits(3);
@@ -103,10 +165,10 @@ void total()
     for ( auto i_lmode : PFO_mode ){
       for ( auto ih : heff_name ){
         Int_t tmp = 0;
-        for( auto iprod_mode : prod_modes ){
+        for( auto iqq : qq ){
           TString dir_name = "/efficiency/";
-          TString hname = "h_" + iprod_mode + "_" + igenreco + "_" + i_lmode + "_" + ih;
-          TH1F *h = (TH1F*) file->Get(iprod_mode + dir_name + hname);
+          TString hname = "h_" + iqq + "_" + igenreco + "_" + i_lmode + "_" + ih;
+          TH1F *h = (TH1F*) file->Get(iqq + dir_name + hname);
           if(tmp==0) {
             TH1F *htmp = (TH1F*) h->Clone();
             htmp->SetName("h_" + igenreco + "_" + i_lmode + "_" + ih);
@@ -202,9 +264,14 @@ void partial()
     TCanvas *c_cos_Pi = new TCanvas("c_cos_Pi", "c_cos_Pi", 1500,400);
     c_cos_Pi->Divide(heff_name.size()-1,1);
     
+    Int_t NbfCut = h1_cos_eff["reco"][LPFO_mode]["nocut"]->GetEntries();
     for ( auto ih : heff_name ){
 
       TH1F * h_num = h1_cos_eff["reco"][LPFO_mode][ih];
+
+      Float_t total_ratio = (Float_t) h_num->GetEntries()/(Float_t) NbfCut;
+      if(!count) cout << std::setprecision (3) << h_num->GetEntries() << endl;
+      cout << std::setprecision (3) << total_ratio * 100 << "\\%" << endl;
       
       if (count) {
         
@@ -245,6 +312,9 @@ void partial()
 
 void efficiency_cos()
 {
-  partial();
+  // partial();
   // total();
+
+  calcEff();
+
 }
