@@ -9,8 +9,8 @@ using std::cout; using std::endl;
 using std::vector; using std::unordered_map;
 
 TString LPFO_mode = "Pi";
-// TString chiral = "eL.pR";
-TString chiral = "eR.pL";
+TString chiral = "eL.pR";
+// TString chiral = "eR.pL";
 
 TString inputDir = "../../rootfiles/merged/";
 array<TString,2> chirals   = {"eL.pR", "eR.pL"};
@@ -218,7 +218,7 @@ void pq_method_PiLPFO_add()
       TCanvas *cTotal = new TCanvas("cTotal","cTotal",800,800);
       TPad *padTotal = new TPad("padTotal","padTotal",0,0,1,1);
       StylePad(padTotal,0,0.15,0,0.17);
-      h_gen->GetYaxis()->SetRangeUser(0,800E3);
+      // h_gen->GetYaxis()->SetRangeUser(0,800E3);
       h_gen->SetTitle(";cos#theta;Entries");
       h_gen->Draw("h");
       h_reco->Draw("same");
@@ -246,7 +246,7 @@ void pq_method_PiLPFO_add()
       totalReco->SetFillStyle(0);
       TPad *padts_reco = new TPad("padts_reco","padts_reco",0,0,1,1);
       StylePad(padts_reco,0,0.15,0,0.17);
-      totalReco->GetYaxis()->SetRangeUser(0,800E3);
+      // totalReco->GetYaxis()->SetRangeUser(0,800E3);
       totalReco->SetTitle(";cos#theta;Entries");
       totalReco->Draw("h");
       hmap.at("uu").at("reco")->Draw("h same");
@@ -280,7 +280,7 @@ void pq_method_PiLPFO_add()
       totalGen->SetFillStyle(0);
       TPad *padts_gen = new TPad("padts_gen","padts_gen",0,0,1,1);
       StylePad(padts_gen,0,0.15,0,0.17);
-      totalGen->GetYaxis()->SetRangeUser(0,800E3);
+      // totalGen->GetYaxis()->SetRangeUser(0,800E3);
       totalGen->SetTitle(";cos#theta;Entries");
       totalGen->Draw("h");
       h_gen_uu->Draw("h same");
@@ -310,7 +310,7 @@ void pq_method_PiLPFO_add()
       f_reco_ratio->SetParNames("S","A");
       h_reco_LPFO_pq_cos_subhist->Fit("f_reco_ratio");
       cout << "Reco Chi2 / ndf = " << f_reco_ratio->GetChisquare() << " / " << f_reco_ratio->GetNDF() << endl;
-      h_reco_LPFO_pq_cos_subhist->GetYaxis()->SetRangeUser(0,800E3);
+      // h_reco_LPFO_pq_cos_subhist->GetYaxis()->SetRangeUser(0,800E3);
       c_ratio_fit->Clear();
 
       auto trp = new TRatioPlot(h_reco_LPFO_pq_cos_subhist);
@@ -334,7 +334,7 @@ void pq_method_PiLPFO_add()
       TCanvas  *c_ratio_genreco = new TCanvas("c_ratio_genreco","c_ratio_genreco",700,900);
       TH1F *rGen  = (TH1F*) h_gen->Clone();
       TH1F *rReco = (TH1F*) h_reco->Clone();
-      rReco->GetYaxis()->SetRangeUser(0,800E3);
+      // rReco->GetYaxis()->SetRangeUser(0,800E3);
       rReco->SetTitle(";cos#theta;Entries");
 
       auto trp_genreco = new TRatioPlot(rReco,rGen);
