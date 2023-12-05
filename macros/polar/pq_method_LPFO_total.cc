@@ -17,14 +17,19 @@ Float_t TopRange = 550;
 
 TString inputDir = "../../rootfiles/merged/";
 array<TString,2> chirals   = {"eL.pR", "eR.pL"};
-// array<TString,4> processes = {"P2f_z_h", "P4f_ww_h", "P4f_zz_h", "Pqqh"};
 array<TString,4> processes = {"Pqqh", "P4f_zz_h", "P4f_ww_h", "P2f_z_h"};
+// array<TString,1> processes = {"P2f_z_h"};
 
-// array<TString,6> qqbars    = {"rr", "bb", "cc", "ss", "dd", "uu"};
-array<TString,6> qqbars    = {"rr", "bb", "cc", "dd", "uu", "ss"};
+// array<TString,6> qqbars    = {"rr", "bb", "cc", "ss", "dd", "uu"}; // pion
+array<TString,6> qqbars    = {"rr", "bb", "cc", "dd", "uu", "ss"}; // kaon ss
+// array<TString,5> qqbars    = {"rr", "bb", "cc", "dd", "uu"}; // kaon uu/dd
+// array<TString,1> qqbars    = {"ss"};
 
 array<TString,4> leg_processes = {"P2f_z_h", "P4f_ww_h", "P4f_zz_h", "Pqqh"};
-array<TString,6> leg_qqbars    = {"dd", "uu", "ss", "cc", "bb", "rr"};
+// array<TString,1> leg_processes = {"P2f_z_h"};
+array<TString,6> leg_qqbars    = {"dd", "uu", "ss", "cc", "bb", "rr"}; // normal
+// array<TString,5> leg_qqbars    = {"dd", "uu", "cc", "bb", "rr"}; // kaon uu/dd
+// array<TString,1> leg_qqbars    = {"ss"};
 
 
 
@@ -240,10 +245,6 @@ void pq_method_LPFO_total()
             h->SetTitle(histName);
             hs_reco.at(chiral)->Add(h);
             h_reco.at(chiral)->Add(h);
-
-            cout << "====== " << category << " ======\n";
-            cout << h->Integral(1,25) << endl;
-
           }
         }else{
           TH1F *h = hmap[process][chiral]["bg"]["reco"];
@@ -284,8 +285,22 @@ void pq_method_LPFO_total()
       gStyle->SetPalette(55);
       // hs_reco.at(chiral)->Draw("h plc nostack");
       hs_reco.at(chiral)->Draw("h plc");
-      leg_reco.at(chiral)->Draw("same");
       hs_reco.at(chiral)->SetMaximum(TopRange);
+      TF1 * f_bg = new TF1("f_bg","[0]*(1+x*x)+[1]*x",-1,1);
+      double bgpars[2];
+      if(chiral=="eL.pR"){
+        bgpars[0]=43.9821;
+        bgpars[1]=-31.8062;
+      }else{
+        bgpars[0]=16.353;
+        bgpars[1]=-22.4459;
+      }
+      f_bg->SetParameters(bgpars);
+      f_bg->SetLineWidth(4);
+      f_bg->SetLineColor(kBlack);
+      f_bg->Draw("same");
+      leg_reco.at(chiral)->AddEntry(f_bg,"BG fit estimation","l");
+      leg_reco.at(chiral)->Draw("same");
 
 
 
@@ -300,9 +315,21 @@ void pq_method_LPFO_total()
       f_total->SetParNames("S","A");
       h_reco.at(chiral)->Fit("f_total","MNRS");
       cout << "Gen Chi2 / ndf = " << f_total->GetChisquare() << " / " << f_total->GetNDF() << endl;
+
+      TF1 * f_total_all = new TF1("f_total","[0]*(1+x*x)+[1]*x",-1,1);
+      double fitpars[2];
+      f_total->GetParameters(fitpars);
+      f_total_all->SetParameters(fitpars);
+      // cout << fitpars[0] << "," << fitpars[1] << endl;
+
       f_total->SetLineWidth(3);
       f_total->SetLineColor(kRed);
+      f_total_all->SetLineWidth(3);
+      f_total_all->SetLineColor(kRed);
+      f_total_all->SetLineStyle(2);
+
       f_total->Draw("same");
+      f_total_all->Draw("same");
 
       TLegend *leg = new TLegend(0.56,0.71,0.86,0.85);
       leg->SetMargin(0.2);
