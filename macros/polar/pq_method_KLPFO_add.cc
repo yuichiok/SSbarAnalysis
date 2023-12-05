@@ -9,8 +9,8 @@ using std::cout; using std::endl;
 using std::vector; using std::unordered_map;
 
 TString LPFO_mode = "K";
-TString chiral = "eL.pR";
-// TString chiral = "eR.pL";
+// TString chiral = "eL.pR";
+TString chiral = "eR.pL";
 
 TString inputDir = "../../rootfiles/merged/";
 array<TString,2> chirals   = {"eL.pR", "eR.pL"};
@@ -226,7 +226,8 @@ void pq_method_KLPFO_add()
 
 
     // Fitting
-    unordered_map<TString, TH1F*> reco_gen_map_fit = main_pq(file_map["P2f_z_h"]["eL.pR"], "ss");
+    unordered_map<TString, TH1F*> reco_gen_map_fit = main_pq(file_map["P2f_z_h"]["eR.pL"], "ss");
+    // unordered_map<TString, TH1F*> reco_gen_map_fit = main_pq(file_map["P2f_z_h"]["eR.pL"], "ss");
     TH1F *h_gen_q_qcos     = (TH1F*) reco_gen_map_fit.at("gen")->Clone();
     TH1F *h_reco_Pi_pq_cos = (TH1F*) reco_gen_map_fit.at("reco")->Clone();
     Normalize(h_gen_q_qcos);
@@ -254,10 +255,27 @@ void pq_method_KLPFO_add()
     TPad  *pad_polar = new TPad("pad_polar", "pad_polar",0,0,1,1);
     StylePad(pad_polar,0,0.12,0,0.15);
 
-    h_reco_Pi_pq_cos->SetTitle(";cos#theta_{#pi^{-}};a.u.");
+    h_reco_Pi_pq_cos->SetTitle(";cos#theta;Entries (norm.)");
+    h_reco_Pi_pq_cos->GetYaxis()->SetRangeUser(0,0.07);
     h_reco_Pi_pq_cos->Draw("");
     h_gen_q_qcos->Draw("hsame");
+
+    f_gen->SetLineWidth(4);
+    f_gen->SetLineColor(kRed);
+    f_reco->SetLineWidth(4);
+    f_reco->SetLineColor(kBlack);
+    f_gen->Draw("same");
     f_reco->Draw("same");
+
+    TLegend *leg = new TLegend(0.59,0.65,0.89,0.85);
+    leg->SetMargin(0.4);
+    leg->SetBorderSize(0);
+    leg->SetFillStyle(0);
+    leg->AddEntry(h_gen_q_qcos,"Parton level","f");
+    leg->AddEntry(h_reco_Pi_pq_cos,"Data","le");
+    leg->AddEntry(f_gen,"Fit parton level","l");
+    leg->AddEntry(f_reco,"Fit data","l");
+    leg->Draw("same");
 
 
   }
