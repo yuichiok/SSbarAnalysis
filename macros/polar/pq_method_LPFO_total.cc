@@ -17,18 +17,20 @@ Float_t TopRange = 550;
 
 TString inputDir = "../../rootfiles/merged/";
 array<TString,2> chirals   = {"eL.pR", "eR.pL"};
-array<TString,4> processes = {"Pqqh", "P4f_zz_h", "P4f_ww_h", "P2f_z_h"};
-// array<TString,1> processes = {"P2f_z_h"};
+array<TString,4> processes = {"Pqqh", "P4f_zz_h", "P4f_ww_h", "P2f_z_h"}; // (kaon uu/dd, kaon ss, pion)
+// array<TString,1> processes = {"P2f_z_h"}; // (kaon uu/dd 2)
 
 // array<TString,6> qqbars    = {"rr", "bb", "cc", "ss", "dd", "uu"}; // pion
-array<TString,6> qqbars    = {"rr", "bb", "cc", "dd", "uu", "ss"}; // kaon ss
-// array<TString,5> qqbars    = {"rr", "bb", "cc", "dd", "uu"}; // kaon uu/dd
+// array<TString,6> qqbars    = {"rr", "bb", "cc", "dd", "uu", "ss"}; // kaon ss
+array<TString,5> qqbars    = {"rr", "bb", "cc", "dd", "uu"}; // kaon uu/dd
+// array<TString,2> qqbars       = {"dd", "uu"}; // kaon uu/dd 2
 // array<TString,1> qqbars    = {"ss"};
 
-array<TString,4> leg_processes = {"P2f_z_h", "P4f_ww_h", "P4f_zz_h", "Pqqh"};
-// array<TString,1> leg_processes = {"P2f_z_h"};
-array<TString,6> leg_qqbars    = {"dd", "uu", "ss", "cc", "bb", "rr"}; // normal
-// array<TString,5> leg_qqbars    = {"dd", "uu", "cc", "bb", "rr"}; // kaon uu/dd
+array<TString,4> leg_processes    = {"P2f_z_h", "P4f_ww_h", "P4f_zz_h", "Pqqh"}; // (kaon uu/dd, kaon ss, pion)
+// array<TString,1> leg_processes = {"P2f_z_h"}; // (kaon uu/dd2 )
+// array<TString,6> leg_qqbars    = {"dd", "uu", "ss", "cc", "bb", "rr"}; // normal
+array<TString,5> leg_qqbars    = {"dd", "uu", "cc", "bb", "rr"}; // kaon uu/dd
+// array<TString,2> leg_qqbars       = {"dd", "uu"}; // kaon uu/dd 2
 // array<TString,1> leg_qqbars    = {"ss"};
 
 
