@@ -72,12 +72,11 @@ def main():
       filename = f"rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I{processID}.{process}.{chiralDot}.KPiLPFO.dedxPi.PFOp15.LPFOp15_pNaN.all.root"
       files[prochiTuple] = TFile.Open(os.path.join(inDir, filename))
 
-  canvases = {}
 
   for LPFO_mode in LPFO_modes:
 
-    canvases[LPFO_mode] = TCanvas(f"{LPFO_mode}_gen_reco_N_cos",f"{LPFO_mode}_gen_reco_N_cos",800,800)
-    canvases[LPFO_mode].cd()
+    c_gen_reco_N_cos = TCanvas(f"c_{LPFO_mode}_gen_reco_N_cos",f"{LPFO_mode}_gen_reco_N_cos",800,800)
+    c_gen_reco_N_cos.cd()
     h_gen_N_cos_sum  = TH1F(f"h_{LPFO_mode}_gen_N_cos_sum",";cos#theta;Entries",100,-1,1)
     h_reco_N_cos_sum = TH1F(f"h_{LPFO_mode}_reco_N_cos_sum",";cos#theta;Entries",100,-1,1)
 
@@ -111,8 +110,19 @@ def main():
     legend.AddEntry(h_reco_N_cos_sum,"Number of reconstructed PFO","l")
     legend.Draw("same")
     pad.Draw()
-    canvases[LPFO_mode].Draw()
-    canvases[LPFO_mode].SaveAs(f"plots/c_{LPFO_mode}.pdf")
+    c_gen_reco_N_cos.Draw()
+    c_gen_reco_N_cos.SaveAs(f"plots/c_{LPFO_mode}.pdf")
+
+    c_gen_reco_cos_ratio = TCanvas(f"c_{LPFO_mode}_gen_reco_cos_ratio",f"{LPFO_mode}_gen_reco_cos_ratio",800,800)
+    p_gen_reco_cos_ratio = TPad(f"p_{LPFO_mode}_gen_reco_cos_ratio", f"p_{LPFO_mode}_gen_reco_cos_ratio", 0, 0, 1, 1)
+    stylePad(p_gen_reco_cos_ratio,0.1,0.1,0.15,0.1)
+    heff = h_reco_N_cos_sum.Clone()
+    heff.Divide(h_gen_N_cos_sum)
+    heff.Draw("")
+    p_gen_reco_cos_ratio.Draw()
+    c_gen_reco_cos_ratio.Draw()
+    c_gen_reco_cos_ratio.SaveAs(f"plots/c_{LPFO_mode}_gen_reco_cos_ratio.pdf")
+
 
 
 
