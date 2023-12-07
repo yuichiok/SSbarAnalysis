@@ -14,6 +14,7 @@ TString chiral    = "eL.pR";
 TString LPFO_mode = "K";
 // TString qq[3] = {"uu","dd","ss"};
 TString qq[5] = {"dd","uu","ss","cc","bb"};
+// TString qq[2] = {"dd","uu"};
 // TString prod_modes[1] = {"ss"};
 
 vector<TString> gen_reco  = {"gen","reco"};
@@ -184,10 +185,12 @@ void total()
 
   int count = 0;
   TH1F * h_denom;
-  TCanvas *c_eff_Pi = new TCanvas("c_eff_Pi", "c_eff_Pi", 1500,400);
-  c_eff_Pi->Divide(heff_name.size()-1,1);
-  TCanvas *c_cos_Pi = new TCanvas("c_cos_Pi", "c_cos_Pi", 1500,400);
-  c_cos_Pi->Divide(heff_name.size()-1,1);
+  TCanvas *c_eff_Pi = new TCanvas("c_eff_Pi", "c_eff_Pi", 1200,1200);
+  // c_eff_Pi->Divide(heff_name.size()-1,1);
+  c_eff_Pi->Divide(3,3);
+  TCanvas *c_cos_Pi = new TCanvas("c_cos_Pi", "c_cos_Pi", 1200,1200);
+  // c_cos_Pi->Divide(heff_name.size()-1,1);
+  c_cos_Pi->Divide(3,3);
   
   for ( auto ih : heff_name ){
 
@@ -196,7 +199,13 @@ void total()
     if (count) {
       
       TH1F *h_eff = plotEfficiency(h_num, h_denom);
-      TString hname = "after " + ih + " selection";
+      TString hname = "After " + ih + " selection (Cut " + count + ")";
+      if(count==7) {
+        // cutid = count+1;
+        hname = TString::Format("After K^{-} PID selection (Cut %db)",count);
+      }
+
+      TString axis = TString::Format(";cos#theta;#epsilon_{%d}",count);
       
       TH1F *h_num_norm   = (TH1F*) h_num->Clone();
       TH1F *h_denom_norm = (TH1F*) h_denom->Clone();
@@ -204,13 +213,13 @@ void total()
       Normalize(h_denom_norm);
 
       c_eff_Pi->cd(count);
-      StylePad(gPad,0,0,0.17,0.1);
+      StylePad(gPad,0,0,0.1,0.1);
       StyleHist(h_eff,kBlue);
-      h_eff->SetTitle(hname);
+      h_eff->SetTitle(hname+axis);
       h_eff->Draw("h");
 
       c_cos_Pi->cd(count);
-      h_denom_norm->SetTitle(hname);
+      h_denom_norm->SetTitle(hname+axis);
       h_denom_norm->Draw("h");
       h_num_norm->Draw("hsame");
 
@@ -276,7 +285,7 @@ void partial()
       if (count) {
         
         TH1F *h_eff = plotEfficiency(h_num, h_denom);
-        TString hname = "after " + ih + " selection";
+        TString hname = "After " + ih + " selection";
         
         TH1F *h_num_norm   = (TH1F*) h_num->Clone();
         TH1F *h_denom_norm = (TH1F*) h_denom->Clone();
@@ -313,8 +322,8 @@ void partial()
 void efficiency_cos()
 {
   // partial();
-  // total();
+  total();
 
-  calcEff();
+  // calcEff();
 
 }
