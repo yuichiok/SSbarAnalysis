@@ -11,7 +11,7 @@ using std::vector; using std::unordered_map;
 
 TString prod_mode = "uu";
 TString chiral    = "eL.pR";
-TString LPFO_mode = "K";
+TString LPFO_mode = "Pi";
 // TString qq[3] = {"uu","dd","ss"};
 TString qq[5] = {"dd","uu","ss","cc","bb"};
 // TString qq[2] = {"dd","uu"};
@@ -22,8 +22,23 @@ vector<TString> PFO_mode  = {"K","Pi"};
 // vector<TString> heff_name = {"nocut","momentum", "tpc_hits", "offset", "PID", "SPFO", "charge"};
 vector<TString> heff_name = {"nocut", "btag", "ctag", "nvtx", "momentum", "LPFOacol", "offset", "PID", "SPFO", "charge"};
 
+array<TString,2> chirals   = {"eL.pR", "eR.pL"};
+array<TString,1> processes = {"P2f_z_h"};
+
+
 TFile *file = new TFile("../../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.eL.pR.KPiLPFO.dedxPi.PFOp15.LPFOp15_pNaN.all.root","READ");
 // TFile *file = new TFile("../../rootfiles/merged/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500012.P2f_z_h.eR.pL.KPiLPFO.dedxPi.PFOp15.LPFOp15_pNaN.all.root","READ");
+
+unordered_map<pair<TString,TString>,pair<Int_t,Int_t>, hash_pair> production = {
+    {{"P2f_z_h", "eL.pR"}, {500010,4994}},
+    {{"P2f_z_h", "eR.pL"}, {500012,4994}},
+    {{"P4f_ww_h", "eL.pR"}, {500066,4996}},
+    {{"P4f_ww_h", "eR.pL"}, {500068,5116}},
+    {{"P4f_zz_h", "eL.pR"}, {500062,5052}},
+    {{"P4f_zz_h", "eR.pL"}, {500064,5109}},
+    {{"Pqqh", "eL.pR"}, {402011,1457}},
+    {{"Pqqh", "eR.pL"}, {402012,2278}},
+};
 
 void BinNormal(TH1F *h)
 {
@@ -151,9 +166,58 @@ void calcEff()
     cutno++;
   }
 
-
-
 }
+
+// DO IT WHEN THERE IS TIME.
+// unordered_map< TString, unordered_map< TString, unordered_map< TString, TH1F* > > > getCosEff(TFile *ifile)
+// {
+//   unordered_map< TString, unordered_map< TString, unordered_map< TString, TH1F* > > > h1_cos_eff;  // [GenReco][LPFO][hist]
+
+//   for ( auto igenreco : gen_reco ){
+//     for ( auto i_lmode : PFO_mode ){
+//       for ( auto ih : heff_name ){
+//         Int_t tmp = 0;
+//         for( auto iqq : qq ){
+//           TString dir_name = "/efficiency/";
+//           TString hname = "h_" + iqq + "_" + igenreco + "_" + i_lmode + "_" + ih;
+//           TH1F *h = (TH1F*) ifile->Get(iqq + dir_name + hname);
+//           if(tmp==0) {
+//             TH1F *htmp = (TH1F*) h->Clone();
+//             htmp->SetName("h_" + igenreco + "_" + i_lmode + "_" + ih);
+//             h1_cos_eff[igenreco][i_lmode][ih] = htmp;
+//           }else{
+//             h1_cos_eff[igenreco][i_lmode][ih]->Add(h);
+//           }
+//           tmp++;
+//         }
+//       }
+//     }
+//   }
+
+// }
+
+// void eff_chiral()
+// {
+//   TString inputDir = "../../rootfiles/merged/";
+//   unordered_map<TString, unordered_map<TString, TFile*> > file_map;
+//   for( auto process : processes ){
+//     for( auto chiral : chirals ){
+//       Int_t processID = production.at({process,chiral}).first;
+//       cout << process << " " << chiral << " " << processID << endl;
+//       TString filename = inputDir + "rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I" + processID + "." + process + "." + chiral + ".KPiLPFO.dedxPi.PFOp15.LPFOp15_pNaN.all.root";
+//       TFile *file = new TFile(filename,"READ");
+//       if( !file->IsOpen() ) throw std::runtime_error("File not found");
+//       file_map[process][chiral] = file;
+//     }
+//   }
+
+
+
+
+
+// }
+
+
 
 
 void total()
@@ -325,5 +389,6 @@ void efficiency_cos()
   total();
 
   // calcEff();
+  // eff_chiral();
 
 }
