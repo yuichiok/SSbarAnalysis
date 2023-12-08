@@ -10,7 +10,7 @@ using std::vector; using std::array; using std::unordered_map;
 
 // TString prod_mode = "uu";
 // TString chiral    = "eR.pL";
-TString LPFO_mode = "K";
+TString LPFO_mode = "Pi";
 // Float_t TopRange = 700;
 Float_t TopRange = 550;
 // Float_t TopRange = 0.7;
@@ -225,11 +225,13 @@ void pq_method_LPFO_ud()
 
     unordered_map<TString, THStack*> hs_reco;
     unordered_map<TString, TH1F*>    h_reco;
+    unordered_map<TString, TH1F*>    h_gen;
     unordered_map<TString, TLegend*> leg_reco;
 
     for( auto chiral : chirals ){
       hs_reco[chiral] = new THStack("hs_reco_" + chiral,";cos#theta;Entries / Int. Lumi.");
       h_reco[chiral]  = new TH1F("h_reco_" + chiral,";cos#theta;Entries / Int. Lumi.", 100,-1,1);
+      h_gen[chiral]  = new TH1F("h_gen_" + chiral,";cos#theta;Entries / Int. Lumi.", 100,-1,1);
       leg_reco[chiral] = new TLegend(0.59,0.65,0.89,0.85);
       leg_reco[chiral]->SetMargin(0.4);
       leg_reco[chiral]->SetBorderSize(0);
@@ -240,23 +242,29 @@ void pq_method_LPFO_ud()
       for( auto chiral : chirals ){
         if( process=="P2f_z_h" ){
           for( auto category : qqbars ){
-            TH1F *h = hmap[process][chiral][category]["reco"];
-            h->GetYaxis()->SetRangeUser(0,TopRange);
-            h->SetFillStyle(0);
+            TH1F *fh_reco = hmap[process][chiral][category]["reco"];
+            TH1F *fh_gen  = hmap[process][chiral][category]["gen"];
+            fh_reco->GetYaxis()->SetRangeUser(0,TopRange);
+            fh_reco->SetFillStyle(0);
             TString histName = histLabel(process,category);
-            h->SetTitle(histName);
-            hs_reco.at(chiral)->Add(h);
-            h_reco.at(chiral)->Add(h);
+            fh_reco->SetTitle(histName);
+            fh_gen->SetTitle(histName);
+            hs_reco.at(chiral)->Add(fh_reco);
+            h_reco.at(chiral)->Add(fh_reco);
+            h_gen.at(chiral)->Add(fh_gen);
           }
         }else{
-          TH1F *h = hmap[process][chiral]["bg"]["reco"];
-          h->GetYaxis()->SetRangeUser(0,TopRange);
-          h->SetFillStyle(0);
+          TH1F *fh_reco = hmap[process][chiral]["bg"]["reco"];
+          TH1F *fh_gen  = hmap[process][chiral]["bg"]["gen"];
+          fh_reco->GetYaxis()->SetRangeUser(0,TopRange);
+          fh_reco->SetFillStyle(0);
           TString histName = histLabel(process,"bg");
-          h->SetTitle(histName);
-          h->SetLineStyle(7);
-          hs_reco.at(chiral)->Add(h);
-          h_reco.at(chiral)->Add(h);
+          fh_reco->SetTitle(histName);
+          fh_gen->SetTitle(histName);
+          fh_reco->SetLineStyle(7);
+          hs_reco.at(chiral)->Add(fh_reco);
+          h_reco.at(chiral)->Add(fh_reco);
+          h_gen.at(chiral)->Add(fh_gen);
         }
       }
     }
@@ -311,7 +319,9 @@ void pq_method_LPFO_ud()
       TPad *pad_h_reco  = new TPad("pad_h_reco_" + chiral, "pad_h_reco_" + chiral,0,0,1,1);
       StylePad(pad_h_reco,0,0.12,0,0.15);
       h_reco.at(chiral)->SetLineWidth(3);
-      h_reco.at(chiral)->Draw("");
+      h_gen.at(chiral)->SetLineWidth(3);
+      h_gen.at(chiral)->Draw("h");
+      h_reco.at(chiral)->Draw("same");
 
       TF1 * f_total = new TF1("f_total","[0]*(1+x*x)+[1]*x",-0.6,0.6);
       f_total->SetParNames("S","A");
