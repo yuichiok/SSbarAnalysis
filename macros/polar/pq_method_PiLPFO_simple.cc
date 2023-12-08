@@ -9,15 +9,13 @@ using std::cout; using std::endl;
 using std::vector; using std::unordered_map;
 
 TString LPFO_mode = "Pi";
-TString chiral = "eL.pR";
+TString ichiral = "eL.pR";
+TString qq = "uu";
 // TString chiral = "eR.pL";
 
 TString inputDir = "../../rootfiles/merged/";
 array<TString,2> chirals   = {"eL.pR", "eR.pL"};
-// array<TString,4> processes = {"P2f_z_h", "P4f_ww_h", "P4f_zz_h", "Pqqh"};
 array<TString,1> processes = {"P2f_z_h"};
-// array<TString,6> qqbars    = {"dd", "uu", "ss", "cc", "bb", "rr"};
-array<TString,3> qqbars    = {"dd", "uu", "ss"};
 
 unordered_map<pair<TString,TString>,pair<Int_t,Int_t>, hash_pair> production = {
     {{"P2f_z_h", "eL.pR"}, {500010,4994}},
@@ -30,7 +28,7 @@ unordered_map<pair<TString,TString>,pair<Int_t,Int_t>, hash_pair> production = {
     {{"Pqqh", "eR.pL"}, {402012,2278}},
 };
 
-Float_t fitRange = 0.8;
+Float_t fitRange = 0.6;
 
 void BinNormal(TH1F *h)
 {
@@ -84,8 +82,10 @@ unordered_map<TString, TH1F*> main_pq(TFile* file, TString prodMode)
   {
     TH1F* h_reco_LPFO_scos_eff = efficiencyCorrection(h_reco_LPFO_scos,LPFO_mode,file,prodMode);
     TH1F* h_reco_LPFO_qcos_eff = efficiencyCorrection(h_reco_LPFO_qcos,LPFO_mode,file,prodMode);
-    h_reco_LPFO_scos_eff_corr = resolutionCorrection(h_reco_LPFO_scos_eff,LPFO_mode,file,prodMode);
-    h_reco_LPFO_qcos_eff_corr = resolutionCorrection(h_reco_LPFO_qcos_eff,LPFO_mode,file,prodMode);
+    // h_reco_LPFO_scos_eff_corr = resolutionCorrection(h_reco_LPFO_scos_eff,LPFO_mode,file,prodMode);
+    // h_reco_LPFO_qcos_eff_corr = resolutionCorrection(h_reco_LPFO_qcos_eff,LPFO_mode,file,prodMode);
+    h_reco_LPFO_scos_eff_corr = (TH1F*) h_reco_LPFO_scos_eff->Clone();
+    h_reco_LPFO_qcos_eff_corr = (TH1F*) h_reco_LPFO_qcos_eff->Clone();
 
   }else{
     h_reco_LPFO_scos_eff_corr = (TH1F*) h_reco_LPFO_scos->Clone();
@@ -98,8 +98,11 @@ unordered_map<TString, TH1F*> main_pq(TFile* file, TString prodMode)
   {
     TH1F* h_acc_PiPi_cos_eff = efficiencyCorrection(h_acc_PiPi_cos,LPFO_mode,file,prodMode);
     TH1F* h_rej_PiPi_cos_eff = efficiencyCorrection(h_rej_PiPi_cos,LPFO_mode,file,prodMode);
-    h_acc_PiPi_cos_eff_corr = resolutionCorrection(h_acc_PiPi_cos_eff,LPFO_mode,file,prodMode);
-    h_rej_PiPi_cos_eff_corr = resolutionCorrection(h_rej_PiPi_cos_eff,LPFO_mode,file,prodMode);
+    // h_acc_PiPi_cos_eff_corr = resolutionCorrection(h_acc_PiPi_cos_eff,LPFO_mode,file,prodMode);
+    // h_rej_PiPi_cos_eff_corr = resolutionCorrection(h_rej_PiPi_cos_eff,LPFO_mode,file,prodMode);
+    h_acc_PiPi_cos_eff_corr = (TH1F*) h_acc_PiPi_cos_eff->Clone();
+    h_rej_PiPi_cos_eff_corr = (TH1F*) h_rej_PiPi_cos_eff->Clone();
+
   }else{
     h_acc_PiPi_cos_eff_corr = (TH1F*) h_acc_PiPi_cos->Clone();
     h_rej_PiPi_cos_eff_corr = (TH1F*) h_rej_PiPi_cos->Clone();
@@ -136,7 +139,7 @@ unordered_map<TString, TH1F*> main_pq(TFile* file, TString prodMode)
 
 }
 
-void pq_method_KLPFO_add()
+void pq_method_PiLPFO_simple()
 {
   gStyle->SetOptStat(0);
   try
@@ -153,13 +156,31 @@ void pq_method_KLPFO_add()
       }
     }
 
-    TH1F *h_gen  = (TH1F*) file_map["P2f_z_h"][chiral]->Get("ss/gen/h_ss_qcos");
-    TH1F *h_reco = (TH1F*) file_map["P2f_z_h"][chiral]->Get("ss/cos/h_ss_" + LPFO_mode + "_qcos");
-    StyleHist(h_gen,kRed+2);
-    StyleHist(h_reco,kRed+2);
+    unordered_map<TString, TH1F*> h_map = main_pq(file_map["P2f_z_h"][ichiral], qq);
+    TH1F* h_gen = (TH1F*) h_map.at("gen")->Clone();
+    TH1F* h_reco = (TH1F*) h_map.at("reco")->Clone();
+
+    StyleHist(h_gen,kGreen+2);
+    StyleHist(h_reco,kBlue+2);
     Normalize(h_gen);
     Normalize(h_reco);
     h_reco->SetFillStyle(0);
+
+    // Fitting
+    TF1 * f_gen = new TF1("f_gen","[0]*(1+x*x)+[1]*x",-fitRange,fitRange);
+    f_gen->SetParNames("S","A");
+    h_gen->Fit("f_gen","MNRS");
+    f_gen->SetLineColor(kGreen+2);
+    cout << "Gen Chi2 / ndf = " << f_gen->GetChisquare() << " / " << f_gen->GetNDF() << endl;
+
+    TF1 * f_reco = new TF1("f_reco","[0]*(1+x*x)+[1]*x",-fitRange,fitRange);
+    f_reco->SetParNames("S","A");
+    h_reco->Fit("f_reco","MNRS");
+    f_reco->SetLineColor(kRed);
+    cout << "Reco Chi2 / ndf = " << f_reco->GetChisquare() << " / " << f_reco->GetNDF() << endl;
+
+
+
 
     TLegend *legend = new TLegend(0.60,0.75,0.88,0.88);
     legend->AddEntry(h_gen,"Parton level","f");
@@ -172,7 +193,37 @@ void pq_method_KLPFO_add()
     h_gen->SetTitle(";cos#theta;Entries");
     h_gen->Draw("h");
     h_reco->Draw("e same");
+    f_reco->Draw("same");
+    f_gen->Draw("same");
+
     legend->Draw("same");
+
+
+    // Draw polar angle reco/gen ratio
+      TCanvas  *c_ratio_genreco = new TCanvas("c_ratio_genreco","c_ratio_genreco",700,900);
+      TH1F *rGen  = (TH1F*) h_gen->Clone();
+      TH1F *rReco = (TH1F*) h_reco->Clone();
+      // rReco->GetYaxis()->SetRangeUser(0,800E3);
+      rReco->SetTitle(";cos#theta;Entries");
+
+      auto trp_genreco = new TRatioPlot(rReco,rGen);
+      trp_genreco->SetGraphDrawOpt("P");
+      trp_genreco->SetSeparationMargin(0.0);
+      trp_genreco->Draw();
+      trp_genreco->GetLowerRefYaxis()->SetTitle("Data / MC");
+      trp_genreco->GetLowerRefGraph()->SetMinimum(0.5);
+      trp_genreco->GetLowerRefGraph()->SetMaximum(1.5);
+      trp_genreco->GetLowerRefYaxis()->SetLabelSize(0.02);
+
+      trp_genreco->GetUpperPad()->cd();
+      TLegend *leg_trp_genreco = new TLegend(0.51,0.74,0.89,0.89);
+      leg_trp_genreco->SetMargin(0.4);
+      leg_trp_genreco->SetLineColor(0);
+      leg_trp_genreco->AddEntry(rReco,"Reconstructed #pi^{-}","l");
+      leg_trp_genreco->AddEntry(rGen,"Generated #pi^{-}","l");
+      leg_trp_genreco->Draw();
+
+
 
 
   }
