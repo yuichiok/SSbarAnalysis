@@ -12,7 +12,7 @@ using std::vector; using std::unordered_map;
 TString LPFO_mode = "K";
 TString ichiral = "eL.pR";
 // TString ichiral = "eR.pL";
-TString qq = "cc";
+TString qq = "ss";
 // TString chiral = "eR.pL";
 
 TString inputDir = "../../rootfiles/merged/";
@@ -164,8 +164,8 @@ void pq_method_PiLPFO_simple()
 
     StyleHist(h_gen,kGreen+2);
     StyleHist(h_reco,kBlue+2);
-    // Normalize(h_gen);
-    // Normalize(h_reco);
+    Normalize(h_gen);
+    Normalize(h_reco);
     h_reco->SetFillStyle(0);
 
     // Fitting
@@ -184,19 +184,23 @@ void pq_method_PiLPFO_simple()
 
 
 
-    TLegend *legend = new TLegend(0.60,0.75,0.88,0.88);
+    // TLegend *legend = new TLegend(0.60,0.75,0.88,0.88);
+    TLegend *legend = new TLegend(0.2,0.74,0.5,0.84);
+    legend->SetMargin(0.4);
+    legend->SetLineColor(0);
     legend->AddEntry(h_gen,"Parton level","f");
     legend->AddEntry(h_reco,"Reconstructed","le");
 
 
     TCanvas *c_signal = new TCanvas("c_signal","c_signal",800,800);
     TPad    *p_signal = new TPad("p_signal","p_signal",0,0,1,1);
-    StylePad(p_signal,0.1,0.1,0.08,0.155);
+    StylePad(p_signal,0,0.15,0,0.17);
     h_gen->SetTitle(";cos#theta;Entries");
+    h_gen->GetYaxis()->SetRangeUser(0,0.07);
     h_gen->Draw("h");
     h_reco->Draw("e same");
-    f_reco->Draw("same");
-    f_gen->Draw("same");
+    // f_reco->Draw("same");
+    // f_gen->Draw("same");
 
     legend->Draw("same");
 

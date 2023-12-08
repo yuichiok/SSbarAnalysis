@@ -9,8 +9,8 @@ using std::cout; using std::endl;
 using std::vector; using std::unordered_map;
 
 TString LPFO_mode = "Pi";
-// TString chiral = "eL.pR";
-TString chiral = "eR.pL";
+TString chiral = "eL.pR";
+// TString chiral = "eR.pL";
 
 TString inputDir = "../../rootfiles/merged/";
 array<TString,2> chirals   = {"eL.pR", "eR.pL"};
@@ -110,7 +110,7 @@ unordered_map<TString, TH1F*> main_pq(TFile* file, TString prodMode)
     h_rej_PiPi_cos_eff_corr = (TH1F*) h_rej_PiPi_cos->Clone();
   }
 
-  StyleHist(h_gen_q_qcos,kGreen+1);
+  StyleHist(h_gen_q_qcos,kGreen+2);
 
   const Int_t nbins = h_reco_LPFO_scos_eff_corr->GetNbinsX();
 
@@ -304,7 +304,7 @@ void pq_method_PiLPFO_add()
       h_gen_dd->Scale( recogenRatio );
       totalGen->Scale( recogenRatio );
 
-      StyleHist(totalGen,kGreen+1);
+      StyleHist(totalGen,kGreen+2);
       StyleHist(h_gen_uu,kViolet);
       StyleHist(h_gen_dd,kRed);
       totalGen->SetFillStyle(0);
