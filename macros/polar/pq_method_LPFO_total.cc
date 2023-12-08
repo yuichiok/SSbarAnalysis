@@ -249,6 +249,12 @@ void pq_method_LPFO_total()
             h->SetFillStyle(0);
             TString histName = histLabel(process,category);
             h->SetTitle(histName);
+
+            if(category=="uu"||category=="dd"){
+              Float_t eff = (Float_t) hmap[process][chiral][category]["gen"]->Integral() / (Float_t) h->Integral();
+              h->Scale(eff);
+            }
+
             hs_reco.at(chiral)->Add(h);
             h_reco.at(chiral)->Add(h);
           }
@@ -286,7 +292,7 @@ void pq_method_LPFO_total()
     for( auto chiral : chirals ){
       TCanvas *c_hs_reco = new TCanvas("c_hs_reco_" + chiral,"c_hs_reco_" + chiral,900,900);
       TPad *pad_hs_reco = new TPad("pad_hs_reco_" + chiral, "pad_hs_reco_" + chiral,0,0,1,1);
-      StylePad(pad_hs_reco,0,0.12,0,0.15);
+      StylePad(pad_hs_reco,0,0.15,0,0.17);
       gStyle->SetHistTopMargin(0);
       gStyle->SetPalette(55);
       hs_reco.at(chiral)->Draw("h plc nostack");
@@ -311,9 +317,9 @@ void pq_method_LPFO_total()
 
 
       // Fit
-      TCanvas *c_h_reco = new TCanvas("c_h_reco_" + chiral,"c_h_reco_" + chiral,900,900);
+      TCanvas *c_h_reco = new TCanvas("c_h_reco_" + chiral,"c_h_reco_" + chiral,800,800);
       TPad *pad_h_reco  = new TPad("pad_h_reco_" + chiral, "pad_h_reco_" + chiral,0,0,1,1);
-      StylePad(pad_h_reco,0,0.12,0,0.15);
+      StylePad(pad_h_reco,0,0.15,0,0.17);
       h_reco.at(chiral)->SetLineWidth(3);
       h_reco.at(chiral)->Draw("");
 
