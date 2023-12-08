@@ -9,8 +9,8 @@ using std::cout; using std::endl;
 using std::vector; using std::unordered_map;
 
 TString LPFO_mode = "K";
-// TString chiral = "eL.pR";
-TString chiral = "eR.pL";
+TString ichiral = "eL.pR";
+// TString chiral = "eR.pL";
 
 TString inputDir = "../../rootfiles/merged/";
 array<TString,2> chirals   = {"eL.pR", "eR.pL"};
@@ -113,7 +113,7 @@ unordered_map<TString, TH1F*> main_pq(TFile* file, TString prodMode)
     h_rej_PiPi_cos_eff_corr = (TH1F*) h_rej_PiPi_cos->Clone();
   }
 
-  StyleHist(h_gen_q_qcos,kGreen+1);
+  StyleHist(h_gen_q_qcos,kGreen+2);
 
   const Int_t nbins = h_reco_LPFO_scos_eff_corr->GetNbinsX();
 
@@ -161,73 +161,14 @@ void pq_method_KLPFO_add()
       }
     }
 
-    // TH1F *h_gen  = (TH1F*) file_map["P2f_z_h"][chiral]->Get("ss/gen/h_ss_qcos");
-    // TH1F *h_reco = (TH1F*) file_map["P2f_z_h"][chiral]->Get("ss/cos/h_ss_" + LPFO_mode + "_qcos");
-    // StyleHist(h_gen,kRed+2);
-    // StyleHist(h_reco,kRed+2);
-    // Normalize(h_gen);
-    // Normalize(h_reco);
-    // h_reco->SetFillStyle(0);
-
-    // TLegend *legend = new TLegend(0.60,0.75,0.88,0.88);
-    // legend->AddEntry(h_gen,"Parton level","f");
-    // legend->AddEntry(h_reco,"Reconstructed","le");
-
-
-    // TCanvas *c_signal = new TCanvas("c_signal","c_signal",800,800);
-    // TPad    *p_signal = new TPad("p_signal","p_signal",0,0,1,1);
-    // StylePad(p_signal,0.1,0.1,0.08,0.155);
-    // // p_signal->Draw();
-    // h_gen->SetTitle(";cos#theta;Entries");
-    // h_gen->Draw("h");
-    // h_reco->Draw("e same");
-    // legend->Draw("same");
-
-
-
-
     unordered_map<TString, THStack*> hs_map;
     hs_map["gen"]  = new THStack("hs_gen",";cos#theta;Entries");
     hs_map["reco"] = new THStack("hs_reco",";cos#theta;Entries");
     
     TLegend *legend = new TLegend(0.60,0.75,0.88,0.88);
 
-    // for ( auto process : processes ){
-    //   if(process == "P2f_z_h"){
-    //     for ( auto qq : qqbars ){
-    //       unordered_map<TString, TH1F*> reco_gen_map = main_pq(file_map[process][chiral], qq);
-    //       // TH1F *h_gen  = (TH1F*) file_map[process][chiral]->Get(qq + "/gen/h_" + qq + "_qcos");
-    //       // TH1F *h_reco = (TH1F*) file_map[process][chiral]->Get(qq + "/cos/h_" + qq + "_" + LPFO_mode + "_qcos");
-    //       TH1F * h_gen = reco_gen_map["gen"];
-    //       TH1F * h_reco = reco_gen_map["reco"];
-    //       Normalize(h_gen);
-    //       Normalize(h_reco);
-    //       h_gen->SetLineWidth(3);
-    //       h_gen->SetFillStyle(3002);
-    //       h_reco->SetLineWidth(3);
-          
-    //       legend->AddEntry(h_reco,qq,"l");
-
-    //       hs_map.at("gen")->Add(h_gen);
-    //       hs_map.at("reco")->Add(h_reco);
-    //     }
-
-    //   }
-    // }
-
-    // gStyle->SetPalette(kRainbow);
-    // TCanvas * c_polar_nostack = new TCanvas("c_polar_nostack","c_polar_nostack",800,800);
-    // hs_map.at("reco")->Draw("he plc nostack");
-    // hs_map.at("gen")->Draw("he plc nostack same");
-    // legend->Draw("same");
-    // TCanvas * c_polar_stack = new TCanvas("c_polar_stack","c_polar_stack",800,800);
-    // hs_map.at("gen")->Draw("he plc");
-    // hs_map.at("reco")->Draw("he plc same");
-
-
     // Fitting
-    unordered_map<TString, TH1F*> reco_gen_map_fit = main_pq(file_map["P2f_z_h"]["eR.pL"], "ss");
-    // unordered_map<TString, TH1F*> reco_gen_map_fit = main_pq(file_map["P2f_z_h"]["eR.pL"], "ss");
+    unordered_map<TString, TH1F*> reco_gen_map_fit = main_pq(file_map["P2f_z_h"][ichiral], "ss");
     TH1F *h_gen_q_qcos     = (TH1F*) reco_gen_map_fit.at("gen")->Clone();
     TH1F *h_reco_Pi_pq_cos = (TH1F*) reco_gen_map_fit.at("reco")->Clone();
     Normalize(h_gen_q_qcos);
@@ -264,8 +205,8 @@ void pq_method_KLPFO_add()
     f_gen->SetLineColor(kRed);
     f_reco->SetLineWidth(4);
     f_reco->SetLineColor(kBlack);
-    f_gen->Draw("same");
-    f_reco->Draw("same");
+    // f_gen->Draw("same");
+    // f_reco->Draw("same");
 
     TLegend *leg = new TLegend(0.59,0.65,0.89,0.85);
     leg->SetMargin(0.4);
