@@ -9,8 +9,8 @@ using std::cout; using std::endl;
 using std::vector; using std::unordered_map;
 
 TString LPFO_mode = "Pi";
-TString chiral = "eL.pR";
-// TString chiral = "eR.pL";
+// TString ichiral = "eL.pR";
+TString ichiral = "eR.pL";
 
 TString inputDir = "../../rootfiles/merged/";
 array<TString,2> chirals   = {"eL.pR", "eR.pL"};
@@ -67,6 +67,7 @@ unordered_map<TString, TH1F*> main_pq(TFile* file, TString process, TString chir
   TH1F *h_gen_q_qcos    = (TH1F*) file->Get(qq + "/gen/h_" + qq + "_qcos");
   TH1F *h_reco_LPFO_scos  = (TH1F*) file->Get(qq + "/cos/h_" + qq + "_" + LPFO_mode + "_scos");
   TH1F *h_reco_LPFO_qcos  = (TH1F*) file->Get(qq + "/cos/h_" + qq + "_" + LPFO_mode + "_qcos");
+  h_gen_q_qcos->Sumw2();
 
   cout << qq << " reco entry = " << h_reco_LPFO_qcos->GetEntries() << endl;
   cout << qq << " gen entry  = " << h_gen_q_qcos->GetEntries() << endl;
@@ -167,52 +168,51 @@ void pq_method_PiLPFO_BG_sub()
   {
     // unordered_map<TString, unordered_map<TString, TFile*> > file_map;
     unordered_map<TString, unordered_map<TString, unordered_map<TString, TH1F*>>> hmap; // [process][ud][reco/gen]
-    TH1F * h_total_reco     = new TH1F("h_total_reco_" + chiral,";cos#theta;Entries / Int. Lumi.", 100,-1,1);
-    TH1F * h_total_gen      = new TH1F("h_total_gen_" + chiral,";cos#theta;Entries / Int. Lumi.", 100,-1,1);
-    TH1F * h_total_reco_bg  = new TH1F("h_total_reco_bg_" + chiral,";cos#theta;Entries / Int. Lumi.", 100,-1,1);
-    TH1F * h_total_gen_bg   = new TH1F("h_total_gen_bg_" + chiral,";cos#theta;Entries / Int. Lumi.", 100,-1,1);
+    TH1F * h_total_reco     = new TH1F("h_total_reco_" + ichiral,";cos#theta;Entries / Int. Lumi.", 100,-1,1);
+    TH1F * h_total_gen      = new TH1F("h_total_gen_" + ichiral,";cos#theta;Entries / Int. Lumi.", 100,-1,1);
+    TH1F * h_total_reco_bg  = new TH1F("h_total_reco_bg_" + ichiral,";cos#theta;Entries / Int. Lumi.", 100,-1,1);
+    TH1F * h_total_gen_bg   = new TH1F("h_total_gen_bg_" + ichiral,";cos#theta;Entries / Int. Lumi.", 100,-1,1);
     h_total_reco->Sumw2();
     h_total_gen->Sumw2();
     h_total_reco_bg->Sumw2();
     for( auto process : processes ){
-      for( auto chiral : chirals ){
-        Int_t processID = production.at({process,chiral}).first;
-        cout << process << " " << chiral << " " << processID << endl;
-        TString filename = inputDir + "rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I" + processID + "." + process + "." + chiral + ".KPiLPFO.dedxPi.PFOp15.LPFOp15_pNaN.all.root";
-        TFile *file = new TFile(filename,"READ");
-        if( !file->IsOpen() ) throw std::runtime_error("File not found");
-        // file_map[process][chiral] = file;
 
-        if(process=="P2f_z_h"){
+      Int_t processID = production.at({process,ichiral}).first;
+      cout << process << " " << ichiral << " " << processID << endl;
+      TString filename = inputDir + "rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I" + processID + "." + process + "." + ichiral + ".KPiLPFO.dedxPi.PFOp15.LPFOp15_pNaN.all.root";
+      TFile *file = new TFile(filename,"READ");
+      if( !file->IsOpen() ) throw std::runtime_error("File not found");
+      // file_map[process][chiral] = file;
 
-          for( auto qq : qqbars ){
+      if(process=="P2f_z_h"){
 
-            hmap[process][qq] = main_pq(file,process,chiral,qq);
-            if(qq=="uu"||qq=="dd"){
-              Float_t eff = (Float_t) hmap[process][qq]["gen"]->Integral() / (Float_t) hmap[process][qq]["reco"]->Integral();
-              hmap.at(process).at(qq).at("reco")->Scale(eff);
-            }else{
-              h_total_reco_bg->Add(hmap.at(process).at(qq).at("reco"));
-              h_total_gen_bg->Add(hmap.at(process).at(qq).at("gen"));
-            }
+        for( auto qq : qqbars ){
 
-            h_total_reco->Add(hmap.at(process).at(qq).at("reco"));
-            h_total_gen->Add(hmap.at(process).at(qq).at("gen"));
-
+          hmap[process][qq] = main_pq(file,process,ichiral,qq);
+          if(qq=="uu"||qq=="dd"){
+            Float_t eff = (Float_t) hmap[process][qq]["gen"]->Integral() / (Float_t) hmap[process][qq]["reco"]->Integral();
+            hmap.at(process).at(qq).at("reco")->Scale(eff);
+          }else{
+            h_total_reco_bg->Add(hmap.at(process).at(qq).at("reco"));
+            h_total_gen_bg->Add(hmap.at(process).at(qq).at("gen"));
           }
 
-        }else{
-
-          TString qq = "bg";
-          hmap[process][qq] = main_pq(file,process,chiral,qq);
           h_total_reco->Add(hmap.at(process).at(qq).at("reco"));
           h_total_gen->Add(hmap.at(process).at(qq).at("gen"));
-          h_total_reco_bg->Add(hmap.at(process).at(qq).at("reco"));
-          h_total_gen_bg->Add(hmap.at(process).at(qq).at("gen"));
 
         }
 
+      }else{
+
+        TString qq = "bg";
+        hmap[process][qq] = main_pq(file,process,ichiral,qq);
+        h_total_reco->Add(hmap.at(process).at(qq).at("reco"));
+        h_total_gen->Add(hmap.at(process).at(qq).at("gen"));
+        h_total_reco_bg->Add(hmap.at(process).at(qq).at("reco"));
+        h_total_gen_bg->Add(hmap.at(process).at(qq).at("gen"));
+
       }
+
     }
 
 
@@ -232,8 +232,8 @@ void pq_method_PiLPFO_BG_sub()
     StyleHist(h_total_reco_sig,kBlue+2);
     StyleHist(h_total_gen_sig,kGreen+2);
 
-    h_total_reco_sig->Draw("");
-    h_total_gen_sig->Draw("hsame");
+    h_total_gen_sig->GetYaxis()->SetRangeUser(0,0.05);
+    h_total_gen_sig->Draw("h");
 
     // Fitting
     TF1 * f_gen = new TF1("f_gen","[0]*(1+x*x)+[1]*x",-fitRange,fitRange);
@@ -248,8 +248,19 @@ void pq_method_PiLPFO_BG_sub()
     h_total_reco_sig->Fit("f_reco","MNRS");
     f_reco->SetLineColor(kRed);
     cout << "Reco Chi2 / ndf = " << f_reco->GetChisquare() << " / " << f_reco->GetNDF() << endl;
-    f_reco->Draw("same");
     f_gen->Draw("same");
+
+    h_total_reco_sig->Draw("same");
+    f_reco->Draw("same");
+
+    TLegend *legTotal = new TLegend(0.51,0.74,0.89,0.89);
+    legTotal->SetMargin(0.4);
+    legTotal->SetLineColor(0);
+    legTotal->AddEntry(h_total_gen_sig,"Genrated #pi^{-}","f");
+    legTotal->AddEntry(h_total_reco_sig,"Reconstructed #pi^{-}","lE");
+    legTotal->AddEntry(f_gen,"Generated Fit","l");
+    legTotal->AddEntry(f_reco,"Reconstructed Fit","l");
+    legTotal->Draw();
 
 
 
