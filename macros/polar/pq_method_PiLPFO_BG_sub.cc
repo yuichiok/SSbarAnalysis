@@ -9,8 +9,8 @@ using std::cout; using std::endl;
 using std::vector; using std::unordered_map;
 
 TString LPFO_mode = "Pi";
-// TString ichiral = "eL.pR";
-TString ichiral = "eR.pL";
+TString ichiral = "eL.pR";
+// TString ichiral = "eR.pL";
 
 TString inputDir = "../../rootfiles/merged/";
 array<TString,2> chirals   = {"eL.pR", "eR.pL"};
@@ -232,7 +232,7 @@ void pq_method_PiLPFO_BG_sub()
     StyleHist(h_total_reco_sig,kBlue+2);
     StyleHist(h_total_gen_sig,kGreen+2);
 
-    h_total_gen_sig->GetYaxis()->SetRangeUser(0,0.05);
+    h_total_gen_sig->GetYaxis()->SetRangeUser(0,250);
     h_total_gen_sig->Draw("h");
 
     // Fitting

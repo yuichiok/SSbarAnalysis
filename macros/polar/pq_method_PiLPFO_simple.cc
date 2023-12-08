@@ -8,9 +8,11 @@
 using std::cout; using std::endl;
 using std::vector; using std::unordered_map;
 
-TString LPFO_mode = "Pi";
+// TString LPFO_mode = "Pi";
+TString LPFO_mode = "K";
 TString ichiral = "eL.pR";
-TString qq = "uu";
+// TString ichiral = "eR.pL";
+TString qq = "cc";
 // TString chiral = "eR.pL";
 
 TString inputDir = "../../rootfiles/merged/";
@@ -82,10 +84,10 @@ unordered_map<TString, TH1F*> main_pq(TFile* file, TString prodMode)
   {
     TH1F* h_reco_LPFO_scos_eff = efficiencyCorrection(h_reco_LPFO_scos,LPFO_mode,file,prodMode);
     TH1F* h_reco_LPFO_qcos_eff = efficiencyCorrection(h_reco_LPFO_qcos,LPFO_mode,file,prodMode);
-    // h_reco_LPFO_scos_eff_corr = resolutionCorrection(h_reco_LPFO_scos_eff,LPFO_mode,file,prodMode);
-    // h_reco_LPFO_qcos_eff_corr = resolutionCorrection(h_reco_LPFO_qcos_eff,LPFO_mode,file,prodMode);
-    h_reco_LPFO_scos_eff_corr = (TH1F*) h_reco_LPFO_scos_eff->Clone();
-    h_reco_LPFO_qcos_eff_corr = (TH1F*) h_reco_LPFO_qcos_eff->Clone();
+    h_reco_LPFO_scos_eff_corr = resolutionCorrection(h_reco_LPFO_scos_eff,LPFO_mode,file,prodMode);
+    h_reco_LPFO_qcos_eff_corr = resolutionCorrection(h_reco_LPFO_qcos_eff,LPFO_mode,file,prodMode);
+    // h_reco_LPFO_scos_eff_corr = (TH1F*) h_reco_LPFO_scos_eff->Clone();
+    // h_reco_LPFO_qcos_eff_corr = (TH1F*) h_reco_LPFO_qcos_eff->Clone();
 
   }else{
     h_reco_LPFO_scos_eff_corr = (TH1F*) h_reco_LPFO_scos->Clone();
@@ -98,10 +100,10 @@ unordered_map<TString, TH1F*> main_pq(TFile* file, TString prodMode)
   {
     TH1F* h_acc_PiPi_cos_eff = efficiencyCorrection(h_acc_PiPi_cos,LPFO_mode,file,prodMode);
     TH1F* h_rej_PiPi_cos_eff = efficiencyCorrection(h_rej_PiPi_cos,LPFO_mode,file,prodMode);
-    // h_acc_PiPi_cos_eff_corr = resolutionCorrection(h_acc_PiPi_cos_eff,LPFO_mode,file,prodMode);
-    // h_rej_PiPi_cos_eff_corr = resolutionCorrection(h_rej_PiPi_cos_eff,LPFO_mode,file,prodMode);
-    h_acc_PiPi_cos_eff_corr = (TH1F*) h_acc_PiPi_cos_eff->Clone();
-    h_rej_PiPi_cos_eff_corr = (TH1F*) h_rej_PiPi_cos_eff->Clone();
+    h_acc_PiPi_cos_eff_corr = resolutionCorrection(h_acc_PiPi_cos_eff,LPFO_mode,file,prodMode);
+    h_rej_PiPi_cos_eff_corr = resolutionCorrection(h_rej_PiPi_cos_eff,LPFO_mode,file,prodMode);
+    // h_acc_PiPi_cos_eff_corr = (TH1F*) h_acc_PiPi_cos_eff->Clone();
+    // h_rej_PiPi_cos_eff_corr = (TH1F*) h_rej_PiPi_cos_eff->Clone();
 
   }else{
     h_acc_PiPi_cos_eff_corr = (TH1F*) h_acc_PiPi_cos->Clone();
@@ -162,8 +164,8 @@ void pq_method_PiLPFO_simple()
 
     StyleHist(h_gen,kGreen+2);
     StyleHist(h_reco,kBlue+2);
-    Normalize(h_gen);
-    Normalize(h_reco);
+    // Normalize(h_gen);
+    // Normalize(h_reco);
     h_reco->SetFillStyle(0);
 
     // Fitting

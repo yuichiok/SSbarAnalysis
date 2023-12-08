@@ -9,8 +9,8 @@ using std::cout; using std::endl;
 using std::vector; using std::unordered_map;
 
 TString LPFO_mode = "K";
-TString ichiral = "eL.pR";
-// TString chiral = "eR.pL";
+// TString ichiral = "eL.pR";
+TString ichiral = "eR.pL";
 
 TString inputDir = "../../rootfiles/merged/";
 array<TString,2> chirals   = {"eL.pR", "eR.pL"};
@@ -196,10 +196,10 @@ void pq_method_KLPFO_add()
     TPad  *pad_polar = new TPad("pad_polar", "pad_polar",0,0,1,1);
     StylePad(pad_polar,0,0.12,0,0.15);
 
-    h_reco_Pi_pq_cos->SetTitle(";cos#theta;Entries (norm.)");
-    h_reco_Pi_pq_cos->GetYaxis()->SetRangeUser(0,0.07);
-    h_reco_Pi_pq_cos->Draw("");
-    h_gen_q_qcos->Draw("hsame");
+    h_gen_q_qcos->SetTitle(";cos#theta;Entries (norm.)");
+    h_gen_q_qcos->GetYaxis()->SetRangeUser(0,0.07);
+    h_gen_q_qcos->Draw("h");
+    h_reco_Pi_pq_cos->Draw("same");
 
     f_gen->SetLineWidth(4);
     f_gen->SetLineColor(kRed);
@@ -208,14 +208,14 @@ void pq_method_KLPFO_add()
     // f_gen->Draw("same");
     // f_reco->Draw("same");
 
-    TLegend *leg = new TLegend(0.59,0.65,0.89,0.85);
+    TLegend *leg = new TLegend(0.2,0.75,0.5,0.85);
     leg->SetMargin(0.4);
     leg->SetBorderSize(0);
     leg->SetFillStyle(0);
     leg->AddEntry(h_gen_q_qcos,"Parton level","f");
     leg->AddEntry(h_reco_Pi_pq_cos,"Data","le");
-    leg->AddEntry(f_gen,"Fit parton level","l");
-    leg->AddEntry(f_reco,"Fit data","l");
+    // leg->AddEntry(f_gen,"Fit parton level","l");
+    // leg->AddEntry(f_reco,"Fit data","l");
     leg->Draw("same");
 
 
