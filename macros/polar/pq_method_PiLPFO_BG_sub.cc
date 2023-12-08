@@ -226,8 +226,8 @@ void pq_method_PiLPFO_BG_sub()
     TH1F* h_total_gen_sig = (TH1F*) h_total_gen->Clone();
     h_total_gen_sig->Add(h_total_gen_bg,-1);
 
-    Normalize(h_total_reco_sig);
-    Normalize(h_total_gen_sig);
+    // Normalize(h_total_reco_sig);
+    // Normalize(h_total_gen_sig);
 
     StyleHist(h_total_reco_sig,kBlue+2);
     StyleHist(h_total_gen_sig,kGreen+2);
