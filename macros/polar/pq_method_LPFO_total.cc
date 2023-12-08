@@ -10,7 +10,7 @@ using std::vector; using std::array; using std::unordered_map;
 
 // TString prod_mode = "uu";
 // TString chiral    = "eR.pL";
-TString LPFO_mode = "K";
+TString LPFO_mode = "Pi";
 // Float_t TopRange = 700;
 Float_t TopRange = 550;
 // Float_t TopRange = 0.7;
@@ -20,16 +20,16 @@ array<TString,2> chirals   = {"eL.pR", "eR.pL"};
 array<TString,4> processes = {"Pqqh", "P4f_zz_h", "P4f_ww_h", "P2f_z_h"}; // (kaon uu/dd, kaon ss, pion)
 // array<TString,1> processes = {"P2f_z_h"}; // (kaon uu/dd 2)
 
-// array<TString,6> qqbars    = {"rr", "bb", "cc", "ss", "dd", "uu"}; // pion
+array<TString,6> qqbars    = {"rr", "bb", "cc", "ss", "dd", "uu"}; // pion
 // array<TString,6> qqbars    = {"rr", "bb", "cc", "dd", "uu", "ss"}; // kaon ss
-array<TString,5> qqbars    = {"rr", "bb", "cc", "dd", "uu"}; // kaon uu/dd
+// array<TString,5> qqbars    = {"rr", "bb", "cc", "dd", "uu"}; // kaon uu/dd
 // array<TString,2> qqbars       = {"dd", "uu"}; // kaon uu/dd 2
 // array<TString,1> qqbars    = {"ss"};
 
 array<TString,4> leg_processes    = {"P2f_z_h", "P4f_ww_h", "P4f_zz_h", "Pqqh"}; // (kaon uu/dd, kaon ss, pion)
 // array<TString,1> leg_processes = {"P2f_z_h"}; // (kaon uu/dd2 )
-// array<TString,6> leg_qqbars    = {"dd", "uu", "ss", "cc", "bb", "rr"}; // normal
-array<TString,5> leg_qqbars    = {"dd", "uu", "cc", "bb", "rr"}; // kaon uu/dd
+array<TString,6> leg_qqbars    = {"dd", "uu", "ss", "cc", "bb", "rr"}; // normal
+// array<TString,5> leg_qqbars    = {"dd", "uu", "cc", "bb", "rr"}; // kaon uu/dd
 // array<TString,2> leg_qqbars       = {"dd", "uu"}; // kaon uu/dd 2
 // array<TString,1> leg_qqbars    = {"ss"};
 
@@ -125,8 +125,10 @@ unordered_map<TString, TH1F*> main_pq(TFile* file, TString process, TString chir
   {
     TH1F* h_reco_LPFO_scos_eff = efficiencyCorrection(h_reco_LPFO_scos,LPFO_mode,file,category);
     TH1F* h_reco_LPFO_qcos_eff = efficiencyCorrection(h_reco_LPFO_qcos,LPFO_mode,file,category);
-    h_reco_LPFO_scos_eff_corr = resolutionCorrection(h_reco_LPFO_scos_eff,LPFO_mode,file,category);
-    h_reco_LPFO_qcos_eff_corr = resolutionCorrection(h_reco_LPFO_qcos_eff,LPFO_mode,file,category);
+    // h_reco_LPFO_scos_eff_corr = resolutionCorrection(h_reco_LPFO_scos_eff,LPFO_mode,file,category);
+    // h_reco_LPFO_qcos_eff_corr = resolutionCorrection(h_reco_LPFO_qcos_eff,LPFO_mode,file,category);
+    h_reco_LPFO_scos_eff_corr = (TH1F*) h_reco_LPFO_scos_eff->Clone();
+    h_reco_LPFO_qcos_eff_corr = (TH1F*) h_reco_LPFO_qcos_eff->Clone();
 
   }else{
     h_reco_LPFO_scos_eff_corr = (TH1F*) h_reco_LPFO_scos->Clone();
@@ -139,8 +141,10 @@ unordered_map<TString, TH1F*> main_pq(TFile* file, TString process, TString chir
   {
     TH1F* h_acc_LL_cos_eff = efficiencyCorrection(h_acc_LL_cos,LPFO_mode,file,category);
     TH1F* h_rej_LL_cos_eff = efficiencyCorrection(h_rej_LL_cos,LPFO_mode,file,category);
-    h_acc_LL_cos_eff_corr = resolutionCorrection(h_acc_LL_cos_eff,LPFO_mode,file,category);
-    h_rej_LL_cos_eff_corr = resolutionCorrection(h_rej_LL_cos_eff,LPFO_mode,file,category);
+    // h_acc_LL_cos_eff_corr = resolutionCorrection(h_acc_LL_cos_eff,LPFO_mode,file,category);
+    // h_rej_LL_cos_eff_corr = resolutionCorrection(h_rej_LL_cos_eff,LPFO_mode,file,category);
+    h_acc_LL_cos_eff_corr = (TH1F*) h_acc_LL_cos_eff->Clone();
+    h_rej_LL_cos_eff_corr = (TH1F*) h_rej_LL_cos_eff->Clone();
   }else{
     h_acc_LL_cos_eff_corr = (TH1F*) h_acc_LL_cos->Clone();
     h_rej_LL_cos_eff_corr = (TH1F*) h_rej_LL_cos->Clone();
@@ -233,7 +237,7 @@ void pq_method_LPFO_total()
       leg_reco[chiral] = new TLegend(0.59,0.65,0.89,0.85);
       leg_reco[chiral]->SetMargin(0.4);
       leg_reco[chiral]->SetBorderSize(0);
-      leg_reco[chiral]->SetFillStyle(0);
+      // leg_reco[chiral]->SetFillStyle(1);
     }
 
     for( auto process : processes ){
@@ -285,8 +289,8 @@ void pq_method_LPFO_total()
       StylePad(pad_hs_reco,0,0.12,0,0.15);
       gStyle->SetHistTopMargin(0);
       gStyle->SetPalette(55);
-      // hs_reco.at(chiral)->Draw("h plc nostack");
-      hs_reco.at(chiral)->Draw("h plc");
+      hs_reco.at(chiral)->Draw("h plc nostack");
+      // hs_reco.at(chiral)->Draw("h plc");
       hs_reco.at(chiral)->SetMaximum(TopRange);
       TF1 * f_bg = new TF1("f_bg","[0]*(1+x*x)+[1]*x",-1,1);
       double bgpars[2];
@@ -300,8 +304,8 @@ void pq_method_LPFO_total()
       f_bg->SetParameters(bgpars);
       f_bg->SetLineWidth(4);
       f_bg->SetLineColor(kBlack);
-      f_bg->Draw("same");
-      leg_reco.at(chiral)->AddEntry(f_bg,"BG fit estimation","l");
+      // f_bg->Draw("same");
+      // leg_reco.at(chiral)->AddEntry(f_bg,"BG fit estimation","l");
       leg_reco.at(chiral)->Draw("same");
 
 
