@@ -142,10 +142,11 @@ TH1F * CorrectHist( TString prodMode, TH1F * h_reco, vector<Float_t> p_vec)
     av_i /= n;
     av_41i /= n;
 
+    bool abn = 0;
     if(av_i<0 || av_41i<0){
-      float aveavi = (av_i + av_41i) / 2;
-      av_i   = aveavi;
-      av_41i = aveavi;
+      abn = true;
+      av_i   = h_reco->GetBinContent(i);
+      av_41i = h_reco->GetBinContent(nbins + 1 - i);
     }
 
     corrected->SetBinContent(i, av_i);
@@ -168,6 +169,13 @@ TH1F * CorrectHist( TString prodMode, TH1F * h_reco, vector<Float_t> p_vec)
     }
     error_i = sqrt(error_i / (n - 1.));
     error_41i = sqrt(error_41i / (n - 1.));
+
+    if(abn){
+      error_i   = h_reco->GetBinError(i);
+      error_41i = h_reco->GetBinError(nbins + 1 - i);
+    }
+
+
     corrected->SetBinError(i, error_i);
     corrected->SetBinError(nbins + 1 - i, error_41i);
   }
