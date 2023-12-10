@@ -13,7 +13,6 @@ TString LPFO_mode = "K";
 TString ichiral = "eL.pR";
 // TString ichiral = "eR.pL";
 TString qq = "ss";
-// TString chiral = "eR.pL";
 
 TString inputDir = "../../rootfiles/merged/";
 array<TString,2> chirals   = {"eL.pR", "eR.pL"};
@@ -195,7 +194,7 @@ void pq_method_PiLPFO_simple()
     TCanvas *c_signal = new TCanvas("c_signal","c_signal",800,800);
     TPad    *p_signal = new TPad("p_signal","p_signal",0,0,1,1);
     StylePad(p_signal,0,0.15,0,0.17);
-    h_gen->SetTitle(";cos#theta;Entries");
+    h_gen->SetTitle(";cos#theta_{K^{-}};Entries (norm.)");
     h_gen->GetYaxis()->SetRangeUser(0,0.07);
     h_gen->Draw("h");
     h_reco->Draw("e same");
@@ -229,6 +228,13 @@ void pq_method_PiLPFO_simple()
       leg_trp_genreco->AddEntry(rGen,"Generated #pi^{-}","l");
       leg_trp_genreco->Draw();
 
+
+    // stat + sys
+    // cout << "Stat + sys error =====\n";
+    // for (int ibin = 1; ibin <= h_reco->GetNbinsX(); ibin++)
+    // {
+    //   cout << h_reco->GetBinError(ibin) / h_reco->GetBinContent(ibin) * 100  << "\n";
+    // }
 
 
 

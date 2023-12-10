@@ -248,18 +248,23 @@ void pq_method_PiLPFO_add()
       TPad *padTotal = new TPad("padTotal","padTotal",0,0,1,1);
       StylePad(padTotal,0,0.15,0,0.17);
       // h_gen->GetYaxis()->SetRangeUser(0,800E3);
-      h_gen->SetTitle(";cos#theta;Entries");
+      h_gen->SetTitle(";cos#theta_{#pi^{-}};Entries");
+      h_gen->GetYaxis()->SetRangeUser(0,1E6);
       h_gen->Draw("h");
       h_reco->Draw("same");
       // f_reco->Draw("same");
       // f_gen->Draw("same");
 
+    Int_t bineval = 21;
+    cout << h_reco->GetBinError(bineval) / h_reco->GetBinContent(bineval) << endl;
+
+
       // TLegend *legTotal = new TLegend(0.51,0.74,0.89,0.89);
       TLegend *legTotal = new TLegend(0.51,0.74,0.89,0.84);
       legTotal->SetMargin(0.4);
       legTotal->SetLineColor(0);
-      legTotal->AddEntry(h_gen,"Genrated #pi^{-}","f");
-      legTotal->AddEntry(h_reco,"Reconstructed #pi^{-}","lE");
+      legTotal->AddEntry(h_gen,"Parton level","f");
+      legTotal->AddEntry(h_reco,"Reconstructed","lE");
       // legTotal->AddEntry(f_gen,"Generated Fit","l");
       // legTotal->AddEntry(f_reco,"Reconstructed Fit","l");
       legTotal->Draw();

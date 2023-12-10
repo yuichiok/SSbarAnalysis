@@ -9,8 +9,8 @@ using std::cout; using std::endl;
 using std::vector; using std::unordered_map;
 
 TString LPFO_mode = "Pi";
-TString ichiral = "eL.pR";
-// TString ichiral = "eR.pL";
+// TString ichiral = "eL.pR";
+TString ichiral = "eR.pL";
 
 TString inputDir = "../../rootfiles/merged/";
 array<TString,2> chirals   = {"eL.pR", "eR.pL"};
@@ -28,7 +28,7 @@ unordered_map<pair<TString,TString>,pair<Int_t,Int_t>, hash_pair> production = {
     {{"Pqqh", "eR.pL"}, {402012,2278}},
 };
 
-Float_t fitRange = 0.78;
+Float_t fitRange = 0.80;
 
 void BinNormal(TH1F *h)
 {
@@ -219,7 +219,6 @@ void pq_method_PiLPFO_BG_sub()
     TCanvas *c_total = new TCanvas("c_total","c_total",800,800);
     TPad *padTotal = new TPad("padTotal","padTotal",0,0,1,1);
     StylePad(padTotal,0,0.15,0,0.17);
-    h_total_reco->SetTitle(";cos#theta;Entries");
 
     TH1F* h_total_reco_sig = (TH1F*) h_total_reco->Clone();
     h_total_reco_sig->Add(h_total_reco_bg,-1);
@@ -233,6 +232,7 @@ void pq_method_PiLPFO_BG_sub()
     StyleHist(h_total_gen_sig,kGreen+2);
 
     h_total_gen_sig->GetYaxis()->SetRangeUser(0,250);
+    h_total_gen_sig->SetTitle(";cos#theta_{#pi^{-}};Entries / Int. Lumi.");
     h_total_gen_sig->Draw("h");
 
     // Fitting
@@ -256,10 +256,10 @@ void pq_method_PiLPFO_BG_sub()
     TLegend *legTotal = new TLegend(0.51,0.74,0.89,0.89);
     legTotal->SetMargin(0.4);
     legTotal->SetLineColor(0);
-    legTotal->AddEntry(h_total_gen_sig,"Genrated #pi^{-}","f");
-    legTotal->AddEntry(h_total_reco_sig,"Reconstructed #pi^{-}","lE");
-    legTotal->AddEntry(f_gen,"Generated Fit","l");
-    legTotal->AddEntry(f_reco,"Reconstructed Fit","l");
+    legTotal->AddEntry(h_total_gen_sig,"Parton level","f");
+    legTotal->AddEntry(h_total_reco_sig,"Reconstructed","lE");
+    legTotal->AddEntry(f_gen,"Parton level fit","l");
+    legTotal->AddEntry(f_reco,"Reconstruction fit","l");
     legTotal->Draw();
 
 

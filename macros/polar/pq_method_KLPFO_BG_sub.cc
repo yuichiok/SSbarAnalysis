@@ -234,7 +234,8 @@ void pq_method_KLPFO_BG_sub()
     StyleHist(h_total_gen_sig,kGreen+2);
 
     // h_total_gen_sig->GetYaxis()->SetRangeUser(0,250);
-    h_total_gen_sig->SetTitle(";cos#theta;Entries (norm.)");
+    h_total_gen_sig->SetTitle(";cos#theta_{K^{-}};Entries (norm.)");
+    h_total_gen_sig->GetYaxis()->SetRangeUser(0,0.07);
     h_total_gen_sig->Draw("h");
 
     // Fitting
@@ -255,16 +256,31 @@ void pq_method_KLPFO_BG_sub()
     h_total_reco_sig->Draw("same");
     f_reco->Draw("same");
 
-    TLegend *legTotal = new TLegend(0.51,0.74,0.89,0.89);
+    TLegend *legTotal = new TLegend(0.2,0.74,0.5,0.89);
     legTotal->SetMargin(0.4);
     legTotal->SetLineColor(0);
-    legTotal->AddEntry(h_total_gen_sig,"Genrated #pi^{-}","f");
-    legTotal->AddEntry(h_total_reco_sig,"Reconstructed #pi^{-}","lE");
-    legTotal->AddEntry(f_gen,"Generated Fit","l");
-    legTotal->AddEntry(f_reco,"Reconstructed Fit","l");
+    legTotal->AddEntry(h_total_gen_sig,"Parton level","f");
+    legTotal->AddEntry(h_total_reco_sig,"Reconstructed","lE");
+    legTotal->AddEntry(f_gen,"Parton level fit","l");
+    legTotal->AddEntry(f_reco,"Reconstruction fit","l");
     legTotal->Draw();
 
 
+    // output AFB
+    Float_t AFB_gen  = AFB_calculation(f_gen);
+    Float_t AFB_reco = AFB_calculation(f_reco);
+    cout << "Gen  AFB = " << AFB_gen << endl;
+    cout << "Reco AFB = " << AFB_reco << endl;
+
+
+
+    // stat + sys
+    // cout << "Stat + sys error =====\n";
+    // for (int ibin = 1; ibin <= h_total_reco_sig->GetNbinsX(); ibin++)
+    // {
+    //   cout << h_total_reco_sig->GetBinError(ibin) / h_total_reco_sig->GetBinContent(ibin) * 100  << "\n";
+    // }
+    
 
 
   }
