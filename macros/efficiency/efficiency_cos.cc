@@ -11,7 +11,8 @@ using std::vector; using std::unordered_map;
 
 TString prod_mode = "uu";
 TString chiral    = "eL.pR";
-TString LPFO_mode = "Pi";
+// TString LPFO_mode = "Pi";
+TString LPFO_mode = "K";
 // TString qq[3] = {"uu","dd","ss"};
 TString qq[5] = {"dd","uu","ss","cc","bb"};
 // TString qq[2] = {"dd","uu"};
@@ -157,7 +158,8 @@ void calcEff()
     }
     for (auto iqq : qq){
       if(ih=="nocut"){
-        cout << std::setprecision (3) << iqq << " 100\\% (" << eff_map[iqq][ih] << ") & ";
+        // cout << std::setprecision (3) << iqq << " 100\\% (" << eff_map[iqq][ih] << ") & ";
+        cout <<  iqq << " 100\\% (" << eff_map[iqq][ih] << ") & ";
       }else{
         cout << std::setprecision (3) << eff_map[iqq][ih] * 100. << "\\% & "; 
       }
@@ -386,9 +388,9 @@ void partial()
 void efficiency_cos()
 {
   // partial();
-  total();
+  // total();
 
-  // calcEff();
+  calcEff();
   // eff_chiral();
 
 }
