@@ -251,3 +251,21 @@ Float_t AFB_calculation( TF1 * f )
   return AFB;
 
 }
+
+Float_t AFB_calculation_fit( TF1 * f )
+{
+  float S = f->GetParameter(0);
+  float A = f->GetParameter(1);
+  float AFB = (3*A) / (8*S);
+
+  return AFB;
+
+}
+
+Float_t AFB_error( Float_t AFB, Int_t N )
+{
+  Float_t AFB_error = sqrt((1-AFB*AFB)/(Float_t)N);
+
+  return AFB_error;
+
+}
