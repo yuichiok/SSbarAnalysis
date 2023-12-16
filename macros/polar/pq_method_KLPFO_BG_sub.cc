@@ -9,8 +9,8 @@ using std::cout; using std::endl;
 using std::vector; using std::unordered_map;
 
 TString LPFO_mode = "K";
-TString ichiral = "eL.pR";
-// TString ichiral = "eR.pL";
+// TString ichiral = "eL.pR";
+TString ichiral = "eR.pL";
 
 TString inputDir = "../../rootfiles/merged/";
 array<TString,2> chirals   = {"eL.pR", "eR.pL"};
@@ -177,6 +177,9 @@ void pq_method_KLPFO_BG_sub()
     h_total_reco->Sumw2();
     h_total_gen->Sumw2();
     h_total_reco_bg->Sumw2();
+
+    Int_t Nreco = 0;
+
     for( auto process : processes ){
 
       Int_t processID = production.at({process,ichiral}).first;
@@ -202,6 +205,9 @@ void pq_method_KLPFO_BG_sub()
           h_total_reco->Add(hmap.at(process).at(qq).at("reco"));
           h_total_gen->Add(hmap.at(process).at(qq).at("gen"));
 
+          TH1F *hreco = (TH1F*) file->Get( qq + "/cos/h_" + qq + "_" + LPFO_mode + "_qcos" );
+          Nreco += hreco->GetEntries();
+
         }
 
       }else{
@@ -212,6 +218,9 @@ void pq_method_KLPFO_BG_sub()
         h_total_gen->Add(hmap.at(process).at(qq).at("gen"));
         h_total_reco_bg->Add(hmap.at(process).at(qq).at("reco"));
         h_total_gen_bg->Add(hmap.at(process).at(qq).at("gen"));
+
+        TH1F *hreco = (TH1F*) file->Get( qq + "/cos/h_" + qq + "_" + LPFO_mode + "_qcos" );
+        Nreco += hreco->GetEntries();
 
       }
 
@@ -267,10 +276,14 @@ void pq_method_KLPFO_BG_sub()
 
 
     // output AFB
-    Float_t AFB_gen  = AFB_calculation(f_gen);
-    Float_t AFB_reco = AFB_calculation(f_reco);
-    cout << "Gen  AFB = " << AFB_gen << endl;
-    cout << "Reco AFB = " << AFB_reco << endl;
+    Float_t AFB_gen  = AFB_calculation_fit(f_gen);
+    Float_t AFB_reco = AFB_calculation_fit(f_reco);
+    Float_t AFB_reco_error = AFB_error(AFB_reco, Nreco);
+    // Float_t AFB_gen  = AFB_calculation(f_gen);
+    // Float_t AFB_reco = AFB_calculation(f_reco);
+    cout << "Gen  AFB  = " << AFB_gen << endl;
+    cout << "Reco AFB  = " << AFB_reco << " +- " << AFB_reco_error << endl;
+    cout << "Precision = " << AFB_reco_error / AFB_reco << endl;
 
 
 
