@@ -105,7 +105,12 @@ def main():
             h_sum.Add(h)
 
           styleHist(h_sum,1)
-          legend.AddEntry(h_sum, category.split("_")[1], "l")
+          # legend.AddEntry(h_sum, category.split("_")[1], "l")
+          if category == "momentum_LPFO":
+            legend.AddEntry(h_sum, "LPFO", "l")
+          elif category == "momentum_SPFO":
+            legend.AddEntry(h_sum, "non-LPFO", "l")
+
           h_sum.SetTitle(f"{process} {category} {igenreco}")
           tmp_ths_LPFO_SPFO.Add(h_sum)
         
