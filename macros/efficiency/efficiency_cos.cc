@@ -159,7 +159,7 @@ void calcEff()
     for (auto iqq : qq){
       if(ih=="nocut"){
         // cout << std::setprecision (3) << iqq << " 100\\% (" << eff_map[iqq][ih] << ") & ";
-        cout <<  iqq << " 100\\% (" << eff_map[iqq][ih] << ") & ";
+        cout <<  iqq << " 100\\% (" << eff_map[iqq][ih] / 2.0 << ") & ";
       }else{
         cout << std::setprecision (3) << eff_map[iqq][ih] * 100. << "\\% & "; 
       }
