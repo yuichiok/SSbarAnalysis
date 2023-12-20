@@ -181,6 +181,8 @@ void pq_method_PiLPFO_add()
     hmap["uu"] = main_pq(file_map["P2f_z_h"][chiral], "uu");
     hmap["dd"] = main_pq(file_map["P2f_z_h"][chiral], "dd");
 
+    Int_t Nreco = hmap.at("uu").at("reco")->Integral() + hmap.at("dd").at("reco")->Integral();
+
     // cout << "uu ratio = " << uu_ratio << endl;
     // cout << "dd ratio = " << dd_ratio << endl;
     // cout << "weight   = " << dd_ratio / uu_ratio << endl;
@@ -239,10 +241,15 @@ void pq_method_PiLPFO_add()
       cout << "Reco Chi2 / ndf = " << f_reco->GetChisquare() << " / " << f_reco->GetNDF() << endl;
 
       // output AFB
+      // Int_t Nreco = h_reco->Integral();
+      cout << "Nreco = " << Nreco << endl;
       Float_t AFB_gen  = AFB_calculation(f_gen);
       Float_t AFB_reco = AFB_calculation(f_reco);
+      Float_t AFB_reco_error = AFB_error(AFB_reco, Nreco);
+
       cout << "Gen  AFB = " << AFB_gen << endl;
-      cout << "Reco AFB = " << AFB_reco << endl;
+      cout << "Reco AFB = " << AFB_reco << " +- " << AFB_reco_error << endl;
+      cout << "Precision = " << AFB_reco_error / AFB_reco << endl;
 
       TCanvas *cTotal = new TCanvas("cTotal","cTotal",800,800);
       TPad *padTotal = new TPad("padTotal","padTotal",0,0,1,1);
@@ -255,6 +262,7 @@ void pq_method_PiLPFO_add()
       // f_reco->Draw("same");
       // f_gen->Draw("same");
 
+/*
     Int_t bineval = 21;
     cout << h_reco->GetBinError(bineval) / h_reco->GetBinContent(bineval) << endl;
 
@@ -427,6 +435,7 @@ void pq_method_PiLPFO_add()
       leg_trp_genreco->AddEntry(rReco,"Reconstructed #pi^{-}","l");
       leg_trp_genreco->AddEntry(rGen,"Generated #pi^{-}","l");
       leg_trp_genreco->Draw();
+*/
 
   }
   catch(const std::exception& e)

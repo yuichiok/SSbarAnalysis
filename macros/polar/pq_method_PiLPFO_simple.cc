@@ -29,7 +29,7 @@ unordered_map<pair<TString,TString>,pair<Int_t,Int_t>, hash_pair> production = {
     {{"Pqqh", "eR.pL"}, {402012,2278}},
 };
 
-Float_t fitRange = 0.6;
+Float_t fitRange = 0.78;
 
 void BinNormal(TH1F *h)
 {
@@ -83,10 +83,14 @@ unordered_map<TString, TH1F*> main_pq(TFile* file, TString prodMode)
   {
     TH1F* h_reco_LPFO_scos_eff = efficiencyCorrection(h_reco_LPFO_scos,LPFO_mode,file,prodMode);
     TH1F* h_reco_LPFO_qcos_eff = efficiencyCorrection(h_reco_LPFO_qcos,LPFO_mode,file,prodMode);
-    h_reco_LPFO_scos_eff_corr = resolutionCorrection(h_reco_LPFO_scos_eff,LPFO_mode,file,prodMode);
-    h_reco_LPFO_qcos_eff_corr = resolutionCorrection(h_reco_LPFO_qcos_eff,LPFO_mode,file,prodMode);
-    // h_reco_LPFO_scos_eff_corr = (TH1F*) h_reco_LPFO_scos_eff->Clone();
-    // h_reco_LPFO_qcos_eff_corr = (TH1F*) h_reco_LPFO_qcos_eff->Clone();
+    
+    if( LPFO_mode == "K" ){
+      h_reco_LPFO_scos_eff_corr = resolutionCorrection(h_reco_LPFO_scos_eff,LPFO_mode,file,prodMode);
+      h_reco_LPFO_qcos_eff_corr = resolutionCorrection(h_reco_LPFO_qcos_eff,LPFO_mode,file,prodMode);
+    }else{
+      h_reco_LPFO_scos_eff_corr = (TH1F*) h_reco_LPFO_scos_eff->Clone();
+      h_reco_LPFO_qcos_eff_corr = (TH1F*) h_reco_LPFO_qcos_eff->Clone();
+    }
 
   }else{
     h_reco_LPFO_scos_eff_corr = (TH1F*) h_reco_LPFO_scos->Clone();
@@ -99,10 +103,14 @@ unordered_map<TString, TH1F*> main_pq(TFile* file, TString prodMode)
   {
     TH1F* h_acc_PiPi_cos_eff = efficiencyCorrection(h_acc_PiPi_cos,LPFO_mode,file,prodMode);
     TH1F* h_rej_PiPi_cos_eff = efficiencyCorrection(h_rej_PiPi_cos,LPFO_mode,file,prodMode);
-    h_acc_PiPi_cos_eff_corr = resolutionCorrection(h_acc_PiPi_cos_eff,LPFO_mode,file,prodMode);
-    h_rej_PiPi_cos_eff_corr = resolutionCorrection(h_rej_PiPi_cos_eff,LPFO_mode,file,prodMode);
-    // h_acc_PiPi_cos_eff_corr = (TH1F*) h_acc_PiPi_cos_eff->Clone();
-    // h_rej_PiPi_cos_eff_corr = (TH1F*) h_rej_PiPi_cos_eff->Clone();
+
+    if( LPFO_mode == "K" ){
+      h_acc_PiPi_cos_eff_corr = resolutionCorrection(h_acc_PiPi_cos_eff,LPFO_mode,file,prodMode);
+      h_rej_PiPi_cos_eff_corr = resolutionCorrection(h_rej_PiPi_cos_eff,LPFO_mode,file,prodMode);
+    }else{
+      h_acc_PiPi_cos_eff_corr = (TH1F*) h_acc_PiPi_cos_eff->Clone();
+      h_rej_PiPi_cos_eff_corr = (TH1F*) h_rej_PiPi_cos_eff->Clone();
+    }
 
   }else{
     h_acc_PiPi_cos_eff_corr = (TH1F*) h_acc_PiPi_cos->Clone();
@@ -228,6 +236,16 @@ void pq_method_PiLPFO_simple()
       leg_trp_genreco->AddEntry(rGen,"Generated #pi^{-}","l");
       leg_trp_genreco->Draw();
 
+    // output AFB
+    Float_t AFB_gen  = AFB_calculation_fit(f_gen);
+    Float_t AFB_reco = AFB_calculation_fit(f_reco);
+    cout << h_map.at("reco")->Integral() << endl;
+    Float_t AFB_reco_error = AFB_error(AFB_reco, h_map.at("reco")->Integral());
+    // Float_t AFB_gen  = AFB_calculation(f_gen);
+    // Float_t AFB_reco = AFB_calculation(f_reco);
+    cout << "Gen  AFB  = " << AFB_gen << endl;
+    cout << "Reco AFB  = " << AFB_reco << " +- " << AFB_reco_error << endl;
+    cout << "Precision = " << AFB_reco_error / AFB_reco << endl;
 
     // stat + sys
     // cout << "Stat + sys error =====\n";

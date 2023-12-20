@@ -9,8 +9,8 @@ using std::cout; using std::endl;
 using std::vector; using std::unordered_map;
 
 TString LPFO_mode = "Pi";
-// TString ichiral = "eL.pR";
-TString ichiral = "eR.pL";
+TString ichiral = "eL.pR";
+// TString ichiral = "eR.pL";
 
 TString inputDir = "../../rootfiles/merged/";
 array<TString,2> chirals   = {"eL.pR", "eR.pL"};
@@ -172,9 +172,13 @@ void pq_method_PiLPFO_BG_sub()
     TH1F * h_total_gen      = new TH1F("h_total_gen_" + ichiral,";cos#theta;Entries / Int. Lumi.", 100,-1,1);
     TH1F * h_total_reco_bg  = new TH1F("h_total_reco_bg_" + ichiral,";cos#theta;Entries / Int. Lumi.", 100,-1,1);
     TH1F * h_total_gen_bg   = new TH1F("h_total_gen_bg_" + ichiral,";cos#theta;Entries / Int. Lumi.", 100,-1,1);
+    TH1F * h_reco_ud        = new TH1F("h_reco_ud_" + ichiral,";cos#theta;Entries / Int. Lumi.", 100,-1,1);
     h_total_reco->Sumw2();
     h_total_gen->Sumw2();
     h_total_reco_bg->Sumw2();
+
+    Int_t Nreco = 0;
+
     for( auto process : processes ){
 
       Int_t processID = production.at({process,ichiral}).first;
@@ -192,6 +196,8 @@ void pq_method_PiLPFO_BG_sub()
           if(qq=="uu"||qq=="dd"){
             Float_t eff = (Float_t) hmap[process][qq]["gen"]->Integral() / (Float_t) hmap[process][qq]["reco"]->Integral();
             hmap.at(process).at(qq).at("reco")->Scale(eff);
+            h_reco_ud->Add(hmap.at(process).at(qq).at("reco"));
+            Nreco += hmap.at(process).at(qq).at("reco")->Integral();
           }else{
             h_total_reco_bg->Add(hmap.at(process).at(qq).at("reco"));
             h_total_gen_bg->Add(hmap.at(process).at(qq).at("gen"));
@@ -221,7 +227,8 @@ void pq_method_PiLPFO_BG_sub()
     StylePad(padTotal,0,0.15,0,0.17);
 
     TH1F* h_total_reco_sig = (TH1F*) h_total_reco->Clone();
-    h_total_reco_sig->Add(h_total_reco_bg,-1);
+    // h_total_reco_sig->Add(h_total_reco_bg,-1);
+    h_total_reco_sig->Add(h_total_reco_bg,-0.95);
     TH1F* h_total_gen_sig = (TH1F*) h_total_gen->Clone();
     h_total_gen_sig->Add(h_total_gen_bg,-1);
 
@@ -229,6 +236,8 @@ void pq_method_PiLPFO_BG_sub()
     // Normalize(h_total_gen_sig);
 
     StyleHist(h_total_reco_sig,kBlue+2);
+    StyleHist(h_reco_ud,kBlue+2);
+
     StyleHist(h_total_gen_sig,kGreen+2);
 
     h_total_gen_sig->GetYaxis()->SetRangeUser(0,250);
@@ -250,18 +259,38 @@ void pq_method_PiLPFO_BG_sub()
     cout << "Reco Chi2 / ndf = " << f_reco->GetChisquare() << " / " << f_reco->GetNDF() << endl;
     f_gen->Draw("same");
 
-    h_total_reco_sig->Draw("same");
+    // h_total_reco_sig->Draw("same");
+    h_total_reco_sig->SetFillColor(kBlack);
+    h_total_reco_sig->SetLineColor(0);
+    h_total_reco_sig->SetFillStyle(3001);
+    h_total_reco_sig->Draw("E2 same");
+    h_reco_ud->SetMarkerStyle(8);
+    h_reco_ud->SetMarkerSize(0.7);
+    h_reco_ud->Draw("same");
+
+
     f_reco->Draw("same");
 
     TLegend *legTotal = new TLegend(0.51,0.74,0.89,0.89);
     legTotal->SetMargin(0.4);
     legTotal->SetLineColor(0);
     legTotal->AddEntry(h_total_gen_sig,"Parton level","f");
-    legTotal->AddEntry(h_total_reco_sig,"Reconstructed","lE");
+    // legTotal->AddEntry(h_total_reco_sig,"Reconstructed","lE");
+    legTotal->AddEntry(h_reco_ud,"Reconstructed + stat. unc.","lep");
+    legTotal->AddEntry(h_total_reco_sig,"Stat. + syst. unc.","f");
     legTotal->AddEntry(f_gen,"Parton level fit","l");
     legTotal->AddEntry(f_reco,"Reconstruction fit","l");
     legTotal->Draw();
 
+    // output AFB
+    // Int_t Nreco = h_reco_ud->Integral();
+    Float_t AFB_gen  = AFB_calculation(f_gen);
+    Float_t AFB_reco = AFB_calculation(f_reco);
+    Float_t AFB_reco_error = AFB_error(AFB_reco, Nreco);
+
+    cout << "Gen  AFB = " << AFB_gen << endl;
+    cout << "Reco AFB = " << AFB_reco << " +- " << AFB_reco_error << endl;
+    cout << "Precision = " << AFB_reco_error / AFB_reco << endl;
 
 
 

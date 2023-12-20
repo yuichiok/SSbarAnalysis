@@ -151,8 +151,8 @@ unordered_map<TString, TH1F*> main_pq(TFile* file, TString process, TString chir
   cout << "Reco Chi2 / ndf = " << f_reco->GetChisquare() << " / " << f_reco->GetNDF() << endl;
 
   Int_t luminosity = production.at({process,chiral}).second;
-  h_gen_q_qcos->Scale(1.0 / luminosity);
-  h_reco_LPFO_pq_cos->Scale(1.0 / luminosity);
+  h_gen_q_qcos->Scale(1.0 / (Float_t) luminosity);
+  h_reco_LPFO_pq_cos->Scale(1.0 / (Float_t) luminosity);
 
   // output
   unordered_map<TString, TH1F*> hmap;
@@ -174,6 +174,7 @@ void pq_method_KLPFO_BG_sub()
     TH1F * h_total_gen      = new TH1F("h_total_gen_" + ichiral,";cos#theta;Entries / Int. Lumi.", 100,-1,1);
     TH1F * h_total_reco_bg  = new TH1F("h_total_reco_bg_" + ichiral,";cos#theta;Entries / Int. Lumi.", 100,-1,1);
     TH1F * h_total_gen_bg   = new TH1F("h_total_gen_bg_" + ichiral,";cos#theta;Entries / Int. Lumi.", 100,-1,1);
+    TH1F * h_reco_ss;
     h_total_reco->Sumw2();
     h_total_gen->Sumw2();
     h_total_reco_bg->Sumw2();
@@ -196,6 +197,7 @@ void pq_method_KLPFO_BG_sub()
           hmap[process][qq] = main_pq(file,process,ichiral,qq);
           if(qq=="ss"){
             Float_t eff = (Float_t) hmap[process][qq]["gen"]->Integral() / (Float_t) hmap[process][qq]["reco"]->Integral();
+            h_reco_ss = (TH1F*) hmap[process][qq]["reco"]->Clone();
             // hmap.at(process).at(qq).at("reco")->Scale(eff);
           }else{
             h_total_reco_bg->Add(hmap.at(process).at(qq).at("reco"));
@@ -227,19 +229,27 @@ void pq_method_KLPFO_BG_sub()
     }
 
 
-    TCanvas *c_total = new TCanvas("c_total","c_total",800,800);
+    TCanvas *c_total = new TCanvas("c_total","c_total",1000,1000);
     TPad *padTotal = new TPad("padTotal","padTotal",0,0,1,1);
     StylePad(padTotal,0,0.15,0,0.17);
 
+    // TH1F* h_bgsub = (TH1F*) h_total_reco_bg->Clone();
+    // h_bgsub->Scale(h_bgsub->Integral() * 1.05);
+
     TH1F* h_total_reco_sig = (TH1F*) h_total_reco->Clone();
-    h_total_reco_sig->Add(h_total_reco_bg,-1);
+    // h_total_reco_sig->Add(h_total_reco_bg,-1);
+    h_total_reco_sig->Add(h_total_reco_bg,-0.95);
+    // h_total_reco_sig->Add(h_bgsub,-1);
     TH1F* h_total_gen_sig = (TH1F*) h_total_gen->Clone();
     h_total_gen_sig->Add(h_total_gen_bg,-1);
 
     Normalize(h_total_reco_sig);
     Normalize(h_total_gen_sig);
+    Normalize(h_reco_ss);
 
     StyleHist(h_total_reco_sig,kBlue+2);
+    StyleHist(h_reco_ss,kBlue+2);
+
     StyleHist(h_total_gen_sig,kGreen+2);
 
     // h_total_gen_sig->GetYaxis()->SetRangeUser(0,250);
@@ -262,14 +272,21 @@ void pq_method_KLPFO_BG_sub()
     cout << "Reco Chi2 / ndf = " << f_reco->GetChisquare() << " / " << f_reco->GetNDF() << endl;
     f_gen->Draw("same");
 
-    h_total_reco_sig->Draw("same");
+    h_total_reco_sig->SetFillColor(kBlack);
+    h_total_reco_sig->SetLineColor(0);
+    h_total_reco_sig->SetFillStyle(3001);
+    h_total_reco_sig->Draw("E2 same");
+    h_reco_ss->SetMarkerStyle(8);
+    h_reco_ss->SetMarkerSize(0.7);
+    h_reco_ss->Draw("same");
     f_reco->Draw("same");
 
     TLegend *legTotal = new TLegend(0.2,0.74,0.5,0.89);
     legTotal->SetMargin(0.4);
     legTotal->SetLineColor(0);
     legTotal->AddEntry(h_total_gen_sig,"Parton level","f");
-    legTotal->AddEntry(h_total_reco_sig,"Reconstructed","lE");
+    legTotal->AddEntry(h_reco_ss,"Reconstructed + stat. unc.","lep");
+    legTotal->AddEntry(h_total_reco_sig,"Stat. + syst. unc.","f");
     legTotal->AddEntry(f_gen,"Parton level fit","l");
     legTotal->AddEntry(f_reco,"Reconstruction fit","l");
     legTotal->Draw();
