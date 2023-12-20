@@ -8,7 +8,8 @@
 using std::cout; using std::endl;
 using std::vector; using std::array; using std::unordered_map;
 
-TString LPFO_mode = "K";
+// TString LPFO_mode = "K";
+TString LPFO_mode = "Pi";
 TString ichiral = "eL.pR";
 // TString ichiral = "eR.pL";
 
@@ -90,7 +91,8 @@ void cross_section()
     for( auto process : processes ){
       for( auto iqq : qqbars ){
         if(process=="P2f_z_h"){
-          if(iqq=="ss"){
+          // if(iqq=="ss"){
+          if(iqq=="uu" || iqq=="dd"){
             Nsig += Nreco[process][ichiral][iqq];
           }else{
             Nbg += Nreco[process][ichiral][iqq];

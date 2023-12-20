@@ -11,8 +11,8 @@ using std::vector; using std::unordered_map;
 
 TString prod_mode = "uu";
 TString chiral    = "eL.pR";
-// TString LPFO_mode = "Pi";
-TString LPFO_mode = "K";
+TString LPFO_mode = "Pi";
+// TString LPFO_mode = "K";
 // TString qq[3] = {"uu","dd","ss"};
 TString qq[5] = {"dd","uu","ss","cc","bb"};
 // TString qq[2] = {"dd","uu"};
