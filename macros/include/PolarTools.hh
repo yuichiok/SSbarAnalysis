@@ -123,14 +123,6 @@ TH1F * CorrectHist( TString prodMode, TH1F * h_reco, vector<Float_t> p_vec)
     // float p = 0.73;    // average p for u & d
     float q = 1 - p;
     float weight = (p * p + q * q) / (q * q * q * q - p * p * p * p);
-    if (weight > 5){
-      int ibf = i-1;
-      if(i!=1){
-        p = p_vec.at(ibf - 1);
-        q = 1 - p;
-        weight = (p * p + q * q) / (q * q * q * q - p * p * p * p);
-      }
-    }
 
     // calcualte average
     float av_i = 0;
@@ -149,6 +141,14 @@ TH1F * CorrectHist( TString prodMode, TH1F * h_reco, vector<Float_t> p_vec)
     }
     av_i /= n;
     av_41i /= n;
+
+    bool abn = 0;
+    if(av_i<0 || av_41i<0){
+      abn = true;
+      av_i   = h_reco->GetBinContent(i);
+      av_41i = h_reco->GetBinContent(nbins + 1 - i);
+    }
+
     corrected->SetBinContent(i, av_i);
     corrected->SetBinContent(nbins + 1 - i, av_41i);
 
@@ -169,6 +169,13 @@ TH1F * CorrectHist( TString prodMode, TH1F * h_reco, vector<Float_t> p_vec)
     }
     error_i = sqrt(error_i / (n - 1.));
     error_41i = sqrt(error_41i / (n - 1.));
+
+    if(abn){
+      error_i   = h_reco->GetBinError(i);
+      error_41i = h_reco->GetBinError(nbins + 1 - i);
+    }
+
+
     corrected->SetBinError(i, error_i);
     corrected->SetBinError(nbins + 1 - i, error_41i);
   }
@@ -182,8 +189,8 @@ TH1F * efficiencyCorrection( TH1F * h, TString LPFO_mode, TFile * file, TString 
   // TString dirName = category + "/efficiency/";
   // TH1F *h_reco_offset = (TH1F*) file->Get(dirName + "h_" + category + "_reco_" + LPFO_mode + "_momentum");
   // TH1F *h_reco_PID    = (TH1F*) file->Get(dirName + "h_" + category + "_reco_" + LPFO_mode + "_charge");
-  TFile *file_eff_weight = new TFile("../efficiency/eff_weight.root","READ");
-  TH1F *h_reco_offset = (TH1F*) file_eff_weight->Get("h_reco_" + LPFO_mode + "_momentum");
+  TFile *file_eff_weight = new TFile("../efficiency/eff_weight_" + LPFO_mode + ".root","READ");
+  TH1F *h_reco_offset = (TH1F*) file_eff_weight->Get("h_reco_" + LPFO_mode + "_btag");
   TH1F *h_reco_PID    = (TH1F*) file_eff_weight->Get("h_reco_" + LPFO_mode + "_charge");
 
 
@@ -242,5 +249,23 @@ Float_t AFB_calculation( TF1 * f )
   float AFB = (N_forward - N_backward) / (N_forward + N_backward);
 
   return AFB;
+
+}
+
+Float_t AFB_calculation_fit( TF1 * f )
+{
+  float S = f->GetParameter(0);
+  float A = f->GetParameter(1);
+  float AFB = (3*A) / (8*S);
+
+  return AFB;
+
+}
+
+Float_t AFB_error( Float_t AFB, Int_t N )
+{
+  Float_t AFB_error = sqrt((1-AFB*AFB)/(Float_t)N);
+
+  return AFB_error;
 
 }

@@ -1,6 +1,7 @@
 import os
 import sys
 import pandas as pd
+from tabulate import tabulate
 from ROOT import gStyle, TFile, TCanvas, TPad
 from ROOT import TCanvas, TH1F, THStack, TLine, TLegend
 
@@ -25,7 +26,7 @@ def addHist(file, hpath, htype, hsum):
   hsum.Add(h)
 
 def addData(file, hpath, df, process, qqbar, chiral):
-  hcategory = ["cosBF","sinacol", "invM", "y23","LPFOacol","cosAF"]
+  hcategory = ["cosBF","sinacol", "invM", "y23","cosAF"]
   # Initialize dictionaries to accumulate values
   values_dict = {
       "process": process,
@@ -95,7 +96,6 @@ def main():
       "sinacol" : 0.3,
       "invM"    : 140,
       "y23"     : 0.02,
-      "LPFOacol": 0.97,
     }
     def __init__(self, category, title, bin, xmin, xmax):
       self.category = category
@@ -123,13 +123,12 @@ def main():
       self.line.SetLineWidth(3)
       self.line.SetLineStyle(1)
 
-  columnDf = ["process", "qqbar", "chiral", "cosBF", "sinacol", "invM", "y23", "LPFOacol", "cosAF"]
+  columnDf = ["process", "qqbar", "chiral", "cosBF", "sinacol", "invM", "y23", "cosAF"]
   totDf = pd.DataFrame(columns=columnDf)
   PMs = {
     "sinacol": PlotManager("sinacol", ";sin#Psi_{acol};Norm.", 100, 0, 1),
     "invM": PlotManager("invM", ";m_{j_{1},j_{2}};Norm.", 100, 0, 500),
     "y23": PlotManager("y23", ";y_{23};Norm.", 50, 0, 0.25),
-    "LPFOacol": PlotManager("LPFOacol", ";cos#theta_{L_{1},L_{2}};Norm.", 100, 0, 1),
   }
 
   for process in processes:
@@ -184,15 +183,23 @@ def main():
       effDf[column] = totDf[column]
     elif column == "cosBF":
       denom = totDf[column]
+      effDf['None'] = denom
+      # print(totDf["process"], totDf["qqbar"], totDf["chiral"], denom)
     else:
-      effDf[f'cut{cutno}'] = totDf[column] / denom
+      effDf[f'cut{cutno}'] = totDf[column] / denom * 100.
       cutno += 1
   with pd.option_context('display.float_format', '{:0.1f}'.format):
     effDf = effDf.sort_values(by=['chiral', 'process'])
     eLpRdf = effDf.head(9).T
     eRpLdf = effDf.loc[1:].T
-    print(eLpRdf)
-    print(eRpLdf)
+    # print(eLpRdf)
+    # print(eRpLdf)
+
+    tmp = eRpLdf.tail(5)
+
+    print(tabulate(tmp, tablefmt='latex',floatfmt=".1f",showindex=False))
+
+
 
     # file_eLpR = Path('eLpR.csv')  
     file_eLpR = os.path.join(macroDir, 'preselection', 'eLpR.csv')

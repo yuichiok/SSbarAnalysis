@@ -11,13 +11,29 @@ using std::vector; using std::array; using std::unordered_map;
 // TString prod_mode = "uu";
 // TString chiral    = "eR.pL";
 TString LPFO_mode = "Pi";
-// Float_t TopRange = 700E3;
-Float_t TopRange = 10;
+// Float_t TopRange = 700;
+Float_t TopRange = 550;
+// Float_t TopRange = 0.7;
 
 TString inputDir = "../../rootfiles/merged/";
 array<TString,2> chirals   = {"eL.pR", "eR.pL"};
-array<TString,4> processes = {"P2f_z_h", "P4f_ww_h", "P4f_zz_h", "Pqqh"};
-array<TString,6> qqbars    = {"dd", "uu", "ss", "cc", "bb", "rr"};
+// array<TString,4> processes = {"Pqqh", "P4f_zz_h", "P4f_ww_h", "P2f_z_h"}; // (kaon uu/dd, kaon ss, pion)
+array<TString,1> processes = {"P2f_z_h"}; // (kaon uu/dd 2)
+
+// array<TString,6> qqbars    = {"rr", "bb", "cc", "ss", "dd", "uu"}; // pion
+// array<TString,6> qqbars    = {"rr", "bb", "cc", "dd", "uu", "ss"}; // kaon ss
+// array<TString,5> qqbars    = {"rr", "bb", "cc", "dd", "uu"}; // kaon uu/dd
+array<TString,2> qqbars       = {"dd", "uu"}; // kaon uu/dd 2
+// array<TString,1> qqbars    = {"ss"};
+
+// array<TString,4> leg_processes    = {"P2f_z_h", "P4f_ww_h", "P4f_zz_h", "Pqqh"}; // (kaon uu/dd, kaon ss, pion)
+array<TString,1> leg_processes = {"P2f_z_h"}; // (kaon uu/dd2 )
+// array<TString,6> leg_qqbars    = {"dd", "uu", "ss", "cc", "bb", "rr"}; // normal
+// array<TString,5> leg_qqbars    = {"dd", "uu", "cc", "bb", "rr"}; // kaon uu/dd
+array<TString,2> leg_qqbars       = {"dd", "uu"}; // kaon uu/dd 2
+// array<TString,1> leg_qqbars    = {"ss"};
+
+
 
 unordered_map<pair<TString,TString>,pair<Int_t,Int_t>, hash_pair> production = {
     {{"P2f_z_h", "eL.pR"}, {500010,4994}},
@@ -98,8 +114,8 @@ unordered_map<TString, TH1F*> main_pq(TFile* file, TString process, TString chir
   cout << category << " reco eff   = " << (float)h_reco_LPFO_qcos->GetEntries() / (float)h_gen_q_qcos->GetEntries() << endl;
   
   // used for pq correction
-  TH1F *h_acc_PiPi_cos  = (TH1F*) file->Get(category + "/cos/h_" + category + "_" + LPFO_mode + "_acc_cos");
-  TH1F *h_rej_PiPi_cos  = (TH1F*) file->Get(category + "/cos/h_" + category + "_" + LPFO_mode + "_rej_cos");
+  TH1F *h_acc_LL_cos  = (TH1F*) file->Get(category + "/cos/h_" + category + "_" + LPFO_mode + "_acc_cos");
+  TH1F *h_rej_LL_cos  = (TH1F*) file->Get(category + "/cos/h_" + category + "_" + LPFO_mode + "_rej_cos");
 
   // efficiency correction
   Bool_t isEffCorr = true;
@@ -117,17 +133,17 @@ unordered_map<TString, TH1F*> main_pq(TFile* file, TString process, TString chir
     h_reco_LPFO_qcos_eff_corr = (TH1F*) h_reco_LPFO_qcos->Clone();
   }
 
-  TH1F *h_acc_PiPi_cos_eff_corr;
-  TH1F *h_rej_PiPi_cos_eff_corr;
+  TH1F *h_acc_LL_cos_eff_corr;
+  TH1F *h_rej_LL_cos_eff_corr;
   if (isEffCorr)
   {
-    TH1F* h_acc_PiPi_cos_eff = efficiencyCorrection(h_acc_PiPi_cos,LPFO_mode,file,category);
-    TH1F* h_rej_PiPi_cos_eff = efficiencyCorrection(h_rej_PiPi_cos,LPFO_mode,file,category);
-    h_acc_PiPi_cos_eff_corr = resolutionCorrection(h_acc_PiPi_cos_eff,LPFO_mode,file,category);
-    h_rej_PiPi_cos_eff_corr = resolutionCorrection(h_rej_PiPi_cos_eff,LPFO_mode,file,category);
+    TH1F* h_acc_LL_cos_eff = efficiencyCorrection(h_acc_LL_cos,LPFO_mode,file,category);
+    TH1F* h_rej_LL_cos_eff = efficiencyCorrection(h_rej_LL_cos,LPFO_mode,file,category);
+    h_acc_LL_cos_eff_corr = resolutionCorrection(h_acc_LL_cos_eff,LPFO_mode,file,category);
+    h_rej_LL_cos_eff_corr = resolutionCorrection(h_rej_LL_cos_eff,LPFO_mode,file,category);
   }else{
-    h_acc_PiPi_cos_eff_corr = (TH1F*) h_acc_PiPi_cos->Clone();
-    h_rej_PiPi_cos_eff_corr = (TH1F*) h_rej_PiPi_cos->Clone();
+    h_acc_LL_cos_eff_corr = (TH1F*) h_acc_LL_cos->Clone();
+    h_rej_LL_cos_eff_corr = (TH1F*) h_rej_LL_cos->Clone();
   }
 
   StyleHist(h_gen_q_qcos,kGreen+1);
@@ -135,16 +151,16 @@ unordered_map<TString, TH1F*> main_pq(TFile* file, TString process, TString chir
   const Int_t nbins = h_reco_LPFO_scos_eff_corr->GetNbinsX();
 
   // pq correction
-  TString pValName = "p_PiPi_" + category;
-  TH1F *p_PiPi = new TH1F(pValName,pValName, 50,0,1);
-  p_PiPi->Sumw2();
+  TString pValName = "p_" + LPFO_mode + LPFO_mode + "_" + category;
+  TH1F *p_LL = new TH1F(pValName,pValName, 50,0,1);
+  p_LL->Sumw2();
 
-  vector<Float_t> p_vec = GetP(h_acc_PiPi_cos_eff_corr, h_rej_PiPi_cos_eff_corr);
+  vector<Float_t> p_vec = GetP(h_acc_LL_cos_eff_corr, h_rej_LL_cos_eff_corr);
 
   for (unsigned i = 0; i < p_vec.size() / 2; i++)
   {
-    p_PiPi->SetBinContent(nbins / 2 - i, p_vec.at(i));
-    p_PiPi->SetBinError(nbins / 2 - i, p_vec.at(i + nbins / 2));
+    p_LL->SetBinContent(nbins / 2 - i, p_vec.at(i));
+    p_LL->SetBinError(nbins / 2 - i, p_vec.at(i + nbins / 2));
   }
 
   TH1F *h_reco_LPFO_pq_cos;
@@ -181,7 +197,7 @@ unordered_map<TString, TH1F*> main_pq(TFile* file, TString process, TString chir
 
 }
 
-void pq_method_PiLPFO_total()
+void pq_method_LPFO_ud()
 {
   try
   {
@@ -197,6 +213,7 @@ void pq_method_PiLPFO_total()
 
         if( process=="P2f_z_h" ){
           for( auto category : qqbars ){
+            cout << "======== read " << category << " ===========" << endl;
             hmap[process][chiral][category] = main_pq(file,process,chiral,category);
           }
         }else{
@@ -207,10 +224,16 @@ void pq_method_PiLPFO_total()
     }
 
     unordered_map<TString, THStack*> hs_reco;
+    unordered_map<TString, TH1F*>    h_reco;
+    unordered_map<TString, TH1F*>    h_gen;
     unordered_map<TString, TLegend*> leg_reco;
+
     for( auto chiral : chirals ){
       hs_reco[chiral] = new THStack("hs_reco_" + chiral,";cos#theta;Entries / Int. Lumi.");
-      leg_reco[chiral] = new TLegend(0.59,0.68,0.89,0.89);
+      h_reco[chiral]  = new TH1F("h_reco_" + chiral,";cos#theta;Entries / Int. Lumi.", 100,-1,1);
+      h_gen[chiral]  = new TH1F("h_gen_" + chiral,";cos#theta;Entries / Int. Lumi.", 100,-1,1);
+      leg_reco[chiral] = new TLegend(0.59,0.65,0.89,0.85);
+      leg_reco[chiral]->SetMargin(0.4);
       leg_reco[chiral]->SetBorderSize(0);
       leg_reco[chiral]->SetFillStyle(0);
     }
@@ -219,28 +242,50 @@ void pq_method_PiLPFO_total()
       for( auto chiral : chirals ){
         if( process=="P2f_z_h" ){
           for( auto category : qqbars ){
-            // if(category=="bb" || category=="cc" || category=="ss") continue;
-            if(category=="bb" || category=="cc" ) continue;
-            TH1F *h = hmap[process][chiral][category]["reco"];
-            h->GetYaxis()->SetRangeUser(0,TopRange);
-            h->SetFillStyle(0);
+            TH1F *fh_reco = hmap[process][chiral][category]["reco"];
+            TH1F *fh_gen  = hmap[process][chiral][category]["gen"];
+            fh_reco->GetYaxis()->SetRangeUser(0,TopRange);
+            fh_reco->SetFillStyle(0);
             TString histName = histLabel(process,category);
-            h->SetTitle(histName);
-            hs_reco.at(chiral)->Add(h);
+            fh_reco->SetTitle(histName);
+            fh_gen->SetTitle(histName);
+            hs_reco.at(chiral)->Add(fh_reco);
+            h_reco.at(chiral)->Add(fh_reco);
+            h_gen.at(chiral)->Add(fh_gen);
+          }
+        }else{
+          TH1F *fh_reco = hmap[process][chiral]["bg"]["reco"];
+          TH1F *fh_gen  = hmap[process][chiral]["bg"]["gen"];
+          fh_reco->GetYaxis()->SetRangeUser(0,TopRange);
+          fh_reco->SetFillStyle(0);
+          TString histName = histLabel(process,"bg");
+          fh_reco->SetTitle(histName);
+          fh_gen->SetTitle(histName);
+          fh_reco->SetLineStyle(7);
+          hs_reco.at(chiral)->Add(fh_reco);
+          h_reco.at(chiral)->Add(fh_reco);
+          h_gen.at(chiral)->Add(fh_gen);
+        }
+      }
+    }
+    for( auto process : leg_processes ){
+      for( auto chiral : chirals ){
+        if( process=="P2f_z_h" ){
+          for( auto category : leg_qqbars ){
+            TH1F *h = hmap[process][chiral][category]["reco"];
+            TString histName = histLabel(process,category);
             leg_reco.at(chiral)->AddEntry(h,histName,"l");
           }
         }else{
           TH1F *h = hmap[process][chiral]["bg"]["reco"];
-          h->GetYaxis()->SetRangeUser(0,TopRange);
-          h->SetFillStyle(0);
           TString histName = histLabel(process,"bg");
-          h->SetTitle(histName);
-          h->SetLineStyle(7);
-          hs_reco.at(chiral)->Add(h);
           leg_reco.at(chiral)->AddEntry(h,histName,"l");
         }
       }
     }
+
+
+    cout << "========== Main Fit Results ==========\n";
 
     for( auto chiral : chirals ){
       TCanvas *c_hs_reco = new TCanvas("c_hs_reco_" + chiral,"c_hs_reco_" + chiral,900,900);
@@ -248,51 +293,67 @@ void pq_method_PiLPFO_total()
       StylePad(pad_hs_reco,0,0.12,0,0.15);
       gStyle->SetHistTopMargin(0);
       gStyle->SetPalette(55);
-      hs_reco.at(chiral)->Draw("h plc nostack");
-      leg_reco.at(chiral)->Draw();
-      // pad_hs_reco->BuildLegend(0.59,0.68,0.89,0.89);
-    }
-
-
-  /*
-    unordered_map<TString, THStack*> hs_gen;
-    for( auto chiral : chirals ){
-      hs_gen[chiral] = new THStack("hs_gen_" + chiral,";cos#theta;Entries / Int. Lumi.");
-    }
-
-    for( auto process : processes ){
-      for( auto chiral : chirals ){
-        if( process=="P2f_z_h" ){
-          for( auto category : qqbars ){
-            if(category=="bb" || category=="cc" || category=="ss") continue;
-            // if(category=="bb" || category=="cc" ) continue;
-            TH1F *h = hmap[process][chiral][category]["gen"];
-            // h->GetYaxis()->SetRangeUser(0,TopRange);
-            h->SetFillStyle(0);
-            h->SetTitle(histLabel(process,category));
-            hs_gen.at(chiral)->Add(h);
-          }
-        }else{
-          TH1F *h = hmap[process][chiral]["bg"]["gen"];
-          // h->GetYaxis()->SetRangeUser(0,TopRange);
-          h->SetFillStyle(0);
-          h->SetTitle(histLabel(process,"bg"));
-          h->SetLineStyle(7);
-          hs_gen.at(chiral)->Add(h);
-        }
+      // hs_reco.at(chiral)->Draw("h plc nostack");
+      hs_reco.at(chiral)->Draw("h plc");
+      hs_reco.at(chiral)->SetMaximum(TopRange);
+      TF1 * f_bg = new TF1("f_bg","[0]*(1+x*x)+[1]*x",-1,1);
+      double bgpars[2];
+      if(chiral=="eL.pR"){
+        bgpars[0]=43.9821;
+        bgpars[1]=-31.8062;
+      }else{
+        bgpars[0]=16.353;
+        bgpars[1]=-22.4459;
       }
-    }
+      f_bg->SetParameters(bgpars);
+      f_bg->SetLineWidth(4);
+      f_bg->SetLineColor(kBlack);
+      f_bg->Draw("same");
+      leg_reco.at(chiral)->AddEntry(f_bg,"BG fit estimation","l");
+      leg_reco.at(chiral)->Draw("same");
 
-    for( auto chiral : chirals ){
-      TCanvas *c_hs_gen = new TCanvas("c_hs_gen_" + chiral,"c_hs_gen_" + chiral,900,900);
-      TPad *pad_hs_gen = new TPad("pad_hs_gen_" + chiral, "pad_hs_gen_" + chiral,0,0,1,1);
-      StylePad(pad_hs_gen,0,0.12,0,0.15);
-      gStyle->SetHistTopMargin(0);
-      gStyle->SetPalette(55);
-      hs_gen.at(chiral)->Draw("h plc nostack");
-      pad_hs_gen->BuildLegend(0.59,0.68,0.89,0.89);
+
+
+      // Fit
+      TCanvas *c_h_reco = new TCanvas("c_h_reco_" + chiral,"c_h_reco_" + chiral,900,900);
+      TPad *pad_h_reco  = new TPad("pad_h_reco_" + chiral, "pad_h_reco_" + chiral,0,0,1,1);
+      StylePad(pad_h_reco,0,0.12,0,0.15);
+      h_reco.at(chiral)->SetLineWidth(3);
+      h_gen.at(chiral)->SetLineWidth(3);
+      h_gen.at(chiral)->Draw("h");
+      h_reco.at(chiral)->Draw("same");
+
+      TF1 * f_total = new TF1("f_total","[0]*(1+x*x)+[1]*x",-0.6,0.6);
+      f_total->SetParNames("S","A");
+      h_reco.at(chiral)->Fit("f_total","MNRS");
+      cout << "Gen Chi2 / ndf = " << f_total->GetChisquare() << " / " << f_total->GetNDF() << endl;
+
+      TF1 * f_total_all = new TF1("f_total","[0]*(1+x*x)+[1]*x",-1,1);
+      double fitpars[2];
+      f_total->GetParameters(fitpars);
+      f_total_all->SetParameters(fitpars);
+      // cout << fitpars[0] << "," << fitpars[1] << endl;
+
+      f_total->SetLineWidth(3);
+      f_total->SetLineColor(kRed);
+      f_total_all->SetLineWidth(3);
+      f_total_all->SetLineColor(kRed);
+      f_total_all->SetLineStyle(2);
+
+      f_total->Draw("same");
+      f_total_all->Draw("same");
+
+      TLegend *leg = new TLegend(0.56,0.71,0.86,0.85);
+      leg->SetMargin(0.2);
+      leg->SetBorderSize(0);
+      leg->SetFillStyle(0);
+      leg->AddEntry(h_reco.at(chiral),"Data","lep");
+      leg->AddEntry(f_total,"#frac{d#sigma}{dcos#theta} = S(1+cos^{2}#theta) + Acos#theta","l");
+      leg->Draw("same");
+
+      cout << "======================================\n";
+
     }
-  */
 
   }
   catch(const std::exception& e)
