@@ -252,6 +252,15 @@ Float_t AFB_calculation( TF1 * f )
 
 }
 
+
+Float_t AFB_N_calculation( Float_t N_forward, Float_t N_backward )
+{
+  Float_t AFB = (N_forward - N_backward) / (N_forward + N_backward);
+
+  return AFB;
+
+}
+
 Float_t AFB_calculation_fit( TF1 * f )
 {
   float S = f->GetParameter(0);

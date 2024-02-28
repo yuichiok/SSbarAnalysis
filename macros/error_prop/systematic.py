@@ -28,14 +28,14 @@ def main():
   ## AFB ##
 
   # ud eLpR
-  # values      = [-0.0994781]
-  # error_stats = [0.00011812]
-  # error_bkgs  = [0.00948006]
+  values      = [-0.0994781]
+  error_stats = [0.00011812]
+  error_bkgs  = [0.00948006]
 
   # ud eLpR p40
-  values      = [-0.0940253]
-  error_stats = [0.000280467]
-  error_bkgs  = [0.00947992]
+  # values      = [-0.0940253]
+  # error_stats = [0.000280467]
+  # error_bkgs  = [0.00947992]
 
   # ud eRpL
   # values      = [-0.464087]
