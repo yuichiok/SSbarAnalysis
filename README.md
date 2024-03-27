@@ -1,10 +1,11 @@
-# SSbarAnalysis
+# SSbarAnalysis (Light Quark Analysis)
 [![GitHub commits](https://img.shields.io/github/last-commit/yuichiok/SSbarAnalysis)](https://GitHub.com/yuichiok/SSbarAnalysis/commit)
 [![GitHub license](https://img.shields.io/github/license/yuichiok/SSbarAnalysis)](https://github.com/yuichiok/SSbarAnalysis/blob/main/LICENSE)
 <!---![CMake](https://img.shields.io/badge/CMake-%23008FBA.svg?style=for-the-badge&logo=cmake&logoColor=white)--->
 
-Analysis dedicated to $e^+e^- \rightarrow s\bar{s}$ process at Inernational Linear Collider (ILC) at 250 GeV running scenario.
-The primary objective is to identify $s$ and $\bar{s}$ quarks out from among the other quark flavor backgrounds, using the leading Kaons as its signature.
+~~Analysis dedicated to $e^+e^- \rightarrow s\bar{s}$ process at Inernational Linear Collider (ILC) at 250 GeV running scenario.~~
+~~The primary objective is to identify $s$ and $\bar{s}$ quarks out from among the other quark flavor backgrounds, using the leading Kaons as its signature.~~
+The primary objective of these codes was to analyze $s\bar{s}$ events, while the analysis is now extended to other light flavour quark events i.e. $u\bar{u}$ and $d\bar{d}$ processes.
 
 Contirbution to this project is always welcome, one just needs to follow [the contribution rules](https://github.com/yuichiok/SSbarAnalysis/blob/main/CONTRIBUTING.md).
 
