@@ -39,6 +39,7 @@ int main(int argc, char* argv[])
         throw 0;
       }
 
+    // Configuration file (you can change this to your own configuration file)
       TString anconfig = "etc/SSbarAnalysisConfig_default.ini";
 
     // Record the time main starts processing.
@@ -52,6 +53,7 @@ int main(int argc, char* argv[])
               "  Processing Begun: " << ts_mainBegin << "\n"
               "\n";
 
+      // PROCESSING
       QQbarAnalysis::NtupleProcessor ntplproc(argv[1],anconfig,"",-1);
 
     // CLOSING OUTPUT.
