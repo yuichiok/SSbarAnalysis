@@ -10,7 +10,7 @@ projectDir = Path(__file__).parent.absolute()
 
 parser = argparse.ArgumentParser(description='Run QQbarAnalysis')
 parser.add_argument('--process', type=str, required=True,
-                    help='Production process (P2f_z_h, P4f_ww_h, P4_zz_h, Pe1e1h)')
+                    help='Production process (P2f_z_h, P4f_ww_h, P4_zz_h, Pqqh)')
 parser.add_argument('--chiral',  type=str, required=True,
                     help='Polarization of beam (eLpR or eRpL)')
 

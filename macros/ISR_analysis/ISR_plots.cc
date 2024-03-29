@@ -28,22 +28,41 @@ void plot_ISR()
 
   for(auto& cat : h_category){
     h2d[cat]["ratio"] = h2_ISR_signal(h2d, cat);
-    if(cat == "npfos") h2d[cat]["ratio"]->SetTitle("ISR/signal");
+    // if(cat == "npfos") h2d[cat]["ratio"]->SetTitle("ISR/signal");
   }
   sig_isr.push_back("ratio");
 
-  TCanvas* c1 = new TCanvas("c1","c1",1000,700);
-  c1->Divide(3,2);
-  Int_t ic=1;
+  Int_t ncan = h_category.size() * sig_isr.size();
+  TCanvas* cs[ncan];
+  Int_t ccnt = 0;
+  for( int ic = 0; ic < ncan; ic++ ) cs[ic] = new TCanvas("c" + TString::Format("%d",ic), "c" + TString::Format("%d",ic),800,800);
+
+  Int_t ic = 0;
   for(auto& cat : h_category){
     for(auto& sig : sig_isr){
-      c1->cd(ic);
+      cs[ic]->cd();
       StylePad(gPad,0,0,0.14,0.14);
       gPad->SetGrid(0,0);
+      h2d[cat][sig]->SetTitle("");
       h2d[cat][sig]->Draw("colz");
       ic++;
     }
   }
+
+
+
+  // TCanvas* c1 = new TCanvas("c1","c1",1000,700);
+  // c1->Divide(3,2);
+  // Int_t ic=1;
+  // for(auto& cat : h_category){
+  //   for(auto& sig : sig_isr){
+  //     c1->cd(ic);
+  //     StylePad(gPad,0,0,0.14,0.14);
+  //     gPad->SetGrid(0,0);
+  //     h2d[cat][sig]->Draw("colz");
+  //     ic++;
+  //   }
+  // }
 
 }
 

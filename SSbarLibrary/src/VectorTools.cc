@@ -38,6 +38,13 @@ Float_t VectorTools::GetCosBetween( ROOT::Math::XYZVector v1, ROOT::Math::XYZVec
   return cos_btw;
 }
 
+Float_t VectorTools::GetSinACol( ROOT::Math::XYZVector v1, ROOT::Math::XYZVector v2 )
+{
+  ROOT::Math::XYZVector cross     = v1.Cross(v2);
+  Float_t sin_acol = cross.R()/(v1.R()*v2.R());
+  return sin_acol;
+}
+
 Float_t VectorTools::GetThetaBetween( ROOT::Math::XYZVector v1, ROOT::Math::XYZVector v2 )
 {
   Float_t dot = v1.Dot(v2);

@@ -9,6 +9,10 @@ etc/*.ini
 *.o
 *.exe
 *.root
+*.pdf
+*.png
+*.jpg
+*.csv
 
 # batch job related
 batch_jobs/etc
@@ -19,7 +23,7 @@ batch_jobs/backup
 batch_jobs/grid
 
 # python related
-batch_jobs/__pycache__
+**/__pycache__
 
 throw_jobs.sh
 

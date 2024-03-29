@@ -141,6 +141,14 @@ TH1F * CorrectHist( TString prodMode, TH1F * h_reco, vector<Float_t> p_vec)
     }
     av_i /= n;
     av_41i /= n;
+
+    bool abn = 0;
+    if(av_i<0 || av_41i<0){
+      abn = true;
+      av_i   = h_reco->GetBinContent(i);
+      av_41i = h_reco->GetBinContent(nbins + 1 - i);
+    }
+
     corrected->SetBinContent(i, av_i);
     corrected->SetBinContent(nbins + 1 - i, av_41i);
 
@@ -161,6 +169,13 @@ TH1F * CorrectHist( TString prodMode, TH1F * h_reco, vector<Float_t> p_vec)
     }
     error_i = sqrt(error_i / (n - 1.));
     error_41i = sqrt(error_41i / (n - 1.));
+
+    if(abn){
+      error_i   = h_reco->GetBinError(i);
+      error_41i = h_reco->GetBinError(nbins + 1 - i);
+    }
+
+
     corrected->SetBinError(i, error_i);
     corrected->SetBinError(nbins + 1 - i, error_41i);
   }
@@ -169,18 +184,15 @@ TH1F * CorrectHist( TString prodMode, TH1F * h_reco, vector<Float_t> p_vec)
 
 }
 
-TH1F * efficiencyCorrection( TH1F * h, TString LPFO_mode, TFile * file )
+TH1F * efficiencyCorrection( TH1F * h, TString LPFO_mode, TFile * file, TString category )
 {
-  TString dirName = "efficiency/";
-  TH1F *h_reco_offset = (TH1F*) file->Get(dirName + "h_reco_" + LPFO_mode + "_momentum");
-  TH1F *h_reco_PID    = (TH1F*) file->Get(dirName + "h_reco_" + LPFO_mode + "_charge");
+  // TString dirName = category + "/efficiency/";
+  // TH1F *h_reco_offset = (TH1F*) file->Get(dirName + "h_" + category + "_reco_" + LPFO_mode + "_momentum");
+  // TH1F *h_reco_PID    = (TH1F*) file->Get(dirName + "h_" + category + "_reco_" + LPFO_mode + "_charge");
+  TFile *file_eff_weight = new TFile("../efficiency/eff_weight_" + LPFO_mode + ".root","READ");
+  TH1F *h_reco_offset = (TH1F*) file_eff_weight->Get("h_reco_" + LPFO_mode + "_btag");
+  TH1F *h_reco_PID    = (TH1F*) file_eff_weight->Get("h_reco_" + LPFO_mode + "_charge");
 
-  // TString dirName = "efficiency/dEdx/";
-  // TH2F *h2_reco_offset = (TH2F*) file->Get(dirName + "h2_reco_" + LPFO_mode + "_" + LPFO_mode + "_momentum_dEdx_dist_cos");
-  // TH2F *h2_reco_PID    = (TH2F*) file->Get(dirName + "h2_reco_" + LPFO_mode + "_" + LPFO_mode + "_SPFO_dEdx_dist_cos");
-
-  // TH1F *h_reco_offset = (TH1F*) h2_reco_offset->ProjectionX();
-  // TH1F *h_reco_PID    = (TH1F*) h2_reco_PID->ProjectionX();
 
   TH1F *h_eff = (TH1F*) h_reco_PID->Clone();
   h_eff->Sumw2();
@@ -192,15 +204,14 @@ TH1F * efficiencyCorrection( TH1F * h, TString LPFO_mode, TFile * file )
   return h_eff_corr;
 }
 
-TH1F * resolutionCorrection( TH1F * h, TString LPFO_mode, TFile * file )
+TH1F * resolutionCorrection( TH1F * h, TString LPFO_mode, TFile * file, TString category )
 {
-  // TH1F *h_gen_N_Pi_cos  = (TH1F*) file->Get("h_gen_N_" + LPFO_mode + "_cos");
-  // TH1F *h_reco_N_Pi_cos = (TH1F*) file->Get("h_reco_N_" + LPFO_mode + "_cos");
-  // TH1F *h_N_Pi_corr_cos = (TH1F*) file->Get("h_N_" + LPFO_mode + "_corr_cos");
-
-  TH1F *h_gen_N_Pi_cos  = (TH1F*) file->Get("resolution/h_" + LPFO_mode + "_gen_N_cos");
-  TH1F *h_reco_N_Pi_cos = (TH1F*) file->Get("resolution/h_" + LPFO_mode + "_reco_N_cos");
-  TH1F *h_N_Pi_corr_cos = (TH1F*) file->Get("resolution/h_" + LPFO_mode + "_N_corr_cos");
+  TH1F *h_gen_N_Pi_cos  = (TH1F*) file->Get( category + "/resolution/h_" + category + "_" + LPFO_mode + "_gen_N_cos");
+  TH1F *h_reco_N_Pi_cos = (TH1F*) file->Get( category + "/resolution/h_" + category + "_" + LPFO_mode + "_reco_N_cos");
+  TH1F *h_N_Pi_corr_cos = (TH1F*) file->Get( category + "/resolution/h_" + category + "_" + LPFO_mode + "_N_corr_cos");
+  Int_t genN = h_gen_N_Pi_cos->Integral();
+  TH1F *htmp = (TH1F*) h->Clone();
+  if(!genN) return htmp;
 
   TH1F *h_stable_cos = (TH1F*) h_N_Pi_corr_cos->Clone();
   TH1F *h_purity_cos = (TH1F*) h_N_Pi_corr_cos->Clone();
@@ -238,5 +249,32 @@ Float_t AFB_calculation( TF1 * f )
   float AFB = (N_forward - N_backward) / (N_forward + N_backward);
 
   return AFB;
+
+}
+
+
+Float_t AFB_N_calculation( Float_t N_forward, Float_t N_backward )
+{
+  Float_t AFB = (N_forward - N_backward) / (N_forward + N_backward);
+
+  return AFB;
+
+}
+
+Float_t AFB_calculation_fit( TF1 * f )
+{
+  float S = f->GetParameter(0);
+  float A = f->GetParameter(1);
+  float AFB = (3*A) / (8*S);
+
+  return AFB;
+
+}
+
+Float_t AFB_error( Float_t AFB, Int_t N )
+{
+  Float_t AFB_error = sqrt((1-AFB*AFB)/(Float_t)N);
+
+  return AFB_error;
 
 }

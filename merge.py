@@ -1,40 +1,52 @@
 import os
 import sys
 import subprocess
+import argparse
+from pathlib import Path
+projectDir = Path(__file__).parent.absolute()
+sys.path.append(os.path.join(projectDir, 'batch_jobs'))
+print(projectDir)
+from processDict import production
 
-# udsProcess
-udsProcess = "uu"
+parser = argparse.ArgumentParser(description='Run QQbarAnalysis')
+parser.add_argument('--process', type=str, required=True,
+                    help='Production process (P2f_z_h, P4f_ww_h, P4_zz_h, Pqqh)')
+parser.add_argument('--chiral',  type=str, required=True,
+                    help='Polarization of beam (eLpR or eRpL or eLpL or eRpR)')
 
-# chiral
-# chiral = "eLpR"
-chiral = "eRpL"
+args  = parser.parse_args()
+if args.chiral not in ["eLpR", "eRpL", "eLpL", "eRpR"]:
+  sys.exit("Error: chiral must be eLpR or eRpL or eLpL or eRpR")
+if args.process not in ["P2f_z_h", "P4f_ww_h", "P4f_zz_h", "Pqqh"]:
+  sys.exit("Error: process must be P2f_z_h, P4f_ww_h, P4f_zz_h, or Pqqh")
 
-# processID
-chiral_node = ""
-processIDs = []
-if chiral == "eLpR":
-  chiral_node = "eL.pR"
-  processIDs = [15162,15271,15273,15315,15319,15351,15353,15355,15357,15463,15465,15467,15469,15471,15473,15475,15477,15479,15499,15501,15503,15505,15507,15509,15511,15513,15515,15517,15539,15541,15549,15551,15553,15555,15557,15559,15561,15563,15585,15587,15589,15591,15593,15595,15597,15599,15601,15603,15629,15633]
-elif chiral == "eRpL":
-  chiral_node = "eR.pL"
-  processIDs = [15165,15275,15277,15279,15359,15361,15363,15365,15367,15369,15481,15483,15485,15487,15489,15491,15493,15495,15497,15519,15521,15523,15525,15527,15529,15531,15533,15535,15537,15565,15567,15569,15571,15573,15575,15577,15579,15581,15583,15605,15607,15609,15611,15613,15616,15618,15620,15625,15627,15631]
+chiralDot = "eL.pR" if args.chiral == "eLpR" else "eR.pL"
 
-indir    = "./rootfiles/tmp_root/"
-outdir   = "./rootfiles/merged/"
-stagedir = f"{outdir}/staged/"
-dirCheck = os.path.isdir(indir) or os.path.isdir(outdir) or os.path.isdir(stagedir)
+model = "l5"
+processID  = production[args.process, args.chiral][0]
+prodIDList = production[args.process, args.chiral][1]
+
+inDir    = os.path.join(projectDir, 'rootfiles/tmp_root')
+outDir   = os.path.join(projectDir, 'rootfiles/merged')
+stageDir = os.path.join(outDir, 'staged')
+dirCheck = os.path.isdir(inDir) or os.path.isdir(outDir) or os.path.isdir(stageDir)
 if not dirCheck:
   sys.exit("Error: directory not found")
 
-subprocess.run(f"rm -rf {stagedir}/*",shell=True)
+print("Removing staged directory...")
+subprocess.run(['rm', '-rf', stageDir])
+print("Creating staged directory...")
+subprocess.run(['mkdir', '-p', stageDir])
 
-for processID in processIDs:
-  print(f"Merging {processID}")
-  subprocess.run(f"hadd -f -j 8 {stagedir}/stage_{processID}.root {indir}/*{processID}*.root",shell=True)
+for prodID in prodIDList:
+  print(f"Processing {args.process} {args.chiral} {processID} {prodID}")
+  subprocess.run(f"hadd -f -j 8 {stageDir}/stage_{args.process}_{args.chiral}_{processID}_{prodID}.root \
+                  {inDir}/*{processID}*{args.process}*{chiralDot}*{prodID}*.root",shell=True)
 
-# subprocess.run(f"rm -rf {indir}",shell=True)
-# subprocess.run(f"mkdir -p {indir}",shell=True)
+# # subprocess.run(f"rm -rf {indir}",shell=True)
+# # subprocess.run(f"mkdir -p {indir}",shell=True)
 
-haddCommand = f"hadd -f -j 8 {outdir}/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I500010.P2f_z_h.{chiral_node}.{udsProcess}.KPiLPFO.dedxPi.PFOp15.LPFOp15_pNaN.tpc0.mix_uds.correctDist.all.root {stagedir}/stage_*.root"
+haddCommand = f"hadd -f -j 8 {outDir}/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I{processID}.{args.process}.{chiralDot}.KPiLPFO.dedxPi.PFOp15.LPFOp15_pNaN.all.root \
+                {stageDir}/stage_*.root"
 print(haddCommand)
 subprocess.run(haddCommand,shell=True)

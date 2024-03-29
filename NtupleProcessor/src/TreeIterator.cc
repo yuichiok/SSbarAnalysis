@@ -61,18 +61,30 @@ namespace QQbarAnalysis
 
       if ( entry % 1000 == 0 ) cout << "    [TreeIterator] Event " << entry << endl;
     // Evaluate the criteria for this entry
-      if ( eAnalyzer.Select( EventAnalyzer::kQQ ) ){
 
-        eAnalyzer.Jet_sum_n_acol();
-
+      if( eAnalyzer.isSignal() ){
+        // analyze Gen MC
         if( eAnalyzer.Select( EventAnalyzer::kMC ) ){
           eAnalyzer.AnalyzeGen(entry);
         }
-        if( eAnalyzer.Select( EventAnalyzer::kReco ) ){
-          eAnalyzer.AnalyzeReco(entry);
-        }
-        
       }
+
+      if( eAnalyzer.Select( EventAnalyzer::kReco ) ){
+        eAnalyzer.AnalyzeReco(entry);
+      }
+
+
+
+      // if ( eAnalyzer.Select( EventAnalyzer::kQQ ) ){
+
+      //   if( eAnalyzer.Select( EventAnalyzer::kMC ) ){
+      //     eAnalyzer.AnalyzeGen(entry);
+      //   }
+      //   if( eAnalyzer.Select( EventAnalyzer::kReco ) ){
+      //     eAnalyzer.AnalyzeReco(entry);
+      //   }
+        
+      // }
 
       return true;
   }
