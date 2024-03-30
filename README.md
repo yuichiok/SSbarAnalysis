@@ -109,3 +109,13 @@ For TSelector (see [`TreeIterator.cc`](https://github.com/yuichiok/SSbarAnalysis
 
  In generated event analysis, "cheated PID" will be used for PID. For reconstructed event analysis, dE/dx method is being used.
  This is implemented in [`PFOTools.cc`](https://github.com/yuichiok/SSbarAnalysis/blob/main/NtupleProcessor/src/PFOTools.cc#L248-L273). (Commented out line suggest some different methods on PID criteria we've tested in the past)
+
+ ## Macros
+
+ These macros here are example codes for plotting histograms based on the ROOT file outputted from the NtupleProcessor.
+ The latest working codes are store within directory.
+ The most important results are the polar angle distribution, stored under `macros/polar`.
+
+ - `pq_method_K(Pi)LPFO_add.cc`: Polar angle distribution for single flavor.
+ - `pq_method_K(Pi)LPFO_total.cc`: Polar angle distribution with all background processes being stacked.
+ - `pq_method_K(Pi)LPFO_BG_sub.cc`: Polar angle distribution for single flavor with all other backgrounds being subtracted to estimate the systematic uncertainty.
