@@ -81,10 +81,10 @@ For TSelector (see [`TreeIterator.cc`](https://github.com/yuichiok/SSbarAnalysis
 
  Main analysis process happens here.
  Output of this analysis will be a ROOT file with set of histograms for each qqbar process (all flavors). Structure of ROOT file looks as following.
- ![Structure of output ROOT file](https://github.com/yuichiok/SSbarAnalysis/blob/main/misc/rootbrowse_historgams.png)
+ ![Structure of output ROOT file](https://github.com/yuichiok/SSbarAnalysis/blob/main/misc/rootbrowse_histograms.png?raw=true)
+ 
  The code is split into two parts: Generated and Reconstructed.
-
- The analysis flow as following:
+ The analysis flow as follow:
  
 #### Generated Events
  1. Generated part will check the particle type of qqbar with `EventAnalyzer::isSignal()`
@@ -92,3 +92,7 @@ For TSelector (see [`TreeIterator.cc`](https://github.com/yuichiok/SSbarAnalysis
  3. Main analysis for generated event happens in `EventAnalyzer::AnalyzeGen()`.
     - Check for cuts described in `EventAnalyzer::TriggerMap()`.
     - Fills histogram defined in `HistManager.cc`.
+
+> [!NOTE]
+> In generated event analysis, "cheated PID" will be used for PID.
+
