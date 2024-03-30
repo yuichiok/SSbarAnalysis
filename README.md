@@ -91,6 +91,6 @@ For TSelector (see [`TreeIterator.cc`](https://github.com/yuichiok/SSbarAnalysis
  2. Check whether generated event satisfies the preselection (qqbar being back-to-back etc.) with `EventAnalyzer::Select()`.
  3. Main analysis for generated event happens in `EventAnalyzer::AnalyzeGen()`.
     - Check for cuts described in `EventAnalyzer::TriggerMap()`.
-      > [!NOTE]
-      > In generated event analysis, "cheated PID" will be used for PID.
     - Fills histogram defined in `HistManager.cc`.
+> [!NOTE]
+> In generated event analysis, "cheated PID" will be used for PID.
