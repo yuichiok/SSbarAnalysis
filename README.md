@@ -94,3 +94,14 @@ For TSelector (see [`TreeIterator.cc`](https://github.com/yuichiok/SSbarAnalysis
     - Fills histogram defined in `HistManager.cc`.
 > [!NOTE]
 > In generated event analysis, "cheated PID" will be used for PID.
+
+#### Reconstructed Events
+ 1. Reconstructed part takes place after the generated event analysis.
+ 2. Preselection identical to the generated one will be applied to the reconstructed event analysis with `EventAnalyzer::Select()` method.
+ 3. Main analysis for reconstructed event happens in `EventAnalyzer::AnalyzeReco()`.
+    - Use jet and its associated PFO information to check for the cuts in `EventAnalyzer::TriggerMap()`.
+    - `EventAnalyzer::ProcessDoubleTagEfficiency()` will fill polar angle histogram after individual cut so that one can compute the selection efficiency later in our macros.
+    - `EventAnalyzer::ProcessDoubleTag()` fills various histograms after going through all the cuts.
+    - `EventAnalyzer::ResolutionAnalysis()` fills histograms related to resolution analysis (Stability and purity)
+
+Finally after all these parts, one needs to clear the struct with `EventAnalyzer::ClearStructs()` to avoid segmentation fault upon looping over the events.
