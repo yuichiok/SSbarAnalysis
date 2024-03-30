@@ -11,6 +11,7 @@ etc/*.ini
 *.root
 *.pdf
 *.png
+!misc/*.png
 *.jpg
 *.csv
 
