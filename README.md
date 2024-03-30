@@ -55,7 +55,7 @@ One can execute this file by:
 ```
 replacing `[input_root_file]` by the path to the input root file from [QQbarAnalysis](https://github.com/QQbarAnalysis/QQbarAnalysis) project.
 
-## Workflow
+## Analysis Workflow
 
 ### NtupleProcessor
 
@@ -92,8 +92,6 @@ For TSelector (see [`TreeIterator.cc`](https://github.com/yuichiok/SSbarAnalysis
  3. Main analysis for generated event happens in `EventAnalyzer::AnalyzeGen()`.
     - Check for cuts described in `EventAnalyzer::TriggerMap()`.
     - Fills histogram defined in `HistManager.cc`.
-> [!NOTE]
-> In generated event analysis, "cheated PID" will be used for PID.
 
 #### Reconstructed Events
  1. Reconstructed part takes place after the generated event analysis.
@@ -104,4 +102,10 @@ For TSelector (see [`TreeIterator.cc`](https://github.com/yuichiok/SSbarAnalysis
     - `EventAnalyzer::ProcessDoubleTag()` fills various histograms after going through all the cuts.
     - `EventAnalyzer::ResolutionAnalysis()` fills histograms related to resolution analysis (Stability and purity)
 
-Finally after all these parts, one needs to clear the struct with `EventAnalyzer::ClearStructs()` to avoid segmentation fault upon looping over the events.
+> [!NOTE]
+> Historgam and boolean management is done using `std::unordered_map` in c++ standard library. See the [documentation](https://en.cppreference.com/w/cpp/container/unordered_map) for detail.
+
+ Finally after all these parts, one needs to clear the struct with `EventAnalyzer::ClearStructs()` to avoid segmentation fault upon looping over the events.
+
+ In generated event analysis, "cheated PID" will be used for PID. For reconstructed event analysis, dE/dx method is being used.
+ This is implemented in [`PFOTools.cc`](https://github.com/yuichiok/SSbarAnalysis/blob/main/NtupleProcessor/src/PFOTools.cc#L248-L273). (Commented out line suggest some different methods on PID criteria we've tested in the past)
